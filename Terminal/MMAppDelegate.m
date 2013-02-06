@@ -119,15 +119,17 @@
                 continue;
             }
 
-            [data setLength:bytesread];
-            NSString *readData = [[NSString alloc] initWithData:data encoding:NSASCIIStringEncoding];
-            NSAttributedString *attribData = [[NSAttributedString alloc] initWithString:readData];
-            NSTextStorage *textStorage = [self.consoleText textStorage];
-            [textStorage beginEditing];
-            [textStorage appendAttributedString:attribData];
-            [textStorage endEditing];
-            [self.consoleText didChangeText];
-            [self.consoleText scrollToEndOfDocument:self];
+            dispatch_async(dispatch_get_main_queue(), ^{
+                [data setLength:bytesread];
+                NSString *readData = [[NSString alloc] initWithData:data encoding:NSASCIIStringEncoding];
+                NSAttributedString *attribData = [[NSAttributedString alloc] initWithString:readData];
+                NSTextStorage *textStorage = [self.consoleText textStorage];
+                [textStorage beginEditing];
+                [textStorage appendAttributedString:attribData];
+                [textStorage endEditing];
+                [self.consoleText didChangeText];
+                [self.consoleText scrollToEndOfDocument:self];
+            });
         }
 
         if (FD_ISSET(self.fd, &wfds)) {
