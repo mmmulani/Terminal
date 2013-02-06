@@ -27,7 +27,7 @@
 	<key>NSHumanReadableCopyright</key>
 	<string>Copyright © 2013 Mehdi Mulani. All rights reserved.</string>
 	<key>NSMainNibFile</key>
-	<string>MainMenu</string>
+	<string>MMTerminal</string>
 	<key>NSPrincipalClass</key>
 	<string>NSApplication</string>
 </dict>

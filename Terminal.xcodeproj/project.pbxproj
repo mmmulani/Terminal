@@ -12,7 +12,7 @@
 		91F4EECC16B8D63D00F65E91 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 91F4EECB16B8D63D00F65E91 /* main.m */; };
 		91F4EED016B8D63D00F65E91 /* Credits.rtf in Resources */ = {isa = PBXBuildFile; fileRef = 91F4EECE16B8D63D00F65E91 /* Credits.rtf */; };
 		91F4EED316B8D63D00F65E91 /* MMAppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 91F4EED216B8D63D00F65E91 /* MMAppDelegate.m */; };
-		91F4EED616B8D63D00F65E91 /* MainMenu.xib in Resources */ = {isa = PBXBuildFile; fileRef = 91F4EED416B8D63D00F65E91 /* MainMenu.xib */; };
+		91F4EED616B8D63D00F65E91 /* MMTerminal.xib in Resources */ = {isa = PBXBuildFile; fileRef = 91F4EED416B8D63D00F65E91 /* MMTerminal.xib */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -28,7 +28,7 @@
 		91F4EECF16B8D63D00F65E91 /* en */ = {isa = PBXFileReference; lastKnownFileType = text.rtf; name = en; path = en.lproj/Credits.rtf; sourceTree = "<group>"; };
 		91F4EED116B8D63D00F65E91 /* MMAppDelegate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = MMAppDelegate.h; sourceTree = "<group>"; };
 		91F4EED216B8D63D00F65E91 /* MMAppDelegate.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = MMAppDelegate.m; sourceTree = "<group>"; };
-		91F4EED516B8D63D00F65E91 /* en */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = en; path = en.lproj/MainMenu.xib; sourceTree = "<group>"; };
+		91F4EED516B8D63D00F65E91 /* en */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = en; path = en.lproj/MMTerminal.xib; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -84,7 +84,7 @@
 			children = (
 				91F4EED116B8D63D00F65E91 /* MMAppDelegate.h */,
 				91F4EED216B8D63D00F65E91 /* MMAppDelegate.m */,
-				91F4EED416B8D63D00F65E91 /* MainMenu.xib */,
+				91F4EED416B8D63D00F65E91 /* MMTerminal.xib */,
 				91F4EEC616B8D63D00F65E91 /* Supporting Files */,
 			);
 			path = Terminal;
@@ -156,7 +156,7 @@
 			files = (
 				91F4EECA16B8D63D00F65E91 /* InfoPlist.strings in Resources */,
 				91F4EED016B8D63D00F65E91 /* Credits.rtf in Resources */,
-				91F4EED616B8D63D00F65E91 /* MainMenu.xib in Resources */,
+				91F4EED616B8D63D00F65E91 /* MMTerminal.xib in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -191,12 +191,12 @@
 			name = Credits.rtf;
 			sourceTree = "<group>";
 		};
-		91F4EED416B8D63D00F65E91 /* MainMenu.xib */ = {
+		91F4EED416B8D63D00F65E91 /* MMTerminal.xib */ = {
 			isa = PBXVariantGroup;
 			children = (
 				91F4EED516B8D63D00F65E91 /* en */,
 			);
-			name = MainMenu.xib;
+			name = MMTerminal.xib;
 			sourceTree = "<group>";
 		};
 /* End PBXVariantGroup section */
