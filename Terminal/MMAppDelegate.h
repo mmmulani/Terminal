@@ -8,12 +8,13 @@
 
 #import <Cocoa/Cocoa.h>
 
-@interface MMAppDelegate : NSObject <NSApplicationDelegate, NSTextFieldDelegate>
+@interface MMAppDelegate : NSObject <NSApplicationDelegate>
 
 @property (retain) IBOutlet NSWindow *window;
-@property (retain) IBOutlet NSTextField *commandText;
 @property (retain) IBOutlet NSTextView *consoleText;
 @property int fd;
 @property BOOL running;
+
+- (void)handleTerminalInput:(NSString *)input;
 
 @end

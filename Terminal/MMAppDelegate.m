@@ -96,8 +96,6 @@
     fd_set efds;
 
     while (true) {
-        sleep(1);
-
         FD_ZERO(&rfds);
         FD_ZERO(&wfds);
         FD_ZERO(&efds);
@@ -105,11 +103,11 @@
         FD_SET(self.fd, &rfds);
 
         int result = select(self.fd + 1, &rfds, &wfds, &efds, nil);
-//        NSLog(@"Select result: %d", result);
+        NSLog(@"Select result: %d", result);
 
         if (FD_ISSET(self.fd, &rfds)) {
             NSMutableData *data = [NSMutableData dataWithLength:2048];
-            ssize_t bytesread = read(self.fd, [data mutableBytes], 2048 - 1  );
+            ssize_t bytesread = read(self.fd, [data mutableBytes], 2048);
 
             if (bytesread == 0) {
                 NSLog(@"errno %d", errno);
@@ -123,7 +121,13 @@
 
             [data setLength:bytesread];
             NSString *readData = [[NSString alloc] initWithData:data encoding:NSASCIIStringEncoding];
-            self.consoleText.string = [self.consoleText.string stringByAppendingString:readData];
+            NSAttributedString *attribData = [[NSAttributedString alloc] initWithString:readData];
+            NSTextStorage *textStorage = [self.consoleText textStorage];
+            [textStorage beginEditing];
+            [textStorage appendAttributedString:attribData];
+            [textStorage endEditing];
+            [self.consoleText didChangeText];
+            [self.consoleText scrollToEndOfDocument:self];
         }
 
         if (FD_ISSET(self.fd, &wfds)) {
@@ -132,34 +136,21 @@
     }
 }
 
+- (void)handleTerminalInput:(NSString *)input;
+{
+    if (self.running && [input length]) {
+        const char *typed = [input cStringUsingEncoding:NSASCIIStringEncoding];
+        write(self.fd, typed, [input length]);
+    }
+}
+
 # pragma mark - NSApplicationDelegate
 
 - (void)applicationDidFinishLaunching:(NSNotification *)aNotification;
 {
-    self.commandText.delegate = self;
-}
-
-# pragma mark - NSTextFieldDelegate
-
-- (BOOL)control:(NSControl*)control textView:(NSTextView*)textView doCommandBySelector:(SEL)commandSelector;
-{
-    BOOL result = NO;
-    if ((commandSelector == @selector(insertNewline:)) && !self.running) {
-        [self runCommand:self.commandText.stringValue];
-        self.commandText.stringValue = @"";
-        result = YES;
-    }
-    
-    return result;
-}
-
-- (void)controlTextDidChange:(NSNotification *)obj;
-{
-    if (self.running && [self.commandText.stringValue length]) {
-        const char *typed = [self.commandText.stringValue cStringUsingEncoding:NSASCIIStringEncoding];
-        write(self.fd, typed, [self.commandText.stringValue length]);
-        self.commandText.stringValue = @"";
-    }
+    [self.consoleText setEditable:NO];
+    [self.window becomeFirstResponder];
+    [self runCommand:@"/bin/sh"];
 }
 
 @end
