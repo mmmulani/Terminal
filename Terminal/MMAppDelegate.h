@@ -15,6 +15,8 @@
 @property int fd;
 @property BOOL running;
 
++ (NSConnection *)sharedConnection;
+
 - (void)handleTerminalInput:(NSString *)input;
 
 @end

@@ -16,6 +16,18 @@
 
 @implementation MMAppDelegate
 
++ (NSConnection *)sharedConnection;
+{
+    static NSConnection *connection;
+    @synchronized(self) {
+        if (!connection) {
+            connection = [NSConnection new];
+        }
+    }
+
+    return connection;
+}
+
 - (void)runCommand:(NSString *)command;
 {
     [NSThread detachNewThreadSelector:@selector(executeCommand:) toTarget:self withObject:command];
@@ -25,6 +37,8 @@
 - (void)executeCommand:(NSString *)command;
 {
     NSArray *items = [command componentsSeparatedByString:@" "];
+
+    NSProxy *proxy = [[[self class] sharedConnection] rootProxy];
 
     struct termios term;
     struct winsize win;
@@ -79,11 +93,63 @@
     }
 
     if (pid == (pid_t)0) {
-        int status = execvp(argv[0],(char* const*)argv);
+        // Running as the shell.
+        // These pipes are written from the shell's point-of-view.
+        // That is, the shell intends to write into the writepipe, and read from the readpipe.
 
-        NSLog(@"Exec failed :( %d", status);
+        // TODO: Pipe stderr up from the child.
+        int writepipe[2] = { -1, -1 };
+        int readpipe[2] = { -1, -1 };
+        pid_t child_pid;
 
-        _exit(-1);
+        if (pipe(readpipe) < 0 || pipe(writepipe) < 0) {
+            NSLog(@"Creating pipe failed! :(");
+            _exit(-1);
+        }
+
+        NSLog(@"Writepipe: %d %d", writepipe[0], writepipe[1]);
+        NSLog(@"Readpipe: %d %d", readpipe[0], readpipe[1]);
+
+        child_pid = fork();
+        if (child_pid == 0) {
+            // This will run the program.
+            close(writepipe[1]);
+            close(readpipe[0]);
+
+            dup2(writepipe[0], STDIN_FILENO);
+            dup2(readpipe[1], STDOUT_FILENO);
+
+            int status = execvp(argv[0],(char* const*)argv);
+
+            NSLog(@"Exec failed :( %d", status);
+
+            _exit(-1);
+        } else {
+            close(writepipe[0]);
+            close(readpipe[1]);
+        }
+
+        fd_set rfds;
+        while (true) {
+            sleep(1);
+
+            FD_ZERO(&rfds);
+
+            FD_SET(readpipe[0], &rfds);
+
+//            int result = select(readpipe[0] + 1, &rfds, NULL, NULL, NULL);
+
+//            if (FD_ISSET(self.fd, &rfds)) {
+                NSLog(@"Checking..");
+
+                NSMutableData *data = [NSMutableData dataWithLength:2048];
+                ssize_t bytesread = read(readpipe[0], [data mutableBytes], 2048);
+
+                [data setLength:bytesread];
+                NSString *readData = [[NSString alloc] initWithData:data encoding:NSASCIIStringEncoding];
+                NSLog(@"Read in %@", readData);
+//            }
+        }
     }
 
     NSLog(@"Started with pid %d", pid);
@@ -124,17 +190,9 @@
                 continue;
             }
 
-            dispatch_async(dispatch_get_main_queue(), ^{
-                [data setLength:bytesread];
-                NSString *readData = [[NSString alloc] initWithData:data encoding:NSASCIIStringEncoding];
-                NSAttributedString *attribData = [[NSAttributedString alloc] initWithString:readData];
-                NSTextStorage *textStorage = [self.consoleText textStorage];
-                [textStorage beginEditing];
-                [textStorage appendAttributedString:attribData];
-                [textStorage endEditing];
-                [self.consoleText didChangeText];
-                [self.consoleText scrollToEndOfDocument:self];
-            });
+            [data setLength:bytesread];
+            NSString *readData = [[NSString alloc] initWithData:data encoding:NSASCIIStringEncoding];
+            [proxy performSelector:@selector(beep:) withObject:readData];
         }
 
         if (FD_ISSET(self.fd, &wfds)) {
@@ -155,13 +213,28 @@
     }
 }
 
+- (void)beep:(NSString *)message;
+{
+    NSAttributedString *attribData = [[NSAttributedString alloc] initWithString:message];
+    NSTextStorage *textStorage = [self.consoleText textStorage];
+    [textStorage beginEditing];
+    [textStorage appendAttributedString:attribData];
+    [textStorage endEditing];
+    [self.consoleText didChangeText];
+    [self.consoleText scrollToEndOfDocument:self];
+}
+
 # pragma mark - NSApplicationDelegate
 
 - (void)applicationDidFinishLaunching:(NSNotification *)aNotification;
 {
     [self.consoleText setEditable:NO];
     [self.window becomeFirstResponder];
-    [self runCommand:@"/bin/sh"];
+    [self runCommand:@"/bin/pwd"];
+
+    NSConnection *serverConnection = [[self class] sharedConnection];
+    [serverConnection setRootObject:self];
+    [serverConnection registerName:@"lol"];
 }
 
 @end
