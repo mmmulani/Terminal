@@ -10,6 +10,7 @@
 
 #include <termios.h>
 #include <util.h>
+#include <sys/wait.h>
 
 #define CTRLKEY(c)   ((c)-'A'+1)
 
@@ -103,14 +104,18 @@
         FD_SET(self.fd, &rfds);
 
         int result = select(self.fd + 1, &rfds, &wfds, &efds, nil);
-        NSLog(@"Select result: %d", result);
 
         if (FD_ISSET(self.fd, &rfds)) {
             NSMutableData *data = [NSMutableData dataWithLength:2048];
             ssize_t bytesread = read(self.fd, [data mutableBytes], 2048);
 
             if (bytesread == 0) {
-                NSLog(@"errno %d", errno);
+                int status;
+                waitpid(pid, &status, WNOHANG);
+                if (WIFEXITED(status) || WIFSIGNALED(status)) {
+                    break;
+                }
+
                 continue;
             }
 
@@ -136,6 +141,10 @@
             NSLog(@"Gotta write");
         }
     }
+
+    close(self.fd);
+    self.fd = -1;
+    self.running = NO;
 }
 
 - (void)handleTerminalInput:(NSString *)input;
