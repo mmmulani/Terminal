@@ -25,6 +25,7 @@
 - (void)start;
 {
     self.shellConnection = [NSConnection serviceConnectionWithName:@"com.mm.shell" rootObject:self];
+    NSLog(@"Shell connection: %@", self.shellConnection);
 
     [[NSRunLoop mainRunLoop] run];
 }
@@ -57,15 +58,30 @@
         _exit(-1);
     }
 
+    NSLog(@"stdout pipe: %d %d", stdout_pipe[0], stdout_pipe[1]);
+    NSLog(@"stdin pipe: %d %d", stdin_pipe[0], stdin_pipe[1]);
     NSLog(@"stderr pipe: %d %d", stderr_pipe[0], stderr_pipe[1]);
+
+    NSLog(@"Running %s", argv[0]);
+
+    fcntl(stdout_pipe[0], F_SETFL, O_NONBLOCK);
 
     child_pid = fork();
     if (child_pid == 0) {
         // This will run the program.
 
+        close(stdin_pipe[1]);
+        close(stdout_pipe[0]);
+
         dup2(stdin_pipe[0], STDIN_FILENO);
         dup2(stdout_pipe[1], STDOUT_FILENO);
         dup2(stderr_pipe[1], STDERR_FILENO);
+
+//        close(stdin_pipe[0]);
+//        close(stdout_pipe[1]);
+//        close(stderr_pipe[1]);
+
+        fprintf(stdout, "test");
 
         int status = execvp(argv[0],(char* const*)argv);
 
@@ -93,9 +109,13 @@
         NSLog(@"Done checking");
 
         if (FD_ISSET(stdout_pipe[0], &rfds)) {
-
             NSMutableData *data = [NSMutableData dataWithLength:2048];
-            ssize_t bytesread = read(stderr_pipe[0], [data mutableBytes], 2048);
+            ssize_t bytesread = read(stdout_pipe[0], [data mutableBytes], 2048);
+
+            if (bytesread < 0) {
+                NSLog(@"Read %zd bytes with errno %d", bytesread, errno);
+                continue;
+            }
 
             [data setLength:bytesread];
             NSString *readData = [[NSString alloc] initWithData:data encoding:NSASCIIStringEncoding];

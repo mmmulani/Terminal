@@ -13,7 +13,6 @@
 		919BA9B416C875C40091CB1B /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 919BA9B316C875C40091CB1B /* main.m */; };
 		919BA9B816C875C40091CB1B /* Shell.1 in CopyFiles */ = {isa = PBXBuildFile; fileRef = 919BA9B716C875C40091CB1B /* Shell.1 */; };
 		919BA9C016C87E4F0091CB1B /* MMShellMain.m in Sources */ = {isa = PBXBuildFile; fileRef = 919BA9BF16C87E4F0091CB1B /* MMShellMain.m */; };
-		919BA9C316C89D160091CB1B /* MMCommandTextField.m in Sources */ = {isa = PBXBuildFile; fileRef = 919BA9C216C89D160091CB1B /* MMCommandTextField.m */; };
 		91F4EEC016B8D63D00F65E91 /* Cocoa.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 91F4EEBF16B8D63D00F65E91 /* Cocoa.framework */; };
 		91F4EECA16B8D63D00F65E91 /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = 91F4EEC816B8D63D00F65E91 /* InfoPlist.strings */; };
 		91F4EECC16B8D63D00F65E91 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 91F4EECB16B8D63D00F65E91 /* main.m */; };
@@ -57,8 +56,6 @@
 		919BA9B716C875C40091CB1B /* Shell.1 */ = {isa = PBXFileReference; lastKnownFileType = text.man; path = Shell.1; sourceTree = "<group>"; };
 		919BA9BE16C87E4F0091CB1B /* MMShellMain.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MMShellMain.h; sourceTree = "<group>"; };
 		919BA9BF16C87E4F0091CB1B /* MMShellMain.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MMShellMain.m; sourceTree = "<group>"; };
-		919BA9C116C89D160091CB1B /* MMCommandTextField.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MMCommandTextField.h; sourceTree = "<group>"; };
-		919BA9C216C89D160091CB1B /* MMCommandTextField.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MMCommandTextField.m; sourceTree = "<group>"; };
 		91F4EEBC16B8D63D00F65E91 /* Terminal.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Terminal.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		91F4EEBF16B8D63D00F65E91 /* Cocoa.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Cocoa.framework; path = System/Library/Frameworks/Cocoa.framework; sourceTree = SDKROOT; };
 		91F4EEC216B8D63D00F65E91 /* AppKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AppKit.framework; path = System/Library/Frameworks/AppKit.framework; sourceTree = SDKROOT; };
@@ -164,8 +161,6 @@
 				9106520816C313640010DC76 /* MMWindow.m */,
 				91F4EED416B8D63D00F65E91 /* MMTerminal.xib */,
 				91F4EEC616B8D63D00F65E91 /* Supporting Files */,
-				919BA9C116C89D160091CB1B /* MMCommandTextField.h */,
-				919BA9C216C89D160091CB1B /* MMCommandTextField.m */,
 			);
 			path = Terminal;
 			sourceTree = "<group>";
@@ -279,7 +274,6 @@
 				91F4EED316B8D63D00F65E91 /* MMAppDelegate.m in Sources */,
 				9106520916C313640010DC76 /* MMWindow.m in Sources */,
 				9106520C16C574160010DC76 /* MMTextView.m in Sources */,
-				919BA9C316C89D160091CB1B /* MMCommandTextField.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

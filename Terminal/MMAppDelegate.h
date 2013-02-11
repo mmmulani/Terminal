@@ -8,7 +8,7 @@
 
 #import <Cocoa/Cocoa.h>
 
-@interface MMAppDelegate : NSObject <NSApplicationDelegate>
+@interface MMAppDelegate : NSObject <NSApplicationDelegate, NSTextFieldDelegate>
 
 @property (retain) IBOutlet NSWindow *window;
 @property (retain) IBOutlet NSTextView *consoleText;

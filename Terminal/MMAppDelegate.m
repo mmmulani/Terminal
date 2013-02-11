@@ -14,12 +14,6 @@
 
 #define CTRLKEY(c)   ((c)-'A'+1)
 
-@interface MMAppDelegate ()
-
-@property (retain) NSString *shellLine;
-
-@end
-
 @implementation MMAppDelegate
 
 + (NSConnection *)shellConnection;
@@ -44,7 +38,6 @@
 - (void)startShell;
 {
     NSProxy *proxy = [[NSConnection connectionWithRegisteredName:@"com.mm.terminal" host:nil] rootProxy];
-    self.shellLine = @"";
 
     struct termios term;
     struct winsize win;
@@ -154,6 +147,7 @@
 
             [data setLength:bytesread];
             NSString *readData = [[NSString alloc] initWithData:data encoding:NSASCIIStringEncoding];
+            NSLog(@"Read in %@ on the fd", readData);
             [proxy performSelector:@selector(beep:) withObject:readData];
         }
 
@@ -168,13 +162,7 @@
 
 - (void)handleTerminalInput:(NSString *)input;
 {
-    if (!self.running) {
-        self.shellLine = [self.shellLine stringByAppendingString:input];
-        if ([self.shellLine characterAtIndex:([self.shellLine length] - 1)] == '\r') {
-            [self runCommand:[self.shellLine substringToIndex:([self.shellLine length] - 1)]];
-            self.shellLine = @"";
-        }
-    } else if ([input length]) {
+    if (self.running && [input length]) {
         const char *typed = [input cStringUsingEncoding:NSASCIIStringEncoding];
         write(self.fd, typed, [input length]);
     }
@@ -203,6 +191,24 @@
     self.terminalAppConnection = [NSConnection serviceConnectionWithName:@"com.mm.terminal" rootObject:self];
 
     [NSThread detachNewThreadSelector:@selector(startShell) toTarget:self withObject:nil];
+}
+
+# pragma mark - NSTextFieldDelegate
+
+- (BOOL)control:(NSControl *)control textShouldBeginEditing:(NSText *)fieldEditor;
+{
+    return !self.running;
+}
+
+- (BOOL)control:(NSControl *)control textView:(NSTextView *)textView doCommandBySelector:(SEL)commandSelector;
+{
+    if (commandSelector == @selector(insertNewline:)) {
+        [self runCommand:textView.string];
+        [textView setString:@""];
+        return YES;
+    }
+
+    return NO;
 }
 
 @end
