@@ -186,7 +186,6 @@
 - (void)applicationDidFinishLaunching:(NSNotification *)aNotification;
 {
     [self.consoleText setNextResponder:self.window];
-    NSLog(@"First responder: %@", self.window.firstResponder);
 
     self.terminalAppConnection = [NSConnection serviceConnectionWithName:@"com.mm.terminal" rootObject:self];
 
