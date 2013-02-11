@@ -14,9 +14,15 @@
 
 #define CTRLKEY(c)   ((c)-'A'+1)
 
+@interface MMAppDelegate ()
+
+@property (retain) NSString *shellLine;
+
+@end
+
 @implementation MMAppDelegate
 
-+ (NSConnection *)sharedConnection;
++ (NSConnection *)shellConnection;
 {
     static NSConnection *connection;
     @synchronized(self) {
@@ -30,15 +36,15 @@
 
 - (void)runCommand:(NSString *)command;
 {
-    [NSThread detachNewThreadSelector:@selector(executeCommand:) toTarget:self withObject:command];
+    NSProxy *proxy = [[[self class] shellConnection] rootProxy];
+    [proxy performSelector:@selector(executeCommand:) withObject:command];
     self.running = YES;
 }
 
-- (void)executeCommand:(NSString *)command;
+- (void)startShell;
 {
-    NSArray *items = [command componentsSeparatedByString:@" "];
-
-    NSProxy *proxy = [[[self class] sharedConnection] rootProxy];
+    NSProxy *proxy = [[NSConnection connectionWithRegisteredName:@"terminal" host:nil] rootProxy];
+    self.shellLine = @"";
 
     struct termios term;
     struct winsize win;
@@ -78,12 +84,6 @@
 	win.ws_xpixel = 0;
 	win.ws_ypixel = 0;
 
-    const char *argv[[items count] + 1];
-    for (NSUInteger i = 0; i < [items count]; i++) {
-        argv[i] = [items[i] cStringUsingEncoding:NSASCIIStringEncoding];
-    }
-    argv[[items count]] = NULL;
-
     char ttyname[PATH_MAX];
     pid_t pid;
     {
@@ -97,59 +97,16 @@
         // These pipes are written from the shell's point-of-view.
         // That is, the shell intends to write into the writepipe, and read from the readpipe.
 
-        // TODO: Pipe stderr up from the child.
-        int writepipe[2] = { -1, -1 };
-        int readpipe[2] = { -1, -1 };
-        pid_t child_pid;
+        NSFileManager *fileManager = [[NSFileManager alloc] init];
 
-        if (pipe(readpipe) < 0 || pipe(writepipe) < 0) {
-            NSLog(@"Creating pipe failed! :(");
-            _exit(-1);
-        }
+        const char *args[2];
+        args[0] = [[[fileManager currentDirectoryPath] stringByAppendingPathComponent:@"Shell"] cStringUsingEncoding:NSASCIIStringEncoding];
+        args[1] = NULL;
+        execve(args[0], args, NULL);
 
-        NSLog(@"Writepipe: %d %d", writepipe[0], writepipe[1]);
-        NSLog(@"Readpipe: %d %d", readpipe[0], readpipe[1]);
+        NSLog(@"Reached bad part. %s", args[0]);
 
-        child_pid = fork();
-        if (child_pid == 0) {
-            // This will run the program.
-            close(writepipe[1]);
-            close(readpipe[0]);
-
-            dup2(writepipe[0], STDIN_FILENO);
-            dup2(readpipe[1], STDOUT_FILENO);
-
-            int status = execvp(argv[0],(char* const*)argv);
-
-            NSLog(@"Exec failed :( %d", status);
-
-            _exit(-1);
-        } else {
-            close(writepipe[0]);
-            close(readpipe[1]);
-        }
-
-        fd_set rfds;
-        while (true) {
-            sleep(1);
-
-            FD_ZERO(&rfds);
-
-            FD_SET(readpipe[0], &rfds);
-
-//            int result = select(readpipe[0] + 1, &rfds, NULL, NULL, NULL);
-
-//            if (FD_ISSET(self.fd, &rfds)) {
-                NSLog(@"Checking..");
-
-                NSMutableData *data = [NSMutableData dataWithLength:2048];
-                ssize_t bytesread = read(readpipe[0], [data mutableBytes], 2048);
-
-                [data setLength:bytesread];
-                NSString *readData = [[NSString alloc] initWithData:data encoding:NSASCIIStringEncoding];
-                NSLog(@"Read in %@", readData);
-//            }
-        }
+        exit(1);
     }
 
     NSLog(@"Started with pid %d", pid);
@@ -179,6 +136,7 @@
                 int status;
                 waitpid(pid, &status, WNOHANG);
                 if (WIFEXITED(status) || WIFSIGNALED(status)) {
+                    NSLog(@"Exited?");
                     break;
                 }
 
@@ -207,7 +165,13 @@
 
 - (void)handleTerminalInput:(NSString *)input;
 {
-    if (self.running && [input length]) {
+    if (!self.running) {
+        self.shellLine = [self.shellLine stringByAppendingString:input];
+        if ([self.shellLine characterAtIndex:([self.shellLine length] - 1)] == '\r') {
+            [self runCommand:[self.shellLine substringToIndex:([self.shellLine length] - 1)]];
+            self.shellLine = @"";
+        }
+    } else if ([input length]) {
         const char *typed = [input cStringUsingEncoding:NSASCIIStringEncoding];
         write(self.fd, typed, [input length]);
     }
@@ -215,26 +179,28 @@
 
 - (void)beep:(NSString *)message;
 {
-    NSAttributedString *attribData = [[NSAttributedString alloc] initWithString:message];
-    NSTextStorage *textStorage = [self.consoleText textStorage];
-    [textStorage beginEditing];
-    [textStorage appendAttributedString:attribData];
-    [textStorage endEditing];
-    [self.consoleText didChangeText];
-    [self.consoleText scrollToEndOfDocument:self];
+    dispatch_async(dispatch_get_main_queue(), ^{
+        NSAttributedString *attribData = [[NSAttributedString alloc] initWithString:message];
+        NSTextStorage *textStorage = [self.consoleText textStorage];
+        [textStorage beginEditing];
+        [textStorage appendAttributedString:attribData];
+        [textStorage endEditing];
+        [self.consoleText didChangeText];
+        [self.consoleText scrollToEndOfDocument:self];
+    });
 }
 
 # pragma mark - NSApplicationDelegate
 
 - (void)applicationDidFinishLaunching:(NSNotification *)aNotification;
 {
-    [self.consoleText setEditable:NO];
-    [self.window becomeFirstResponder];
-    [self runCommand:@"/bin/pwd"];
+    [self.consoleText setNextResponder:self.window];
+    NSLog(@"First responder: %@", self.window.firstResponder);
+    [self runCommand:@"/Users/mehdi/Development/Terminal/tmp/test"];
 
-    NSConnection *serverConnection = [[self class] sharedConnection];
-    [serverConnection setRootObject:self];
-    [serverConnection registerName:@"lol"];
+    self.terminalAppConnection = [NSConnection serviceConnectionWithName:@"terminal" rootObject:self];
+
+    [NSThread detachNewThreadSelector:@selector(startShell) toTarget:self withObject:nil];
 }
 
 @end

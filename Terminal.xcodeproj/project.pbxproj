@@ -8,6 +8,11 @@
 
 /* Begin PBXBuildFile section */
 		9106520916C313640010DC76 /* MMWindow.m in Sources */ = {isa = PBXBuildFile; fileRef = 9106520816C313640010DC76 /* MMWindow.m */; };
+		9106520C16C574160010DC76 /* MMTextView.m in Sources */ = {isa = PBXBuildFile; fileRef = 9106520B16C574160010DC76 /* MMTextView.m */; };
+		919BA9B116C875C40091CB1B /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 919BA9B016C875C40091CB1B /* Foundation.framework */; };
+		919BA9B416C875C40091CB1B /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 919BA9B316C875C40091CB1B /* main.m */; };
+		919BA9B816C875C40091CB1B /* Shell.1 in CopyFiles */ = {isa = PBXBuildFile; fileRef = 919BA9B716C875C40091CB1B /* Shell.1 */; };
+		919BA9C016C87E4F0091CB1B /* MMShellMain.m in Sources */ = {isa = PBXBuildFile; fileRef = 919BA9BF16C87E4F0091CB1B /* MMShellMain.m */; };
 		91F4EEC016B8D63D00F65E91 /* Cocoa.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 91F4EEBF16B8D63D00F65E91 /* Cocoa.framework */; };
 		91F4EECA16B8D63D00F65E91 /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = 91F4EEC816B8D63D00F65E91 /* InfoPlist.strings */; };
 		91F4EECC16B8D63D00F65E91 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 91F4EECB16B8D63D00F65E91 /* main.m */; };
@@ -16,9 +21,41 @@
 		91F4EED616B8D63D00F65E91 /* MMTerminal.xib in Resources */ = {isa = PBXBuildFile; fileRef = 91F4EED416B8D63D00F65E91 /* MMTerminal.xib */; };
 /* End PBXBuildFile section */
 
+/* Begin PBXContainerItemProxy section */
+		919BA9BC16C876260091CB1B /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 91F4EEB416B8D63C00F65E91 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 919BA9AE16C875C40091CB1B;
+			remoteInfo = Shell;
+		};
+/* End PBXContainerItemProxy section */
+
+/* Begin PBXCopyFilesBuildPhase section */
+		919BA9AD16C875C40091CB1B /* CopyFiles */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = /usr/share/man/man1/;
+			dstSubfolderSpec = 0;
+			files = (
+				919BA9B816C875C40091CB1B /* Shell.1 in CopyFiles */,
+			);
+			runOnlyForDeploymentPostprocessing = 1;
+		};
+/* End PBXCopyFilesBuildPhase section */
+
 /* Begin PBXFileReference section */
 		9106520716C313640010DC76 /* MMWindow.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MMWindow.h; sourceTree = "<group>"; };
 		9106520816C313640010DC76 /* MMWindow.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MMWindow.m; sourceTree = "<group>"; };
+		9106520A16C574160010DC76 /* MMTextView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MMTextView.h; sourceTree = "<group>"; };
+		9106520B16C574160010DC76 /* MMTextView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MMTextView.m; sourceTree = "<group>"; };
+		919BA9AF16C875C40091CB1B /* Shell */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = Shell; sourceTree = BUILT_PRODUCTS_DIR; };
+		919BA9B016C875C40091CB1B /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = System/Library/Frameworks/Foundation.framework; sourceTree = SDKROOT; };
+		919BA9B316C875C40091CB1B /* main.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
+		919BA9B616C875C40091CB1B /* Shell-Prefix.pch */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "Shell-Prefix.pch"; sourceTree = "<group>"; };
+		919BA9B716C875C40091CB1B /* Shell.1 */ = {isa = PBXFileReference; lastKnownFileType = text.man; path = Shell.1; sourceTree = "<group>"; };
+		919BA9BE16C87E4F0091CB1B /* MMShellMain.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MMShellMain.h; sourceTree = "<group>"; };
+		919BA9BF16C87E4F0091CB1B /* MMShellMain.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MMShellMain.m; sourceTree = "<group>"; };
 		91F4EEBC16B8D63D00F65E91 /* Terminal.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Terminal.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		91F4EEBF16B8D63D00F65E91 /* Cocoa.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Cocoa.framework; path = System/Library/Frameworks/Cocoa.framework; sourceTree = SDKROOT; };
 		91F4EEC216B8D63D00F65E91 /* AppKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AppKit.framework; path = System/Library/Frameworks/AppKit.framework; sourceTree = SDKROOT; };
@@ -35,6 +72,14 @@
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
+		919BA9AC16C875C40091CB1B /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				919BA9B116C875C40091CB1B /* Foundation.framework in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		91F4EEB916B8D63D00F65E91 /* Frameworks */ = {
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
@@ -46,10 +91,31 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		919BA9B216C875C40091CB1B /* Shell */ = {
+			isa = PBXGroup;
+			children = (
+				919BA9B316C875C40091CB1B /* main.m */,
+				919BA9BE16C87E4F0091CB1B /* MMShellMain.h */,
+				919BA9BF16C87E4F0091CB1B /* MMShellMain.m */,
+				919BA9B716C875C40091CB1B /* Shell.1 */,
+				919BA9B516C875C40091CB1B /* Supporting Files */,
+			);
+			path = Shell;
+			sourceTree = "<group>";
+		};
+		919BA9B516C875C40091CB1B /* Supporting Files */ = {
+			isa = PBXGroup;
+			children = (
+				919BA9B616C875C40091CB1B /* Shell-Prefix.pch */,
+			);
+			name = "Supporting Files";
+			sourceTree = "<group>";
+		};
 		91F4EEB316B8D63C00F65E91 = {
 			isa = PBXGroup;
 			children = (
 				91F4EEC516B8D63D00F65E91 /* Terminal */,
+				919BA9B216C875C40091CB1B /* Shell */,
 				91F4EEBE16B8D63D00F65E91 /* Frameworks */,
 				91F4EEBD16B8D63D00F65E91 /* Products */,
 			);
@@ -59,6 +125,7 @@
 			isa = PBXGroup;
 			children = (
 				91F4EEBC16B8D63D00F65E91 /* Terminal.app */,
+				919BA9AF16C875C40091CB1B /* Shell */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -67,6 +134,7 @@
 			isa = PBXGroup;
 			children = (
 				91F4EEBF16B8D63D00F65E91 /* Cocoa.framework */,
+				919BA9B016C875C40091CB1B /* Foundation.framework */,
 				91F4EEC116B8D63D00F65E91 /* Other Frameworks */,
 			);
 			name = Frameworks;
@@ -87,6 +155,8 @@
 			children = (
 				91F4EED116B8D63D00F65E91 /* MMAppDelegate.h */,
 				91F4EED216B8D63D00F65E91 /* MMAppDelegate.m */,
+				9106520A16C574160010DC76 /* MMTextView.h */,
+				9106520B16C574160010DC76 /* MMTextView.m */,
 				9106520716C313640010DC76 /* MMWindow.h */,
 				9106520816C313640010DC76 /* MMWindow.m */,
 				91F4EED416B8D63D00F65E91 /* MMTerminal.xib */,
@@ -110,6 +180,23 @@
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
+		919BA9AE16C875C40091CB1B /* Shell */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 919BA9BB16C875C40091CB1B /* Build configuration list for PBXNativeTarget "Shell" */;
+			buildPhases = (
+				919BA9AB16C875C40091CB1B /* Sources */,
+				919BA9AC16C875C40091CB1B /* Frameworks */,
+				919BA9AD16C875C40091CB1B /* CopyFiles */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = Shell;
+			productName = Shell;
+			productReference = 919BA9AF16C875C40091CB1B /* Shell */;
+			productType = "com.apple.product-type.tool";
+		};
 		91F4EEBB16B8D63D00F65E91 /* Terminal */ = {
 			isa = PBXNativeTarget;
 			buildConfigurationList = 91F4EED916B8D63D00F65E91 /* Build configuration list for PBXNativeTarget "Terminal" */;
@@ -121,6 +208,7 @@
 			buildRules = (
 			);
 			dependencies = (
+				919BA9BD16C876260091CB1B /* PBXTargetDependency */,
 			);
 			name = Terminal;
 			productName = Terminal;
@@ -150,6 +238,7 @@
 			projectRoot = "";
 			targets = (
 				91F4EEBB16B8D63D00F65E91 /* Terminal */,
+				919BA9AE16C875C40091CB1B /* Shell */,
 			);
 		};
 /* End PBXProject section */
@@ -168,6 +257,15 @@
 /* End PBXResourcesBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
+		919BA9AB16C875C40091CB1B /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				919BA9B416C875C40091CB1B /* main.m in Sources */,
+				919BA9C016C87E4F0091CB1B /* MMShellMain.m in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		91F4EEB816B8D63D00F65E91 /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
@@ -175,10 +273,19 @@
 				91F4EECC16B8D63D00F65E91 /* main.m in Sources */,
 				91F4EED316B8D63D00F65E91 /* MMAppDelegate.m in Sources */,
 				9106520916C313640010DC76 /* MMWindow.m in Sources */,
+				9106520C16C574160010DC76 /* MMTextView.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXSourcesBuildPhase section */
+
+/* Begin PBXTargetDependency section */
+		919BA9BD16C876260091CB1B /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 919BA9AE16C875C40091CB1B /* Shell */;
+			targetProxy = 919BA9BC16C876260091CB1B /* PBXContainerItemProxy */;
+		};
+/* End PBXTargetDependency section */
 
 /* Begin PBXVariantGroup section */
 		91F4EEC816B8D63D00F65E91 /* InfoPlist.strings */ = {
@@ -208,6 +315,24 @@
 /* End PBXVariantGroup section */
 
 /* Begin XCBuildConfiguration section */
+		919BA9B916C875C40091CB1B /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				GCC_PRECOMPILE_PREFIX_HEADER = YES;
+				GCC_PREFIX_HEADER = "Shell/Shell-Prefix.pch";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+			};
+			name = Debug;
+		};
+		919BA9BA16C875C40091CB1B /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				GCC_PRECOMPILE_PREFIX_HEADER = YES;
+				GCC_PREFIX_HEADER = "Shell/Shell-Prefix.pch";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+			};
+			name = Release;
+		};
 		91F4EED716B8D63D00F65E91 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
@@ -294,6 +419,14 @@
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
+		919BA9BB16C875C40091CB1B /* Build configuration list for PBXNativeTarget "Shell" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				919BA9B916C875C40091CB1B /* Debug */,
+				919BA9BA16C875C40091CB1B /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+		};
 		91F4EEB716B8D63C00F65E91 /* Build configuration list for PBXProject "Terminal" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (

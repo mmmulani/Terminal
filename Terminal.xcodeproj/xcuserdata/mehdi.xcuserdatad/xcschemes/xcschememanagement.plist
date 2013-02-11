@@ -4,6 +4,11 @@
 <dict>
 	<key>SchemeUserState</key>
 	<dict>
+		<key>Shell.xcscheme</key>
+		<dict>
+			<key>orderHint</key>
+			<integer>1</integer>
+		</dict>
 		<key>Terminal.xcscheme</key>
 		<dict>
 			<key>orderHint</key>
@@ -12,6 +17,11 @@
 	</dict>
 	<key>SuppressBuildableAutocreation</key>
 	<dict>
+		<key>919BA9AE16C875C40091CB1B</key>
+		<dict>
+			<key>primary</key>
+			<true/>
+		</dict>
 		<key>91F4EEBB16B8D63D00F65E91</key>
 		<dict>
 			<key>primary</key>

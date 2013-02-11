@@ -14,8 +14,9 @@
 @property (retain) IBOutlet NSTextView *consoleText;
 @property int fd;
 @property BOOL running;
+@property (retain) NSConnection *terminalAppConnection;
 
-+ (NSConnection *)sharedConnection;
++ (NSConnection *)shellConnection;
 
 - (void)handleTerminalInput:(NSString *)input;
 
