@@ -36,14 +36,14 @@
 
 - (void)runCommand:(NSString *)command;
 {
-    NSProxy *proxy = [[[self class] shellConnection] rootProxy];
+    NSProxy *proxy = [[NSConnection connectionWithRegisteredName:@"com.mm.shell" host:nil] rootProxy];
     [proxy performSelector:@selector(executeCommand:) withObject:command];
     self.running = YES;
 }
 
 - (void)startShell;
 {
-    NSProxy *proxy = [[NSConnection connectionWithRegisteredName:@"terminal" host:nil] rootProxy];
+    NSProxy *proxy = [[NSConnection connectionWithRegisteredName:@"com.mm.terminal" host:nil] rootProxy];
     self.shellLine = @"";
 
     struct termios term;
@@ -92,6 +92,9 @@
         self.fd = fd;
     }
 
+    NSString *shellLocation = [[[[NSFileManager alloc] init] currentDirectoryPath] stringByAppendingPathComponent:@"Shell"];
+    NSLog(@"Shell location: %@", shellLocation);
+
     if (pid == (pid_t)0) {
         // Running as the shell.
         // These pipes are written from the shell's point-of-view.
@@ -102,6 +105,7 @@
         const char *args[2];
         args[0] = [[[fileManager currentDirectoryPath] stringByAppendingPathComponent:@"Shell"] cStringUsingEncoding:NSASCIIStringEncoding];
         args[1] = NULL;
+        NSLog(@"Starting %s", args[0]);
         execve(args[0], args, NULL);
 
         NSLog(@"Reached bad part. %s", args[0]);
@@ -160,7 +164,6 @@
 
     close(self.fd);
     self.fd = -1;
-    self.running = NO;
 }
 
 - (void)handleTerminalInput:(NSString *)input;
@@ -196,9 +199,8 @@
 {
     [self.consoleText setNextResponder:self.window];
     NSLog(@"First responder: %@", self.window.firstResponder);
-    [self runCommand:@"/Users/mehdi/Development/Terminal/tmp/test"];
 
-    self.terminalAppConnection = [NSConnection serviceConnectionWithName:@"terminal" rootObject:self];
+    self.terminalAppConnection = [NSConnection serviceConnectionWithName:@"com.mm.terminal" rootObject:self];
 
     [NSThread detachNewThreadSelector:@selector(startShell) toTarget:self withObject:nil];
 }

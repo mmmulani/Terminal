@@ -22,7 +22,23 @@
     return application;
 }
 
+- (void)start;
+{
+    self.shellConnection = [NSConnection serviceConnectionWithName:@"com.mm.shell" rootObject:self];
+
+    [[NSRunLoop mainRunLoop] run];
+}
+
 - (void)executeCommand:(NSString *)command;
+{
+    dispatch_async(dispatch_get_main_queue(), ^{
+        [self _executeCommand:command];
+    });
+
+    return;
+}
+
+- (void)_executeCommand:(NSString *)command;
 {
     NSArray *items = [command componentsSeparatedByString:@" "];
     const char *argv[[items count] + 1];
@@ -57,8 +73,8 @@
 
         _exit(-1);
     } else {
-        close(stdin_pipe[1]);
-        close(stdout_pipe[0]);
+        close(stdin_pipe[0]);
+        close(stdout_pipe[1]);
         close(stderr_pipe[1]);
     }
 
@@ -68,12 +84,15 @@
 
         FD_ZERO(&rfds);
 
-        FD_SET(stderr_pipe[0], &rfds);
+        FD_SET(stdout_pipe[0], &rfds);
 
-        int result = select(stderr_pipe[0] + 1, &rfds, NULL, NULL, NULL);
+        NSLog(@"Checking..");
 
-        if (FD_ISSET(stderr_pipe[0], &rfds)) {
-            NSLog(@"Checking..");
+        int result = select(stdout_pipe[0] + 1, &rfds, NULL, NULL, NULL);
+
+        NSLog(@"Done checking");
+
+        if (FD_ISSET(stdout_pipe[0], &rfds)) {
 
             NSMutableData *data = [NSMutableData dataWithLength:2048];
             ssize_t bytesread = read(stderr_pipe[0], [data mutableBytes], 2048);

@@ -7,6 +7,7 @@
 //
 
 #import <Foundation/Foundation.h>
+#import "MMShellMain.h"
 
 int main(int argc, const char * argv[])
 {
@@ -16,12 +17,7 @@ int main(int argc, const char * argv[])
         // insert code here...
         NSLog(@"Hello, World!");
 
-        NSProxy *proxy = [[NSConnection connectionWithRegisteredName:@"terminal" host:nil] rootProxy];
-
-        [proxy performSelector:@selector(beep:) withObject:@"Child sending beep!"];
-        NSLog(@"Logging beep.");
-
-        [[NSRunLoop mainRunLoop] run];
+        [[MMShellMain sharedApplication] start];
         
     }
     return 0;

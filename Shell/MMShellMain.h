@@ -10,6 +10,10 @@
 
 @interface MMShellMain : NSObject
 
+@property (retain) NSConnection *shellConnection;
+
 + (MMShellMain *)sharedApplication;
+
+- (void)start;
 
 @end
