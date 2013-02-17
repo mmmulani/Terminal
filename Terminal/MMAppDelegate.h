@@ -12,6 +12,7 @@
 
 @property (retain) IBOutlet NSWindow *window;
 @property (retain) IBOutlet NSTextView *consoleText;
+@property (retain) IBOutlet NSTextField *commandInput;
 @property int fd;
 @property BOOL running;
 @property (retain) NSConnection *terminalAppConnection;

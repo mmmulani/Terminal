@@ -96,7 +96,7 @@
         NSFileManager *fileManager = [[NSFileManager alloc] init];
 
         const char *args[2];
-        args[0] = [[[fileManager currentDirectoryPath] stringByAppendingPathComponent:@"Shell"] cStringUsingEncoding:NSASCIIStringEncoding];
+        args[0] = [[[fileManager currentDirectoryPath] stringByAppendingPathComponent:@"Shell"] cStringUsingEncoding:NSUTF8StringEncoding];
         args[1] = NULL;
         NSLog(@"Starting %s", args[0]);
         execve(args[0], args, NULL);
@@ -108,7 +108,7 @@
 
     NSLog(@"Started with pid %d", pid);
 
-    NSLog(@"TTY started: %@ with fd %d", [NSString stringWithCString:ttyname encoding:NSASCIIStringEncoding], self.fd);
+    NSLog(@"TTY started: %@ with fd %d", [NSString stringWithCString:ttyname encoding:NSUTF8StringEncoding], self.fd);
 
     fcntl(self.fd, F_SETFL, O_NONBLOCK);
 
@@ -146,8 +146,8 @@
             }
 
             [data setLength:bytesread];
-            NSString *readData = [[NSString alloc] initWithData:data encoding:NSASCIIStringEncoding];
-            NSLog(@"Read in %@ on the fd", readData);
+            NSString *readData = [[NSString alloc] initWithData:data encoding:NSUTF8StringEncoding];
+            NSLog(@"Read in %@ on the fd with bytes %@", readData, data);
             [proxy performSelector:@selector(beep:) withObject:readData];
         }
 
@@ -163,7 +163,7 @@
 - (void)handleTerminalInput:(NSString *)input;
 {
     if (self.running && [input length]) {
-        const char *typed = [input cStringUsingEncoding:NSASCIIStringEncoding];
+        const char *typed = [input cStringUsingEncoding:NSUTF8StringEncoding];
         write(self.fd, typed, [input length]);
     }
 }
@@ -181,6 +181,14 @@
     });
 }
 
+- (void)processFinished;
+{
+    NSLog(@"Process finished");
+    self.running = NO;
+
+    [self.window makeFirstResponder:self.commandInput];
+}
+
 # pragma mark - NSApplicationDelegate
 
 - (void)applicationDidFinishLaunching:(NSNotification *)aNotification;
@@ -196,6 +204,9 @@
 
 - (BOOL)control:(NSControl *)control textShouldBeginEditing:(NSText *)fieldEditor;
 {
+    if (self.running) {
+        [self.window makeFirstResponder:self.consoleText];
+    }
     return !self.running;
 }
 
@@ -204,6 +215,7 @@
     if (commandSelector == @selector(insertNewline:)) {
         [self runCommand:textView.string];
         [textView setString:@""];
+        [self.window makeFirstResponder:self.consoleText];
         return YES;
     }
 

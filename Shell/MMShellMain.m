@@ -44,7 +44,7 @@
     NSArray *items = [command componentsSeparatedByString:@" "];
     const char *argv[[items count] + 1];
     for (NSUInteger i = 0; i < [items count]; i++) {
-        argv[i] = [items[i] cStringUsingEncoding:NSASCIIStringEncoding];
+        argv[i] = [items[i] cStringUsingEncoding:NSUTF8StringEncoding];
     }
     argv[[items count]] = NULL;
 
@@ -61,6 +61,11 @@
 
         _exit(-1);
     }
+
+    waitpid(child_pid, NULL, 0);
+
+    NSProxy *proxy = [[NSConnection connectionWithRegisteredName:@"com.mm.terminal" host:nil] rootProxy];
+    [proxy performSelector:@selector(processFinished)];
 }
 
 @end
