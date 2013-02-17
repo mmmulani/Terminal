@@ -15,5 +15,6 @@
 + (MMShellMain *)sharedApplication;
 
 - (void)start;
+- (void)executeCommand:(NSString *)command;
 
 @end

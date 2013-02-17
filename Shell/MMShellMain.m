@@ -32,11 +32,11 @@
 
 - (void)executeCommand:(NSString *)command;
 {
-    dispatch_async(dispatch_get_main_queue(), ^{
+//    dispatch_async(dispatch_get_main_queue(), ^{
         [self _executeCommand:command];
-    });
+//    });
 
-    return;
+//    return;
 }
 
 - (void)_executeCommand:(NSString *)command;
@@ -53,7 +53,7 @@
     int stderr_pipe[2] = { -1, -1 };
     pid_t child_pid;
 
-    if (pipe(stdout_pipe) < 0 || pipe(stdin_pipe) < 0 || pipe(stderr_pipe) < 0) {
+    if (pipe(stdout_pipe) < 0 || pipe(stderr_pipe) < 0 || pipe(stdin_pipe) < 0) {
         NSLog(@"Creating pipes failed! :(");
         _exit(-1);
     }
@@ -72,16 +72,15 @@
 
         close(stdin_pipe[1]);
         close(stdout_pipe[0]);
+        close(stderr_pipe[0]);
 
 //        dup2(stdin_pipe[0], STDIN_FILENO);
-//        dup2(stdout_pipe[1], STDOUT_FILENO);
-//        dup2(stderr_pipe[1], STDERR_FILENO);
+        dup2(stdout_pipe[1], STDOUT_FILENO);
+        dup2(stderr_pipe[1], STDERR_FILENO);
 
         close(stdin_pipe[0]);
         close(stdout_pipe[1]);
         close(stderr_pipe[1]);
-
-        fprintf(stdout, "test\n");
 
         int status = execvp(argv[0],(char* const*)argv);
 
@@ -94,17 +93,23 @@
         close(stderr_pipe[1]);
     }
 
+    fcntl(stdout_pipe[0], F_SETFL, O_NONBLOCK);
+    fcntl(stderr_pipe[0], F_SETFL, O_NONBLOCK);
+
     fd_set rfds;
     while (true) {
-        sleep(1);
-
         FD_ZERO(&rfds);
 
         FD_SET(stdout_pipe[0], &rfds);
+        FD_SET(stderr_pipe[0], &rfds);
 
         NSLog(@"Checking..");
 
-        int result = select(stdout_pipe[0] + 1, &rfds, NULL, NULL, NULL);
+        int result = select(MAX(stdout_pipe[0], stderr_pipe[0]) + 1, &rfds, NULL, NULL, NULL);
+        if (result == 0) {
+            NSLog(@"Done checking and nothing available.");
+            continue;
+        }
 
         NSLog(@"Done checking");
 
@@ -124,7 +129,31 @@
             }
 
             if (bytesread < 0) {
-                NSLog(@"Read %zd bytes with errno %d", bytesread, errno);
+                NSLog(@"Read %zd stdout bytes with errno %d", bytesread, errno);
+                continue;
+            }
+
+            [data setLength:bytesread];
+            NSString *readData = [[NSString alloc] initWithData:data encoding:NSASCIIStringEncoding];
+            NSLog(@"Read in %@", readData);
+        }
+        if (FD_ISSET(stderr_pipe[0], &rfds)) {
+            NSMutableData *data = [NSMutableData dataWithLength:2048];
+            ssize_t bytesread = read(stderr_pipe[0], [data mutableBytes], 2048);
+
+            if (bytesread == 0) {
+                int status;
+                waitpid(child_pid, &status, WNOHANG);
+                if (WIFEXITED(status) || WIFSIGNALED(status)) {
+                    NSLog(@"Exited?");
+                    break;
+                }
+
+                continue;
+            }
+
+            if (bytesread < 0) {
+                NSLog(@"Read %zd stderr bytes with errno %d", bytesread, errno);
                 continue;
             }
 

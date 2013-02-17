@@ -17,8 +17,10 @@ int main(int argc, const char * argv[])
         // insert code here...
         NSLog(@"Hello, World!");
 
-        [[MMShellMain sharedApplication] start];
-        
+//        [[MMShellMain sharedApplication] start];
+        [[MMShellMain sharedApplication] executeCommand:@"/Users/mehdi/Development/Terminal/tmp/test"];
+//        [[MMShellMain sharedApplication] executeCommand:@"/bin/bash"];
+
     }
     return 0;
 }
