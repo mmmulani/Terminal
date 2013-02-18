@@ -27,6 +27,8 @@
     self.shellConnection = [NSConnection serviceConnectionWithName:@"com.mm.shell" rootObject:self];
     NSLog(@"Shell connection: %@", self.shellConnection);
 
+    setenv("TERM", "xterm-256color", NO);
+
     [[NSRunLoop mainRunLoop] run];
 }
 
