@@ -16,23 +16,11 @@
 
 @implementation MMAppDelegate
 
-+ (NSConnection *)shellConnection;
-{
-    static NSConnection *connection;
-    @synchronized(self) {
-        if (!connection) {
-            connection = [NSConnection new];
-        }
-    }
-
-    return connection;
-}
-
 - (void)runCommand:(NSString *)command;
 {
     NSProxy *proxy = [[NSConnection connectionWithRegisteredName:@"com.mm.shell" host:nil] rootProxy];
     [proxy performSelector:@selector(executeCommand:) withObject:command];
-    self.running = YES;
+    [self.terminalWindow setRunning:YES];
 }
 
 - (void)startShell;
@@ -162,7 +150,7 @@
 
 - (void)handleTerminalInput:(NSString *)input;
 {
-    if (self.running && [input length]) {
+    if (self.terminalWindow.running && [input length]) {
         const char *typed = [input cStringUsingEncoding:NSUTF8StringEncoding];
         write(self.fd, typed, [input length]);
     }
@@ -170,23 +158,14 @@
 
 - (void)beep:(NSString *)message;
 {
-    dispatch_async(dispatch_get_main_queue(), ^{
-        NSAttributedString *attribData = [[NSAttributedString alloc] initWithString:message];
-        NSTextStorage *textStorage = [self.consoleText textStorage];
-        [textStorage beginEditing];
-        [textStorage appendAttributedString:attribData];
-        [textStorage endEditing];
-        [self.consoleText didChangeText];
-        [self.consoleText scrollToEndOfDocument:self];
-    });
+    [self.terminalWindow handleOutput:message];
 }
 
 - (void)processFinished;
 {
     NSLog(@"Process finished");
-    self.running = NO;
 
-    [self.window makeFirstResponder:self.commandInput];
+    [self.terminalWindow processFinished];
 }
 
 # pragma mark - NSApplicationDelegate
@@ -199,28 +178,6 @@
     [self.terminalWindow showWindow:nil];
 
     [NSThread detachNewThreadSelector:@selector(startShell) toTarget:self withObject:nil];
-}
-
-# pragma mark - NSTextFieldDelegate
-
-- (BOOL)control:(NSControl *)control textShouldBeginEditing:(NSText *)fieldEditor;
-{
-    if (self.running) {
-        [self.window makeFirstResponder:self.consoleText];
-    }
-    return !self.running;
-}
-
-- (BOOL)control:(NSControl *)control textView:(NSTextView *)textView doCommandBySelector:(SEL)commandSelector;
-{
-    if (commandSelector == @selector(insertNewline:)) {
-        [self runCommand:textView.string];
-        [textView setString:@""];
-        [self.window makeFirstResponder:self.consoleText];
-        return YES;
-    }
-
-    return NO;
 }
 
 @end
