@@ -9,6 +9,8 @@
 /* Begin PBXBuildFile section */
 		9106520916C313640010DC76 /* MMWindow.m in Sources */ = {isa = PBXBuildFile; fileRef = 9106520816C313640010DC76 /* MMWindow.m */; };
 		9106520C16C574160010DC76 /* MMTextView.m in Sources */ = {isa = PBXBuildFile; fileRef = 9106520B16C574160010DC76 /* MMTextView.m */; };
+		9186499016D2A6190024D9BE /* MMTerminalWindowController.m in Sources */ = {isa = PBXBuildFile; fileRef = 9186498E16D2A6190024D9BE /* MMTerminalWindowController.m */; };
+		9186499116D2A6190024D9BE /* MMTerminalWindow.xib in Resources */ = {isa = PBXBuildFile; fileRef = 9186498F16D2A6190024D9BE /* MMTerminalWindow.xib */; };
 		919BA9B116C875C40091CB1B /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 919BA9B016C875C40091CB1B /* Foundation.framework */; };
 		919BA9B416C875C40091CB1B /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 919BA9B316C875C40091CB1B /* main.m */; };
 		919BA9B816C875C40091CB1B /* Shell.1 in CopyFiles */ = {isa = PBXBuildFile; fileRef = 919BA9B716C875C40091CB1B /* Shell.1 */; };
@@ -18,7 +20,7 @@
 		91F4EECC16B8D63D00F65E91 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 91F4EECB16B8D63D00F65E91 /* main.m */; };
 		91F4EED016B8D63D00F65E91 /* Credits.rtf in Resources */ = {isa = PBXBuildFile; fileRef = 91F4EECE16B8D63D00F65E91 /* Credits.rtf */; };
 		91F4EED316B8D63D00F65E91 /* MMAppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 91F4EED216B8D63D00F65E91 /* MMAppDelegate.m */; };
-		91F4EED616B8D63D00F65E91 /* MMTerminal.xib in Resources */ = {isa = PBXBuildFile; fileRef = 91F4EED416B8D63D00F65E91 /* MMTerminal.xib */; };
+		91F4EED616B8D63D00F65E91 /* MMMainMenu.xib in Resources */ = {isa = PBXBuildFile; fileRef = 91F4EED416B8D63D00F65E91 /* MMMainMenu.xib */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -49,6 +51,9 @@
 		9106520816C313640010DC76 /* MMWindow.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MMWindow.m; sourceTree = "<group>"; };
 		9106520A16C574160010DC76 /* MMTextView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MMTextView.h; sourceTree = "<group>"; };
 		9106520B16C574160010DC76 /* MMTextView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MMTextView.m; sourceTree = "<group>"; };
+		9186498D16D2A6190024D9BE /* MMTerminalWindowController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MMTerminalWindowController.h; sourceTree = "<group>"; };
+		9186498E16D2A6190024D9BE /* MMTerminalWindowController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MMTerminalWindowController.m; sourceTree = "<group>"; };
+		9186498F16D2A6190024D9BE /* MMTerminalWindow.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = MMTerminalWindow.xib; sourceTree = "<group>"; };
 		919BA9AF16C875C40091CB1B /* Shell */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = Shell; sourceTree = BUILT_PRODUCTS_DIR; };
 		919BA9B016C875C40091CB1B /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = System/Library/Frameworks/Foundation.framework; sourceTree = SDKROOT; };
 		919BA9B316C875C40091CB1B /* main.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
@@ -68,7 +73,7 @@
 		91F4EECF16B8D63D00F65E91 /* en */ = {isa = PBXFileReference; lastKnownFileType = text.rtf; name = en; path = en.lproj/Credits.rtf; sourceTree = "<group>"; };
 		91F4EED116B8D63D00F65E91 /* MMAppDelegate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = MMAppDelegate.h; sourceTree = "<group>"; };
 		91F4EED216B8D63D00F65E91 /* MMAppDelegate.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = MMAppDelegate.m; sourceTree = "<group>"; };
-		91F4EED516B8D63D00F65E91 /* en */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = en; path = en.lproj/MMTerminal.xib; sourceTree = "<group>"; };
+		91F4EED516B8D63D00F65E91 /* en */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = en; path = en.lproj/MMMainMenu.xib; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -159,8 +164,11 @@
 				9106520B16C574160010DC76 /* MMTextView.m */,
 				9106520716C313640010DC76 /* MMWindow.h */,
 				9106520816C313640010DC76 /* MMWindow.m */,
-				91F4EED416B8D63D00F65E91 /* MMTerminal.xib */,
+				91F4EED416B8D63D00F65E91 /* MMMainMenu.xib */,
 				91F4EEC616B8D63D00F65E91 /* Supporting Files */,
+				9186498D16D2A6190024D9BE /* MMTerminalWindowController.h */,
+				9186498E16D2A6190024D9BE /* MMTerminalWindowController.m */,
+				9186498F16D2A6190024D9BE /* MMTerminalWindow.xib */,
 			);
 			path = Terminal;
 			sourceTree = "<group>";
@@ -250,7 +258,8 @@
 			files = (
 				91F4EECA16B8D63D00F65E91 /* InfoPlist.strings in Resources */,
 				91F4EED016B8D63D00F65E91 /* Credits.rtf in Resources */,
-				91F4EED616B8D63D00F65E91 /* MMTerminal.xib in Resources */,
+				91F4EED616B8D63D00F65E91 /* MMMainMenu.xib in Resources */,
+				9186499116D2A6190024D9BE /* MMTerminalWindow.xib in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -274,6 +283,7 @@
 				91F4EED316B8D63D00F65E91 /* MMAppDelegate.m in Sources */,
 				9106520916C313640010DC76 /* MMWindow.m in Sources */,
 				9106520C16C574160010DC76 /* MMTextView.m in Sources */,
+				9186499016D2A6190024D9BE /* MMTerminalWindowController.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -304,12 +314,12 @@
 			name = Credits.rtf;
 			sourceTree = "<group>";
 		};
-		91F4EED416B8D63D00F65E91 /* MMTerminal.xib */ = {
+		91F4EED416B8D63D00F65E91 /* MMMainMenu.xib */ = {
 			isa = PBXVariantGroup;
 			children = (
 				91F4EED516B8D63D00F65E91 /* en */,
 			);
-			name = MMTerminal.xib;
+			name = MMMainMenu.xib;
 			sourceTree = "<group>";
 		};
 /* End PBXVariantGroup section */
@@ -426,6 +436,7 @@
 				919BA9BA16C875C40091CB1B /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 		91F4EEB716B8D63C00F65E91 /* Build configuration list for PBXProject "Terminal" */ = {
 			isa = XCConfigurationList;

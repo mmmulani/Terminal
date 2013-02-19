@@ -8,6 +8,8 @@
 
 #import <Cocoa/Cocoa.h>
 
+#import "MMTerminalWindowController.h"
+
 @interface MMAppDelegate : NSObject <NSApplicationDelegate, NSTextFieldDelegate>
 
 @property (retain) IBOutlet NSWindow *window;
@@ -16,6 +18,8 @@
 @property int fd;
 @property BOOL running;
 @property (retain) NSConnection *terminalAppConnection;
+
+@property (retain) MMTerminalWindowController *terminalWindow;
 
 + (NSConnection *)shellConnection;
 

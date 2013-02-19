@@ -6,11 +6,11 @@
 //  Copyright (c) 2013 Mehdi Mulani. All rights reserved.
 //
 
-#import "MMAppDelegate.h"
-
 #include <termios.h>
 #include <util.h>
 #include <sys/wait.h>
+
+#import "MMAppDelegate.h"
 
 #define CTRLKEY(c)   ((c)-'A'+1)
 
@@ -193,9 +193,10 @@
 
 - (void)applicationDidFinishLaunching:(NSNotification *)aNotification;
 {
-    [self.consoleText setNextResponder:self.window];
-
     self.terminalAppConnection = [NSConnection serviceConnectionWithName:@"com.mm.terminal" rootObject:self];
+
+    self.terminalWindow = [[MMTerminalWindowController alloc] init];
+    [self.terminalWindow showWindow:nil];
 
     [NSThread detachNewThreadSelector:@selector(startShell) toTarget:self withObject:nil];
 }
