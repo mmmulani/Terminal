@@ -10,10 +10,12 @@
 
 #import "MMTextView.h"
 
-@interface MMTerminalWindowController : NSWindowController <NSTextFieldDelegate>
+@interface MMTerminalWindowController : NSWindowController <NSTextFieldDelegate, NSTableViewDataSource, NSTableViewDelegate>
 
-@property (retain) IBOutlet MMTextView *consoleText;
-@property (retain) IBOutlet NSTextField *commandInput;
+@property (strong) IBOutlet MMTextView *consoleText;
+@property (strong) IBOutlet NSTextField *commandInput;
+@property (strong) IBOutlet NSTableView *tableView;
+@property (strong) NSMutableArray *tasks;
 @property BOOL running;
 
 - (void)handleOutput:(NSString *)message;

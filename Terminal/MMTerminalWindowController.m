@@ -8,6 +8,8 @@
 
 #import "MMTerminalWindowController.h"
 #import "MMAppDelegate.h"
+#import "MMTask.h"
+#import "MMTaskCellViewController.h"
 
 @interface MMTerminalWindowController ()
 
@@ -19,6 +21,8 @@
 {
     self = [self initWithWindowNibName:@"MMTerminalWindow"];
 
+    self.tasks = [NSMutableArray array];
+
     return self;
 }
 
@@ -27,25 +31,23 @@
     [super windowDidLoad];
 
     [self.consoleText setNextResponder:self.window];
-
-    // Implement this method to handle any initialization after your window controller's window has been loaded from its nib file.
 }
 
 - (void)handleOutput:(NSString *)message;
 {
     dispatch_async(dispatch_get_main_queue(), ^{
         NSAttributedString *attribData = [[NSAttributedString alloc] initWithString:message];
-        NSTextStorage *textStorage = [self.consoleText textStorage];
-        [textStorage beginEditing];
-        [textStorage appendAttributedString:attribData];
-        [textStorage endEditing];
-        [self.consoleText didChangeText];
-        [self.consoleText scrollToEndOfDocument:self];
+        MMTask *lastTask = [self.tasks lastObject];
+        [lastTask.output appendAttributedString:attribData];
+
+        [self.tableView reloadData];
     });
 }
 
 - (void)processFinished;
 {
+    MMTask *task = [self.tasks lastObject];
+    task.finishedAt = [NSDate date];
     self.running = NO;
 
     [self.window makeFirstResponder:self.commandInput];
@@ -65,13 +67,35 @@
 {
     if (commandSelector == @selector(insertNewline:)) {
         MMAppDelegate *appDelegate = (MMAppDelegate *)[[NSApplication sharedApplication] delegate];
-        [appDelegate runCommand:textView.string];
+        MMTask *newTask = [MMTask new];
+        newTask.command = textView.string;
+        newTask.startedAt = [NSDate date];
+        [self.tasks addObject:newTask];
+        [appDelegate runCommand:newTask.command];
         [textView setString:@""];
         [self.window makeFirstResponder:self.consoleText];
         return YES;
     }
 
     return NO;
+}
+
+# pragma mark - NSTableViewDataSource
+
+- (NSInteger)numberOfRowsInTableView:(NSTableView *)tableView;
+{
+    return [self.tasks count];
+}
+
+- (CGFloat)tableView:(NSTableView *)tableView heightOfRow:(NSInteger)row;
+{
+    return 100.0f;
+}
+
+- (NSView *)tableView:(NSTableView *)tableView viewForTableColumn:(NSTableColumn *)tableColumn row:(NSInteger)row;
+{
+    MMTaskCellViewController *cellViewController = [[MMTaskCellViewController alloc] initWithTask:self.tasks[row]];
+    return [cellViewController view];
 }
 
 @end

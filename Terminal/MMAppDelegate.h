@@ -14,9 +14,9 @@
 
 @property int fd;
 @property BOOL running;
-@property (retain) NSConnection *terminalAppConnection;
+@property (strong) NSConnection *terminalAppConnection;
 
-@property (retain) MMTerminalWindowController *terminalWindow;
+@property (strong) MMTerminalWindowController *terminalWindow;
 
 - (void)handleTerminalInput:(NSString *)input;
 - (void)runCommand:(NSString *)command;
