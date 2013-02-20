@@ -28,6 +28,7 @@
     NSLog(@"Shell connection: %@", self.shellConnection);
 
     setenv("TERM", "xterm-256color", NO);
+    setenv("LANG", "en_US.UTF-8", NO);
 
     [[NSRunLoop mainRunLoop] run];
 }
@@ -50,6 +51,14 @@
     }
     argv[[items count]] = NULL;
 
+    if ([items[0] isEqual:@"cd"]) {
+        [self handleSpecialCommand:command];
+        NSProxy *proxy = [[NSConnection connectionWithRegisteredName:@"com.mm.terminal" host:nil] rootProxy];
+        [proxy performSelector:@selector(processFinished)];
+
+        return;
+    }
+
     NSLog(@"Running %s", argv[0]);
 
     pid_t child_pid;
@@ -68,6 +77,25 @@
 
     NSProxy *proxy = [[NSConnection connectionWithRegisteredName:@"com.mm.terminal" host:nil] rootProxy];
     [proxy performSelector:@selector(processFinished)];
+}
+
+- (void)handleSpecialCommand:(NSString *)command;
+{
+    NSArray *items = [command componentsSeparatedByString:@" "];
+
+    if ([items[0] isEqualToString:@"cd"]) {
+        NSRange whitespaceChars = [command rangeOfCharacterFromSet:[NSCharacterSet whitespaceCharacterSet]];
+        NSString *newDirectory = nil;
+        if ((whitespaceChars.location == NSNotFound) ||
+            ((whitespaceChars.location + whitespaceChars.length) == [command length])) {
+            newDirectory = NSHomeDirectory();
+        } else {
+            newDirectory = [command substringFromIndex:(whitespaceChars.location + whitespaceChars.length)];
+        }
+
+        chdir([newDirectory cStringUsingEncoding:NSUTF8StringEncoding]);
+        NSLog(@"Changed directory to %@", newDirectory);
+    }
 }
 
 @end
