@@ -13,10 +13,11 @@
 @interface MMTaskCellViewController : NSViewController
 
 @property (strong) IBOutlet NSTextField *label;
-@property (strong) IBOutlet NSTextView *output;
+@property (strong) IBOutlet NSTextView *outputView;
 
 @property (strong) MMTask *task;
 
 - (id)initWithTask:(MMTask *)task;
+- (void)scrollToBottom;
 
 @end

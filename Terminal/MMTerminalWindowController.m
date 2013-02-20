@@ -22,6 +22,7 @@
     self = [self initWithWindowNibName:@"MMTerminalWindow"];
 
     self.tasks = [NSMutableArray array];
+    self.taskViewControllers = [NSMutableArray array];
 
     return self;
 }
@@ -40,7 +41,11 @@
         MMTask *lastTask = [self.tasks lastObject];
         [lastTask.output appendAttributedString:attribData];
 
-        [self.tableView reloadData];
+        if ([self.taskViewControllers count] == [self.tasks count]) {
+            [((MMTaskCellViewController *)self.taskViewControllers.lastObject) scrollToBottom];
+        }
+
+        [self.tableView scrollToEndOfDocument:self];
     });
 }
 
@@ -68,12 +73,13 @@
     if (commandSelector == @selector(insertNewline:)) {
         MMAppDelegate *appDelegate = (MMAppDelegate *)[[NSApplication sharedApplication] delegate];
         MMTask *newTask = [MMTask new];
-        newTask.command = textView.string;
+        newTask.command = [textView.string copy];
         newTask.startedAt = [NSDate date];
         [self.tasks addObject:newTask];
         [appDelegate runCommand:newTask.command];
         [textView setString:@""];
         [self.window makeFirstResponder:self.consoleText];
+        [self.tableView reloadData];
         return YES;
     }
 
@@ -89,13 +95,16 @@
 
 - (CGFloat)tableView:(NSTableView *)tableView heightOfRow:(NSInteger)row;
 {
-    return 100.0f;
+    return 200.0f;
 }
 
 - (NSView *)tableView:(NSTableView *)tableView viewForTableColumn:(NSTableColumn *)tableColumn row:(NSInteger)row;
 {
-    MMTaskCellViewController *cellViewController = [[MMTaskCellViewController alloc] initWithTask:self.tasks[row]];
-    return [cellViewController view];
+    for (NSInteger i = [self.taskViewControllers count]; i <= row; i++) {
+        [self.taskViewControllers addObject:[[MMTaskCellViewController alloc] initWithTask:self.tasks[i]]];
+    }
+
+    return [self.taskViewControllers[row] view];
 }
 
 @end

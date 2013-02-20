@@ -16,6 +16,7 @@
 @property (strong) IBOutlet NSTextField *commandInput;
 @property (strong) IBOutlet NSTableView *tableView;
 @property (strong) NSMutableArray *tasks;
+@property (strong) NSMutableArray *taskViewControllers;
 @property BOOL running;
 
 - (void)handleOutput:(NSString *)message;

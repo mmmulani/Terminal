@@ -38,7 +38,13 @@
 
     [self.label setStringValue:[NSString stringWithFormat:@"Ran %@", self.task.command]];
 
-    [self.output.layoutManager replaceTextStorage:self.task.output];
+    [self.outputView.layoutManager replaceTextStorage:self.task.output];
+    [self.outputView scrollToEndOfDocument:self];
+}
+
+- (void)scrollToBottom;
+{
+    [self.outputView scrollToEndOfDocument:self];
 }
 
 @end
