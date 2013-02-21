@@ -9,6 +9,7 @@
 #import <Cocoa/Cocoa.h>
 
 #import "MMTerminalWindowController.h"
+#import "MMDebugMessagesWindowController.h"
 
 @interface MMAppDelegate : NSObject <NSApplicationDelegate, NSTextFieldDelegate>
 
@@ -16,6 +17,7 @@
 @property BOOL running;
 @property (strong) NSConnection *terminalAppConnection;
 
+@property (strong) MMDebugMessagesWindowController *debugWindow;
 @property (strong) MMTerminalWindowController *terminalWindow;
 
 - (void)handleTerminalInput:(NSString *)input;

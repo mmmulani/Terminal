@@ -12,20 +12,30 @@
 NSString *const ConnectionShellName = @"com.mm.shell";
 NSString *const ConnectionTerminalName = @"com.mm.terminal";
 
-@implementation MMShared
-
-+ (void)logMessage:(NSString *)format, ...;
+void MMLog(NSString *format, ...)
 {
-    NSString *processName = [[NSProcessInfo processInfo] processName];
+    static NSString *processName;
+    if (!processName) {
+        processName = [[NSProcessInfo processInfo] processName];
+    }
+    static NSDateFormatter *dateFormatter;
+    if (!dateFormatter) {
+        dateFormatter = [[NSDateFormatter alloc] init];
+        [dateFormatter setDateFormat:@"yyyy-MM-dd HH:mm:ss.SSS"];
+    }
+    NSString *now = [dateFormatter stringFromDate:[NSDate date]];
     va_list args;
     va_start(args, format);
-    NSString *message = [NSString stringWithFormat:[@"%@[%ld:%lx] " stringByAppendingString:format], processName, (long)getpid(), (long)pthread_mach_thread_np(pthread_self()), args];
+    NSString *formattedString = [[NSString alloc] initWithFormat:format arguments:args];
     va_end(args);
+    NSString *message = [NSString stringWithFormat:@"%@ %@[%ld:%lx] %@", now, processName, (long)getpid(), (long)pthread_mach_thread_np(pthread_self()), formattedString];
 
     dispatch_async(dispatch_get_current_queue(), ^{
         NSProxy *proxy = [[NSConnection connectionWithRegisteredName:ConnectionTerminalName host:nil] rootProxy];
         [proxy performSelector:@selector(_logMessage:) withObject:message];
     });
 }
+
+@implementation MMShared
 
 @end

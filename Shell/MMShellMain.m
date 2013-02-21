@@ -26,12 +26,10 @@
 - (void)start;
 {
     self.shellConnection = [NSConnection serviceConnectionWithName:ConnectionShellName rootObject:self];
-    NSLog(@"Shell connection: %@", self.shellConnection);
+    MMLog(@"Shell connection: %@", self.shellConnection);
 
     setenv("TERM", "xterm-256color", NO);
     setenv("LANG", "en_US.UTF-8", NO);
-
-    [MMShared logMessage:@"Test"];
 
     [[NSRunLoop mainRunLoop] run];
 }
@@ -62,10 +60,11 @@
         return;
     }
 
-    NSLog(@"Running %s", argv[0]);
+    MMLog(@"Running %s", argv[0]);
 
     pid_t child_pid;
     child_pid = fork();
+    MMLog(@"Child pid: %d", child_pid);
     if (child_pid == 0) {
         // This will run the program.
 
@@ -76,7 +75,12 @@
         _exit(-1);
     }
 
-    waitpid(child_pid, NULL, 0);
+    [NSThread detachNewThreadSelector:@selector(waitForChildToFinish:) toTarget:self withObject:@((int)child_pid)];
+}
+
+- (void)waitForChildToFinish:(NSNumber *)child_pid;
+{
+    waitpid([child_pid intValue], NULL, 0);
 
     NSProxy *proxy = [[NSConnection connectionWithRegisteredName:ConnectionTerminalName host:nil] rootProxy];
     [proxy performSelector:@selector(processFinished)];
@@ -97,7 +101,7 @@
         }
 
         chdir([newDirectory cStringUsingEncoding:NSUTF8StringEncoding]);
-        NSLog(@"Changed directory to %@", newDirectory);
+        MMLog(@"Changed directory to %@", newDirectory);
     }
 }
 

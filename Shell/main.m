@@ -8,6 +8,7 @@
 
 #import <Foundation/Foundation.h>
 #import "MMShellMain.h"
+#import "MMShared.h"
 
 int main(int argc, const char * argv[])
 {
@@ -15,7 +16,7 @@ int main(int argc, const char * argv[])
     @autoreleasepool {
         
         // insert code here...
-        NSLog(@"Hello, World!");
+        MMLog(@"Hello, World!");
 
         [[MMShellMain sharedApplication] start];
 //        [[MMShellMain sharedApplication] executeCommand:@"/Users/mehdi/Development/Terminal/tmp/test"];

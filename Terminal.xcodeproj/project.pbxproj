@@ -16,6 +16,8 @@
 		9186499B16D46A490024D9BE /* MMTaskCellView.xib in Resources */ = {isa = PBXBuildFile; fileRef = 9186499916D46A490024D9BE /* MMTaskCellView.xib */; };
 		918649B916D5D19E0024D9BE /* MMShared.m in Sources */ = {isa = PBXBuildFile; fileRef = 918649B116D5A6A80024D9BE /* MMShared.m */; };
 		918649BA16D5D1BD0024D9BE /* MMShared.m in Sources */ = {isa = PBXBuildFile; fileRef = 918649B116D5A6A80024D9BE /* MMShared.m */; };
+		918649BE16D69A700024D9BE /* MMDebugMessagesWindowController.m in Sources */ = {isa = PBXBuildFile; fileRef = 918649BC16D69A6F0024D9BE /* MMDebugMessagesWindowController.m */; };
+		918649BF16D69A700024D9BE /* MMDebugMessagesPanel.xib in Resources */ = {isa = PBXBuildFile; fileRef = 918649BD16D69A700024D9BE /* MMDebugMessagesPanel.xib */; };
 		919BA9B116C875C40091CB1B /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 919BA9B016C875C40091CB1B /* Foundation.framework */; };
 		919BA9B416C875C40091CB1B /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 919BA9B316C875C40091CB1B /* main.m */; };
 		919BA9B816C875C40091CB1B /* Shell.1 in CopyFiles */ = {isa = PBXBuildFile; fileRef = 919BA9B716C875C40091CB1B /* Shell.1 */; };
@@ -66,6 +68,9 @@
 		9186499916D46A490024D9BE /* MMTaskCellView.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = MMTaskCellView.xib; sourceTree = "<group>"; };
 		918649B016D5A6A80024D9BE /* MMShared.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MMShared.h; sourceTree = "<group>"; };
 		918649B116D5A6A80024D9BE /* MMShared.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MMShared.m; sourceTree = "<group>"; };
+		918649BB16D69A6F0024D9BE /* MMDebugMessagesWindowController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MMDebugMessagesWindowController.h; sourceTree = "<group>"; };
+		918649BC16D69A6F0024D9BE /* MMDebugMessagesWindowController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MMDebugMessagesWindowController.m; sourceTree = "<group>"; };
+		918649BD16D69A700024D9BE /* MMDebugMessagesPanel.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = MMDebugMessagesPanel.xib; sourceTree = "<group>"; };
 		919BA9AF16C875C40091CB1B /* Shell */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = Shell; sourceTree = BUILT_PRODUCTS_DIR; };
 		919BA9B016C875C40091CB1B /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = System/Library/Frameworks/Foundation.framework; sourceTree = SDKROOT; };
 		919BA9B316C875C40091CB1B /* main.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
@@ -205,6 +210,9 @@
 				91F4EEC616B8D63D00F65E91 /* Supporting Files */,
 				9186499216D408700024D9BE /* MMTask.h */,
 				9186499316D408700024D9BE /* MMTask.m */,
+				918649BB16D69A6F0024D9BE /* MMDebugMessagesWindowController.h */,
+				918649BC16D69A6F0024D9BE /* MMDebugMessagesWindowController.m */,
+				918649BD16D69A700024D9BE /* MMDebugMessagesPanel.xib */,
 			);
 			path = Terminal;
 			sourceTree = "<group>";
@@ -297,6 +305,7 @@
 				91F4EED616B8D63D00F65E91 /* MMMainMenu.xib in Resources */,
 				9186499116D2A6190024D9BE /* MMTerminalWindow.xib in Resources */,
 				9186499B16D46A490024D9BE /* MMTaskCellView.xib in Resources */,
+				918649BF16D69A700024D9BE /* MMDebugMessagesPanel.xib in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -325,6 +334,7 @@
 				9186499016D2A6190024D9BE /* MMTerminalWindowController.m in Sources */,
 				9186499416D408700024D9BE /* MMTask.m in Sources */,
 				9186499A16D46A490024D9BE /* MMTaskCellViewController.m in Sources */,
+				918649BE16D69A700024D9BE /* MMDebugMessagesWindowController.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

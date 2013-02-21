@@ -9,8 +9,8 @@
 FOUNDATION_EXPORT NSString *const ConnectionShellName;
 FOUNDATION_EXPORT NSString *const ConnectionTerminalName;
 
-@interface MMShared : NSObject
+FOUNDATION_EXPORT void MMLog(NSString *format, ...) NS_FORMAT_FUNCTION(1,2);
 
-+ (void)logMessage:(NSString *)format, ...;
+@interface MMShared : NSObject
 
 @end

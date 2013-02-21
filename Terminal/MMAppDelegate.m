@@ -174,12 +174,15 @@
     self.terminalWindow = [[MMTerminalWindowController alloc] init];
     [self.terminalWindow showWindow:nil];
 
+    self.debugWindow = [[MMDebugMessagesWindowController alloc] init];
+    [self.debugWindow showWindow:nil];
+
     [NSThread detachNewThreadSelector:@selector(startShell) toTarget:self withObject:nil];
 }
 
 - (void)_logMessage:(NSString *)message;
 {
-    NSLog(@"%@", message);
+    [self.debugWindow addDebugMessage:message];
 }
 
 @end
