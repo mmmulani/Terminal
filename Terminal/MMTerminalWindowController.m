@@ -13,6 +13,9 @@
 
 @interface MMTerminalWindowController ()
 
+// An index into |self.tasks| of the current task shown in the command input field.
+@property NSUInteger commandHistoryIndex;
+
 @end
 
 @implementation MMTerminalWindowController
@@ -23,6 +26,7 @@
 
     self.tasks = [NSMutableArray array];
     self.taskViewControllers = [NSMutableArray array];
+    self.commandHistoryIndex = 0;
 
     return self;
 }
@@ -80,10 +84,23 @@
         newTask.startedAt = [NSDate date];
         [self.tasks addObject:newTask];
         [appDelegate runCommand:newTask.command];
+
         [textView setString:@""];
+        self.commandHistoryIndex = 0;
+
         [self.window makeFirstResponder:self.consoleText];
         [self.tableView reloadData];
         return YES;
+    } else if (commandSelector == @selector(scrollPageUp:)) {
+        if (self.tasks.count > 0) {
+            if (self.commandHistoryIndex == 0) {
+                self.commandHistoryIndex = self.tasks.count - 1;
+            } else {
+                self.commandHistoryIndex--;
+            }
+            [textView setString:[(MMTask *)self.tasks[self.commandHistoryIndex] command]];
+            return YES;
+        }
     }
 
     return NO;
