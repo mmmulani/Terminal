@@ -40,6 +40,14 @@
 
     [self.outputView.layoutManager replaceTextStorage:self.task.output];
     [self.outputView scrollToEndOfDocument:self];
+
+    NSLog(@"Bounds: %@, Frame: %@", NSStringFromSize(self.view.bounds.size), NSStringFromSize(self.view.frame.size));
+    NSLog(@"OutputView Bounds: %@, Frame: %@", NSStringFromRect(self.outputView.bounds), NSStringFromRect(self.outputView.frame));
+}
+
+- (CGFloat)heightToFitAllOfOutput;
+{
+    return self.view.frame.size.height - self.outputView.minSize.height + self.outputView.frame.size.height;
 }
 
 - (void)scrollToBottom;

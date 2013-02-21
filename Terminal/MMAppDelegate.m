@@ -11,6 +11,7 @@
 #include <sys/wait.h>
 
 #import "MMAppDelegate.h"
+#import "MMShared.h"
 
 #define CTRLKEY(c)   ((c)-'A'+1)
 
@@ -18,14 +19,14 @@
 
 - (void)runCommand:(NSString *)command;
 {
-    NSProxy *proxy = [[NSConnection connectionWithRegisteredName:@"com.mm.shell" host:nil] rootProxy];
+    NSProxy *proxy = [[NSConnection connectionWithRegisteredName:ConnectionShellName host:nil] rootProxy];
     [proxy performSelector:@selector(executeCommand:) withObject:command];
     [self.terminalWindow setRunning:YES];
 }
 
 - (void)startShell;
 {
-    NSProxy *proxy = [[NSConnection connectionWithRegisteredName:@"com.mm.terminal" host:nil] rootProxy];
+    NSProxy *proxy = [[NSConnection connectionWithRegisteredName:ConnectionTerminalName host:nil] rootProxy];
 
     struct termios term;
     struct winsize win;
@@ -73,15 +74,13 @@
         self.fd = fd;
     }
 
-    NSString *shellLocation = [[[[NSFileManager alloc] init] currentDirectoryPath] stringByAppendingPathComponent:@"Shell"];
-    NSLog(@"Shell location: %@", shellLocation);
-
     if (pid == (pid_t)0) {
         // Running as the shell.
         // These pipes are written from the shell's point-of-view.
         // That is, the shell intends to write into the writepipe, and read from the readpipe.
 
         NSFileManager *fileManager = [[NSFileManager alloc] init];
+        sleep(1);
 
         const char *args[2];
         args[0] = [[[fileManager currentDirectoryPath] stringByAppendingPathComponent:@"Shell"] cStringUsingEncoding:NSUTF8StringEncoding];
@@ -110,7 +109,6 @@
         FD_ZERO(&efds);
 
         FD_SET(self.fd, &rfds);
-
         int result = select(self.fd + 1, &rfds, &wfds, &efds, nil);
 
         if (FD_ISSET(self.fd, &rfds)) {
@@ -135,7 +133,6 @@
 
             [data setLength:bytesread];
             NSString *readData = [[NSString alloc] initWithData:data encoding:NSUTF8StringEncoding];
-            NSLog(@"Read in %@ on the fd with bytes %@", readData, data);
             [proxy performSelector:@selector(beep:) withObject:readData];
         }
 
@@ -172,12 +169,17 @@
 
 - (void)applicationDidFinishLaunching:(NSNotification *)aNotification;
 {
-    self.terminalAppConnection = [NSConnection serviceConnectionWithName:@"com.mm.terminal" rootObject:self];
+    self.terminalAppConnection = [NSConnection serviceConnectionWithName:ConnectionTerminalName rootObject:self];
 
     self.terminalWindow = [[MMTerminalWindowController alloc] init];
     [self.terminalWindow showWindow:nil];
 
     [NSThread detachNewThreadSelector:@selector(startShell) toTarget:self withObject:nil];
+}
+
+- (void)_logMessage:(NSString *)message;
+{
+    NSLog(@"%@", message);
 }
 
 @end

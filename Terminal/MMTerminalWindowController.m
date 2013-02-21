@@ -42,7 +42,10 @@
         [lastTask.output appendAttributedString:attribData];
 
         if ([self.taskViewControllers count] == [self.tasks count]) {
-            [((MMTaskCellViewController *)self.taskViewControllers.lastObject) scrollToBottom];
+            // Force the outputView to re-layout its text and then resize it accordingly.
+            MMTaskCellViewController *lastController = self.taskViewControllers.lastObject;
+            [lastController.outputView.layoutManager ensureLayoutForCharacterRange:NSMakeRange(0, lastTask.output.length)];
+            [self.tableView noteHeightOfRowsWithIndexesChanged:[NSIndexSet indexSetWithIndex:([self.taskViewControllers count] - 1)]];
         }
 
         [self.tableView scrollToEndOfDocument:self];
@@ -95,16 +98,21 @@
 
 - (CGFloat)tableView:(NSTableView *)tableView heightOfRow:(NSInteger)row;
 {
-    return 200.0f;
+    [self _prepareViewControllersUntilRow:row];
+    return [(MMTaskCellViewController *)self.taskViewControllers[row] heightToFitAllOfOutput];;
 }
 
 - (NSView *)tableView:(NSTableView *)tableView viewForTableColumn:(NSTableColumn *)tableColumn row:(NSInteger)row;
 {
+    [self _prepareViewControllersUntilRow:row];
+    return [self.taskViewControllers[row] view];
+}
+
+- (void)_prepareViewControllersUntilRow:(NSInteger)row;
+{
     for (NSInteger i = [self.taskViewControllers count]; i <= row; i++) {
         [self.taskViewControllers addObject:[[MMTaskCellViewController alloc] initWithTask:self.tasks[i]]];
     }
-
-    return [self.taskViewControllers[row] view];
 }
 
 @end

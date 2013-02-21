@@ -14,6 +14,8 @@
 		9186499416D408700024D9BE /* MMTask.m in Sources */ = {isa = PBXBuildFile; fileRef = 9186499316D408700024D9BE /* MMTask.m */; };
 		9186499A16D46A490024D9BE /* MMTaskCellViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 9186499816D46A490024D9BE /* MMTaskCellViewController.m */; };
 		9186499B16D46A490024D9BE /* MMTaskCellView.xib in Resources */ = {isa = PBXBuildFile; fileRef = 9186499916D46A490024D9BE /* MMTaskCellView.xib */; };
+		918649B916D5D19E0024D9BE /* MMShared.m in Sources */ = {isa = PBXBuildFile; fileRef = 918649B116D5A6A80024D9BE /* MMShared.m */; };
+		918649BA16D5D1BD0024D9BE /* MMShared.m in Sources */ = {isa = PBXBuildFile; fileRef = 918649B116D5A6A80024D9BE /* MMShared.m */; };
 		919BA9B116C875C40091CB1B /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 919BA9B016C875C40091CB1B /* Foundation.framework */; };
 		919BA9B416C875C40091CB1B /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 919BA9B316C875C40091CB1B /* main.m */; };
 		919BA9B816C875C40091CB1B /* Shell.1 in CopyFiles */ = {isa = PBXBuildFile; fileRef = 919BA9B716C875C40091CB1B /* Shell.1 */; };
@@ -62,6 +64,8 @@
 		9186499716D46A490024D9BE /* MMTaskCellViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MMTaskCellViewController.h; sourceTree = "<group>"; };
 		9186499816D46A490024D9BE /* MMTaskCellViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MMTaskCellViewController.m; sourceTree = "<group>"; };
 		9186499916D46A490024D9BE /* MMTaskCellView.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = MMTaskCellView.xib; sourceTree = "<group>"; };
+		918649B016D5A6A80024D9BE /* MMShared.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MMShared.h; sourceTree = "<group>"; };
+		918649B116D5A6A80024D9BE /* MMShared.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MMShared.m; sourceTree = "<group>"; };
 		919BA9AF16C875C40091CB1B /* Shell */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = Shell; sourceTree = BUILT_PRODUCTS_DIR; };
 		919BA9B016C875C40091CB1B /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = System/Library/Frameworks/Foundation.framework; sourceTree = SDKROOT; };
 		919BA9B316C875C40091CB1B /* main.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
@@ -117,6 +121,16 @@
 			name = "Terminal window";
 			sourceTree = "<group>";
 		};
+		918649B716D5D16F0024D9BE /* Shared */ = {
+			isa = PBXGroup;
+			children = (
+				918649B016D5A6A80024D9BE /* MMShared.h */,
+				918649B116D5A6A80024D9BE /* MMShared.m */,
+			);
+			name = Shared;
+			path = MMShared;
+			sourceTree = "<group>";
+		};
 		919BA9B216C875C40091CB1B /* Shell */ = {
 			isa = PBXGroup;
 			children = (
@@ -144,6 +158,7 @@
 				919BA9B216C875C40091CB1B /* Shell */,
 				91F4EEBE16B8D63D00F65E91 /* Frameworks */,
 				91F4EEBD16B8D63D00F65E91 /* Products */,
+				918649B716D5D16F0024D9BE /* Shared */,
 			);
 			sourceTree = "<group>";
 		};
@@ -292,6 +307,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				918649BA16D5D1BD0024D9BE /* MMShared.m in Sources */,
 				919BA9B416C875C40091CB1B /* main.m in Sources */,
 				919BA9C016C87E4F0091CB1B /* MMShellMain.m in Sources */,
 			);
@@ -301,6 +317,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				918649B916D5D19E0024D9BE /* MMShared.m in Sources */,
 				91F4EECC16B8D63D00F65E91 /* main.m in Sources */,
 				91F4EED316B8D63D00F65E91 /* MMAppDelegate.m in Sources */,
 				9106520916C313640010DC76 /* MMWindow.m in Sources */,

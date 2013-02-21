@@ -4,6 +4,11 @@
 <dict>
 	<key>SchemeUserState</key>
 	<dict>
+		<key>MMShared.xcscheme</key>
+		<dict>
+			<key>orderHint</key>
+			<integer>2</integer>
+		</dict>
 		<key>Shell.xcscheme</key>
 		<dict>
 			<key>orderHint</key>
@@ -17,6 +22,11 @@
 	</dict>
 	<key>SuppressBuildableAutocreation</key>
 	<dict>
+		<key>918649A016D5A3FA0024D9BE</key>
+		<dict>
+			<key>primary</key>
+			<true/>
+		</dict>
 		<key>919BA9AE16C875C40091CB1B</key>
 		<dict>
 			<key>primary</key>

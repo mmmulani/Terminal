@@ -7,6 +7,7 @@
 //
 
 #import "MMShellMain.h"
+#import "MMShared.h"
 
 @implementation MMShellMain
 
@@ -24,11 +25,13 @@
 
 - (void)start;
 {
-    self.shellConnection = [NSConnection serviceConnectionWithName:@"com.mm.shell" rootObject:self];
+    self.shellConnection = [NSConnection serviceConnectionWithName:ConnectionShellName rootObject:self];
     NSLog(@"Shell connection: %@", self.shellConnection);
 
     setenv("TERM", "xterm-256color", NO);
     setenv("LANG", "en_US.UTF-8", NO);
+
+    [MMShared logMessage:@"Test"];
 
     [[NSRunLoop mainRunLoop] run];
 }
@@ -53,7 +56,7 @@
 
     if ([items[0] isEqual:@"cd"]) {
         [self handleSpecialCommand:command];
-        NSProxy *proxy = [[NSConnection connectionWithRegisteredName:@"com.mm.terminal" host:nil] rootProxy];
+        NSProxy *proxy = [[NSConnection connectionWithRegisteredName:ConnectionTerminalName host:nil] rootProxy];
         [proxy performSelector:@selector(processFinished)];
 
         return;
@@ -75,7 +78,7 @@
 
     waitpid(child_pid, NULL, 0);
 
-    NSProxy *proxy = [[NSConnection connectionWithRegisteredName:@"com.mm.terminal" host:nil] rootProxy];
+    NSProxy *proxy = [[NSConnection connectionWithRegisteredName:ConnectionTerminalName host:nil] rootProxy];
     [proxy performSelector:@selector(processFinished)];
 }
 
