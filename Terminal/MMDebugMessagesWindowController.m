@@ -29,10 +29,15 @@
 - (void)windowDidLoad
 {
     [super windowDidLoad];
+
+    [self.window setLevel:NSNormalWindowLevel];
 }
 
 - (void)addDebugMessage:(NSString *)message;
 {
+    NSScrollView *scrollView = self.tableView.enclosingScrollView;
+    CGFloat distanceFromBottom = [(NSView *)scrollView.documentView frame].size.height - (scrollView.contentView.bounds.origin.y + scrollView.contentView.bounds.size.height);
+
     [self.debugMessages addObject:message];
     [self.tableView noteNumberOfRowsChanged];
 
@@ -43,6 +48,10 @@
     CGFloat messageWidth = [message sizeWithAttributes:attributes].width + 2.0f;
     if (messageWidth > self.tableColumn.width) {
         [self.tableColumn setWidth:messageWidth];
+    }
+
+    if (distanceFromBottom < 0.5) {
+        [self.tableView scrollToEndOfDocument:self];
     }
 }
 
