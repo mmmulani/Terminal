@@ -41,9 +41,8 @@
 - (void)handleOutput:(NSString *)message;
 {
     dispatch_async(dispatch_get_main_queue(), ^{
-        NSAttributedString *attribData = [[NSAttributedString alloc] initWithString:message];
         MMTask *lastTask = [self.tasks lastObject];
-        [lastTask.output appendAttributedString:attribData];
+        [lastTask handleCommandOutput:message];
 
         if ([self.taskViewControllers count] == [self.tasks count]) {
             // Force the outputView to re-layout its text and then resize it accordingly.
@@ -61,6 +60,9 @@
     MMTask *task = [self.tasks lastObject];
     task.finishedAt = [NSDate date];
     self.running = NO;
+
+    MMTaskCellViewController *controller = [self.taskViewControllers lastObject];
+    [controller updateWithANSIOutput];
 
     [self.window makeFirstResponder:self.commandInput];
 }

@@ -20,5 +20,6 @@
 - (id)initWithTask:(MMTask *)task;
 - (void)scrollToBottom;
 - (CGFloat)heightToFitAllOfOutput;
+- (void)updateWithANSIOutput;
 
 @end

@@ -52,4 +52,9 @@
     [self.outputView scrollToEndOfDocument:self];
 }
 
+- (void)updateWithANSIOutput;
+{
+    [self.outputView.textStorage setAttributedString:self.task.currentANSIDisplay];
+}
+
 @end
