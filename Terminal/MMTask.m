@@ -12,6 +12,7 @@
 @interface MMTask ()
 
 @property unichar **ansiLines;
+@property NSString *unreadOutput;
 
 @end
 
@@ -39,17 +40,37 @@
 
 - (void)handleCommandOutput:(NSString *)output;
 {
-    for (NSUInteger i = 0; i < [output length]; i++) {
+    NSString *outputToHandle = self.unreadOutput ? [self.unreadOutput stringByAppendingString:output] : output;
+    for (NSUInteger i = 0; i < [outputToHandle length]; i++) {
         if (self.cursorPosition.y > TERM_HEIGHT) {
             MMLog(@"Cursor position too low");
             break;
         }
 
-        unichar currentChar = [output characterAtIndex:i];
+        unichar currentChar = [outputToHandle characterAtIndex:i];
         if (currentChar == '\n') {
             [self addNewline];
         } else if (currentChar == '\r') {
-            [self moveToFrontOfLine];
+            [self moveCursorBackward:(self.cursorPosition.x - 1)];
+        } else if (currentChar == '\033') { // Escape character.
+            NSUInteger firstAlphabeticIndex = i;
+            NSCharacterSet *lowercaseChars = [NSCharacterSet lowercaseLetterCharacterSet];
+            NSCharacterSet *uppercaseChars = [NSCharacterSet uppercaseLetterCharacterSet];
+            while (firstAlphabeticIndex < [output length] &&
+                   ![lowercaseChars characterIsMember:[outputToHandle characterAtIndex:firstAlphabeticIndex]] &&
+                   ![uppercaseChars characterIsMember:[outputToHandle characterAtIndex:firstAlphabeticIndex]]) {
+                firstAlphabeticIndex++;
+            }
+
+            // The escape sequence could be split over multiple reads.
+            if (firstAlphabeticIndex == [outputToHandle length]) {
+                self.unreadOutput = [outputToHandle substringFromIndex:i];
+                break;
+            }
+
+            NSString *escapeSequence = [outputToHandle substringWithRange:NSMakeRange(i, firstAlphabeticIndex - i + 1)];
+            [self handleEscapeSequence:escapeSequence];
+            i = firstAlphabeticIndex;
         } else {
             [self ansiPrint:currentChar];
         }
@@ -63,7 +84,6 @@
 
 - (void)ansiPrint:(unichar)character;
 {
-    // TODO: Add height checks.
     // TODO: Add checks to see if the characters before need filling.
     if (self.cursorPosition.x == TERM_WIDTH) {
         self.ansiLines[self.cursorPosition.y][0] = character;
@@ -87,6 +107,49 @@
 - (void)moveToFrontOfLine;
 {
     self.cursorPosition = MMPositionMake(1, self.cursorPosition.y);
+}
+
+- (void)moveCursorUp:(NSUInteger)lines;
+{
+    NSInteger newXPosition = self.cursorPosition.x;
+    if (lines >= self.cursorPosition.y) {
+        newXPosition = 1;
+    }
+
+    self.cursorPosition = MMPositionMake(newXPosition, MAX(1, self.cursorPosition.y - lines));
+}
+
+- (void)moveCursorDown:(NSUInteger)lines;
+{
+    for (; lines > 0; lines--) {
+        self.ansiLines[self.cursorPosition.y - 1][TERM_WIDTH] = '\n';
+        self.cursorPosition = MMPositionMake(self.cursorPosition.x, self.cursorPosition.y + 1);
+        [self checkIfExceededLastLine];
+    }
+
+    [self fillCurrentLineWithSpacesUpToCursor];
+}
+
+- (void)moveCursorForward:(NSUInteger)spaces;
+{
+    // TODO: Handle wrap around/determine if it is necessary.
+    self.cursorPosition = MMPositionMake(MIN(TERM_WIDTH, self.cursorPosition.x + spaces), self.cursorPosition.y);
+}
+
+- (void)moveCursorBackward:(NSUInteger)spaces;
+{
+    // TODO: Handle wrap around correctly.
+
+    self.cursorPosition = MMPositionMake(MAX(1, self.cursorPosition.x - spaces), self.cursorPosition.y);
+}
+
+- (void)fillCurrentLineWithSpacesUpToCursor;
+{
+    for (NSUInteger i = 0; i < self.cursorPosition.x - 1; i++) {
+        if (self.ansiLines[self.cursorPosition.y - 1][i] == '\0') {
+            self.ansiLines[self.cursorPosition.y - 1][i] = ' ';
+        }
+    }
 }
 
 - (void)clearScreen;
@@ -135,6 +198,27 @@
     }
 
     return display;
+}
+
+- (void)handleEscapeSequence:(NSString *)escapeSequence;
+{
+    if ([escapeSequence characterAtIndex:1] != '[') {
+        MMLog(@"Unsupported escape sequence: %@", escapeSequence);
+        return;
+    }
+
+    unichar escapeCode = [escapeSequence characterAtIndex:([escapeSequence length] - 1)];
+    if (escapeCode == 'A') {
+
+    } else if (escapeCode == 'B') {
+
+    } else if (escapeCode == 'C') {
+
+    } else if (escapeCode == 'D') {
+
+    } else {
+        MMLog(@"Unhandled escape sequence: %@", escapeSequence);
+    }
 }
 
 @end

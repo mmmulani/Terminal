@@ -47,7 +47,9 @@
         if ([self.taskViewControllers count] == [self.tasks count]) {
             // Force the outputView to re-layout its text and then resize it accordingly.
             MMTaskCellViewController *lastController = self.taskViewControllers.lastObject;
-            [lastController.outputView.layoutManager ensureLayoutForCharacterRange:NSMakeRange(0, lastTask.output.length)];
+            [lastController updateWithANSIOutput];
+
+//            [lastController.outputView.layoutManager ensureLayoutForCharacterRange:NSMakeRange(0, lastTask.output.length)];
             [self.tableView noteHeightOfRowsWithIndexesChanged:[NSIndexSet indexSetWithIndex:([self.taskViewControllers count] - 1)]];
         }
 
