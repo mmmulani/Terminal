@@ -137,6 +137,7 @@
 - (void)moveCursorDown:(NSUInteger)lines;
 {
     for (; lines > 0; lines--) {
+        // TODO: Only add newlines when it is necessary.
         self.ansiLines[self.cursorPosition.y - 1][TERM_WIDTH] = '\n';
         self.cursorPosition = MMPositionMake(self.cursorPosition.x, self.cursorPosition.y + 1);
         [self checkIfExceededLastLine];
@@ -156,6 +157,28 @@
     // TODO: Handle wrap around correctly.
 
     self.cursorPosition = MMPositionMake(MAX(1, self.cursorPosition.x - spaces), self.cursorPosition.y);
+}
+
+- (void)moveCursorToX:(NSUInteger)x Y:(NSUInteger)y;
+{
+    // Sanitize the input.
+    x = MIN(MAX(x, 1), TERM_WIDTH);
+    y = MIN(MAX(y, 1), TERM_HEIGHT);
+
+    if (y <= self.cursorPosition.y) {
+        self.cursorPosition = MMPositionMake(x, y);
+    } else {
+        // We are guaranteed that y >= 2.
+        // Add newlines when necessary starting from the final row and moving up.
+        for (NSUInteger row = y; row > self.cursorPosition.y; row--) {
+            if (self.ansiLines[row - 1][0] != '\0') {
+                continue;
+            }
+
+            self.ansiLines[row - 2][TERM_WIDTH] = '\n';
+        }
+    }
+    [self fillCurrentLineWithSpacesUpToCursor];
 }
 
 - (void)fillCurrentLineWithSpacesUpToCursor;
@@ -233,7 +256,7 @@
         return;
     }
 
-    NSArray *items = [escapeSequence componentsSeparatedByString:@";"];
+    NSArray *items = [[escapeSequence substringWithRange:NSMakeRange(2, [escapeSequence length] - 3)] componentsSeparatedByString:@";"];
 
     unichar escapeCode = [escapeSequence characterAtIndex:([escapeSequence length] - 1)];
     if (escapeCode == 'A') {
@@ -244,8 +267,21 @@
         [self moveCursorForward:[items[0] intValue]];
     } else if (escapeCode == 'D') {
         [self moveCursorBackward:[items[0] intValue]];
+    } else if (escapeCode == 'H' || escapeCode == 'f') {
+        NSUInteger x = [items count] >= 2 ? [items[1] intValue] : 0;
+        NSUInteger y = [items count] >= 1 ? [items[0] intValue] : 0;
+        [self moveCursorToX:x Y:y];
     } else if (escapeCode == 'K') {
         [self clearUntilEndOfLine];
+    } else if (escapeCode == 'J') {
+        if ([items count] && [items[0] isEqualToString:@"2"]) {
+            MMPosition savedPosition = self.cursorPosition;
+            self.cursorPosition = MMPositionMake(1, 1);
+            [self clearScreen];
+            [self moveCursorToX:savedPosition.x Y:savedPosition.y];
+        } else {
+            MMLog(@"Unsupported clear mode with escape sequence: %@", escapeSequence);
+        }
     } else {
         MMLog(@"Unhandled escape sequence: %@", escapeSequence);
     }
