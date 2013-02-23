@@ -54,6 +54,17 @@
             [self moveCursorBackward:(self.cursorPosition.x - 1)];
         } else if (currentChar == '\033') { // Escape character.
             NSUInteger firstAlphabeticIndex = i;
+            if ([outputToHandle length] == (firstAlphabeticIndex + 1)) {
+                self.unreadOutput = [outputToHandle substringFromIndex:i];
+                break;
+            }
+
+            if ([outputToHandle characterAtIndex:(firstAlphabeticIndex + 1)] != '[') {
+                MMLog(@"Early unhandled escape sequence: %@", [outputToHandle substringWithRange:NSMakeRange(firstAlphabeticIndex, 2)]);
+                i = i + 1;
+                continue;
+            }
+
             NSCharacterSet *lowercaseChars = [NSCharacterSet lowercaseLetterCharacterSet];
             NSCharacterSet *uppercaseChars = [NSCharacterSet uppercaseLetterCharacterSet];
             while (firstAlphabeticIndex < [output length] &&
@@ -86,7 +97,10 @@
 {
     // TODO: Add checks to see if the characters before need filling.
     if (self.cursorPosition.x == TERM_WIDTH) {
-        self.ansiLines[self.cursorPosition.y][0] = character;
+        self.cursorPosition = MMPositionMake(1, self.cursorPosition.y + 1);
+        [self checkIfExceededLastLine];
+
+        self.ansiLines[self.cursorPosition.y - 1][0] = character;
         self.cursorPosition = MMPositionMake(2, self.cursorPosition.y + 1);
     } else {
         self.ansiLines[self.cursorPosition.y - 1][self.cursorPosition.x - 1] = character;
@@ -117,6 +131,7 @@
     }
 
     self.cursorPosition = MMPositionMake(newXPosition, MAX(1, self.cursorPosition.y - lines));
+    [self fillCurrentLineWithSpacesUpToCursor];
 }
 
 - (void)moveCursorDown:(NSUInteger)lines;
@@ -149,6 +164,17 @@
         if (self.ansiLines[self.cursorPosition.y - 1][i] == '\0') {
             self.ansiLines[self.cursorPosition.y - 1][i] = ' ';
         }
+    }
+}
+
+- (void)clearUntilEndOfLine;
+{
+    for (NSUInteger i = self.cursorPosition.x - 1; i < TERM_WIDTH; i++) {
+        if (self.ansiLines[self.cursorPosition.y - 1][i] == '\0') {
+            break;
+        }
+
+        self.ansiLines[self.cursorPosition.y - 1][i] = '\0';
     }
 }
 
@@ -207,15 +233,19 @@
         return;
     }
 
+    NSArray *items = [escapeSequence componentsSeparatedByString:@";"];
+
     unichar escapeCode = [escapeSequence characterAtIndex:([escapeSequence length] - 1)];
     if (escapeCode == 'A') {
-
+        [self moveCursorUp:[items[0] intValue]];
     } else if (escapeCode == 'B') {
-
+        [self moveCursorDown:[items[0] intValue]];
     } else if (escapeCode == 'C') {
-
+        [self moveCursorForward:[items[0] intValue]];
     } else if (escapeCode == 'D') {
-
+        [self moveCursorBackward:[items[0] intValue]];
+    } else if (escapeCode == 'K') {
+        [self clearUntilEndOfLine];
     } else {
         MMLog(@"Unhandled escape sequence: %@", escapeSequence);
     }
