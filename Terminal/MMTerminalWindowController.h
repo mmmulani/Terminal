@@ -15,11 +15,13 @@
 @property (strong) IBOutlet MMTextView *consoleText;
 @property (strong) IBOutlet NSTextField *commandInput;
 @property (strong) IBOutlet NSTableView *tableView;
+@property (strong) IBOutlet NSTextField *currentDirectoryLabel;
 @property (strong) NSMutableArray *tasks;
 @property (strong) NSMutableArray *taskViewControllers;
 @property BOOL running;
 
 - (void)handleOutput:(NSString *)message;
 - (void)processFinished;
+- (void)directoryChangedTo:(NSString *)newPath;
 
 @end

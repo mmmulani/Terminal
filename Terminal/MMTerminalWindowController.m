@@ -49,7 +49,7 @@
             MMTaskCellViewController *lastController = self.taskViewControllers.lastObject;
             [lastController updateWithANSIOutput];
 
-//            [lastController.outputView.layoutManager ensureLayoutForCharacterRange:NSMakeRange(0, lastTask.output.length)];
+            [lastController.outputView.layoutManager ensureLayoutForCharacterRange:NSMakeRange(0, 10000)];
             [self.tableView noteHeightOfRowsWithIndexesChanged:[NSIndexSet indexSetWithIndex:([self.taskViewControllers count] - 1)]];
         }
 
@@ -67,6 +67,11 @@
     [controller updateWithANSIOutput];
 
     [self.window makeFirstResponder:self.commandInput];
+}
+
+- (void)directoryChangedTo:(NSString *)newPath;
+{
+    [self.currentDirectoryLabel setStringValue:[NSString stringWithFormat:@"Current directory: %@", newPath]];
 }
 
 # pragma mark - NSTextFieldDelegate

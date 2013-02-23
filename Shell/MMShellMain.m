@@ -28,8 +28,16 @@
     self.shellConnection = [NSConnection serviceConnectionWithName:ConnectionShellName rootObject:self];
     MMLog(@"Shell connection: %@", self.shellConnection);
 
-    setenv("TERM", "xterm-256color", NO);
-    setenv("LANG", "en_US.UTF-8", NO);
+    NSDictionary *environmentVariables =
+    @{
+      @"TERM": @"xterm-256color",
+      @"LANG": @"en_US.UTF-8",
+      @"HOME": NSHomeDirectory(),
+      };
+
+    for (NSString *variable in environmentVariables) {
+        setenv([variable cStringUsingEncoding:NSUTF8StringEncoding], [environmentVariables[variable] cStringUsingEncoding:NSUTF8StringEncoding], NO);
+    }
 
     [[NSRunLoop mainRunLoop] run];
 }
@@ -95,13 +103,17 @@
         NSString *newDirectory = nil;
         if ((whitespaceChars.location == NSNotFound) ||
             ((whitespaceChars.location + whitespaceChars.length) == [command length])) {
-            newDirectory = NSHomeDirectory();
+            newDirectory = @"~";
         } else {
             newDirectory = [command substringFromIndex:(whitespaceChars.location + whitespaceChars.length)];
         }
 
-        chdir([newDirectory cStringUsingEncoding:NSUTF8StringEncoding]);
-        MMLog(@"Changed directory to %@", newDirectory);
+        newDirectory = [newDirectory stringByExpandingTildeInPath];
+
+        NSFileManager *fileManager = [NSFileManager defaultManager];
+        [fileManager changeCurrentDirectoryPath:newDirectory];
+        NSProxy *proxy = [[NSConnection connectionWithRegisteredName:ConnectionTerminalName host:nil] rootProxy];
+        [proxy performSelector:@selector(directoryChangedTo:) withObject:[fileManager currentDirectoryPath]];
     }
 }
 

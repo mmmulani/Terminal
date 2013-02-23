@@ -165,6 +165,11 @@
     [self.terminalWindow processFinished];
 }
 
+- (void)directoryChangedTo:(NSString *)newPath;
+{
+    [self.terminalWindow directoryChangedTo:newPath];
+}
+
 # pragma mark - NSApplicationDelegate
 
 - (void)applicationDidFinishLaunching:(NSNotification *)aNotification;
