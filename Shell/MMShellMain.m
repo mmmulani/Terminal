@@ -39,6 +39,8 @@
         setenv([variable cStringUsingEncoding:NSUTF8StringEncoding], [environmentVariables[variable] cStringUsingEncoding:NSUTF8StringEncoding], NO);
     }
 
+    [self informTerminalOfCurrentDirectory];
+
     [[NSRunLoop mainRunLoop] run];
 }
 
@@ -112,9 +114,16 @@
 
         NSFileManager *fileManager = [NSFileManager defaultManager];
         [fileManager changeCurrentDirectoryPath:newDirectory];
-        NSProxy *proxy = [[NSConnection connectionWithRegisteredName:ConnectionTerminalName host:nil] rootProxy];
-        [proxy performSelector:@selector(directoryChangedTo:) withObject:[fileManager currentDirectoryPath]];
+
+        [self informTerminalOfCurrentDirectory];
     }
+}
+
+- (void)informTerminalOfCurrentDirectory;
+{
+    NSFileManager *fileManager = [NSFileManager defaultManager];
+    NSProxy *proxy = [[NSConnection connectionWithRegisteredName:ConnectionTerminalName host:nil] rootProxy];
+    [proxy performSelector:@selector(directoryChangedTo:) withObject:[fileManager currentDirectoryPath]];
 }
 
 @end

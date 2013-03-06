@@ -15,6 +15,7 @@
 
 // An index into |self.tasks| of the current task shown in the command input field.
 @property NSUInteger commandHistoryIndex;
+@property NSString *currentDirectory;
 
 @end
 
