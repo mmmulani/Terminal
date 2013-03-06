@@ -21,8 +21,6 @@
         return nil;
     }
 
-    self.debugMessages = [NSMutableArray arrayWithCapacity:256];
-
     return self;
 }
 
@@ -35,36 +33,24 @@
 
 - (void)addDebugMessage:(NSString *)message;
 {
-    NSScrollView *scrollView = self.tableView.enclosingScrollView;
-    CGFloat distanceFromBottom = [(NSView *)scrollView.documentView frame].size.height - (scrollView.contentView.bounds.origin.y + scrollView.contentView.bounds.size.height);
+    CGFloat distanceFromBottom = [(NSView *)self.debugScrollView.documentView frame].size.height - (self.debugScrollView.contentView.bounds.origin.y + self.debugScrollView.contentView.bounds.size.height);
 
-    [self.debugMessages addObject:message];
-    [self.tableView noteNumberOfRowsChanged];
+    NSString *messageWithNewline = [message stringByAppendingString:@"\n"];
 
-    static NSDictionary *attributes;
+    static NSDictionary *attributes = nil;
     if (!attributes) {
-        attributes = [[self.tableColumn.dataCell attributedStringValue] attributesAtIndex:0 effectiveRange:NULL];
+        NSFont *font = [NSFont fontWithName:@"Lucida Console" size:12.0f];
+        attributes =
+        @{
+          NSFontAttributeName: font,
+          };
     }
-    CGFloat messageWidth = [message sizeWithAttributes:attributes].width + 2.0f;
-    if (messageWidth > self.tableColumn.width) {
-        [self.tableColumn setWidth:messageWidth];
-    }
+
+    [self.debugOutput.textStorage appendAttributedString:[[NSAttributedString alloc] initWithString:messageWithNewline attributes:attributes]];
 
     if (distanceFromBottom < 0.5) {
-        [self.tableView scrollToEndOfDocument:self];
+        [self.debugOutput scrollToEndOfDocument:self];
     }
-}
-
-# pragma mark - NSTableViewDataSource
-
-- (NSInteger)numberOfRowsInTableView:(NSTableView *)tableView;
-{
-    return [self.debugMessages count];
-}
-
-- (id)tableView:(NSTableView *)tableView objectValueForTableColumn:(NSTableColumn *)tableColumn row:(NSInteger)row;
-{
-    return self.debugMessages[row];
 }
 
 @end

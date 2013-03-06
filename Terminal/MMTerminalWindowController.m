@@ -52,9 +52,11 @@
 
             [lastController.outputView.layoutManager ensureLayoutForCharacterRange:NSMakeRange(0, 10000)];
             [self.tableView noteHeightOfRowsWithIndexesChanged:[NSIndexSet indexSetWithIndex:([self.taskViewControllers count] - 1)]];
+            NSLog(@"Updating height of last");
         }
 
         [self.tableView scrollToEndOfDocument:self];
+        NSLog(@"Trying to scroll to bottom");
     });
 }
 
@@ -64,6 +66,8 @@
     task.finishedAt = [NSDate date];
     self.running = NO;
 
+    [self.tableView scrollToEndOfDocument:self];
+
     MMTaskCellViewController *controller = [self.taskViewControllers lastObject];
     [controller updateWithANSIOutput];
 
@@ -72,6 +76,7 @@
 
 - (void)directoryChangedTo:(NSString *)newPath;
 {
+    self.currentDirectory = newPath;
     [self.currentDirectoryLabel setStringValue:[NSString stringWithFormat:@"Current directory: %@", newPath]];
 }
 
@@ -114,6 +119,46 @@
     }
 
     return NO;
+}
+
+- (NSArray *)control:(NSControl *)control textView:(NSTextView *)textView completions:(NSArray *)words forPartialWordRange:(NSRange)charRange indexOfSelectedItem:(NSInteger *)index;
+{
+    // TODO: Handle tilde expansion.
+
+    NSRange whitespaceRange = [textView.string rangeOfCharacterFromSet:[NSCharacterSet whitespaceCharacterSet] options:NSBackwardsSearch range:NSMakeRange(0, charRange.location + 1)];
+    NSString *partial;
+    if (whitespaceRange.location == NSNotFound) {
+        partial = [textView.string substringWithRange:NSMakeRange(0, charRange.length + charRange.location)];
+    } else {
+        partial = [textView.string substringWithRange:NSMakeRange(whitespaceRange.location + 1, charRange.length + (charRange.location - (whitespaceRange.location + 1)))];
+    }
+    NSLog(@"partial: %@, whitespaceRange: %@", partial, NSStringFromRange(whitespaceRange));
+
+    NSString *absolutePartial = partial;
+    if (![partial isAbsolutePath]) {
+        absolutePartial = [self.currentDirectory stringByAppendingPathComponent:partial];
+    }
+    NSArray *matches;
+    NSString *longestMatch;
+    [absolutePartial completePathIntoString:&longestMatch caseSensitive:NO matchesIntoArray:&matches filterTypes:nil];
+    NSMutableArray *results = [NSMutableArray arrayWithCapacity:[matches count]];
+    NSUInteger startingPosition = [absolutePartial length] - [partial length];
+    for (NSString *result in matches) {
+        [results addObject:[result substringFromIndex:startingPosition]];
+    }
+
+    if ([results count] == 0) {
+        return nil;
+    }
+
+    // NSString completePathIntoString: will try to complete the path by traversing the directory tree
+    // until it finds multiple results. However, we only want to return one directory from that path.
+    NSRange slashAfterPartial = [results[0] rangeOfString:@"/" options:0 range:NSMakeRange([partial length] + 1, [results[0] length] - [partial length] - 1)];
+    if (slashAfterPartial.location != NSNotFound) {
+        return @[[results[0] substringToIndex:slashAfterPartial.location]];
+    }
+
+    return results;
 }
 
 # pragma mark - NSTableViewDataSource

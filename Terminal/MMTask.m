@@ -80,6 +80,7 @@
             }
 
             NSString *escapeSequence = [outputToHandle substringWithRange:NSMakeRange(i, firstAlphabeticIndex - i + 1)];
+            MMLog(@"Parsed escape sequence: %@", escapeSequence);
             [self handleEscapeSequence:escapeSequence];
             i = firstAlphabeticIndex;
         } else {
@@ -101,7 +102,7 @@
         [self checkIfExceededLastLine];
 
         self.ansiLines[self.cursorPosition.y - 1][0] = character;
-        self.cursorPosition = MMPositionMake(2, self.cursorPosition.y + 1);
+        self.cursorPosition = MMPositionMake(2, self.cursorPosition.y);
     } else {
         self.ansiLines[self.cursorPosition.y - 1][self.cursorPosition.x - 1] = character;
         self.cursorPosition = MMPositionMake(self.cursorPosition.x + 1, self.cursorPosition.y);
@@ -177,6 +178,8 @@
 
             self.ansiLines[row - 2][TERM_WIDTH] = '\n';
         }
+
+        self.cursorPosition = MMPositionMake(x, y);
     }
     [self fillCurrentLineWithSpacesUpToCursor];
 }

@@ -8,11 +8,10 @@
 
 #import <Cocoa/Cocoa.h>
 
-@interface MMDebugMessagesWindowController : NSWindowController <NSTableViewDataSource, NSTableViewDelegate>
+@interface MMDebugMessagesWindowController : NSWindowController
 
-@property (strong) IBOutlet NSTableView *tableView;
-@property (strong) IBOutlet NSTableColumn *tableColumn;
-@property (strong) NSMutableArray *debugMessages;
+@property (strong) IBOutlet NSScrollView *debugScrollView;
+@property (strong) IBOutlet NSTextView *debugOutput;
 
 - (void)addDebugMessage:(NSString *)message;
 
