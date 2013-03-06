@@ -69,7 +69,7 @@
 
             NSCharacterSet *lowercaseChars = [NSCharacterSet lowercaseLetterCharacterSet];
             NSCharacterSet *uppercaseChars = [NSCharacterSet uppercaseLetterCharacterSet];
-            while (firstAlphabeticIndex < [output length] &&
+            while (firstAlphabeticIndex < [outputToHandle length] &&
                    ![lowercaseChars characterIsMember:[outputToHandle characterAtIndex:firstAlphabeticIndex]] &&
                    ![uppercaseChars characterIsMember:[outputToHandle characterAtIndex:firstAlphabeticIndex]]) {
                 firstAlphabeticIndex++;
