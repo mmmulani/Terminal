@@ -38,7 +38,7 @@
     return self;
 }
 
-- (void)handleCommandOutput:(NSString *)output;
+- (void)handleCommandOutput:(NSString *)output withVerbosity:(BOOL)verbosity;
 {
     NSString *outputToHandle = self.unreadOutput ? [self.unreadOutput stringByAppendingString:output] : output;
     for (NSUInteger i = 0; i < [outputToHandle length]; i++) {
@@ -52,6 +52,8 @@
             [self addNewline];
         } else if (currentChar == '\r') {
             [self moveCursorBackward:(self.cursorPosition.x - 1)];
+        } else if (currentChar == '\b') {
+            [self moveCursorBackward:1];
         } else if (currentChar == '\033') { // Escape character.
             NSUInteger firstAlphabeticIndex = i;
             if ([outputToHandle length] == (firstAlphabeticIndex + 1)) {
@@ -85,6 +87,9 @@
             i = firstAlphabeticIndex;
         } else {
             [self ansiPrint:currentChar];
+            if (verbosity) {
+                MMLog(@"Printed character %c", currentChar);
+            }
         }
     }
 

@@ -33,6 +33,6 @@ MMPositionMake(NSInteger x, NSInteger y)
 @property (readonly) NSAttributedString *currentANSIDisplay;
 @property MMPosition cursorPosition;
 
-- (void)handleCommandOutput:(NSString *)output;
+- (void)handleCommandOutput:(NSString *)output withVerbosity:(BOOL)verbosity;
 
 @end

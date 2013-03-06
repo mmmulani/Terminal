@@ -13,6 +13,8 @@
 @property (strong) IBOutlet NSScrollView *debugScrollView;
 @property (strong) IBOutlet NSTextView *debugOutput;
 
+- (IBAction)allCharactersAction:(id)sender;
+
 - (void)addDebugMessage:(NSString *)message;
 
 @end

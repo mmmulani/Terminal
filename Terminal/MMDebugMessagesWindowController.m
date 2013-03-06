@@ -7,6 +7,7 @@
 //
 
 #import "MMDebugMessagesWindowController.h"
+#import "MMAppDelegate.h"
 
 @interface MMDebugMessagesWindowController ()
 
@@ -31,6 +32,11 @@
     [self.window setLevel:NSNormalWindowLevel];
 }
 
+- (IBAction)allCharactersAction:(id)sender {
+    MMAppDelegate *appDelegate = (MMAppDelegate *)[[NSApplication sharedApplication] delegate];
+    appDelegate.terminalWindow.logAllCharacters = [sender state] == NSOnState;
+}
+
 - (void)addDebugMessage:(NSString *)message;
 {
     CGFloat distanceFromBottom = [(NSView *)self.debugScrollView.documentView frame].size.height - (self.debugScrollView.contentView.bounds.origin.y + self.debugScrollView.contentView.bounds.size.height);
@@ -39,7 +45,7 @@
 
     static NSDictionary *attributes = nil;
     if (!attributes) {
-        NSFont *font = [NSFont fontWithName:@"Lucida Console" size:12.0f];
+        NSFont *font = [NSFont userFixedPitchFontOfSize:[NSFont systemFontSize]];
         attributes =
         @{
           NSFontAttributeName: font,

@@ -19,6 +19,7 @@
 @property (strong) NSMutableArray *tasks;
 @property (strong) NSMutableArray *taskViewControllers;
 @property BOOL running;
+@property BOOL logAllCharacters;
 
 - (void)handleOutput:(NSString *)message;
 - (void)processFinished;
