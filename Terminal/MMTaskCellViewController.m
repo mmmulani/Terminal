@@ -55,6 +55,7 @@
 - (void)updateWithANSIOutput;
 {
     [self.outputView.textStorage setAttributedString:self.task.currentANSIDisplay];
+    [self.outputView setSelectedRange:NSMakeRange(self.task.cursorPositionByCharacters, 0)];
 }
 
 @end

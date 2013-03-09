@@ -35,8 +35,6 @@
 - (void)windowDidLoad
 {
     [super windowDidLoad];
-
-    [self.consoleText setNextResponder:self.window];
 }
 
 - (void)handleOutput:(NSString *)message;
@@ -85,7 +83,8 @@
 - (BOOL)control:(NSControl *)control textShouldBeginEditing:(NSText *)fieldEditor;
 {
     if (self.running) {
-        [self.window makeFirstResponder:self.consoleText];
+        MMTaskCellViewController *lastController = self.taskViewControllers.lastObject;
+        [self.window makeFirstResponder:lastController.outputView];
     }
     return !self.running;
 }
@@ -103,8 +102,11 @@
         [textView setString:@""];
         self.commandHistoryIndex = 0;
 
-        [self.window makeFirstResponder:self.consoleText];
         [self.tableView reloadData];
+
+        MMTaskCellViewController *lastController = self.taskViewControllers.lastObject;
+        [self.window makeFirstResponder:lastController.outputView];
+
         return YES;
     } else if (commandSelector == @selector(scrollPageUp:)) {
         if (self.tasks.count > 0) {

@@ -13,6 +13,7 @@
 
 @property unichar **ansiLines;
 @property NSString *unreadOutput;
+@property NSUInteger cursorPositionByCharacters;
 
 @end
 
@@ -240,6 +241,8 @@
 
 - (NSAttributedString *)currentANSIDisplay;
 {
+    NSUInteger cursorPosition = 0;
+
     NSMutableAttributedString *display = [[NSMutableAttributedString alloc] init];
     for (NSUInteger i = 0; i < TERM_HEIGHT; i++) {
         for (NSUInteger j = 0; j < TERM_WIDTH; j++) {
@@ -247,12 +250,21 @@
                 break;
             }
 
+            if (self.cursorPosition.y - 1 > i ||
+                (self.cursorPosition.y - 1 == i && self.cursorPosition.x > j)) {
+                cursorPosition++;
+            }
             [display appendAttributedString:[[NSAttributedString alloc] initWithString:[NSString stringWithCharacters:&self.ansiLines[i][j] length:1]]];
         }
         if (self.ansiLines[i][TERM_WIDTH] == '\n') {
+            if (self.cursorPosition.y - 1 > i) {
+                cursorPosition++;
+            }
             [display appendAttributedString:[[NSAttributedString alloc] initWithString:@"\n"]];
         }
     }
+
+    self.cursorPositionByCharacters = cursorPosition;
 
     return display;
 }

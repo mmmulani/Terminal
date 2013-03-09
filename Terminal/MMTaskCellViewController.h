@@ -9,11 +9,12 @@
 #import <Cocoa/Cocoa.h>
 
 #import "MMTask.h"
+#import "MMTextView.h"
 
 @interface MMTaskCellViewController : NSViewController
 
 @property (strong) IBOutlet NSTextField *label;
-@property (strong) IBOutlet NSTextView *outputView;
+@property (strong) IBOutlet MMTextView *outputView;
 
 @property (strong) MMTask *task;
 
