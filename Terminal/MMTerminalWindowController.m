@@ -102,7 +102,8 @@
         [textView setString:@""];
         self.commandHistoryIndex = 0;
 
-        [self.tableView reloadData];
+        [self.tableView insertRowsAtIndexes:[NSIndexSet indexSetWithIndex:(self.tasks.count - 1)] withAnimation:NSTableViewAnimationEffectNone];
+        [self.tableView scrollToEndOfDocument:self];
 
         MMTaskCellViewController *lastController = self.taskViewControllers.lastObject;
         [self.window makeFirstResponder:lastController.outputView];
