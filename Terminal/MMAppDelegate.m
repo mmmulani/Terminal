@@ -112,10 +112,29 @@
         int result = select(self.fd + 1, &rfds, &wfds, &efds, nil);
 
         if (FD_ISSET(self.fd, &rfds)) {
-            NSMutableData *data = [NSMutableData dataWithLength:2048];
-            ssize_t bytesread = read(self.fd, [data mutableBytes], 2048);
+            // Mac OS X caps read() to 1024 bytes (for some reason), we expect that 4KiB is the most that will be sent in one read.
+            NSMutableData *data = [NSMutableData dataWithLength:1024 * 4];
+            ssize_t totalBytesRead = 0;
+            for (NSUInteger i = 0; i < 4; i++) {
+                ssize_t bytesRead = read(self.fd, [data mutableBytes] + totalBytesRead, 1024);
 
-            if (bytesread == 0) {
+                if (bytesRead < 0) {
+                    if (errno != EAGAIN && errno != EINTR) {
+                        NSLog(@"Serious error.");
+                        return;
+                    }
+
+                    bytesRead = 0;
+                }
+
+                totalBytesRead += bytesRead;
+
+                if (bytesRead < 1024) {
+                    break;
+                }
+            }
+
+            if (totalBytesRead == 0) {
                 int status;
                 waitpid(pid, &status, WNOHANG);
                 if (WIFEXITED(status) || WIFSIGNALED(status)) {
@@ -126,12 +145,7 @@
                 continue;
             }
 
-            if (bytesread < 0) {
-                NSLog(@"Read %zd bytes with errno %d", bytesread, errno);
-                continue;
-            }
-
-            [data setLength:bytesread];
+            [data setLength:totalBytesRead];
             NSString *readData = [[NSString alloc] initWithData:data encoding:NSUTF8StringEncoding];
             [proxy performSelector:@selector(beep:) withObject:readData];
         }
