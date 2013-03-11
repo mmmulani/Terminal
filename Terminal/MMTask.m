@@ -239,7 +239,7 @@
     }
 }
 
-- (NSAttributedString *)currentANSIDisplay;
+- (NSMutableAttributedString *)currentANSIDisplay;
 {
     NSUInteger cursorPosition = 0;
 

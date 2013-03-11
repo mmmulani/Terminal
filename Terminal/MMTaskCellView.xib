@@ -44,7 +44,7 @@
 					<object class="NSTextField" id="530947580">
 						<reference key="NSNextResponder" ref="1005"/>
 						<int key="NSvFlags">268</int>
-						<string key="NSFrame">{{17, 54}, {446, 17}}</string>
+						<string key="NSFrame">{{17, 44}, {446, 17}}</string>
 						<reference key="NSSuperview" ref="1005"/>
 						<reference key="NSWindow"/>
 						<reference key="NSNextKeyView" ref="920814991"/>
@@ -112,7 +112,7 @@
 											<string>WebURLsWithTitlesPboardType</string>
 											<string>public.url</string>
 										</set>
-										<string key="NSFrameSize">{438, 24}</string>
+										<string key="NSFrameSize">{438, 14}</string>
 										<reference key="NSSuperview" ref="899074347"/>
 										<reference key="NSWindow"/>
 										<reference key="NSNextKeyView" ref="395303670"/>
@@ -121,8 +121,19 @@
 											<object class="NSLayoutManager" key="NSLayoutManager">
 												<object class="NSTextStorage" key="NSTextStorage">
 													<object class="NSMutableString" key="NSString">
-														<characters key="NS.bytes"/>
+														<characters key="NS.bytes">test</characters>
 													</object>
+													<dictionary key="NSAttributes">
+														<object class="NSFont" key="NSFont">
+															<string key="NSName">LucidaGrande</string>
+															<double key="NSSize">11</double>
+															<int key="NSfFlags">2329</int>
+														</object>
+														<object class="NSMutableParagraphStyle" key="NSParagraphStyle">
+															<int key="NSAlignment">4</int>
+															<nil key="NSTabStops"/>
+														</object>
+													</dictionary>
 													<nil key="NSDelegate"/>
 												</object>
 												<array class="NSMutableArray" key="NSTextContainers">
@@ -178,7 +189,7 @@
 										<nil key="NSDelegate"/>
 									</object>
 								</array>
-								<string key="NSFrame">{{1, 1}, {438, 24}}</string>
+								<string key="NSFrame">{{1, 1}, {438, 14}}</string>
 								<reference key="NSSuperview" ref="920814991"/>
 								<reference key="NSWindow"/>
 								<reference key="NSNextKeyView" ref="298371505"/>
@@ -209,7 +220,7 @@
 							<object class="NSScroller" id="395303670">
 								<reference key="NSNextResponder" ref="920814991"/>
 								<int key="NSvFlags">256</int>
-								<string key="NSFrame">{{423, 1}, {16, 24}}</string>
+								<string key="NSFrame">{{423, 1}, {16, 14}}</string>
 								<reference key="NSSuperview" ref="920814991"/>
 								<reference key="NSWindow"/>
 								<reference key="NSNextKeyView"/>
@@ -218,7 +229,7 @@
 								<reference key="NSTarget" ref="920814991"/>
 								<string key="NSAction">_doScroller:</string>
 								<double key="NSCurValue">1</double>
-								<double key="NSPercent">0.85256409645080566</double>
+								<double key="NSPercent">0.9285714285714286</double>
 							</object>
 							<object class="NSScroller" id="892590294">
 								<reference key="NSNextResponder" ref="920814991"/>
@@ -236,12 +247,12 @@
 								<double key="NSPercent">0.94565218687057495</double>
 							</object>
 						</array>
-						<string key="NSFrame">{{20, 20}, {440, 26}}</string>
+						<string key="NSFrame">{{20, 20}, {440, 16}}</string>
 						<reference key="NSSuperview" ref="1005"/>
 						<reference key="NSWindow"/>
 						<reference key="NSNextKeyView" ref="892590294"/>
 						<string key="NSReuseIdentifierKey">_NS:9</string>
-						<int key="NSsFlags">133138</int>
+						<int key="NSsFlags">133137</int>
 						<reference key="NSVScroller" ref="395303670"/>
 						<reference key="NSHScroller" ref="892590294"/>
 						<reference key="NSContentView" ref="899074347"/>
@@ -250,7 +261,7 @@
 						<double key="NSMagnification">1</double>
 					</object>
 				</array>
-				<string key="NSFrameSize">{480, 88}</string>
+				<string key="NSFrameSize">{480, 78}</string>
 				<reference key="NSSuperview"/>
 				<reference key="NSWindow"/>
 				<reference key="NSNextKeyView" ref="530947580"/>
@@ -462,11 +473,6 @@
 						<reference key="parent" ref="1005"/>
 					</object>
 					<object class="IBObjectRecord">
-						<int key="objectID">9</int>
-						<reference key="object" ref="482285239"/>
-						<reference key="parent" ref="1005"/>
-					</object>
-					<object class="IBObjectRecord">
 						<int key="objectID">11</int>
 						<reference key="object" ref="1007861322"/>
 						<reference key="parent" ref="1005"/>
@@ -502,6 +508,11 @@
 					<object class="IBObjectRecord">
 						<int key="objectID">18</int>
 						<reference key="object" ref="582540078"/>
+						<reference key="parent" ref="1005"/>
+					</object>
+					<object class="IBObjectRecord">
+						<int key="objectID">9</int>
+						<reference key="object" ref="482285239"/>
 						<reference key="parent" ref="1005"/>
 					</object>
 				</array>
@@ -541,7 +552,7 @@
 			<nil key="activeLocalization"/>
 			<dictionary class="NSMutableDictionary" key="localizations"/>
 			<nil key="sourceID"/>
-			<int key="maxID">21</int>
+			<int key="maxID">22</int>
 		</object>
 		<object class="IBClassDescriber" key="IBDocument.Classes">
 			<array class="NSMutableArray" key="referencedPartialClassDescriptions">
@@ -550,7 +561,7 @@
 					<string key="superclassName">NSViewController</string>
 					<dictionary class="NSMutableDictionary" key="outlets">
 						<string key="label">NSTextField</string>
-						<string key="outputView">NSTextView</string>
+						<string key="outputView">MMTextView</string>
 					</dictionary>
 					<dictionary class="NSMutableDictionary" key="toOneOutletInfosByName">
 						<object class="IBToOneOutletInfo" key="label">
@@ -559,7 +570,7 @@
 						</object>
 						<object class="IBToOneOutletInfo" key="outputView">
 							<string key="name">outputView</string>
-							<string key="candidateClassName">NSTextView</string>
+							<string key="candidateClassName">MMTextView</string>
 						</object>
 					</dictionary>
 					<object class="IBClassDescriptionSource" key="sourceIdentifier">

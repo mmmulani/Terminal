@@ -30,7 +30,7 @@ MMPositionMake(NSInteger x, NSInteger y)
 @property (strong) NSDate *finishedAt;
 @property (strong) NSString *command;
 
-@property (readonly) NSAttributedString *currentANSIDisplay;
+@property (readonly) NSMutableAttributedString *currentANSIDisplay;
 @property MMPosition cursorPosition;
 @property (readonly) NSUInteger cursorPositionByCharacters;
 

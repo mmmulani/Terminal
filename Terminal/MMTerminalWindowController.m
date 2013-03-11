@@ -69,6 +69,8 @@
     MMTaskCellViewController *controller = [self.taskViewControllers lastObject];
     [controller updateWithANSIOutput];
 
+    [self.tableView noteHeightOfRowsWithIndexesChanged:[NSIndexSet indexSetWithIndex:([self.taskViewControllers count] - 1)]];
+
     [self.window makeFirstResponder:self.commandInput];
 }
 

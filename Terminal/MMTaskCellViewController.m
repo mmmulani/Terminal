@@ -54,8 +54,21 @@
 
 - (void)updateWithANSIOutput;
 {
-    [self.outputView.textStorage setAttributedString:self.task.currentANSIDisplay];
-    [self.outputView setSelectedRange:NSMakeRange(self.task.cursorPositionByCharacters, 0)];
+    NSMutableAttributedString *displayString = self.task.currentANSIDisplay;
+    NSUInteger cursorPositionByCharacters = self.task.cursorPositionByCharacters;
+
+    // If the process has finished, we remove a trailing newline if it exists.
+    if (self.task.finishedAt) {
+        if (displayString.length && [displayString.mutableString characterAtIndex:(displayString.length - 1)] == '\n') {
+            if (cursorPositionByCharacters == displayString.length) {
+                cursorPositionByCharacters--;
+            }
+            [displayString replaceCharactersInRange:NSMakeRange(displayString.length - 1, 1) withString:@""];
+        }
+    }
+
+    [self.outputView.textStorage setAttributedString:displayString];
+    [self.outputView setSelectedRange:NSMakeRange(cursorPositionByCharacters, 0)];
 }
 
 @end
