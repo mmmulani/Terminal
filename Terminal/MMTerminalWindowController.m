@@ -53,8 +53,15 @@
             NSLog(@"Updating height of last");
         }
 
-        [self.tableView scrollToEndOfDocument:self];
-        NSLog(@"Trying to scroll to bottom");
+        // XXX: Hack to scroll to bottom after output is added to the screen.
+        // Though we inform the NSTableView that a row's height is changed, calling scrollToEndOfDocument: at this point will not scroll to the bottom (possibly due to animations running concurrently).
+        // This (hopefully) runs after those animations are done.
+        double delayInSeconds = 0.2;
+        dispatch_time_t popTime = dispatch_time(DISPATCH_TIME_NOW, (int64_t)(delayInSeconds * NSEC_PER_SEC));
+        dispatch_after(popTime, dispatch_get_main_queue(), ^(void){
+            [self.tableView scrollToEndOfDocument:self];
+            NSLog(@"Trying to scroll to bottom");
+        });
     });
 }
 
