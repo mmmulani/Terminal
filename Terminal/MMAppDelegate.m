@@ -80,13 +80,12 @@
         // That is, the shell intends to write into the writepipe, and read from the readpipe.
 
         NSFileManager *fileManager = [[NSFileManager alloc] init];
-        sleep(1);
 
         const char *args[2];
         args[0] = [[[fileManager currentDirectoryPath] stringByAppendingPathComponent:@"Shell"] cStringUsingEncoding:NSUTF8StringEncoding];
         args[1] = NULL;
         NSLog(@"Starting %s", args[0]);
-        execve(args[0], args, NULL);
+        execv(args[0], args);
 
         NSLog(@"Reached bad part. %s", args[0]);
 

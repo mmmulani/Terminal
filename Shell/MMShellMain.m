@@ -32,7 +32,6 @@
     @{
       @"TERM": @"xterm-256color",
       @"LANG": @"en_US.UTF-8",
-      @"HOME": NSHomeDirectory(),
       };
 
     for (NSString *variable in environmentVariables) {
