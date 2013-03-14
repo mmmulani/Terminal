@@ -96,8 +96,6 @@
 
     NSLog(@"TTY started: %@ with fd %d", [NSString stringWithCString:ttyname encoding:NSUTF8StringEncoding], self.fd);
 
-    fcntl(self.fd, F_SETFL, O_NONBLOCK);
-
     fd_set rfds;
     fd_set wfds;
     fd_set efds;
@@ -123,6 +121,9 @@
                         return;
                     }
 
+                    if (totalBytesRead == 1024) {
+                        MMLog(@"Warning: only read 1024 bytes.");
+                    }
                     bytesRead = 0;
                 }
 
