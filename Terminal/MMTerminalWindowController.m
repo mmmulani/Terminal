@@ -71,12 +71,11 @@
     task.finishedAt = [NSDate date];
     self.running = NO;
 
-    [self.tableView scrollToEndOfDocument:self];
-
     MMTaskCellViewController *controller = [self.taskViewControllers lastObject];
     [controller updateWithANSIOutput];
 
     [self.tableView noteHeightOfRowsWithIndexesChanged:[NSIndexSet indexSetWithIndex:([self.taskViewControllers count] - 1)]];
+    [self.tableView scrollToEndOfDocument:self];
 
     [self.window makeFirstResponder:self.commandInput];
 }
