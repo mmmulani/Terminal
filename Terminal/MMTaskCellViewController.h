@@ -22,5 +22,6 @@
 - (void)scrollToBottom;
 - (CGFloat)heightToFitAllOfOutput;
 - (void)updateWithANSIOutput;
+- (IBAction)saveTranscript:(id)sender;
 
 @end

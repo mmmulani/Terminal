@@ -41,6 +41,8 @@
 
 - (void)handleCommandOutput:(NSString *)output withVerbosity:(BOOL)verbosity;
 {
+    [self.output appendAttributedString:[[NSAttributedString alloc] initWithString:output]];
+
     NSString *outputToHandle = self.unreadOutput ? [self.unreadOutput stringByAppendingString:output] : output;
     for (NSUInteger i = 0; i < [outputToHandle length]; i++) {
         if (self.cursorPosition.y > TERM_HEIGHT) {
@@ -93,9 +95,6 @@
             }
         }
     }
-
-    NSAttributedString *attribData = [[NSAttributedString alloc] initWithString:output];
-    [self.output appendAttributedString:attribData];
 }
 
 # pragma mark - ANSI display methods

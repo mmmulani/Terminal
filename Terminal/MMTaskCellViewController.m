@@ -38,7 +38,6 @@
 
     [self.label setStringValue:[NSString stringWithFormat:@"Ran %@", self.task.command]];
 
-    [self.outputView.layoutManager replaceTextStorage:self.task.output];
     [self.outputView scrollToEndOfDocument:self];
 }
 
@@ -79,6 +78,19 @@
 
     [self.outputView.textStorage setAttributedString:displayString];
     [self.outputView setSelectedRange:NSMakeRange(cursorPositionByCharacters, 0)];
+}
+
+- (IBAction)saveTranscript:(id)sender;
+{
+    NSSavePanel *savePanel = [NSSavePanel savePanel];
+    [savePanel setAllowedFileTypes:@[@"output"]];
+    [savePanel beginSheetModalForWindow:self.view.window completionHandler:^(NSInteger result) {
+        if (result != NSFileHandlingPanelOKButton) {
+            return;
+        }
+
+        [self.task.output.string writeToURL:savePanel.URL atomically:YES encoding:NSUTF8StringEncoding error:NULL];
+    }];
 }
 
 @end
