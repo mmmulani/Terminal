@@ -15,6 +15,8 @@
 @property (strong) IBOutlet NSTextField *commandInput;
 @property (strong) IBOutlet NSTableView *tableView;
 @property (strong) IBOutlet NSTextField *currentDirectoryLabel;
+@property (strong) IBOutlet NSView *commandControlsView;
+@property (strong) IBOutlet NSLayoutConstraint *commandControlsLayoutConstraint;
 @property (strong) NSMutableArray *tasks;
 @property (strong) NSMutableArray *taskViewControllers;
 @property BOOL running;

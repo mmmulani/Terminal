@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		9103CD7216F7EE0900506F8B /* QuartzCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 9103CD7116F7EE0900506F8B /* QuartzCore.framework */; };
 		9106520916C313640010DC76 /* MMWindow.m in Sources */ = {isa = PBXBuildFile; fileRef = 9106520816C313640010DC76 /* MMWindow.m */; };
 		9106520C16C574160010DC76 /* MMTextView.m in Sources */ = {isa = PBXBuildFile; fileRef = 9106520B16C574160010DC76 /* MMTextView.m */; };
 		9186499016D2A6190024D9BE /* MMTerminalWindowController.m in Sources */ = {isa = PBXBuildFile; fileRef = 9186498E16D2A6190024D9BE /* MMTerminalWindowController.m */; };
@@ -65,6 +66,7 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
+		9103CD7116F7EE0900506F8B /* QuartzCore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = QuartzCore.framework; path = System/Library/Frameworks/QuartzCore.framework; sourceTree = SDKROOT; };
 		9106520716C313640010DC76 /* MMWindow.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MMWindow.h; sourceTree = "<group>"; };
 		9106520816C313640010DC76 /* MMWindow.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MMWindow.m; sourceTree = "<group>"; };
 		9106520A16C574160010DC76 /* MMTextView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MMTextView.h; sourceTree = "<group>"; };
@@ -133,6 +135,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				9103CD7216F7EE0900506F8B /* QuartzCore.framework in Frameworks */,
 				91F4EEC016B8D63D00F65E91 /* Cocoa.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -206,6 +209,7 @@
 		91F4EEB316B8D63C00F65E91 = {
 			isa = PBXGroup;
 			children = (
+				9103CD7116F7EE0900506F8B /* QuartzCore.framework */,
 				91F4EEC516B8D63D00F65E91 /* Terminal */,
 				919BA9B216C875C40091CB1B /* Shell */,
 				91F1747416ED0CF0002E2594 /* ANSIEscapeSequencesTests */,
@@ -641,6 +645,7 @@
 				91F1747F16ED0CF0002E2594 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 		91F4EEB716B8D63C00F65E91 /* Build configuration list for PBXProject "Terminal" */ = {
 			isa = XCConfigurationList;

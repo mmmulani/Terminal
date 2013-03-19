@@ -10,12 +10,15 @@
 #import "MMAppDelegate.h"
 #import "MMTask.h"
 #import "MMTaskCellViewController.h"
+#import <QuartzCore/QuartzCore.h>
 
 @interface MMTerminalWindowController ()
 
 // An index into |self.tasks| of the current task shown in the command input field.
 @property NSUInteger commandHistoryIndex;
 @property NSString *currentDirectory;
+
+@property CGFloat originalCommandControlsLayoutConstraintConstant;
 
 @end
 
@@ -35,6 +38,8 @@
 - (void)windowDidLoad
 {
     [super windowDidLoad];
+
+    self.originalCommandControlsLayoutConstraintConstant = self.commandControlsLayoutConstraint.constant;
 }
 
 - (void)handleOutput:(NSString *)message;
@@ -78,6 +83,13 @@
     [self.tableView scrollToEndOfDocument:self];
 
     [self.window makeFirstResponder:self.commandInput];
+
+    CABasicAnimation *animation = [CABasicAnimation animation];
+    animation.timingFunction = [CAMediaTimingFunction functionWithName:kCAMediaTimingFunctionDefault];
+    animation.duration = 0.5;
+    self.commandControlsLayoutConstraint.animations = @{@"constant": animation};
+
+    [self.commandControlsLayoutConstraint.animator setConstant:self.originalCommandControlsLayoutConstraintConstant];
 }
 
 - (void)directoryChangedTo:(NSString *)newPath;
@@ -115,6 +127,14 @@
 
         MMTaskCellViewController *lastController = self.taskViewControllers.lastObject;
         [self.window makeFirstResponder:lastController.outputView];
+
+        CGFloat controlsHeight = self.commandControlsView.frame.size.height;
+        CABasicAnimation *animation = [CABasicAnimation animation];
+        animation.timingFunction = [CAMediaTimingFunction functionWithName:kCAMediaTimingFunctionDefault];
+        animation.duration = 0.5;
+        self.commandControlsLayoutConstraint.animations = @{@"constant": animation};
+
+        [self.commandControlsLayoutConstraint.animator setConstant:(-1 * controlsHeight)];
 
         return YES;
     } else if (commandSelector == @selector(scrollPageUp:)) {
