@@ -25,48 +25,53 @@
     [super tearDown];
 }
 
-- (void)checkInput:(NSString *)input againstExpectedOutput:(NSString *)output;
-{
-    [self checkInput:input againstExpectedOutput:output withExpectedCursor:MMPositionMake(-123, -456)];
-}
+#define CheckInputAgainstExpectedOutput(input, output) \
+do {\
+    MMTask *task = [MMTask new]; \
+    [task handleCommandOutput:input withVerbosity:NO]; \
+    STAssertEqualObjects([task.currentANSIDisplay string], output, @"Compared task output to provided output."); \
+} while (0)
 
-- (void)checkInput:(NSString *)input againstExpectedOutput:(NSString *)output withExpectedCursor:(MMPosition)cursorPosition;
-{
-    MMTask *task = [MMTask new];
-    [task handleCommandOutput:input withVerbosity:NO];
-    STAssertEqualObjects([task.currentANSIDisplay string], output, @"Compared task output to provided output.");
-
-    if (cursorPosition.x != -123 && cursorPosition.y != -456) {
-        STAssertEquals(task.cursorPosition.x, cursorPosition.x, @"X coord of cursor position");
-        STAssertEquals(task.cursorPosition.y, cursorPosition.y, @"X coord of cursor position");
-    }
-}
+#define CheckInputAgainstExpectedOutputWithExpectedCursor(input, output, cursorPosition_) \
+do {\
+    MMTask *task = [MMTask new]; \
+    [task handleCommandOutput:input withVerbosity:NO]; \
+    STAssertEqualObjects([task.currentANSIDisplay string], output, @"Compared task output to provided output."); \
+    STAssertEquals(task.cursorPosition.x, cursorPosition_.x, @"X coord of cursor position"); \
+    STAssertEquals(task.cursorPosition.y, cursorPosition_.y, @"X coord of cursor position"); \
+} while (0)
 
 - (void)testNonANSIPrograms;
 {
-    [self checkInput:@"a" againstExpectedOutput:@"a"];
-    [self checkInput:@"a\nb" againstExpectedOutput:@"a\nb"];
-    [self checkInput:@"a\nb\n" againstExpectedOutput:@"a\nb\n"];
+    CheckInputAgainstExpectedOutput(@"a", @"a");
+    CheckInputAgainstExpectedOutput(@"a\nb", @"a\nb");
+    CheckInputAgainstExpectedOutput(@"a\nb\n", @"a\nb\n");
 
     // Really long strings shouldn't be separated to multiple lines.
     NSString *longString = [@"" stringByPaddingToLength:100 withString:@"1234567890" startingAtIndex:0];
-    [self checkInput:longString againstExpectedOutput:longString];
+    CheckInputAgainstExpectedOutput(longString, longString);
 }
 
 - (void)testClearingScreen;
 {
-    [self checkInput:@"\033[2J" againstExpectedOutput:@"" withExpectedCursor:MMPositionMake(1,1)];
-    [self checkInput:@"_\033[2J" againstExpectedOutput:@" " withExpectedCursor:MMPositionMake(2,1)];
+    CheckInputAgainstExpectedOutputWithExpectedCursor(@"\033[2J", @"", MMPositionMake(1,1));
+    CheckInputAgainstExpectedOutputWithExpectedCursor(@"_\033[2J", @" ", MMPositionMake(2,1));
 }
 
 - (void)testCursorHorizontalAbsolute;
 {
-    [self checkInput:@"test\033[GA" againstExpectedOutput:@"Aest"];
-    [self checkInput:@"test\033[0GA" againstExpectedOutput:@"Aest"];
-    [self checkInput:@"test\033[1GA" againstExpectedOutput:@"Aest"];
-    [self checkInput:@"test\033[2GA" againstExpectedOutput:@"tAst"];
+    CheckInputAgainstExpectedOutput(@"test\033[GA", @"Aest");
+    CheckInputAgainstExpectedOutput(@"test\033[0GA", @"Aest");
+    CheckInputAgainstExpectedOutput(@"test\033[1GA", @"Aest");
+    CheckInputAgainstExpectedOutput(@"test\033[2GA", @"tAst");
     NSString *expectedOutput = [[@"test" stringByPaddingToLength:79 withString:@" " startingAtIndex:0] stringByAppendingString:@"A"];
-    [self checkInput:@"test\033[90GA" againstExpectedOutput:expectedOutput];
+    CheckInputAgainstExpectedOutput(@"test\033[90GA", expectedOutput);
+}
+
+- (void)testNewlineHandling;
+{
+    CheckInputAgainstExpectedOutput(@"test\n", @"test\n");
+    CheckInputAgainstExpectedOutput(@"test\033[1C\n", @"test\n");
 }
 
 @end
