@@ -67,6 +67,16 @@
         }
     }
 
+    static NSDictionary *attributes = nil;
+    if (!attributes) {
+        NSFont *font = [NSFont userFixedPitchFontOfSize:[NSFont systemFontSize]];
+        attributes =
+        @{
+          NSFontAttributeName: font,
+          };
+    }
+    [displayString setAttributes:attributes range:NSMakeRange(0, displayString.length)];
+
     [self.outputView.textStorage setAttributedString:displayString];
     [self.outputView setSelectedRange:NSMakeRange(cursorPositionByCharacters, 0)];
 }
