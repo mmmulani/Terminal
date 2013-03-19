@@ -59,4 +59,14 @@
     [self checkInput:@"_\033[2J" againstExpectedOutput:@" " withExpectedCursor:MMPositionMake(2,1)];
 }
 
+- (void)testCursorHorizontalAbsolute;
+{
+    [self checkInput:@"test\033[GA" againstExpectedOutput:@"Aest"];
+    [self checkInput:@"test\033[0GA" againstExpectedOutput:@"Aest"];
+    [self checkInput:@"test\033[1GA" againstExpectedOutput:@"Aest"];
+    [self checkInput:@"test\033[2GA" againstExpectedOutput:@"tAst"];
+    NSString *expectedOutput = [[@"test" stringByPaddingToLength:79 withString:@" " startingAtIndex:0] stringByAppendingString:@"A"];
+    [self checkInput:@"test\033[90GA" againstExpectedOutput:expectedOutput];
+}
+
 @end

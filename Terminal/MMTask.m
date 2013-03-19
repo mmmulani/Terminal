@@ -287,6 +287,9 @@
         [self moveCursorForward:[items[0] intValue]];
     } else if (escapeCode == 'D') {
         [self moveCursorBackward:[items[0] intValue]];
+    } else if (escapeCode == 'G') {
+        NSUInteger x = [items count] >= 1 ? [items[0] intValue] : 0;
+        [self moveCursorToX:x Y:self.cursorPosition.y];
     } else if (escapeCode == 'H' || escapeCode == 'f') {
         NSUInteger x = [items count] >= 2 ? [items[1] intValue] : 0;
         NSUInteger y = [items count] >= 1 ? [items[0] intValue] : 0;
