@@ -71,6 +71,7 @@ do {\
 - (void)testNewlineHandling;
 {
     CheckInputAgainstExpectedOutput(@"test\n", @"test\n");
+    CheckInputAgainstExpectedOutputWithExpectedCursor(@"test\n\n", @"test\n\n", MMPositionMake(1, 3));
     CheckInputAgainstExpectedOutput(@"test\033[1C\n", @"test\n");
 }
 
