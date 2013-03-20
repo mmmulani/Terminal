@@ -189,10 +189,12 @@
 
 - (void)fillCurrentLineWithSpacesUpToCursor;
 {
-    for (NSUInteger i = 0; i < self.cursorPosition.x - 1; i++) {
-        if (self.ansiLines[self.cursorPosition.y - 1][i] == '\0') {
-            self.ansiLines[self.cursorPosition.y - 1][i] = ' ';
+    for (NSInteger i = self.cursorPosition.x - 2; i >= 0; i--) {
+        if (self.ansiLines[self.cursorPosition.y - 1][i] != '\0') {
+            break;
         }
+
+        self.ansiLines[self.cursorPosition.y - 1][i] = ' ';
     }
 }
 
