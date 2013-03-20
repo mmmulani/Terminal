@@ -77,6 +77,8 @@ do {\
     CheckInputAgainstExpectedOutput(@"test\033[1C\n", @"test\n");
     CheckInputAgainstExpectedOutput(@"\033[2J\033[1;1HTest\033[2;1HAbc", @"Test\nAbc");
 
+    CheckInputAgainstExpectedOutput(@"\033[1;80H\n", @"\n");
+
     // Test that the terminal can a nearly full screen. By that we mean 23 full lines and a non-empty 24th line.
     // This tests how the terminal handles wrapping around at the end of a line.
     NSString *spaceFillingLine = [@"" stringByPaddingToLength:80 withString:@"1234567890" startingAtIndex:0];
