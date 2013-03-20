@@ -88,4 +88,15 @@ do {\
     CheckInputAgainstExpectedOutput(nearlyFullScreenWithNewlines, nearlyFullScreenWithNewlines);
 }
 
+- (void)testCursorForward;
+{
+    CheckInputAgainstExpectedOutput(@"a\033[0Cb", @"a b");
+    CheckInputAgainstExpectedOutput(@"a\033[1Cb", @"a b");
+    CheckInputAgainstExpectedOutput(@"a\033[2Cb", @"a  b");
+
+    // Test wrap-around.
+    CheckInputAgainstExpectedOutput(@"a\033[1000Cb", @"a                                                                              b");
+    CheckInputAgainstExpectedOutput(@"a\033[1000Cbc", @"a                                                                              bc");
+}
+
 @end

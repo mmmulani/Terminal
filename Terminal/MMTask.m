@@ -100,7 +100,8 @@
 
 - (void)ansiPrint:(unichar)character;
 {
-    // TODO: Add checks to see if the characters before need filling.
+    [self fillCurrentLineWithSpacesUpToCursor];
+
     self.ansiLines[self.cursorPosition.y - 1][self.cursorPosition.x - 1] = character;
     if (self.cursorPosition.x == TERM_WIDTH) {
         self.cursorPosition = MMPositionMake(1, self.cursorPosition.y + 1);
@@ -150,7 +151,8 @@
 
 - (void)moveCursorForward:(NSUInteger)spaces;
 {
-    // TODO: Handle wrap around/determine if it is necessary.
+    spaces = MAX(spaces, 1);
+
     self.cursorPosition = MMPositionMake(MIN(TERM_WIDTH, self.cursorPosition.x + spaces), self.cursorPosition.y);
 }
 
