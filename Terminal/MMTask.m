@@ -85,7 +85,6 @@
             }
 
             NSString *escapeSequence = [outputToHandle substringWithRange:NSMakeRange(i, firstAlphabeticIndex - i + 1)];
-            MMLog(@"Parsed escape sequence: %@", escapeSequence);
             [self handleEscapeSequence:escapeSequence];
             i = firstAlphabeticIndex;
         } else {
@@ -102,14 +101,11 @@
 - (void)ansiPrint:(unichar)character;
 {
     // TODO: Add checks to see if the characters before need filling.
+    self.ansiLines[self.cursorPosition.y - 1][self.cursorPosition.x - 1] = character;
     if (self.cursorPosition.x == TERM_WIDTH) {
         self.cursorPosition = MMPositionMake(1, self.cursorPosition.y + 1);
         [self checkIfExceededLastLine];
-
-        self.ansiLines[self.cursorPosition.y - 1][0] = character;
-        self.cursorPosition = MMPositionMake(2, self.cursorPosition.y);
     } else {
-        self.ansiLines[self.cursorPosition.y - 1][self.cursorPosition.x - 1] = character;
         self.cursorPosition = MMPositionMake(self.cursorPosition.x + 1, self.cursorPosition.y);
     }
 
@@ -287,11 +283,11 @@
     } else if (escapeCode == 'D') {
         [self moveCursorBackward:[items[0] intValue]];
     } else if (escapeCode == 'G') {
-        NSUInteger x = [items count] >= 1 ? [items[0] intValue] : 0;
+        NSUInteger x = [items count] >= 1 ? [items[0] intValue] : 1;
         [self moveCursorToX:x Y:self.cursorPosition.y];
     } else if (escapeCode == 'H' || escapeCode == 'f') {
-        NSUInteger x = [items count] >= 2 ? [items[1] intValue] : 0;
-        NSUInteger y = [items count] >= 1 ? [items[0] intValue] : 0;
+        NSUInteger x = [items count] >= 2 ? [items[1] intValue] : 1;
+        NSUInteger y = [items count] >= 1 ? [items[0] intValue] : 1;
         [self moveCursorToX:x Y:y];
     } else if (escapeCode == 'K') {
         [self clearUntilEndOfLine];

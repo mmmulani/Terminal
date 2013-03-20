@@ -64,6 +64,8 @@ do {\
     CheckInputAgainstExpectedOutput(@"test\033[0GA", @"Aest");
     CheckInputAgainstExpectedOutput(@"test\033[1GA", @"Aest");
     CheckInputAgainstExpectedOutput(@"test\033[2GA", @"tAst");
+    CheckInputAgainstExpectedOutput(@"\033[80Gt", @"                                                                               t");
+    CheckInputAgainstExpectedOutput(@"\033[80Gta", @"                                                                               ta");
     NSString *expectedOutput = [[@"test" stringByPaddingToLength:79 withString:@" " startingAtIndex:0] stringByAppendingString:@"A"];
     CheckInputAgainstExpectedOutput(@"test\033[90GA", expectedOutput);
 }
@@ -73,6 +75,15 @@ do {\
     CheckInputAgainstExpectedOutput(@"test\n", @"test\n");
     CheckInputAgainstExpectedOutputWithExpectedCursor(@"test\n\n", @"test\n\n", MMPositionMake(1, 3));
     CheckInputAgainstExpectedOutput(@"test\033[1C\n", @"test\n");
+    CheckInputAgainstExpectedOutput(@"\033[2J\033[1;1HTest\033[2;1HAbc", @"Test\nAbc");
+
+    // Test that the terminal can a nearly full screen. By that we mean 23 full lines and a non-empty 24th line.
+    // This tests how the terminal handles wrapping around at the end of a line.
+    NSString *spaceFillingLine = [@"" stringByPaddingToLength:80 withString:@"1234567890" startingAtIndex:0];
+    NSString *nearlyFullScreen = [[@"" stringByPaddingToLength:(80 * 23) withString:spaceFillingLine startingAtIndex:0] stringByAppendingString:@"1"];
+    CheckInputAgainstExpectedOutput(nearlyFullScreen, nearlyFullScreen);
+    NSString *nearlyFullScreenWithNewlines = [[@"" stringByPaddingToLength:(81 * 23) withString:[spaceFillingLine stringByAppendingString:@"\n"] startingAtIndex:0] stringByAppendingString:@"1"];
+    CheckInputAgainstExpectedOutput(nearlyFullScreenWithNewlines, nearlyFullScreenWithNewlines);
 }
 
 @end
