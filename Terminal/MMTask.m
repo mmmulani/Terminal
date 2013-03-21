@@ -100,17 +100,15 @@
 
 - (void)ansiPrint:(unichar)character;
 {
-    [self fillCurrentLineWithSpacesUpToCursor];
+    [self fillCurrentScreenWithSpacesUpToCursor];
 
-    self.ansiLines[self.cursorPosition.y - 1][self.cursorPosition.x - 1] = character;
-    if (self.cursorPosition.x == TERM_WIDTH) {
+    if (self.cursorPosition.x == TERM_WIDTH + 1) {
         self.cursorPosition = MMPositionMake(1, self.cursorPosition.y + 1);
         [self checkIfExceededLastLine];
-    } else {
-        self.cursorPosition = MMPositionMake(self.cursorPosition.x + 1, self.cursorPosition.y);
     }
 
-    [self checkIfExceededLastLine];
+    self.ansiLines[self.cursorPosition.y - 1][self.cursorPosition.x - 1] = character;
+    self.cursorPosition = MMPositionMake(self.cursorPosition.x + 1, self.cursorPosition.y);
 }
 
 - (void)addNewline;
@@ -128,13 +126,12 @@
 
 - (void)moveCursorUp:(NSUInteger)lines;
 {
-    NSInteger newXPosition = self.cursorPosition.x;
+    NSInteger newXPosition = MIN(self.cursorPosition.x, TERM_WIDTH);
     if (lines >= self.cursorPosition.y) {
         newXPosition = 1;
     }
 
     self.cursorPosition = MMPositionMake(newXPosition, MAX(1, self.cursorPosition.y - lines));
-    [self fillCurrentLineWithSpacesUpToCursor];
 }
 
 - (void)moveCursorDown:(NSUInteger)lines;
@@ -145,12 +142,12 @@
         self.cursorPosition = MMPositionMake(self.cursorPosition.x, self.cursorPosition.y + 1);
         [self checkIfExceededLastLine];
     }
-
-    [self fillCurrentLineWithSpacesUpToCursor];
 }
 
 - (void)moveCursorForward:(NSUInteger)spaces;
 {
+    // Unlike the control command to move the cursor backwards, this does not have to deal with wrapping around the margin.
+
     spaces = MAX(spaces, 1);
 
     self.cursorPosition = MMPositionMake(MIN(TERM_WIDTH, self.cursorPosition.x + spaces), self.cursorPosition.y);
@@ -168,7 +165,7 @@
         newPositionX -= distanceToMove;
         spaces -= distanceToMove;
 
-        if (newPositionY == 1 || self.ansiLines[newPositionY - 1][TERM_WIDTH] == '\n') {
+        if (newPositionY == 1 || self.ansiLines[newPositionY - 2][TERM_WIDTH] == '\n') {
             spaces = 0;
         } else if (spaces > 0) {
             newPositionY--;
@@ -200,10 +197,9 @@
 
         self.cursorPosition = MMPositionMake(x, y);
     }
-    [self fillCurrentLineWithSpacesUpToCursor];
 }
 
-- (void)fillCurrentLineWithSpacesUpToCursor;
+- (void)fillCurrentScreenWithSpacesUpToCursor;
 {
     for (NSInteger i = self.cursorPosition.x - 2; i >= 0; i--) {
         if (self.ansiLines[self.cursorPosition.y - 1][i] != '\0') {
@@ -211,6 +207,14 @@
         }
 
         self.ansiLines[self.cursorPosition.y - 1][i] = ' ';
+    }
+
+    for (NSInteger i = self.cursorPosition.y - 2; i >= 0; i--) {
+        if (self.ansiLines[i][TERM_WIDTH] != '\0' || self.ansiLines[i][TERM_WIDTH - 1] != '\0') {
+            break;
+        }
+
+        self.ansiLines[i][TERM_WIDTH] = '\n';
     }
 }
 

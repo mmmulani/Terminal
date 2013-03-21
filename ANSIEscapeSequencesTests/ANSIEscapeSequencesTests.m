@@ -55,7 +55,8 @@ do {\
 - (void)testClearingScreen;
 {
     CheckInputAgainstExpectedOutputWithExpectedCursor(@"\033[2J", @"", MMPositionMake(1,1));
-    CheckInputAgainstExpectedOutputWithExpectedCursor(@"_\033[2J", @" ", MMPositionMake(2,1));
+    CheckInputAgainstExpectedOutputWithExpectedCursor(@"_\033[2J", @"", MMPositionMake(2,1));
+    CheckInputAgainstExpectedOutputWithExpectedCursor(@"_\033[2Ja", @" a", MMPositionMake(3,1));
 }
 
 - (void)testCursorHorizontalAbsolute;
@@ -77,7 +78,6 @@ do {\
     CheckInputAgainstExpectedOutput(@"test\033[1C\n", @"test\n");
     CheckInputAgainstExpectedOutput(@"\033[2J\033[1;1HTest\033[2;1HAbc", @"Test\nAbc");
 
-    // Expected failure:
     CheckInputAgainstExpectedOutput(@"\033[1;80H\n", @"\n");
 
     // Test that the terminal can a nearly full screen. By that we mean 23 full lines and a non-empty 24th line.
@@ -86,7 +86,6 @@ do {\
     NSString *nearlyFullScreen = [[@"" stringByPaddingToLength:(80 * 23) withString:spaceFillingLine startingAtIndex:0] stringByAppendingString:@"1"];
     CheckInputAgainstExpectedOutput(nearlyFullScreen, nearlyFullScreen);
     NSString *nearlyFullScreenWithNewlines = [[@"" stringByPaddingToLength:(81 * 23) withString:[spaceFillingLine stringByAppendingString:@"\n"] startingAtIndex:0] stringByAppendingString:@"1"];
-    // Expected failure:
     CheckInputAgainstExpectedOutput(nearlyFullScreenWithNewlines, nearlyFullScreenWithNewlines);
 }
 
@@ -98,7 +97,6 @@ do {\
     CheckInputAgainstExpectedOutput(@"abcd\033[2De", @"abed");
 
     CheckInputAgainstExpectedOutput(@"\033[1;80Ha\033[1Db", @"                                                                               b");
-    // Expected failure until we support having the cursorPosition go past the right margin.
     CheckInputAgainstExpectedOutput(@"\033[1;80Ha\n\033[1Db", @"                                                                               a\nb");
 }
 
@@ -113,6 +111,11 @@ do {\
     CheckInputAgainstExpectedOutput(@"a\033[1000Cbc", @"a                                                                              bc");
 
     CheckInputAgainstExpectedOutput(@"\033[1;80Habcd\033[1;80H\033[2Cef", @"                                                                               efcd");
+}
+
+- (void)testCursorUp;
+{
+    CheckInputAgainstExpectedOutput(@"\033[3;80Ha\033[1Ab", @"\n                                                                               b\n                                                                               a");
 }
 
 - (void)testCursorPosition;
@@ -135,7 +138,6 @@ do {\
     CheckInputAgainstExpectedOutput(@"\033[2;1Ha", @"\na");
     CheckInputAgainstExpectedOutput(@"\033[2;2Ha", @"\n a");
 
-    // Expected failure until we support having the cursorPosition go past the right margin.
     CheckInputAgainstExpectedOutputWithExpectedCursor(@"\033[1;80Ha\n", @"                                                                               a\n", MMPositionMake(1, 2));
     CheckInputAgainstExpectedOutputWithExpectedCursor(@"\033[2;1H\n", @"\n\n", MMPositionMake(1, 3));
 }

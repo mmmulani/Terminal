@@ -28,6 +28,8 @@
     self.shellConnection = [NSConnection serviceConnectionWithName:ConnectionShellName rootObject:self];
     MMLog(@"Shell connection: %@", self.shellConnection);
 
+    [[NSFileManager defaultManager] changeCurrentDirectoryPath:NSHomeDirectory()];
+
     NSDictionary *environmentVariables =
     @{
       @"TERM": @"xterm-256color",
