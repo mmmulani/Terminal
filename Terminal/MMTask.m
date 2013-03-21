@@ -158,9 +158,25 @@
 
 - (void)moveCursorBackward:(NSUInteger)spaces;
 {
-    // TODO: Handle wrap around correctly.
+    spaces = MAX(spaces, 1);
 
-    self.cursorPosition = MMPositionMake(MAX(1, self.cursorPosition.x - spaces), self.cursorPosition.y);
+    NSInteger newPositionX = self.cursorPosition.x;
+    NSInteger newPositionY = self.cursorPosition.y;
+    while (spaces > 0) {
+        NSInteger distanceToMove = MIN(spaces, newPositionX - 1);
+
+        newPositionX -= distanceToMove;
+        spaces -= distanceToMove;
+
+        if (newPositionY == 1 || self.ansiLines[newPositionY - 1][TERM_WIDTH] == '\n') {
+            spaces = 0;
+        } else if (spaces > 0) {
+            newPositionY--;
+            newPositionX = TERM_WIDTH + 1;
+        }
+    }
+
+    self.cursorPosition = MMPositionMake(newPositionX, newPositionY);
 }
 
 - (void)moveCursorToX:(NSUInteger)x Y:(NSUInteger)y;
