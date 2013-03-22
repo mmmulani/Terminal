@@ -8,6 +8,7 @@
 
 #import "MMTask.h"
 #import "MMShared.h"
+#import "MMAppDelegate.h"
 
 @interface MMTask ()
 
@@ -339,6 +340,9 @@
         } else {
             MMLog(@"Unsupported clear mode with escape sequence: %@", escapeSequence);
         }
+    } else if (escapeCode == 'c') {
+        MMAppDelegate *appDelegate = (MMAppDelegate *)[[NSApplication sharedApplication] delegate];
+        [appDelegate handleTerminalInput:@"\033[?1;2c"];
     } else {
         MMLog(@"Unhandled escape sequence: %@", escapeSequence);
     }
