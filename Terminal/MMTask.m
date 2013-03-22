@@ -52,10 +52,19 @@
 
         unichar currentChar = [outputToHandle characterAtIndex:i];
         if (currentChar == '\n') {
+            if (verbosity) {
+                MMLog(@"Handling newline.");
+            }
             [self addNewline];
         } else if (currentChar == '\r') {
+            if (verbosity) {
+                MMLog(@"Handling carriage return.");
+            }
             [self moveCursorBackward:(self.cursorPosition.x - 1)];
         } else if (currentChar == '\b') {
+            if (verbosity) {
+                MMLog(@"Handling backspace.");
+            }
             [self moveCursorBackward:1];
         } else if (currentChar == '\033') { // Escape character.
             NSUInteger firstAlphabeticIndex = i;
@@ -85,6 +94,9 @@
             }
 
             NSString *escapeSequence = [outputToHandle substringWithRange:NSMakeRange(i, firstAlphabeticIndex - i + 1)];
+            if (verbosity) {
+                MMLog(@"Parsed escape sequence: %@", escapeSequence);
+            }
             [self handleEscapeSequence:escapeSequence];
             i = firstAlphabeticIndex;
         } else {
