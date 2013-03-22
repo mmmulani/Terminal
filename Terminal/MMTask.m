@@ -124,27 +124,30 @@
     self.cursorPosition = MMPositionMake(1, self.cursorPosition.y);
 }
 
-- (void)moveCursorUp:(NSUInteger)lines;
+- (void)moveCursorUp:(NSInteger)lines;
 {
-    NSInteger newXPosition = MIN(self.cursorPosition.x, TERM_WIDTH);
+    lines = MAX(lines, 1);
+    // Comparing it to TERM_WIDTH handles the case where the cursor is past the right margin (which occurs when we right a character at the right margin).
+    NSInteger newPositionX = MIN(self.cursorPosition.x, TERM_WIDTH);
     if (lines >= self.cursorPosition.y) {
-        newXPosition = 1;
+        newPositionX = 1;
     }
+    NSInteger newPositionY = MAX(1, self.cursorPosition.y - lines);
 
-    self.cursorPosition = MMPositionMake(newXPosition, MAX(1, self.cursorPosition.y - lines));
+    self.cursorPosition = MMPositionMake(newPositionX, newPositionY);
 }
 
-- (void)moveCursorDown:(NSUInteger)lines;
+- (void)moveCursorDown:(NSInteger)lines;
 {
-    for (; lines > 0; lines--) {
-        // TODO: Only add newlines when it is necessary.
-        self.ansiLines[self.cursorPosition.y - 1][TERM_WIDTH] = '\n';
-        self.cursorPosition = MMPositionMake(self.cursorPosition.x, self.cursorPosition.y + 1);
-        [self checkIfExceededLastLine];
-    }
+    lines = MAX(lines, 1);
+
+    NSInteger newPositionY = MIN(self.cursorPosition.y + lines, TERM_HEIGHT + 1);
+    self.cursorPosition = MMPositionMake(self.cursorPosition.x, newPositionY);
+
+    [self checkIfExceededLastLine];
 }
 
-- (void)moveCursorForward:(NSUInteger)spaces;
+- (void)moveCursorForward:(NSInteger)spaces;
 {
     // Unlike the control command to move the cursor backwards, this does not have to deal with wrapping around the margin.
 
@@ -153,7 +156,7 @@
     self.cursorPosition = MMPositionMake(MIN(TERM_WIDTH, self.cursorPosition.x + spaces), self.cursorPosition.y);
 }
 
-- (void)moveCursorBackward:(NSUInteger)spaces;
+- (void)moveCursorBackward:(NSInteger)spaces;
 {
     spaces = MAX(spaces, 1);
 

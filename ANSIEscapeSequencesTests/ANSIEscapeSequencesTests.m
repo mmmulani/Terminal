@@ -115,7 +115,16 @@ do {\
 
 - (void)testCursorUp;
 {
+    CheckInputAgainstExpectedOutputWithExpectedCursor(@"\033[1A", @"", MMPositionMake(1, 1));
+    CheckInputAgainstExpectedOutputWithExpectedCursor(@"a\n\033[1Ab", @"b\n", MMPositionMake(2, 1));
+    CheckInputAgainstExpectedOutputWithExpectedCursor(@"a\n\033[Ab", @"b\n", MMPositionMake(2, 1))    ;
+    CheckInputAgainstExpectedOutputWithExpectedCursor(@"a\n\033[0Ab", @"b\n", MMPositionMake(2, 1));
     CheckInputAgainstExpectedOutput(@"\033[3;80Ha\033[1Ab", @"\n                                                                               b\n                                                                               a");
+    CheckInputAgainstExpectedOutputWithExpectedCursor(@"\n\n\n\n\033[100A", @"\n\n\n\n", MMPositionMake(1, 1));
+    CheckInputAgainstExpectedOutputWithExpectedCursor(@"\nabc\033[1A", @"\nabc", MMPositionMake(4, 1));
+    CheckInputAgainstExpectedOutputWithExpectedCursor(@"\nabc\033[1Ad", @"   d\nabc", MMPositionMake(5, 1));
+
+    CheckInputAgainstExpectedOutputWithExpectedCursor(@"\033[10B\033[10A", @"", MMPositionMake(1, 1));
 }
 
 - (void)testCursorPosition;
