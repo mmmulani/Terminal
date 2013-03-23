@@ -272,6 +272,26 @@
     self.cursorPosition = MMPositionMake(1, self.cursorPosition.y);
 }
 
+- (void)deleteLinesFromCursor:(NSInteger)numberOfLinesToDelete;
+{
+    numberOfLinesToDelete = MIN(MAX(1, numberOfLinesToDelete), TERM_HEIGHT - self.cursorPosition.y + 1);
+
+    NSInteger numberOfLinesToMove = TERM_HEIGHT - (self.cursorPosition.y - 1) - numberOfLinesToDelete;
+    for (NSInteger i = 0; i < numberOfLinesToMove; i++) {
+        for (NSInteger j = 0; j <= TERM_WIDTH; j++) {
+            self.ansiLines[self.cursorPosition.y - 1  + i][j] = self.ansiLines[self.cursorPosition.y - 1 + i + numberOfLinesToDelete][j];
+        }
+    }
+
+    for (NSInteger i = 0; i < numberOfLinesToDelete; i++) {
+        for (NSInteger j = 0; j <= TERM_WIDTH; j++) {
+            self.ansiLines[self.cursorPosition.y - 1 + numberOfLinesToMove + i][j] = '\0';
+        }
+    }
+
+    self.cursorPosition = MMPositionMake(1, self.cursorPosition.y);
+}
+
 - (void)fillCurrentScreenWithSpacesUpToCursor;
 {
     for (NSInteger i = self.cursorPosition.x - 2; i >= 0; i--) {
@@ -399,6 +419,8 @@
         }
     } else if (escapeCode == 'L') {
         [self insertBlankLinesFromCursor:[items[0] intValue]];
+    } else if (escapeCode == 'M') {
+        [self deleteLinesFromCursor:[items[0] intValue]];
     } else if (escapeCode == 'P') {
         [self deleteCharacters:[items[0] intValue]];
     } else if (escapeCode == 'c') {

@@ -190,11 +190,18 @@ do {\
 
     CheckInputAgainstExpectedOutput(@"\033[24;1H12345678901234567890123456789012345678901234567890123456789012345678901234567890\033[10;1H\033[100L", @"\n\n\n\n\n\n\n\n\n\n");
     CheckInputAgainstExpectedOutput(@"\033[24;1Habc\033[23;1H\033[1Ld", [[@"" stringByPaddingToLength:22 withString:@"\n" startingAtIndex:0] stringByAppendingString:@"d\n"]);
+    CheckInputAgainstExpectedOutput(@"\033[24;1Ha\033[1Lb", [[@"" stringByPaddingToLength:23 withString:@"\n" startingAtIndex:0] stringByAppendingString:@"b"]);
 }
 
 - (void)testDeleteLine;
 {
-    
+    CheckInputAgainstExpectedOutput(@"\033[10M", @"");
+    CheckInputAgainstExpectedOutputWithExpectedCursor(@"abc\033[M", @"", MMPositionMake(1, 1));
+    CheckInputAgainstExpectedOutputWithExpectedCursor(@"abc\033[0M", @"", MMPositionMake(1, 1));
+    CheckInputAgainstExpectedOutputWithExpectedCursor(@"abc\033[1M", @"", MMPositionMake(1, 1));
+    CheckInputAgainstExpectedOutputWithExpectedCursor(@"abc\033[2M", @"", MMPositionMake(1, 1));
+    CheckInputAgainstExpectedOutputWithExpectedCursor(@"abc\ndef\033[1;1H\033[1M", @"def", MMPositionMake(1, 1));
+    CheckInputAgainstExpectedOutputWithExpectedCursor(@"\033[24;1Habc\033[1M", [@"" stringByPaddingToLength:23 withString:@"\n" startingAtIndex:0], MMPositionMake(1, 24));
 }
 
 @end
