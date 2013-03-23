@@ -215,6 +215,27 @@
     }
 }
 
+- (void)deleteCharacters:(NSUInteger)numberOfCharactersToDelete;
+{
+    numberOfCharactersToDelete = MAX(1, numberOfCharactersToDelete);
+    // Handle the case where the cursor is past the right margin.
+    NSInteger adjustedXPosition = self.cursorPosition.x;//MIN(self.cursorPosition.x, TERM_WIDTH);
+
+    NSInteger numberOfCharactersToMove = MAX(TERM_WIDTH - numberOfCharactersToDelete - (adjustedXPosition - 1), 0);
+    for (NSInteger i = 0; i < numberOfCharactersToMove; i++) {
+        self.ansiLines[self.cursorPosition.y - 1][adjustedXPosition - 1 + i] = self.ansiLines[self.cursorPosition.y - 1][adjustedXPosition - 1 + i + numberOfCharactersToDelete];
+    }
+    for (NSInteger i = adjustedXPosition + numberOfCharactersToMove - 1; i < TERM_WIDTH; i++) {
+        self.ansiLines[self.cursorPosition.y - 1][i] = '\0';
+    }
+
+    if (self.cursorPosition.y < TERM_HEIGHT &&
+        (self.ansiLines[self.cursorPosition.y][0] != '\0' ||
+         self.ansiLines[self.cursorPosition.y][TERM_WIDTH] != '\0')) {
+        self.ansiLines[self.cursorPosition.y - 1][TERM_WIDTH] = '\n';
+    }
+}
+
 - (void)fillCurrentScreenWithSpacesUpToCursor;
 {
     for (NSInteger i = self.cursorPosition.x - 2; i >= 0; i--) {
@@ -340,6 +361,8 @@
         } else {
             MMLog(@"Unsupported clear mode with escape sequence: %@", escapeSequence);
         }
+    } else if (escapeCode == 'P') {
+        [self deleteCharacters:[items[0] intValue]];
     } else if (escapeCode == 'c') {
         MMAppDelegate *appDelegate = (MMAppDelegate *)[[NSApplication sharedApplication] delegate];
         [appDelegate handleTerminalInput:@"\033[?1;2c"];

@@ -151,4 +151,21 @@ do {\
     CheckInputAgainstExpectedOutputWithExpectedCursor(@"\033[2;1H\n", @"\n\n", MMPositionMake(1, 3));
 }
 
+- (void)testDeleteCharacter;
+{
+    // When we are pushed past the right margin, deleting one character should still remove a character from that line.
+    CheckInputAgainstExpectedOutput(@"abc\033[1P", @"abc");
+    CheckInputAgainstExpectedOutput(@"abc\033[1D\033[P", @"ab");
+    CheckInputAgainstExpectedOutput(@"abc\033[1D\033[0P", @"ab");
+    CheckInputAgainstExpectedOutput(@"abc\033[1D\033[1P", @"ab");
+    CheckInputAgainstExpectedOutput(@"abc\033[1D\033[2P", @"ab");
+    CheckInputAgainstExpectedOutput(@"\033[1;80Ha\033[1P", @"                                                                               ");
+    CheckInputAgainstExpectedOutput(@"abc\033[1;1H\033[3P", @"");
+    CheckInputAgainstExpectedOutput(@"abcd\033[1;1H\033[3P", @"d");
+    // This escape sequence is handled differently by xterm, iTerm 2 and Terminal.app.
+    CheckInputAgainstExpectedOutput(@"\033[1;80Ha\033[1Pb", @"                                                                                b");
+    CheckInputAgainstExpectedOutput(@"12345678901234567890123456789012345678901234567890123456789012345678901234567890\033[1;1H\033[1P", @"2345678901234567890123456789012345678901234567890123456789012345678901234567890");
+    CheckInputAgainstExpectedOutput(@"12345678901234567890123456789012345678901234567890123456789012345678901234567890123\033[1;1H\033[1P", @"2345678901234567890123456789012345678901234567890123456789012345678901234567890\n123");
+}
+
 @end
