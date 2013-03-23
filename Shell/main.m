@@ -15,12 +15,7 @@ int main(int argc, const char * argv[])
 
     @autoreleasepool {
         
-        // insert code here...
-        MMLog(@"Hello, World!");
-
         [[MMShellMain sharedApplication] start];
-//        [[MMShellMain sharedApplication] executeCommand:@"/Users/mehdi/Development/Terminal/tmp/test"];
-//        [[MMShellMain sharedApplication] executeCommand:@"/bin/bash"];
 
     }
     return 0;

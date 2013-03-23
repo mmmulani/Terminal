@@ -2,10 +2,10 @@
 <archive type="com.apple.InterfaceBuilder3.Cocoa.XIB" version="8.00">
 	<data>
 		<int key="IBDocument.SystemTarget">1070</int>
-		<string key="IBDocument.SystemVersion">12C60</string>
+		<string key="IBDocument.SystemVersion">12D78</string>
 		<string key="IBDocument.InterfaceBuilderVersion">3084</string>
-		<string key="IBDocument.AppKitVersion">1187.34</string>
-		<string key="IBDocument.HIToolboxVersion">625.00</string>
+		<string key="IBDocument.AppKitVersion">1187.37</string>
+		<string key="IBDocument.HIToolboxVersion">626.00</string>
 		<object class="NSMutableDictionary" key="IBDocument.PluginVersions">
 			<string key="NS.key.0">com.apple.InterfaceBuilder.CocoaPlugin</string>
 			<string key="NS.object.0">3084</string>
@@ -117,25 +117,14 @@
 										<string key="NSFrameSize">{641, 14}</string>
 										<reference key="NSSuperview" ref="899074347"/>
 										<reference key="NSWindow"/>
-										<reference key="NSNextKeyView" ref="395303670"/>
+										<reference key="NSNextKeyView" ref="892590294"/>
 										<string key="NSReuseIdentifierKey">_NS:13</string>
 										<object class="NSTextContainer" key="NSTextContainer" id="722422776">
 											<object class="NSLayoutManager" key="NSLayoutManager">
 												<object class="NSTextStorage" key="NSTextStorage">
 													<object class="NSMutableString" key="NSString">
-														<characters key="NS.bytes">test</characters>
+														<characters key="NS.bytes"/>
 													</object>
-													<dictionary key="NSAttributes">
-														<object class="NSFont" key="NSFont">
-															<string key="NSName">LucidaGrande</string>
-															<double key="NSSize">11</double>
-															<int key="NSfFlags">2329</int>
-														</object>
-														<object class="NSMutableParagraphStyle" key="NSParagraphStyle">
-															<int key="NSAlignment">4</int>
-															<nil key="NSTabStops"/>
-														</object>
-													</dictionary>
 													<nil key="NSDelegate"/>
 												</object>
 												<array class="NSMutableArray" key="NSTextContainers">
@@ -225,7 +214,6 @@
 								<string key="NSFrame">{{626, 1}, {16, 14}}</string>
 								<reference key="NSSuperview" ref="920814991"/>
 								<reference key="NSWindow"/>
-								<reference key="NSNextKeyView"/>
 								<string key="NSReuseIdentifierKey">_NS:83</string>
 								<bool key="NSAllowsLogicalLayoutDirection">NO</bool>
 								<reference key="NSTarget" ref="920814991"/>
@@ -252,7 +240,7 @@
 						<string key="NSFrame">{{20, 20}, {643, 16}}</string>
 						<reference key="NSSuperview" ref="1005"/>
 						<reference key="NSWindow"/>
-						<reference key="NSNextKeyView" ref="892590294"/>
+						<reference key="NSNextKeyView" ref="899074347"/>
 						<string key="NSReuseIdentifierKey">_NS:9</string>
 						<int key="NSsFlags">133137</int>
 						<reference key="NSVScroller" ref="395303670"/>
