@@ -22,6 +22,13 @@ MMPositionMake(NSInteger x, NSInteger y)
     MMPosition p; p.x = x; p.y = y; return p;
 }
 
+typedef enum {
+    MMArrowKeyUp = 0,
+    MMArrowKeyDown,
+    MMArrowKeyRight,
+    MMArrowKeyLeft,
+} MMArrowKey;
+
 @interface MMTask : NSObject
 
 @property (strong) NSTextStorage *output;
@@ -34,6 +41,8 @@ MMPositionMake(NSInteger x, NSInteger y)
 @property MMPosition cursorPosition;
 @property (readonly) NSUInteger cursorPositionByCharacters;
 
+- (void)handleUserInput:(NSString *)input;
+- (void)handleCursorKeyInput:(MMArrowKey)arrowKey;
 - (void)handleCommandOutput:(NSString *)output withVerbosity:(BOOL)verbosity;
 
 @end

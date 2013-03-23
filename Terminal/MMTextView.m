@@ -13,8 +13,7 @@
 
 - (void)keyDown:(NSEvent *)theEvent;
 {
-    MMAppDelegate *appDelegate = (MMAppDelegate *)[[NSApplication sharedApplication] delegate];
-    [appDelegate handleTerminalInput:[theEvent characters]];
+    [self.delegate handleKeyPress:theEvent];
 }
 
 - (BOOL)shouldChangeTextInRange:(NSRange)affectedCharRange replacementString:(NSString *)replacementString;

@@ -8,6 +8,15 @@
 
 #import <Cocoa/Cocoa.h>
 
+@protocol MMTextViewDelegate <NSTextViewDelegate>
+@optional
+
+- (void)handleKeyPress:(NSEvent *)keyEvent;
+
+@end
+
 @interface MMTextView : NSTextView
+
+@property (assign) id<MMTextViewDelegate> delegate;
 
 @end

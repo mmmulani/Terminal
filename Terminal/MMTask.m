@@ -15,6 +15,7 @@
 @property unichar **ansiLines;
 @property NSString *unreadOutput;
 @property NSUInteger cursorPositionByCharacters;
+@property BOOL cursorKeyMode;
 
 @end
 
@@ -38,6 +39,24 @@
     self.cursorPosition = MMPositionMake(1, 1);
 
     return self;
+}
+
+- (void)handleUserInput:(NSString *)input;
+{
+    MMAppDelegate *appDelegate = (MMAppDelegate *)[[NSApplication sharedApplication] delegate];
+    [appDelegate handleTerminalInput:input];
+}
+
+- (void)handleCursorKeyInput:(MMArrowKey)arrowKey;
+{
+    NSString *arrowKeyString = @[@"A", @"B", @"C", @"D"][arrowKey];
+    NSString *inputToSend = nil;
+    if (self.cursorKeyMode) {
+        inputToSend = [@"\033O" stringByAppendingString:arrowKeyString];
+    } else {
+        inputToSend = [@"\033[" stringByAppendingString:arrowKeyString];
+    }
+    [self handleUserInput:inputToSend];
 }
 
 - (void)handleCommandOutput:(NSString *)output withVerbosity:(BOOL)verbosity;
@@ -424,10 +443,13 @@
     } else if (escapeCode == 'P') {
         [self deleteCharacters:[items[0] intValue]];
     } else if (escapeCode == 'c') {
-        MMAppDelegate *appDelegate = (MMAppDelegate *)[[NSApplication sharedApplication] delegate];
-        [appDelegate handleTerminalInput:@"\033[?1;2c"];
+        [self handleUserInput:@"\033[?1;2c"];
     } else if (escapeCode == 'd') {
         [self moveCursorToX:self.cursorPosition.x Y:[items[0] intValue]];
+    } else if ([escapeSequence isEqualToString:@"\033[?1h"]) {
+        self.cursorKeyMode = YES;
+    } else if ([escapeSequence isEqualToString:@"\033[?1l"]) {
+        self.cursorKeyMode = NO;
     } else {
         MMLog(@"Unhandled escape sequence: %@", escapeSequence);
     }

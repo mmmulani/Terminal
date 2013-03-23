@@ -7,6 +7,7 @@
 //
 
 #import "MMTaskCellViewController.h"
+#import "MMAppDelegate.h"
 
 @interface MMTaskCellViewController ()
 
@@ -91,6 +92,19 @@
 
         [self.task.output.string writeToURL:savePanel.URL atomically:YES encoding:NSUTF8StringEncoding error:NULL];
     }];
+}
+
+# pragma mark - MMTextViewDelegate methods
+
+- (void)handleKeyPress:(NSEvent *)keyEvent;
+{
+    // Special case the arrow keys.
+    if ([keyEvent keyCode] >= 123 && [keyEvent keyCode] <= 126) {
+        static MMArrowKey map[] = { MMArrowKeyLeft, MMArrowKeyRight, MMArrowKeyDown, MMArrowKeyUp };
+        [self.task handleCursorKeyInput:map[[keyEvent keyCode] - 123]];
+    } else {
+        [self.task handleUserInput:[keyEvent characters]];
+    }
 }
 
 @end

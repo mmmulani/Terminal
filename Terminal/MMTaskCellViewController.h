@@ -11,7 +11,7 @@
 #import "MMTask.h"
 #import "MMTextView.h"
 
-@interface MMTaskCellViewController : NSViewController
+@interface MMTaskCellViewController : NSViewController <MMTextViewDelegate>
 
 @property (strong) IBOutlet NSTextField *label;
 @property (strong) IBOutlet MMTextView *outputView;
@@ -23,5 +23,7 @@
 - (CGFloat)heightToFitAllOfOutput;
 - (void)updateWithANSIOutput;
 - (IBAction)saveTranscript:(id)sender;
+
+- (void)handleKeyPress:(NSEvent *)keyEvent;
 
 @end
