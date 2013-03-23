@@ -236,6 +236,42 @@
     }
 }
 
+- (void)insertBlankLinesFromCursor:(NSInteger)numberOfLinesToInsert;
+{
+    // TODO: Consider implementing this as manipulating the line pointers.
+
+    // Three step process:
+    // 1. Move the lines below the cursor down such that the |numberOfLinesToInsert| lines below the cursor are repeated.
+    // 2. Clear the |numberOfLinesToInsert| lines below the cursor.
+    // 3. Move the cursor to the correct spot.
+    numberOfLinesToInsert = MIN(MAX(1, numberOfLinesToInsert), TERM_HEIGHT - self.cursorPosition.y);
+
+    // Step 1.
+    NSInteger numberOfLinesToMove = TERM_HEIGHT - (self.cursorPosition.y - 1) - numberOfLinesToInsert;
+    for (NSInteger i = numberOfLinesToMove - 1; i >= 0; i--) {
+        for (NSInteger j = 0; j <= TERM_WIDTH; j++) {
+            self.ansiLines[self.cursorPosition.y - 1 + numberOfLinesToInsert + i][j] = self.ansiLines[self.cursorPosition.y - 1 + i][j];
+        }
+    }
+
+    // Step 2.
+    BOOL fillWithNewlines = NO;
+    if (self.cursorPosition.y + numberOfLinesToInsert < TERM_HEIGHT &&
+        (self.ansiLines[self.cursorPosition.y - 1 + numberOfLinesToInsert][0] != '\0' ||
+         self.ansiLines[self.cursorPosition.y - 1 + numberOfLinesToInsert][TERM_WIDTH] != '\0')) {
+        fillWithNewlines = YES;
+    }
+    for (NSInteger i = 0; i < numberOfLinesToInsert; i++) {
+        for (NSInteger j = 0; j < TERM_WIDTH; j++) {
+            self.ansiLines[self.cursorPosition.y - 1 + i][j] = '\0';
+        }
+        self.ansiLines[self.cursorPosition.y - 1 + i][TERM_WIDTH] = fillWithNewlines ? '\n' : '\0';
+    }
+
+    // Step 3.
+    self.cursorPosition = MMPositionMake(1, self.cursorPosition.y);
+}
+
 - (void)fillCurrentScreenWithSpacesUpToCursor;
 {
     for (NSInteger i = self.cursorPosition.x - 2; i >= 0; i--) {
@@ -361,11 +397,15 @@
         } else {
             MMLog(@"Unsupported clear mode with escape sequence: %@", escapeSequence);
         }
+    } else if (escapeCode == 'L') {
+        [self insertBlankLinesFromCursor:[items[0] intValue]];
     } else if (escapeCode == 'P') {
         [self deleteCharacters:[items[0] intValue]];
     } else if (escapeCode == 'c') {
         MMAppDelegate *appDelegate = (MMAppDelegate *)[[NSApplication sharedApplication] delegate];
         [appDelegate handleTerminalInput:@"\033[?1;2c"];
+    } else if (escapeCode == 'd') {
+        [self moveCursorToX:self.cursorPosition.x Y:[items[0] intValue]];
     } else {
         MMLog(@"Unhandled escape sequence: %@", escapeSequence);
     }

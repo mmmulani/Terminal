@@ -71,6 +71,15 @@ do {\
     CheckInputAgainstExpectedOutput(@"test\033[90GA", expectedOutput);
 }
 
+- (void)testCursorVerticalAbsolute;
+{
+    CheckInputAgainstExpectedOutput(@"\na\033[db", @" b\na");
+    CheckInputAgainstExpectedOutput(@"\na\033[0db", @" b\na");
+    CheckInputAgainstExpectedOutput(@"\na\033[1db", @" b\na");
+    CheckInputAgainstExpectedOutput(@"a\033[2db", @"a\n b");
+    CheckInputAgainstExpectedOutput(@"\033[100da", [[@"" stringByPaddingToLength:23 withString:@"\n" startingAtIndex:0] stringByAppendingFormat:@"a"]);
+}
+
 - (void)testNewlineHandling;
 {
     CheckInputAgainstExpectedOutput(@"test\n", @"test\n");
@@ -166,6 +175,26 @@ do {\
     CheckInputAgainstExpectedOutput(@"\033[1;80Ha\033[1Pb", @"                                                                                b");
     CheckInputAgainstExpectedOutput(@"12345678901234567890123456789012345678901234567890123456789012345678901234567890\033[1;1H\033[1P", @"2345678901234567890123456789012345678901234567890123456789012345678901234567890");
     CheckInputAgainstExpectedOutput(@"12345678901234567890123456789012345678901234567890123456789012345678901234567890123\033[1;1H\033[1P", @"2345678901234567890123456789012345678901234567890123456789012345678901234567890\n123");
+}
+
+- (void)testInsertLine;
+{
+    CheckInputAgainstExpectedOutput(@"a\nb\nc\nd\ne\033[1;1H\033[L", @"\na\nb\nc\nd\ne");
+    CheckInputAgainstExpectedOutput(@"a\nb\nc\nd\ne\033[1;1H\033[0L", @"\na\nb\nc\nd\ne");
+    CheckInputAgainstExpectedOutput(@"a\nb\nc\nd\ne\033[1;1H\033[1L", @"\na\nb\nc\nd\ne");
+    CheckInputAgainstExpectedOutput(@"a\nb\nc\nd\ne\033[1;1H\033[3L", @"\n\n\na\nb\nc\nd\ne");
+
+    // This tests whether the cursor is reset to the left margin after an insert line. (Section 4.11 of the vt220 manual states this behaviour.)
+    // Screen, iTerm 2 and Terminal.app do not implement this behaviour while xterm does.
+    CheckInputAgainstExpectedOutputWithExpectedCursor(@"abc\ndef\033[1;2H\033[1Lg", @"g\nabc\ndef", MMPositionMake(2, 1));
+
+    CheckInputAgainstExpectedOutput(@"\033[24;1H12345678901234567890123456789012345678901234567890123456789012345678901234567890\033[10;1H\033[100L", @"\n\n\n\n\n\n\n\n\n\n");
+    CheckInputAgainstExpectedOutput(@"\033[24;1Habc\033[23;1H\033[1Ld", [[@"" stringByPaddingToLength:22 withString:@"\n" startingAtIndex:0] stringByAppendingString:@"d\n"]);
+}
+
+- (void)testDeleteLine;
+{
+    
 }
 
 @end
