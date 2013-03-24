@@ -204,4 +204,11 @@ do {\
     CheckInputAgainstExpectedOutputWithExpectedCursor(@"\033[24;1Habc\033[1M", [@"" stringByPaddingToLength:23 withString:@"\n" startingAtIndex:0], MMPositionMake(1, 24));
 }
 
+- (void)testBeep;
+{
+    CheckInputAgainstExpectedOutputWithExpectedCursor(@"\a", @"", MMPositionMake(1, 1));
+    CheckInputAgainstExpectedOutputWithExpectedCursor(@"1\a", @"1", MMPositionMake(2, 1));
+    CheckInputAgainstExpectedOutput(@"\a\a\a\a\a\a\a\a\a", @"");
+}
+
 @end
