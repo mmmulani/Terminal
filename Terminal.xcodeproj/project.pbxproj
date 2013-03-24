@@ -19,15 +19,16 @@
 		918649BA16D5D1BD0024D9BE /* MMShared.m in Sources */ = {isa = PBXBuildFile; fileRef = 918649B116D5A6A80024D9BE /* MMShared.m */; };
 		918649BE16D69A700024D9BE /* MMDebugMessagesWindowController.m in Sources */ = {isa = PBXBuildFile; fileRef = 918649BC16D69A6F0024D9BE /* MMDebugMessagesWindowController.m */; };
 		918649BF16D69A700024D9BE /* MMDebugMessagesPanel.xib in Resources */ = {isa = PBXBuildFile; fileRef = 918649BD16D69A700024D9BE /* MMDebugMessagesPanel.xib */; };
+		919ABB4D16FF9D7200BB7108 /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = 919ABB4B16FF9D7200BB7108 /* InfoPlist.strings */; };
 		919BA9B116C875C40091CB1B /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 919BA9B016C875C40091CB1B /* Foundation.framework */; };
 		919BA9B416C875C40091CB1B /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 919BA9B316C875C40091CB1B /* main.m */; };
 		919BA9B816C875C40091CB1B /* Shell.1 in CopyFiles */ = {isa = PBXBuildFile; fileRef = 919BA9B716C875C40091CB1B /* Shell.1 */; };
 		919BA9C016C87E4F0091CB1B /* MMShellMain.m in Sources */ = {isa = PBXBuildFile; fileRef = 919BA9BF16C87E4F0091CB1B /* MMShellMain.m */; };
 		91B8050B16FBC70B00E6D9DF /* MMShellMain.m in Sources */ = {isa = PBXBuildFile; fileRef = 919BA9BF16C87E4F0091CB1B /* MMShellMain.m */; };
+		91B8050F16FF9BCD00E6D9DF /* ANSIEscapeSequencesTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 91B8050E16FF9BCD00E6D9DF /* ANSIEscapeSequencesTests.m */; };
+		91B8051216FF9BDA00E6D9DF /* TerminalTests-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = 91B8051016FF9BD900E6D9DF /* TerminalTests-Info.plist */; };
 		91F1747216ED0CF0002E2594 /* SenTestingKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 91F1747116ED0CF0002E2594 /* SenTestingKit.framework */; };
 		91F1747316ED0CF0002E2594 /* Cocoa.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 91F4EEBF16B8D63D00F65E91 /* Cocoa.framework */; };
-		91F1747916ED0CF0002E2594 /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = 91F1747716ED0CF0002E2594 /* InfoPlist.strings */; };
-		91F1747C16ED0CF0002E2594 /* ANSIEscapeSequencesTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 91F1747B16ED0CF0002E2594 /* ANSIEscapeSequencesTests.m */; };
 		91F4EEC016B8D63D00F65E91 /* Cocoa.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 91F4EEBF16B8D63D00F65E91 /* Cocoa.framework */; };
 		91F4EECA16B8D63D00F65E91 /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = 91F4EEC816B8D63D00F65E91 /* InfoPlist.strings */; };
 		91F4EECC16B8D63D00F65E91 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 91F4EECB16B8D63D00F65E91 /* main.m */; };
@@ -85,6 +86,7 @@
 		918649BB16D69A6F0024D9BE /* MMDebugMessagesWindowController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MMDebugMessagesWindowController.h; sourceTree = "<group>"; };
 		918649BC16D69A6F0024D9BE /* MMDebugMessagesWindowController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MMDebugMessagesWindowController.m; sourceTree = "<group>"; };
 		918649BD16D69A700024D9BE /* MMDebugMessagesPanel.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = MMDebugMessagesPanel.xib; sourceTree = "<group>"; };
+		919ABB4C16FF9D7200BB7108 /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = TerminalTests/en.lproj/InfoPlist.strings; sourceTree = "<group>"; };
 		919BA9AF16C875C40091CB1B /* Shell */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = Shell; sourceTree = BUILT_PRODUCTS_DIR; };
 		919BA9B016C875C40091CB1B /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = System/Library/Frameworks/Foundation.framework; sourceTree = SDKROOT; };
 		919BA9B316C875C40091CB1B /* main.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
@@ -92,13 +94,12 @@
 		919BA9B716C875C40091CB1B /* Shell.1 */ = {isa = PBXFileReference; lastKnownFileType = text.man; path = Shell.1; sourceTree = "<group>"; };
 		919BA9BE16C87E4F0091CB1B /* MMShellMain.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MMShellMain.h; sourceTree = "<group>"; };
 		919BA9BF16C87E4F0091CB1B /* MMShellMain.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MMShellMain.m; sourceTree = "<group>"; };
-		91F1747016ED0CF0002E2594 /* ANSIEscapeSequencesTests.octest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = ANSIEscapeSequencesTests.octest; sourceTree = BUILT_PRODUCTS_DIR; };
+		91B8050D16FF9BC400E6D9DF /* ANSIEscapeSequencesTests.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ANSIEscapeSequencesTests.h; path = TerminalTests/ANSIEscapeSequencesTests.h; sourceTree = SOURCE_ROOT; };
+		91B8050E16FF9BCD00E6D9DF /* ANSIEscapeSequencesTests.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = ANSIEscapeSequencesTests.m; path = TerminalTests/ANSIEscapeSequencesTests.m; sourceTree = SOURCE_ROOT; };
+		91B8051016FF9BD900E6D9DF /* TerminalTests-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; name = "TerminalTests-Info.plist"; path = "TerminalTests/TerminalTests-Info.plist"; sourceTree = SOURCE_ROOT; };
+		91B8051116FF9BD900E6D9DF /* TerminalTests-Prefix.pch */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = "TerminalTests-Prefix.pch"; path = "TerminalTests/TerminalTests-Prefix.pch"; sourceTree = SOURCE_ROOT; };
+		91F1747016ED0CF0002E2594 /* TerminalTests.octest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = TerminalTests.octest; sourceTree = BUILT_PRODUCTS_DIR; };
 		91F1747116ED0CF0002E2594 /* SenTestingKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SenTestingKit.framework; path = Library/Frameworks/SenTestingKit.framework; sourceTree = DEVELOPER_DIR; };
-		91F1747616ED0CF0002E2594 /* ANSIEscapeSequencesTests-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "ANSIEscapeSequencesTests-Info.plist"; sourceTree = "<group>"; };
-		91F1747816ED0CF0002E2594 /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/InfoPlist.strings; sourceTree = "<group>"; };
-		91F1747A16ED0CF0002E2594 /* ANSIEscapeSequencesTests.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ANSIEscapeSequencesTests.h; sourceTree = "<group>"; };
-		91F1747B16ED0CF0002E2594 /* ANSIEscapeSequencesTests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = ANSIEscapeSequencesTests.m; sourceTree = "<group>"; };
-		91F1747D16ED0CF0002E2594 /* ANSIEscapeSequencesTests-Prefix.pch */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "ANSIEscapeSequencesTests-Prefix.pch"; sourceTree = "<group>"; };
 		91F4EEBC16B8D63D00F65E91 /* Terminal.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Terminal.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		91F4EEBF16B8D63D00F65E91 /* Cocoa.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Cocoa.framework; path = System/Library/Frameworks/Cocoa.framework; sourceTree = SDKROOT; };
 		91F4EEC216B8D63D00F65E91 /* AppKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AppKit.framework; path = System/Library/Frameworks/AppKit.framework; sourceTree = SDKROOT; };
@@ -187,22 +188,22 @@
 			name = "Supporting Files";
 			sourceTree = "<group>";
 		};
-		91F1747416ED0CF0002E2594 /* ANSIEscapeSequencesTests */ = {
+		91F1747416ED0CF0002E2594 /* TerminalTests */ = {
 			isa = PBXGroup;
 			children = (
-				91F1747A16ED0CF0002E2594 /* ANSIEscapeSequencesTests.h */,
-				91F1747B16ED0CF0002E2594 /* ANSIEscapeSequencesTests.m */,
+				91B8050D16FF9BC400E6D9DF /* ANSIEscapeSequencesTests.h */,
+				91B8050E16FF9BCD00E6D9DF /* ANSIEscapeSequencesTests.m */,
 				91F1747516ED0CF0002E2594 /* Supporting Files */,
 			);
-			path = ANSIEscapeSequencesTests;
+			name = TerminalTests;
 			sourceTree = "<group>";
 		};
 		91F1747516ED0CF0002E2594 /* Supporting Files */ = {
 			isa = PBXGroup;
 			children = (
-				91F1747616ED0CF0002E2594 /* ANSIEscapeSequencesTests-Info.plist */,
-				91F1747716ED0CF0002E2594 /* InfoPlist.strings */,
-				91F1747D16ED0CF0002E2594 /* ANSIEscapeSequencesTests-Prefix.pch */,
+				91B8051016FF9BD900E6D9DF /* TerminalTests-Info.plist */,
+				919ABB4B16FF9D7200BB7108 /* InfoPlist.strings */,
+				91B8051116FF9BD900E6D9DF /* TerminalTests-Prefix.pch */,
 			);
 			name = "Supporting Files";
 			sourceTree = "<group>";
@@ -213,7 +214,7 @@
 				9103CD7116F7EE0900506F8B /* QuartzCore.framework */,
 				91F4EEC516B8D63D00F65E91 /* Terminal */,
 				919BA9B216C875C40091CB1B /* Shell */,
-				91F1747416ED0CF0002E2594 /* ANSIEscapeSequencesTests */,
+				91F1747416ED0CF0002E2594 /* TerminalTests */,
 				91F4EEBE16B8D63D00F65E91 /* Frameworks */,
 				91F4EEBD16B8D63D00F65E91 /* Products */,
 				918649B716D5D16F0024D9BE /* Shared */,
@@ -225,7 +226,7 @@
 			children = (
 				91F4EEBC16B8D63D00F65E91 /* Terminal.app */,
 				919BA9AF16C875C40091CB1B /* Shell */,
-				91F1747016ED0CF0002E2594 /* ANSIEscapeSequencesTests.octest */,
+				91F1747016ED0CF0002E2594 /* TerminalTests.octest */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -304,9 +305,9 @@
 			productReference = 919BA9AF16C875C40091CB1B /* Shell */;
 			productType = "com.apple.product-type.tool";
 		};
-		91F1746F16ED0CF0002E2594 /* ANSIEscapeSequencesTests */ = {
+		91F1746F16ED0CF0002E2594 /* TerminalTests */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = 91F1748016ED0CF0002E2594 /* Build configuration list for PBXNativeTarget "ANSIEscapeSequencesTests" */;
+			buildConfigurationList = 91F1748016ED0CF0002E2594 /* Build configuration list for PBXNativeTarget "TerminalTests" */;
 			buildPhases = (
 				91F1746B16ED0CF0002E2594 /* Sources */,
 				91F1746C16ED0CF0002E2594 /* Frameworks */,
@@ -318,9 +319,9 @@
 			dependencies = (
 				91F1748216ED0F31002E2594 /* PBXTargetDependency */,
 			);
-			name = ANSIEscapeSequencesTests;
-			productName = ANSIEscapeSequencesTests;
-			productReference = 91F1747016ED0CF0002E2594 /* ANSIEscapeSequencesTests.octest */;
+			name = TerminalTests;
+			productName = TerminalTests;
+			productReference = 91F1747016ED0CF0002E2594 /* TerminalTests.octest */;
 			productType = "com.apple.product-type.bundle";
 		};
 		91F4EEBB16B8D63D00F65E91 /* Terminal */ = {
@@ -365,7 +366,7 @@
 			targets = (
 				91F4EEBB16B8D63D00F65E91 /* Terminal */,
 				919BA9AE16C875C40091CB1B /* Shell */,
-				91F1746F16ED0CF0002E2594 /* ANSIEscapeSequencesTests */,
+				91F1746F16ED0CF0002E2594 /* TerminalTests */,
 			);
 		};
 /* End PBXProject section */
@@ -375,7 +376,8 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				91F1747916ED0CF0002E2594 /* InfoPlist.strings in Resources */,
+				91B8051216FF9BDA00E6D9DF /* TerminalTests-Info.plist in Resources */,
+				919ABB4D16FF9D7200BB7108 /* InfoPlist.strings in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -425,8 +427,8 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				91F1747C16ED0CF0002E2594 /* ANSIEscapeSequencesTests.m in Sources */,
 				91B8050B16FBC70B00E6D9DF /* MMShellMain.m in Sources */,
+				91B8050F16FF9BCD00E6D9DF /* ANSIEscapeSequencesTests.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -462,10 +464,10 @@
 /* End PBXTargetDependency section */
 
 /* Begin PBXVariantGroup section */
-		91F1747716ED0CF0002E2594 /* InfoPlist.strings */ = {
+		919ABB4B16FF9D7200BB7108 /* InfoPlist.strings */ = {
 			isa = PBXVariantGroup;
 			children = (
-				91F1747816ED0CF0002E2594 /* en */,
+				919ABB4C16FF9D7200BB7108 /* en */,
 			);
 			name = InfoPlist.strings;
 			sourceTree = "<group>";
@@ -522,8 +524,8 @@
 				COMBINE_HIDPI_IMAGES = YES;
 				FRAMEWORK_SEARCH_PATHS = "\"$(DEVELOPER_LIBRARY_DIR)/Frameworks\"";
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
-				GCC_PREFIX_HEADER = "ANSIEscapeSequencesTests/ANSIEscapeSequencesTests-Prefix.pch";
-				INFOPLIST_FILE = "ANSIEscapeSequencesTests/ANSIEscapeSequencesTests-Info.plist";
+				GCC_PREFIX_HEADER = "TerminalTests/TerminalTests-Prefix.pch";
+				INFOPLIST_FILE = "TerminalTests/TerminalTests-Info.plist";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				TEST_HOST = "$(BUNDLE_LOADER)";
 				WRAPPER_EXTENSION = octest;
@@ -537,8 +539,8 @@
 				COMBINE_HIDPI_IMAGES = YES;
 				FRAMEWORK_SEARCH_PATHS = "\"$(DEVELOPER_LIBRARY_DIR)/Frameworks\"";
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
-				GCC_PREFIX_HEADER = "ANSIEscapeSequencesTests/ANSIEscapeSequencesTests-Prefix.pch";
-				INFOPLIST_FILE = "ANSIEscapeSequencesTests/ANSIEscapeSequencesTests-Info.plist";
+				GCC_PREFIX_HEADER = "TerminalTests/TerminalTests-Prefix.pch";
+				INFOPLIST_FILE = "TerminalTests/TerminalTests-Info.plist";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				TEST_HOST = "$(BUNDLE_LOADER)";
 				WRAPPER_EXTENSION = octest;
@@ -640,7 +642,7 @@
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
-		91F1748016ED0CF0002E2594 /* Build configuration list for PBXNativeTarget "ANSIEscapeSequencesTests" */ = {
+		91F1748016ED0CF0002E2594 /* Build configuration list for PBXNativeTarget "TerminalTests" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				91F1747E16ED0CF0002E2594 /* Debug */,
