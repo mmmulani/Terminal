@@ -382,7 +382,7 @@
             }
 
             if (self.cursorPosition.y - 1 > i ||
-                (self.cursorPosition.y - 1 == i && self.cursorPosition.x > j)) {
+                (self.cursorPosition.y - 1 == i && self.cursorPosition.x - 1 > j)) {
                 cursorPosition++;
             }
             [display appendAttributedString:[[NSAttributedString alloc] initWithString:[NSString stringWithCharacters:&self.ansiLines[i][j] length:1]]];

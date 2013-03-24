@@ -20,6 +20,7 @@
 		918649BE16D69A700024D9BE /* MMDebugMessagesWindowController.m in Sources */ = {isa = PBXBuildFile; fileRef = 918649BC16D69A6F0024D9BE /* MMDebugMessagesWindowController.m */; };
 		918649BF16D69A700024D9BE /* MMDebugMessagesPanel.xib in Resources */ = {isa = PBXBuildFile; fileRef = 918649BD16D69A700024D9BE /* MMDebugMessagesPanel.xib */; };
 		919ABB4D16FF9D7200BB7108 /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = 919ABB4B16FF9D7200BB7108 /* InfoPlist.strings */; };
+		919ABB5016FFA22900BB7108 /* MMTaskTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 919ABB4F16FFA22900BB7108 /* MMTaskTests.m */; };
 		919BA9B116C875C40091CB1B /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 919BA9B016C875C40091CB1B /* Foundation.framework */; };
 		919BA9B416C875C40091CB1B /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 919BA9B316C875C40091CB1B /* main.m */; };
 		919BA9B816C875C40091CB1B /* Shell.1 in CopyFiles */ = {isa = PBXBuildFile; fileRef = 919BA9B716C875C40091CB1B /* Shell.1 */; };
@@ -87,6 +88,8 @@
 		918649BC16D69A6F0024D9BE /* MMDebugMessagesWindowController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MMDebugMessagesWindowController.m; sourceTree = "<group>"; };
 		918649BD16D69A700024D9BE /* MMDebugMessagesPanel.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = MMDebugMessagesPanel.xib; sourceTree = "<group>"; };
 		919ABB4C16FF9D7200BB7108 /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = TerminalTests/en.lproj/InfoPlist.strings; sourceTree = "<group>"; };
+		919ABB4E16FFA22900BB7108 /* MMTaskTests.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = MMTaskTests.h; path = TerminalTests/MMTaskTests.h; sourceTree = "<group>"; };
+		919ABB4F16FFA22900BB7108 /* MMTaskTests.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = MMTaskTests.m; path = TerminalTests/MMTaskTests.m; sourceTree = "<group>"; };
 		919BA9AF16C875C40091CB1B /* Shell */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = Shell; sourceTree = BUILT_PRODUCTS_DIR; };
 		919BA9B016C875C40091CB1B /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = System/Library/Frameworks/Foundation.framework; sourceTree = SDKROOT; };
 		919BA9B316C875C40091CB1B /* main.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
@@ -194,6 +197,8 @@
 				91B8050D16FF9BC400E6D9DF /* ANSIEscapeSequencesTests.h */,
 				91B8050E16FF9BCD00E6D9DF /* ANSIEscapeSequencesTests.m */,
 				91F1747516ED0CF0002E2594 /* Supporting Files */,
+				919ABB4E16FFA22900BB7108 /* MMTaskTests.h */,
+				919ABB4F16FFA22900BB7108 /* MMTaskTests.m */,
 			);
 			name = TerminalTests;
 			sourceTree = "<group>";
@@ -429,6 +434,7 @@
 			files = (
 				91B8050B16FBC70B00E6D9DF /* MMShellMain.m in Sources */,
 				91B8050F16FF9BCD00E6D9DF /* ANSIEscapeSequencesTests.m in Sources */,
+				919ABB5016FFA22900BB7108 /* MMTaskTests.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
