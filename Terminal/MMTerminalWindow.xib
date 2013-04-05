@@ -66,7 +66,7 @@
 											<reference key="NSNextResponder" ref="916828094"/>
 											<int key="NSvFlags">256</int>
 											<array class="NSMutableArray" key="NSSubviews"/>
-											<string key="NSFrameSize">{682, 383}</string>
+											<string key="NSFrameSize">{682, 390}</string>
 											<reference key="NSSuperview" ref="916828094"/>
 											<reference key="NSWindow"/>
 											<reference key="NSNextKeyView" ref="397365095"/>
@@ -168,7 +168,7 @@
 											<int key="NSTableViewGroupRowStyle">1</int>
 										</object>
 									</array>
-									<string key="NSFrame">{{1, 1}, {682, 383}}</string>
+									<string key="NSFrame">{{1, 1}, {682, 390}}</string>
 									<reference key="NSSuperview" ref="1037746424"/>
 									<reference key="NSWindow"/>
 									<reference key="NSNextKeyView" ref="163722487"/>
@@ -196,6 +196,7 @@
 									<string key="NSFrame">{{1, 119}, {223, 15}}</string>
 									<reference key="NSSuperview" ref="1037746424"/>
 									<reference key="NSWindow"/>
+									<reference key="NSNextKeyView" ref="179608585"/>
 									<string key="NSReuseIdentifierKey">_NS:60</string>
 									<bool key="NSAllowsLogicalLayoutDirection">NO</bool>
 									<int key="NSsFlags">1</int>
@@ -204,7 +205,7 @@
 									<double key="NSPercent">0.99797160243407712</double>
 								</object>
 							</array>
-							<string key="NSFrame">{{0, 59}, {684, 385}}</string>
+							<string key="NSFrame">{{0, 52}, {684, 392}}</string>
 							<reference key="NSSuperview" ref="1006"/>
 							<reference key="NSWindow"/>
 							<reference key="NSNextKeyView" ref="916828094"/>
@@ -225,7 +226,7 @@
 								<object class="NSTextField" id="641956699">
 									<reference key="NSNextResponder" ref="179608585"/>
 									<int key="NSvFlags">268</int>
-									<string key="NSFrame">{{23, 50}, {680, 17}}</string>
+									<string key="NSFrame">{{23, 30}, {680, 17}}</string>
 									<reference key="NSSuperview" ref="179608585"/>
 									<reference key="NSWindow"/>
 									<reference key="NSNextKeyView" ref="432120694"/>
@@ -251,10 +252,10 @@
 								<object class="NSTextField" id="432120694">
 									<reference key="NSNextResponder" ref="179608585"/>
 									<int key="NSvFlags">268</int>
-									<string key="NSFrame">{{20, 20}, {682, 22}}</string>
+									<string key="NSFrame">{{20, 0}, {682, 22}}</string>
 									<reference key="NSSuperview" ref="179608585"/>
 									<reference key="NSWindow"/>
-									<reference key="NSNextKeyView" ref="1037746424"/>
+									<reference key="NSNextKeyView"/>
 									<string key="NSReuseIdentifierKey">_NS:9</string>
 									<bool key="NSEnabled">YES</bool>
 									<object class="NSTextFieldCell" key="NSCell" id="121046635">
@@ -281,7 +282,7 @@
 									<bool key="NSAllowsLogicalLayoutDirection">NO</bool>
 								</object>
 							</array>
-							<string key="NSFrame">{{-20, -20}, {724, 87}}</string>
+							<string key="NSFrame">{{-20, 0}, {724, 52}}</string>
 							<reference key="NSSuperview" ref="1006"/>
 							<reference key="NSWindow"/>
 							<reference key="NSNextKeyView" ref="641956699"/>
@@ -292,7 +293,7 @@
 					<string key="NSFrameSize">{683, 443}</string>
 					<reference key="NSSuperview"/>
 					<reference key="NSWindow"/>
-					<reference key="NSNextKeyView" ref="179608585"/>
+					<reference key="NSNextKeyView" ref="1037746424"/>
 				</object>
 				<string key="NSScreenRect">{{0, 0}, {1680, 1028}}</string>
 				<string key="NSMaxSize">{10000000000000, 10000000000000}</string>
@@ -345,7 +346,7 @@
 							<int key="secondAttribute">4</int>
 							<float key="multiplier">1</float>
 							<object class="IBLayoutConstant" key="constant">
-								<double key="value">-20</double>
+								<double key="value">0.0</double>
 							</object>
 							<float key="priority">1000</float>
 							<reference key="containingView" ref="1006"/>
@@ -478,7 +479,7 @@
 								<int key="secondAttribute">4</int>
 								<float key="multiplier">1</float>
 								<object class="IBLayoutConstant" key="constant">
-									<double key="value">-8</double>
+									<double key="value">0.0</double>
 								</object>
 								<float key="priority">1000</float>
 								<reference key="containingView" ref="1006"/>
@@ -745,8 +746,8 @@
 								<reference key="secondItem" ref="432120694"/>
 								<int key="secondAttribute">4</int>
 								<float key="multiplier">1</float>
-								<object class="IBNSLayoutSymbolicConstant" key="constant">
-									<double key="value">20</double>
+								<object class="IBLayoutConstant" key="constant">
+									<double key="value">0.0</double>
 								</object>
 								<float key="priority">1000</float>
 								<reference key="containingView" ref="179608585"/>
@@ -809,8 +810,8 @@
 								<reference key="secondItem" ref="179608585"/>
 								<int key="secondAttribute">3</int>
 								<float key="multiplier">1</float>
-								<object class="IBNSLayoutSymbolicConstant" key="constant">
-									<double key="value">20</double>
+								<object class="IBLayoutConstant" key="constant">
+									<double key="value">5</double>
 								</object>
 								<float key="priority">1000</float>
 								<reference key="containingView" ref="179608585"/>
@@ -994,7 +995,7 @@
 			<nil key="activeLocalization"/>
 			<dictionary class="NSMutableDictionary" key="localizations"/>
 			<nil key="sourceID"/>
-			<int key="maxID">319</int>
+			<int key="maxID">343</int>
 		</object>
 		<object class="IBClassDescriber" key="IBDocument.Classes">
 			<array class="NSMutableArray" key="referencedPartialClassDescriptions">
