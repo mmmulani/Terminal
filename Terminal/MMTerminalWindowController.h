@@ -14,6 +14,7 @@
 
 @property (strong) IBOutlet NSTextField *commandInput;
 @property (strong) IBOutlet NSTableView *tableView;
+@property (strong) IBOutlet NSCollectionView *directoryCollectionView;
 @property (strong) IBOutlet NSTextField *currentDirectoryLabel;
 @property (strong) IBOutlet NSView *commandControlsView;
 @property (strong) IBOutlet NSLayoutConstraint *commandControlsLayoutConstraint;

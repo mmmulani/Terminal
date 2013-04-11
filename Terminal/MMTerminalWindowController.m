@@ -96,6 +96,18 @@
 {
     self.currentDirectory = newPath;
     [self.currentDirectoryLabel setStringValue:[NSString stringWithFormat:@"Current directory: %@", newPath]];
+
+    NSArray *fileURLs = [[NSFileManager defaultManager] contentsOfDirectoryAtURL:[NSURL URLWithString:newPath] includingPropertiesForKeys:@[NSURLCustomIconKey, NSURLEffectiveIconKey, NSURLFileResourceTypeKey, NSURLNameKey] options:NSDirectoryEnumerationSkipsHiddenFiles error:nil];
+    NSMutableArray *directoryCollectionViewData = [NSMutableArray arrayWithCapacity:[fileURLs count]];
+    for (NSURL *file in fileURLs) {
+        NSDictionary *fileResources = [file resourceValuesForKeys:@[NSURLCustomIconKey, NSURLEffectiveIconKey, NSURLFileResourceTypeKey, NSURLNameKey] error:nil];
+        [directoryCollectionViewData addObject:
+         @{
+         @"name": fileResources[NSURLNameKey],
+         @"icon": fileResources[NSURLEffectiveIconKey],
+         }];
+    }
+    self.directoryCollectionView.content = directoryCollectionViewData;
 }
 
 # pragma mark - NSTextFieldDelegate
