@@ -97,7 +97,7 @@
     self.currentDirectory = newPath;
     [self.currentDirectoryLabel setStringValue:[NSString stringWithFormat:@"Current directory: %@", newPath]];
 
-    NSArray *fileURLs = [[NSFileManager defaultManager] contentsOfDirectoryAtURL:[NSURL URLWithString:newPath] includingPropertiesForKeys:@[NSURLCustomIconKey, NSURLEffectiveIconKey, NSURLFileResourceTypeKey, NSURLNameKey] options:NSDirectoryEnumerationSkipsHiddenFiles error:nil];
+    NSArray *fileURLs = [[NSFileManager defaultManager] contentsOfDirectoryAtURL:[NSURL fileURLWithPath:newPath] includingPropertiesForKeys:@[NSURLCustomIconKey, NSURLEffectiveIconKey, NSURLFileResourceTypeKey, NSURLNameKey] options:NSDirectoryEnumerationSkipsHiddenFiles error:nil];
     NSMutableArray *directoryCollectionViewData = [NSMutableArray arrayWithCapacity:[fileURLs count]];
     for (NSURL *file in fileURLs) {
         NSDictionary *fileResources = [file resourceValuesForKeys:@[NSURLCustomIconKey, NSURLEffectiveIconKey, NSURLFileResourceTypeKey, NSURLNameKey] error:nil];
@@ -107,7 +107,32 @@
          @"icon": fileResources[NSURLEffectiveIconKey],
          }];
     }
-    self.directoryCollectionView.content = directoryCollectionViewData;
+
+    // XXX: This is a hack to arrange the items vertically first, then horizontally in the NSCollectionView.
+    NSUInteger numberOfRows = 4;
+
+    NSUInteger numberOfColumns = ceil((double)[directoryCollectionViewData count] / (double)numberOfRows);
+    [self.directoryCollectionView setMaxNumberOfColumns:numberOfColumns];
+    [self.directoryCollectionView setMaxNumberOfRows:4];
+    NSUInteger numberOfItemsNecessaryForDrawing = numberOfColumns * numberOfRows;
+    NSMutableArray *layoutedCollectionViewData = [NSMutableArray arrayWithCapacity:numberOfItemsNecessaryForDrawing];
+
+    for (NSUInteger i = 0; i < numberOfItemsNecessaryForDrawing; i++) {
+        layoutedCollectionViewData[i] = @{};
+    }
+
+    for (NSUInteger i = 0; i < numberOfItemsNecessaryForDrawing; i++) {
+        NSUInteger newRow = i % numberOfRows;
+        NSUInteger newColumn = i / numberOfRows;
+
+        NSUInteger newIndex = newRow * numberOfColumns + newColumn;
+
+        if (i < [directoryCollectionViewData count]) {
+            layoutedCollectionViewData[newIndex] = directoryCollectionViewData[i];
+        }
+    }
+
+    self.directoryCollectionView.content = layoutedCollectionViewData;
 }
 
 # pragma mark - NSTextFieldDelegate
