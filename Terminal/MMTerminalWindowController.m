@@ -128,13 +128,12 @@
         MMTaskCellViewController *lastController = self.taskViewControllers.lastObject;
         [self.window makeFirstResponder:lastController.outputView];
 
-        CGFloat controlsHeight = self.commandControlsView.frame.size.height;
         CABasicAnimation *animation = [CABasicAnimation animation];
         animation.timingFunction = [CAMediaTimingFunction functionWithName:kCAMediaTimingFunctionDefault];
         animation.duration = 0.5;
         self.commandControlsLayoutConstraint.animations = @{@"constant": animation};
 
-        [self.commandControlsLayoutConstraint.animator setConstant:(-1 * controlsHeight)];
+        [self.commandControlsLayoutConstraint.animator setConstant:20.0];
 
         return YES;
     } else if (commandSelector == @selector(scrollPageUp:)) {
