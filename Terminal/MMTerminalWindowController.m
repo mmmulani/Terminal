@@ -113,7 +113,7 @@
 
     NSUInteger numberOfColumns = ceil((double)[directoryCollectionViewData count] / (double)numberOfRows);
     [self.directoryCollectionView setMaxNumberOfColumns:numberOfColumns];
-    [self.directoryCollectionView setMaxNumberOfRows:4];
+    [self.directoryCollectionView setMaxNumberOfRows:numberOfRows];
     NSUInteger numberOfItemsNecessaryForDrawing = numberOfColumns * numberOfRows;
     NSMutableArray *layoutedCollectionViewData = [NSMutableArray arrayWithCapacity:numberOfItemsNecessaryForDrawing];
 
