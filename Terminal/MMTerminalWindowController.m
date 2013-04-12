@@ -157,7 +157,7 @@
         [appDelegate runCommand:newTask.command];
 
         [textView setString:@""];
-        self.commandHistoryIndex = 0;
+        self.commandHistoryIndex = self.tasks.count;
 
         [self.tableView insertRowsAtIndexes:[NSIndexSet indexSetWithIndex:(self.tasks.count - 1)] withAnimation:NSTableViewAnimationEffectNone];
         [self.tableView scrollToEndOfDocument:self];
@@ -176,13 +176,33 @@
     } else if (commandSelector == @selector(scrollPageUp:)) {
         if (self.tasks.count > 0) {
             if (self.commandHistoryIndex == 0) {
-                self.commandHistoryIndex = self.tasks.count - 1;
+                self.commandHistoryIndex = self.tasks.count;
             } else {
                 self.commandHistoryIndex--;
             }
-            [textView setString:[(MMTask *)self.tasks[self.commandHistoryIndex] command]];
+            NSString *commandToFill = self.commandHistoryIndex == self.tasks.count ? @"" : [(MMTask *)self.tasks[self.commandHistoryIndex] command];
+
+            textView.string = commandToFill;
             return YES;
         }
+    } else if (commandSelector == @selector(scrollPageDown:)) {
+        if (self.tasks.count > 0) {
+            if (self.commandHistoryIndex == self.tasks.count) {
+                self.commandHistoryIndex = 0;
+            } else {
+                self.commandHistoryIndex++;
+            }
+
+            // When the user scrolls down past the last ran command, we fill the textbox with what they were typing.
+            // TODO: Actually save what they were typing before they started scrolling.
+            NSString *commandToFill = self.commandHistoryIndex == self.tasks.count ? @"" : [(MMTask *)self.tasks[self.commandHistoryIndex] command];
+
+            textView.string = commandToFill;
+            return YES;
+        }
+    } else if (commandSelector == @selector(insertTab:)) {
+        [textView complete:self];
+        return YES;
     }
 
     return NO;
