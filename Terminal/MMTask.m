@@ -87,9 +87,7 @@
             }
             [self moveCursorBackward:1];
         } else if (currentChar == '\a') { // Bell (beep).
-#ifndef TEST_TARGET
             NSBeep();
-#endif
             MMLog(@"Beeping.");
         } else if (currentChar == '\033') { // Escape character.
             NSUInteger firstAlphabeticIndex = i;
