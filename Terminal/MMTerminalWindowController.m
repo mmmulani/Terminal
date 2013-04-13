@@ -86,7 +86,7 @@
 
     CABasicAnimation *animation = [CABasicAnimation animation];
     animation.timingFunction = [CAMediaTimingFunction functionWithName:kCAMediaTimingFunctionDefault];
-    animation.duration = 0.5;
+    animation.duration = 0.25;
     self.commandControlsLayoutConstraint.animations = @{@"constant": animation};
 
     [self.commandControlsLayoutConstraint.animator setConstant:self.originalCommandControlsLayoutConstraintConstant];
@@ -167,7 +167,7 @@
 
         CABasicAnimation *animation = [CABasicAnimation animation];
         animation.timingFunction = [CAMediaTimingFunction functionWithName:kCAMediaTimingFunctionDefault];
-        animation.duration = 0.5;
+        animation.duration = 0.25;
         self.commandControlsLayoutConstraint.animations = @{@"constant": animation};
 
         [self.commandControlsLayoutConstraint.animator setConstant:20.0];
@@ -211,6 +211,7 @@
 - (NSArray *)control:(NSControl *)control textView:(NSTextView *)textView completions:(NSArray *)words forPartialWordRange:(NSRange)charRange indexOfSelectedItem:(NSInteger *)index;
 {
     // TODO: Handle tilde expansion.
+    // TODO: Handle empty partial completion. (e.g. attempting a completion with "cd ")
 
     NSRange whitespaceRange = [textView.string rangeOfCharacterFromSet:[NSCharacterSet whitespaceCharacterSet] options:NSBackwardsSearch range:NSMakeRange(0, charRange.location + 1)];
     NSString *partial;
