@@ -96,6 +96,9 @@ do {\
     CheckInputAgainstExpectedOutput(nearlyFullScreen, nearlyFullScreen);
     NSString *nearlyFullScreenWithNewlines = [[@"" stringByPaddingToLength:(81 * 23) withString:[spaceFillingLine stringByAppendingString:@"\n"] startingAtIndex:0] stringByAppendingString:@"1"];
     CheckInputAgainstExpectedOutput(nearlyFullScreenWithNewlines, nearlyFullScreenWithNewlines);
+    NSString *overflowedScreen = [[@"" stringByPaddingToLength:(80 * 26) withString:spaceFillingLine startingAtIndex:0] stringByAppendingString:@"1"];
+    CheckInputAgainstExpectedOutput(overflowedScreen, overflowedScreen);
+
 }
 
 - (void)testCursorBackward;

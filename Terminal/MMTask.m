@@ -12,7 +12,8 @@
 
 @interface MMTask ()
 
-@property unichar **ansiLines;
+@property NSMutableArray *ansiLines;
+@property NSUInteger currentRowOffset;
 @property NSString *unreadOutput;
 @property NSUInteger cursorPositionByCharacters;
 @property BOOL cursorKeyMode;
@@ -30,13 +31,13 @@
 
     self.output = [[NSTextStorage alloc] init];
 
-    self.ansiLines = malloc(sizeof(unichar *) * TERM_HEIGHT);
-    for (NSUInteger i = 0; i < TERM_HEIGHT; i++) {
-        // We allocate 1 extra character for the possible newline character.
-        self.ansiLines[i] = malloc(sizeof(unichar) * (TERM_WIDTH + 1));
+    self.ansiLines = [NSMutableArray arrayWithCapacity:TERM_HEIGHT];
+    for (NSInteger i = 0; i < TERM_HEIGHT; i++) {
+        [self.ansiLines addObject:[NSMutableString stringWithString:[@"" stringByPaddingToLength:81 withString:@"\0" startingAtIndex:0]]];
     }
-    [self clearScreen];
+    self.currentRowOffset = 0;
     self.cursorPosition = MMPositionMake(1, 1);
+    [self clearScreen];
 
     return self;
 }
@@ -133,6 +134,27 @@
 
 # pragma mark - ANSI display methods
 
+- (NSMutableString *)ansiLineAtScrollRow:(NSUInteger)row;
+{
+    return (NSMutableString *)self.ansiLines[self.currentRowOffset + row];
+}
+
+- (unichar)ansiCharacterAtExactRow:(NSUInteger)row column:(NSUInteger)column;
+{
+    return [(NSMutableString *)self.ansiLines[row] characterAtIndex:column];
+}
+
+- (unichar)ansiCharacterAtScrollRow:(NSUInteger)scrollRow column:(NSUInteger)column;
+{
+    return [(NSMutableString *)self.ansiLines[self.currentRowOffset + scrollRow] characterAtIndex:column];
+}
+
+- (void)setAnsiCharacterAtScrollRow:(NSUInteger)row column:(NSUInteger)column withCharacter:(unichar)character;
+{
+    [[self ansiLineAtScrollRow:row] replaceCharactersInRange:NSMakeRange(column, 1) withString:[NSString stringWithCharacters:&character length:1]];
+}
+
+
 - (void)ansiPrint:(unichar)character;
 {
     [self fillCurrentScreenWithSpacesUpToCursor];
@@ -142,13 +164,13 @@
         [self checkIfExceededLastLine];
     }
 
-    self.ansiLines[self.cursorPosition.y - 1][self.cursorPosition.x - 1] = character;
+    [self setAnsiCharacterAtScrollRow:(self.cursorPosition.y - 1) column:(self.cursorPosition.x - 1) withCharacter:character];
     self.cursorPosition = MMPositionMake(self.cursorPosition.x + 1, self.cursorPosition.y);
 }
 
 - (void)addNewline;
 {
-    self.ansiLines[self.cursorPosition.y - 1][TERM_WIDTH] = '\n';
+    [self setAnsiCharacterAtScrollRow:(self.cursorPosition.y - 1) column:TERM_WIDTH withCharacter:'\n'];
     self.cursorPosition = MMPositionMake(1, self.cursorPosition.y + 1);
 
     [self checkIfExceededLastLine];
@@ -203,7 +225,7 @@
         newPositionX -= distanceToMove;
         spaces -= distanceToMove;
 
-        if (newPositionY == 1 || self.ansiLines[newPositionY - 2][TERM_WIDTH] == '\n') {
+        if (newPositionY == 1 || [self ansiCharacterAtScrollRow:(newPositionY - 2) column:TERM_WIDTH] == '\n') {
             spaces = 0;
         } else if (spaces > 0) {
             newPositionY--;
@@ -226,11 +248,11 @@
         // We are guaranteed that y >= 2.
         // Add newlines when necessary starting from the final row and moving up.
         for (NSUInteger row = y; row > self.cursorPosition.y; row--) {
-            if (self.ansiLines[row - 1][0] != '\0') {
+            if ([self ansiCharacterAtScrollRow:(row - 1) column:0] != '\0') {
                 continue;
             }
 
-            self.ansiLines[row - 2][TERM_WIDTH] = '\n';
+            [self setAnsiCharacterAtScrollRow:(row - 2) column:TERM_WIDTH withCharacter:'\n'];
         }
 
         self.cursorPosition = MMPositionMake(x, y);
@@ -245,16 +267,16 @@
 
     NSInteger numberOfCharactersToMove = MAX(TERM_WIDTH - numberOfCharactersToDelete - (adjustedXPosition - 1), 0);
     for (NSInteger i = 0; i < numberOfCharactersToMove; i++) {
-        self.ansiLines[self.cursorPosition.y - 1][adjustedXPosition - 1 + i] = self.ansiLines[self.cursorPosition.y - 1][adjustedXPosition - 1 + i + numberOfCharactersToDelete];
+        [self setAnsiCharacterAtScrollRow:(self.cursorPosition.y - 1) column:(adjustedXPosition - 1 + i) withCharacter:[self ansiCharacterAtScrollRow:(self.cursorPosition.y - 1) column:(adjustedXPosition - 1 + i + numberOfCharactersToDelete)]];
     }
     for (NSInteger i = adjustedXPosition + numberOfCharactersToMove - 1; i < TERM_WIDTH; i++) {
-        self.ansiLines[self.cursorPosition.y - 1][i] = '\0';
+        [self setAnsiCharacterAtScrollRow:(self.cursorPosition.y - 1) column:i withCharacter:'\0'];
     }
 
     if (self.cursorPosition.y < TERM_HEIGHT &&
-        (self.ansiLines[self.cursorPosition.y][0] != '\0' ||
-         self.ansiLines[self.cursorPosition.y][TERM_WIDTH] != '\0')) {
-        self.ansiLines[self.cursorPosition.y - 1][TERM_WIDTH] = '\n';
+        ([self ansiCharacterAtScrollRow:self.cursorPosition.y column:0] != '\0' ||
+         [self ansiCharacterAtScrollRow:self.cursorPosition.y column:TERM_WIDTH] != '\0')) {
+        [self setAnsiCharacterAtScrollRow:(self.cursorPosition.y - 1) column:TERM_WIDTH withCharacter:'\n'];
     }
 }
 
@@ -272,22 +294,22 @@
     NSInteger numberOfLinesToMove = TERM_HEIGHT - (self.cursorPosition.y - 1) - numberOfLinesToInsert;
     for (NSInteger i = numberOfLinesToMove - 1; i >= 0; i--) {
         for (NSInteger j = 0; j <= TERM_WIDTH; j++) {
-            self.ansiLines[self.cursorPosition.y - 1 + numberOfLinesToInsert + i][j] = self.ansiLines[self.cursorPosition.y - 1 + i][j];
+            [self setAnsiCharacterAtScrollRow:(self.cursorPosition.y - 1 + numberOfLinesToInsert + i) column:j withCharacter:[self ansiCharacterAtScrollRow:(self.cursorPosition.y - 1 + i) column:j]];
         }
     }
 
     // Step 2.
     BOOL fillWithNewlines = NO;
     if (self.cursorPosition.y + numberOfLinesToInsert < TERM_HEIGHT &&
-        (self.ansiLines[self.cursorPosition.y - 1 + numberOfLinesToInsert][0] != '\0' ||
-         self.ansiLines[self.cursorPosition.y - 1 + numberOfLinesToInsert][TERM_WIDTH] != '\0')) {
+        ([self ansiCharacterAtScrollRow:(self.cursorPosition.y - 1 + numberOfLinesToInsert) column:0] != '\0' ||
+         [self ansiCharacterAtScrollRow:(self.cursorPosition.y - 1 + numberOfLinesToInsert) column:(TERM_WIDTH)] != '\0')) {
         fillWithNewlines = YES;
     }
     for (NSInteger i = 0; i < numberOfLinesToInsert; i++) {
         for (NSInteger j = 0; j < TERM_WIDTH; j++) {
-            self.ansiLines[self.cursorPosition.y - 1 + i][j] = '\0';
+            [self setAnsiCharacterAtScrollRow:(self.cursorPosition.y - 1 + i) column:j withCharacter:'\0'];
         }
-        self.ansiLines[self.cursorPosition.y - 1 + i][TERM_WIDTH] = fillWithNewlines ? '\n' : '\0';
+        [self setAnsiCharacterAtScrollRow:(self.cursorPosition.y - 1 + i) column:TERM_WIDTH withCharacter:(fillWithNewlines ? '\n' : '\0')];
     }
 
     // Step 3.
@@ -301,13 +323,13 @@
     NSInteger numberOfLinesToMove = TERM_HEIGHT - (self.cursorPosition.y - 1) - numberOfLinesToDelete;
     for (NSInteger i = 0; i < numberOfLinesToMove; i++) {
         for (NSInteger j = 0; j <= TERM_WIDTH; j++) {
-            self.ansiLines[self.cursorPosition.y - 1  + i][j] = self.ansiLines[self.cursorPosition.y - 1 + i + numberOfLinesToDelete][j];
+            [self setAnsiCharacterAtScrollRow:(self.cursorPosition.y - 1 + i) column:j withCharacter:[self ansiCharacterAtScrollRow:(self.cursorPosition.y - 1 + i + numberOfLinesToDelete) column:j]];
         }
     }
 
     for (NSInteger i = 0; i < numberOfLinesToDelete; i++) {
         for (NSInteger j = 0; j <= TERM_WIDTH; j++) {
-            self.ansiLines[self.cursorPosition.y - 1 + numberOfLinesToMove + i][j] = '\0';
+            [self setAnsiCharacterAtScrollRow:(self.cursorPosition.y - 1 + numberOfLinesToMove + i) column:j withCharacter:'\0'];
         }
     }
 
@@ -316,31 +338,36 @@
 
 - (void)fillCurrentScreenWithSpacesUpToCursor;
 {
-    for (NSInteger i = self.cursorPosition.x - 2; i >= 0; i--) {
-        if (self.ansiLines[self.cursorPosition.y - 1][i] != '\0') {
-            break;
-        }
-
-        self.ansiLines[self.cursorPosition.y - 1][i] = ' ';
+    // Create blank lines up to the cursor.
+    for (NSInteger i = self.ansiLines.count; i < self.currentRowOffset + self.cursorPosition.y; i++) {
+        [self.ansiLines addObject:[NSMutableString stringWithString:[@"" stringByPaddingToLength:81 withString:@"\0" startingAtIndex:0]]];
     }
 
     for (NSInteger i = self.cursorPosition.y - 2; i >= 0; i--) {
-        if (self.ansiLines[i][TERM_WIDTH] != '\0' || self.ansiLines[i][TERM_WIDTH - 1] != '\0') {
+        if ([self ansiCharacterAtScrollRow:i column:TERM_WIDTH] != '\0' || [self ansiCharacterAtScrollRow:i column:(TERM_WIDTH - 1)] != '\0') {
             break;
         }
 
-        self.ansiLines[i][TERM_WIDTH] = '\n';
+        [self setAnsiCharacterAtScrollRow:i column:TERM_WIDTH withCharacter:'\n'];
+    }
+
+    for (NSInteger i = self.cursorPosition.x - 2; i >= 0; i--) {
+        if ([self ansiCharacterAtScrollRow:(self.cursorPosition.y - 1) column:i] != '\0') {
+            break;
+        }
+
+        [self setAnsiCharacterAtScrollRow:(self.cursorPosition.y - 1) column:i withCharacter:' '];
     }
 }
 
 - (void)clearUntilEndOfLine;
 {
     for (NSUInteger i = self.cursorPosition.x - 1; i < TERM_WIDTH; i++) {
-        if (self.ansiLines[self.cursorPosition.y - 1][i] == '\0') {
+        if ([self ansiCharacterAtScrollRow:(self.cursorPosition.y - 1) column:i] == '\0') {
             break;
         }
 
-        self.ansiLines[self.cursorPosition.y - 1][i] = '\0';
+        [self setAnsiCharacterAtScrollRow:(self.cursorPosition.y - 1) column:i withCharacter:'\0'];
     }
 }
 
@@ -348,7 +375,7 @@
 {
     for (NSUInteger i = 0; i < TERM_HEIGHT; i++) {
         for (NSUInteger j = 0; j < TERM_WIDTH + 1; j++) {
-            self.ansiLines[i][j] = '\0';
+            [self setAnsiCharacterAtScrollRow:(self.cursorPosition.y - 1) column:i withCharacter:'\0'];
         }
     }
 }
@@ -359,15 +386,8 @@
     if (self.cursorPosition.y > TERM_HEIGHT) {
         NSAssert(self.cursorPosition.y == (TERM_HEIGHT + 1), @"Cursor should only be one line from the bottom");
 
-        unichar *newLastLine = self.ansiLines[0];
-        for (NSUInteger i = 0; i < TERM_HEIGHT - 1; i++) {
-            self.ansiLines[i] = self.ansiLines[i + 1];
-        }
-
-        self.ansiLines[TERM_HEIGHT - 1] = newLastLine;
-        for (NSUInteger i = 0; i < TERM_WIDTH + 1; i++) {
-            self.ansiLines[TERM_HEIGHT - 1][i] = '\0';
-        }
+        self.currentRowOffset++;
+        [self.ansiLines addObject:[NSMutableString stringWithString:[@"" stringByPaddingToLength:81 withString:@"\0" startingAtIndex:0]]];
 
         self.cursorPosition = MMPositionMake(self.cursorPosition.x, self.cursorPosition.y - 1);
     }
@@ -378,19 +398,21 @@
     NSUInteger cursorPosition = 0;
 
     NSMutableAttributedString *display = [[NSMutableAttributedString alloc] init];
-    for (NSUInteger i = 0; i < TERM_HEIGHT; i++) {
+    for (NSUInteger i = 0; i < self.ansiLines.count; i++) {
         for (NSUInteger j = 0; j < TERM_WIDTH; j++) {
-            if (self.ansiLines[i][j] == '\0') {
+            unichar currentChar = [self ansiCharacterAtExactRow:i column:j];
+            if (currentChar == '\0') {
                 break;
             }
 
-            if (self.cursorPosition.y - 1 > i ||
-                (self.cursorPosition.y - 1 == i && self.cursorPosition.x - 1 > j)) {
+            NSInteger adjustedYPosition = i - self.currentRowOffset;
+            if (self.cursorPosition.y - 1 > adjustedYPosition ||
+                (self.cursorPosition.y - 1 == adjustedYPosition && self.cursorPosition.x - 1 > j)) {
                 cursorPosition++;
             }
-            [display appendAttributedString:[[NSAttributedString alloc] initWithString:[NSString stringWithCharacters:&self.ansiLines[i][j] length:1]]];
+            [display appendAttributedString:[[NSAttributedString alloc] initWithString:[NSString stringWithCharacters:&currentChar length:1]]];
         }
-        if (self.ansiLines[i][TERM_WIDTH] == '\n') {
+        if ([self ansiCharacterAtExactRow:i column:TERM_WIDTH] == '\n') {
             if (self.cursorPosition.y - 1 > i) {
                 cursorPosition++;
             }
