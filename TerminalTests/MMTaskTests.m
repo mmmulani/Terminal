@@ -29,6 +29,9 @@ do {\
     NSString *longString = [@"" stringByPaddingToLength:150 withString:@"1234567890" startingAtIndex:0];
     CheckInputAgainstExpectedCursorPositionByCharacters(longString, 150);
     CheckInputAgainstExpectedCursorPositionByCharacters(@"\033[5;1H", 4);
+
+    NSString *longerThanScreenString = [@"" stringByPaddingToLength:(25 * 81) withString:@"1234567890" startingAtIndex:0];
+    CheckInputAgainstExpectedCursorPositionByCharacters(longerThanScreenString, 25 * 81);
 }
 
 @end

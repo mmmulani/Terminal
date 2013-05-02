@@ -44,7 +44,7 @@
 
 - (CGFloat)heightToFitAllOfOutput;
 {
-    return self.view.frame.size.height - self.outputView.minSize.height + self.outputView.frame.size.height;
+    return MIN(self.view.frame.size.height - self.outputView.minSize.height + self.outputView.frame.size.height, 425.0f);
 }
 
 - (void)scrollToBottom;
@@ -78,6 +78,9 @@
     [displayString setAttributes:attributes range:NSMakeRange(0, displayString.length)];
 
     [self.outputView.textStorage setAttributedString:displayString];
+    NSMutableParagraphStyle *style = [[NSParagraphStyle defaultParagraphStyle] mutableCopy];
+    [style setLineBreakMode:NSLineBreakByCharWrapping];
+    [self.outputView.textStorage addAttribute:NSParagraphStyleAttributeName value:style range:NSMakeRange(0, [self.outputView.textStorage length])];
     [self.outputView setSelectedRange:NSMakeRange(cursorPositionByCharacters, 0)];
 }
 
