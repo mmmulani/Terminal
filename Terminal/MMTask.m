@@ -382,7 +382,6 @@
 
 - (void)checkIfExceededLastLine;
 {
-    // TODO: Could print the first line on screen for scrollback?
     if (self.cursorPosition.y > TERM_HEIGHT) {
         NSAssert(self.cursorPosition.y == (TERM_HEIGHT + 1), @"Cursor should only be one line from the bottom");
 
