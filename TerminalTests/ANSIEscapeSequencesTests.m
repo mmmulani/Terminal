@@ -222,4 +222,14 @@ do {\
     CheckInputAgainstExpectedOutput(@"\a\a\a\a\a\a\a\a\a", @"");
 }
 
+- (void)testScrolling;
+{
+    CheckInputAgainstExpectedOutput(@"\033[0;1ra\nb\nc\nd\ne\nf\n", @"a\nb\nc\nd\ne\nf\n");
+    CheckInputAgainstExpectedOutput(@"\033[1;1ra\nb\nc\nd\ne\nf\n", @"a\nb\nc\nd\ne\nf\n");
+    CheckInputAgainstExpectedOutput(@"\033[1;100ra\nb\nc\nd\ne\nf\n", @"a\nb\nc\nd\ne\nf\n");
+
+    CheckInputAgainstExpectedOutput(@"\033[2;3ra\nb\nc\nd\ne\nf\n", @"a\nf\n");
+    CheckInputAgainstExpectedOutput(@"\033[2;5ra\nb\nc\nd\ne\nf\n", @"a\nd\ne\nf\n");
+}
+
 @end

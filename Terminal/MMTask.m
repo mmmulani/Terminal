@@ -17,6 +17,8 @@
 @property NSString *unreadOutput;
 @property NSUInteger cursorPositionByCharacters;
 @property BOOL cursorKeyMode;
+@property NSUInteger scrollTopMargin;
+@property NSUInteger scrollBottomMargin;
 
 @end
 
@@ -37,6 +39,8 @@
     }
     self.currentRowOffset = 0;
     self.cursorPosition = MMPositionMake(1, 1);
+    self.scrollTopMargin = 1;
+    self.scrollBottomMargin = 24;
     [self clearScreen];
 
     return self;
@@ -163,7 +167,7 @@
         // If there is a newline present at the end of this line, we clear it as the text will now flow to the next line.
         [self setAnsiCharacterAtScrollRow:(self.cursorPosition.y - 1) column:(self.cursorPosition.x - 1) withCharacter:'\0'];
         self.cursorPosition = MMPositionMake(1, self.cursorPosition.y + 1);
-        [self checkIfExceededLastLine];
+        [self checkIfExceededLastLineAndObeyScrollMargin:YES];
     }
 
     [self setAnsiCharacterAtScrollRow:(self.cursorPosition.y - 1) column:(self.cursorPosition.x - 1) withCharacter:character];
@@ -175,7 +179,7 @@
     [self setAnsiCharacterAtScrollRow:(self.cursorPosition.y - 1) column:TERM_WIDTH withCharacter:'\n'];
     self.cursorPosition = MMPositionMake(1, self.cursorPosition.y + 1);
 
-    [self checkIfExceededLastLine];
+    [self checkIfExceededLastLineAndObeyScrollMargin:YES];
 }
 
 - (void)moveToFrontOfLine;
@@ -203,7 +207,7 @@
     NSInteger newPositionY = MIN(self.cursorPosition.y + lines, TERM_HEIGHT + 1);
     self.cursorPosition = MMPositionMake(self.cursorPosition.x, newPositionY);
 
-    [self checkIfExceededLastLine];
+    [self checkIfExceededLastLineAndObeyScrollMargin:NO];
 }
 
 - (void)moveCursorForward:(NSInteger)spaces;
@@ -382,9 +386,22 @@
     }
 }
 
-- (void)checkIfExceededLastLine;
+- (void)checkIfExceededLastLineAndObeyScrollMargin:(BOOL)obeyScrollMargin;
 {
-    if (self.cursorPosition.y > TERM_HEIGHT) {
+    if (obeyScrollMargin && (self.cursorPosition.y > self.scrollBottomMargin)) {
+        NSAssert(self.cursorPosition.y == (self.scrollBottomMargin + 1), @"Cursor should only be one line below the bottom margin");
+
+        NSMutableString *newLine = [NSMutableString stringWithString:[@"" stringByPaddingToLength:81 withString:@"\0" startingAtIndex:0]];
+        if (self.scrollTopMargin > 1) {
+            [self.ansiLines removeObjectAtIndex:(self.currentRowOffset + self.scrollTopMargin - 1)];
+            [self.ansiLines insertObject:newLine atIndex:(self.currentRowOffset + self.scrollBottomMargin - 1)];
+        } else {
+            self.currentRowOffset++;
+            [self.ansiLines insertObject:newLine atIndex:(self.currentRowOffset + self.scrollBottomMargin - 1)];
+        }
+
+        self.cursorPosition = MMPositionMake(self.cursorPosition.x, self.cursorPosition.y - 1);
+    } else if (self.cursorPosition.y > TERM_HEIGHT) {
         NSAssert(self.cursorPosition.y == (TERM_HEIGHT + 1), @"Cursor should only be one line from the bottom");
 
         self.currentRowOffset++;
@@ -392,6 +409,15 @@
 
         self.cursorPosition = MMPositionMake(self.cursorPosition.x, self.cursorPosition.y - 1);
     }
+}
+
+- (void)setScrollMarginTop:(NSUInteger)top ScrollMarginBottom:(NSUInteger)bottom;
+{
+    top = MAX(top, 1);
+    bottom = MIN(bottom, TERM_HEIGHT);
+
+    self.scrollBottomMargin = bottom;
+    self.scrollTopMargin = top;
 }
 
 - (NSMutableAttributedString *)currentANSIDisplay;
@@ -476,6 +502,8 @@
         self.cursorKeyMode = YES;
     } else if ([escapeSequence isEqualToString:@"\033[?1l"]) {
         self.cursorKeyMode = NO;
+    } else if (escapeCode == 'r') {
+        [self setScrollMarginTop:[items[0] intValue] ScrollMarginBottom:[items[1] intValue]];
     } else {
         MMLog(@"Unhandled escape sequence: %@", escapeSequence);
     }
