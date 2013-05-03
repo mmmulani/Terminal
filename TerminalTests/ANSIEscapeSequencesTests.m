@@ -57,10 +57,12 @@ do {\
     CheckInputAgainstExpectedOutputWithExpectedCursor(@"\033[2J", @"", MMPositionMake(1,1));
     CheckInputAgainstExpectedOutputWithExpectedCursor(@"_\033[2J", @"", MMPositionMake(2,1));
     CheckInputAgainstExpectedOutputWithExpectedCursor(@"_\033[2Ja", @" a", MMPositionMake(3,1));
+    CheckInputAgainstExpectedOutput(@"__\033[2Ja", @"  a");
+    CheckInputAgainstExpectedOutput(@"12\n34\n\033[2J", @"");
 
     // This is mainly a test against crashes.
     NSString *lotsOfNewLines = [@"" stringByPaddingToLength:80 withString:@"\n" startingAtIndex:0];
-    CheckInputAgainstExpectedOutput([lotsOfNewLines stringByAppendingString:@"\033[2J"], lotsOfNewLines);
+    CheckInputAgainstExpectedOutput([lotsOfNewLines stringByAppendingString:@"\033[2J"], [@"" stringByPaddingToLength:(80 - 23) withString:@"\n" startingAtIndex:0]);
 
     CheckInputAgainstExpectedOutput(@"\033[24;1H\n\n\n\033[2Ja", [[@"" stringByPaddingToLength:26 withString:@"\n" startingAtIndex:0] stringByAppendingString:@"a"]);
 }

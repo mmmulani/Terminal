@@ -381,7 +381,7 @@
 {
     for (NSUInteger i = 0; i < TERM_HEIGHT; i++) {
         for (NSUInteger j = 0; j < TERM_WIDTH + 1; j++) {
-            [self setAnsiCharacterAtScrollRow:(self.cursorPosition.y - 1) column:i withCharacter:'\0'];
+            [self setAnsiCharacterAtScrollRow:i column:j withCharacter:'\0'];
         }
     }
 }
@@ -481,10 +481,7 @@
         [self clearUntilEndOfLine];
     } else if (escapeCode == 'J') {
         if ([items count] && [items[0] isEqualToString:@"2"]) {
-            MMPosition savedPosition = self.cursorPosition;
-            self.cursorPosition = MMPositionMake(1, 1);
             [self clearScreen];
-            [self moveCursorToX:savedPosition.x Y:savedPosition.y];
         } else {
             MMLog(@"Unsupported clear mode with escape sequence: %@", escapeSequence);
         }
