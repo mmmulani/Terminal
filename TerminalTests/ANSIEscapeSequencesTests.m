@@ -61,6 +61,8 @@ do {\
     // This is mainly a test against crashes.
     NSString *lotsOfNewLines = [@"" stringByPaddingToLength:80 withString:@"\n" startingAtIndex:0];
     CheckInputAgainstExpectedOutput([lotsOfNewLines stringByAppendingString:@"\033[2J"], lotsOfNewLines);
+
+    CheckInputAgainstExpectedOutput(@"\033[24;1H\n\n\n\033[2Ja", [[@"" stringByPaddingToLength:26 withString:@"\n" startingAtIndex:0] stringByAppendingString:@"a"]);
 }
 
 - (void)testCursorHorizontalAbsolute;
@@ -103,6 +105,8 @@ do {\
     NSString *overflowedScreen = [[@"" stringByPaddingToLength:(80 * 26) withString:spaceFillingLine startingAtIndex:0] stringByAppendingString:@"1"];
     CheckInputAgainstExpectedOutput(overflowedScreen, overflowedScreen);
 
+    // Writing characters past the terminal limit should overwrite the newline present on that line.
+    CheckInputAgainstExpectedOutput(@"\033[1;1H\n\033[1;79Habcde", @"                                                                              abcde");
 }
 
 - (void)testCursorBackward;

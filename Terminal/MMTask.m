@@ -160,6 +160,8 @@
     [self fillCurrentScreenWithSpacesUpToCursor];
 
     if (self.cursorPosition.x == TERM_WIDTH + 1) {
+        // If there is a newline present at the end of this line, we clear it as the text will now flow to the next line.
+        [self setAnsiCharacterAtScrollRow:(self.cursorPosition.y - 1) column:(self.cursorPosition.x - 1) withCharacter:'\0'];
         self.cursorPosition = MMPositionMake(1, self.cursorPosition.y + 1);
         [self checkIfExceededLastLine];
     }
