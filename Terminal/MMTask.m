@@ -13,12 +13,12 @@
 @interface MMTask ()
 
 @property NSMutableArray *ansiLines;
-@property NSUInteger currentRowOffset;
+@property NSInteger currentRowOffset;
 @property NSString *unreadOutput;
-@property NSUInteger cursorPositionByCharacters;
+@property NSInteger cursorPositionByCharacters;
 @property BOOL cursorKeyMode;
-@property NSUInteger scrollTopMargin;
-@property NSUInteger scrollBottomMargin;
+@property NSInteger scrollTopMargin;
+@property NSInteger scrollBottomMargin;
 
 @end
 
@@ -289,6 +289,7 @@
 - (void)insertBlankLinesFromCursor:(NSInteger)numberOfLinesToInsert;
 {
     // TODO: Consider implementing this as manipulating the line pointers.
+    // TODO: Handle scrolling region. (http://www.vt100.net/docs/vt220-rm/chapter4.html#S4.11)
 
     // Three step process:
     // 1. Move the lines below the cursor down such that the |numberOfLinesToInsert| lines below the cursor are repeated.
@@ -425,8 +426,8 @@
     NSUInteger cursorPosition = 0;
 
     NSMutableAttributedString *display = [[NSMutableAttributedString alloc] init];
-    for (NSUInteger i = 0; i < self.ansiLines.count; i++) {
-        for (NSUInteger j = 0; j < TERM_WIDTH; j++) {
+    for (NSInteger i = 0; i < self.ansiLines.count; i++) {
+        for (NSInteger j = 0; j < TERM_WIDTH; j++) {
             unichar currentChar = [self ansiCharacterAtExactRow:i column:j];
             if (currentChar == '\0') {
                 break;
@@ -440,7 +441,7 @@
             [display appendAttributedString:[[NSAttributedString alloc] initWithString:[NSString stringWithCharacters:&currentChar length:1]]];
         }
         if ([self ansiCharacterAtExactRow:i column:TERM_WIDTH] == '\n') {
-            if (self.cursorPosition.y - 1 > i) {
+            if (self.cursorPosition.y - 1 > i - self.currentRowOffset) {
                 cursorPosition++;
             }
             [display appendAttributedString:[[NSAttributedString alloc] initWithString:@"\n"]];

@@ -39,7 +39,7 @@ typedef enum {
 
 @property (readonly) NSMutableAttributedString *currentANSIDisplay;
 @property MMPosition cursorPosition;
-@property (readonly) NSUInteger cursorPositionByCharacters;
+@property (readonly) NSInteger cursorPositionByCharacters;
 
 - (void)handleUserInput:(NSString *)input;
 - (void)handleCursorKeyInput:(MMArrowKey)arrowKey;

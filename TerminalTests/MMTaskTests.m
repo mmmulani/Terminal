@@ -16,7 +16,7 @@ do {\
     MMTask *task = [MMTask new]; \
     [task handleCommandOutput:input withVerbosity:NO]; \
     (void) task.currentANSIDisplay; \
-    STAssertEquals(task.cursorPositionByCharacters, (NSUInteger)cursorPositionByCharacters_, @"Comparing cursor position by characters."); \
+    STAssertEquals(task.cursorPositionByCharacters, (NSInteger)cursorPositionByCharacters_, @"Comparing cursor position by characters."); \
 } while (0)
 
 - (void)testCursorPositionByCharacters;
@@ -32,6 +32,9 @@ do {\
 
     NSString *longerThanScreenString = [@"" stringByPaddingToLength:(25 * 81) withString:@"1234567890" startingAtIndex:0];
     CheckInputAgainstExpectedCursorPositionByCharacters(longerThanScreenString, 25 * 81);
+
+    NSString *lotsOfNewlines = [@"" stringByPaddingToLength:30 withString:@"\n" startingAtIndex:0];
+    CheckInputAgainstExpectedCursorPositionByCharacters(lotsOfNewlines, 30);
 }
 
 @end
