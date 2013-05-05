@@ -416,6 +416,8 @@
 
 - (void)setScrollMarginTop:(NSUInteger)top ScrollMarginBottom:(NSUInteger)bottom;
 {
+    // TODO: Handle [1;1r -> [1;2r and test.
+
     top = MAX(top, 1);
     bottom = MIN(bottom, TERM_HEIGHT);
 
