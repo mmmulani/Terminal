@@ -288,36 +288,38 @@
 
 - (void)insertBlankLinesFromCursor:(NSInteger)numberOfLinesToInsert;
 {
-    // TODO: Consider implementing this as manipulating the line pointers.
-    // TODO: Handle scrolling region. (http://www.vt100.net/docs/vt220-rm/chapter4.html#S4.11)
+    // We only handle this control sequence when the cursor is within the scroll region.
+    if (self.cursorPosition.y < self.scrollTopMargin || self.cursorPosition.y > self.scrollBottomMargin) {
+        return;
+    }
 
     // Three step process:
-    // 1. Move the lines below the cursor down such that the |numberOfLinesToInsert| lines below the cursor are repeated.
-    // 2. Clear the |numberOfLinesToInsert| lines below the cursor.
+    // 1. Insert |numberOfLinesToInsert| blank lines starting at the cursor.
+    // 2. Remove any lines that were pushed below the scroll margin.
     // 3. Move the cursor to the correct spot.
-    numberOfLinesToInsert = MIN(MAX(1, numberOfLinesToInsert), TERM_HEIGHT - self.cursorPosition.y);
+    numberOfLinesToInsert = MIN(MAX(1, numberOfLinesToInsert), self.scrollBottomMargin - self.cursorPosition.y + 1);
+    NSInteger numberOfLinesToRemove = numberOfLinesToInsert + MIN(self.ansiLines.count - self.currentRowOffset, self.scrollBottomMargin) - (self.scrollBottomMargin - self.scrollTopMargin + 1);
 
     // Step 1.
-    NSInteger numberOfLinesToMove = TERM_HEIGHT - (self.cursorPosition.y - 1) - numberOfLinesToInsert;
-    for (NSInteger i = numberOfLinesToMove - 1; i >= 0; i--) {
-        for (NSInteger j = 0; j <= TERM_WIDTH; j++) {
-            [self setAnsiCharacterAtScrollRow:(self.cursorPosition.y - 1 + numberOfLinesToInsert + i) column:j withCharacter:[self ansiCharacterAtScrollRow:(self.cursorPosition.y - 1 + i) column:j]];
-        }
+    // We either insert a completely blank line or a line ending with a newline character.
+    // We insert a completely blank line if there is content after the lines to be inserted.
+    NSString *newLineText;
+    if (self.currentRowOffset + self.cursorPosition.y - 1 + numberOfLinesToInsert < self.ansiLines.count &&
+        ([self ansiCharacterAtScrollRow:(self.cursorPosition.y - 1 + numberOfLinesToInsert) column:0] != '\0' ||
+         [self ansiCharacterAtScrollRow:(self.cursorPosition.y - 1 + numberOfLinesToInsert) column:(TERM_WIDTH)] != '\0')) {
+        newLineText = [[@"" stringByPaddingToLength:80 withString:@"\0" startingAtIndex:0] stringByAppendingString:@"\n"];
+    } else {
+        newLineText = [@"" stringByPaddingToLength:81 withString:@"\0" startingAtIndex:0];
+    }
+    for (NSInteger i = 0; i < numberOfLinesToInsert; i++) {
+        [self.ansiLines insertObject:[newLineText mutableCopy] atIndex:(self.currentRowOffset + self.cursorPosition.y - 1)];
+    }
+    if (self.cursorPosition.y + numberOfLinesToInsert == TERM_HEIGHT) {
+        [self setAnsiCharacterAtScrollRow:(self.cursorPosition.y - 1 + numberOfLinesToInsert) column:80 withCharacter:'\0'];
     }
 
     // Step 2.
-    BOOL fillWithNewlines = NO;
-    if (self.cursorPosition.y + numberOfLinesToInsert < TERM_HEIGHT &&
-        ([self ansiCharacterAtScrollRow:(self.cursorPosition.y - 1 + numberOfLinesToInsert) column:0] != '\0' ||
-         [self ansiCharacterAtScrollRow:(self.cursorPosition.y - 1 + numberOfLinesToInsert) column:(TERM_WIDTH)] != '\0')) {
-        fillWithNewlines = YES;
-    }
-    for (NSInteger i = 0; i < numberOfLinesToInsert; i++) {
-        for (NSInteger j = 0; j < TERM_WIDTH; j++) {
-            [self setAnsiCharacterAtScrollRow:(self.cursorPosition.y - 1 + i) column:j withCharacter:'\0'];
-        }
-        [self setAnsiCharacterAtScrollRow:(self.cursorPosition.y - 1 + i) column:TERM_WIDTH withCharacter:(fillWithNewlines ? '\n' : '\0')];
-    }
+    [self.ansiLines removeObjectsInRange:NSMakeRange(self.currentRowOffset + self.scrollBottomMargin + numberOfLinesToInsert - numberOfLinesToRemove, numberOfLinesToRemove)];
 
     // Step 3.
     self.cursorPosition = MMPositionMake(1, self.cursorPosition.y);
