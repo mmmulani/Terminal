@@ -97,7 +97,7 @@ do {\
 
     CheckInputAgainstExpectedOutput(@"\033[1;80H\n", @"\n");
 
-    // Test that the terminal can a nearly full screen. By that we mean 23 full lines and a non-empty 24th line.
+    // Test that the terminal can handle nearly full screen. By that we mean 23 full lines and a non-empty 24th line.
     // This tests how the terminal handles wrapping around at the end of a line.
     NSString *spaceFillingLine = [@"" stringByPaddingToLength:80 withString:@"1234567890" startingAtIndex:0];
     NSString *nearlyFullScreen = [[@"" stringByPaddingToLength:(80 * 23) withString:spaceFillingLine startingAtIndex:0] stringByAppendingString:@"1"];
