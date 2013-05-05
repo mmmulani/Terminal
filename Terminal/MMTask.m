@@ -267,9 +267,10 @@
 
 - (void)deleteCharacters:(NSUInteger)numberOfCharactersToDelete;
 {
-    numberOfCharactersToDelete = MAX(1, numberOfCharactersToDelete);
+    numberOfCharactersToDelete = MIN(MAX(1, numberOfCharactersToDelete), TERM_WIDTH);
+
     // Handle the case where the cursor is past the right margin.
-    NSInteger adjustedXPosition = self.cursorPosition.x;//MIN(self.cursorPosition.x, TERM_WIDTH);
+    NSInteger adjustedXPosition = self.cursorPosition.x;
 
     NSInteger numberOfCharactersToMove = MAX(TERM_WIDTH - numberOfCharactersToDelete - (adjustedXPosition - 1), 0);
     for (NSInteger i = 0; i < numberOfCharactersToMove; i++) {
@@ -418,8 +419,8 @@
 {
     // TODO: Handle [1;1r -> [1;2r and test.
 
-    top = MAX(top, 1);
-    bottom = MIN(bottom, TERM_HEIGHT);
+    top = MIN(MAX(top, 1), TERM_HEIGHT - 1);
+    bottom = MAX(MIN(bottom, TERM_HEIGHT), top + 1);
 
     self.scrollBottomMargin = bottom;
     self.scrollTopMargin = top;
@@ -495,7 +496,8 @@
     } else if (escapeCode == 'M') {
         [self deleteLinesFromCursor:[items[0] intValue]];
     } else if (escapeCode == 'P') {
-        [self deleteCharacters:[items[0] intValue]];
+        NSUInteger num = [items count] >= 1 ? [items[0] intValue] : 0;
+        [self deleteCharacters:num];
     } else if (escapeCode == 'c') {
         [self handleUserInput:@"\033[?1;2c"];
     } else if (escapeCode == 'd') {
@@ -505,7 +507,9 @@
     } else if ([escapeSequence isEqualToString:@"\033[?1l"]) {
         self.cursorKeyMode = NO;
     } else if (escapeCode == 'r') {
-        [self setScrollMarginTop:[items[0] intValue] ScrollMarginBottom:[items[1] intValue]];
+        NSUInteger bottom = [items count] >= 2 ? [items[1] intValue] : TERM_HEIGHT;
+        NSUInteger top = [items count] >= 1 ? [items[0] intValue] : 1;
+        [self setScrollMarginTop:top ScrollMarginBottom:bottom];
     } else {
         MMLog(@"Unhandled escape sequence: %@", escapeSequence);
     }
