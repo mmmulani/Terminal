@@ -39,17 +39,24 @@
 
     [self.label setStringValue:[NSString stringWithFormat:@"Ran %@", self.task.command]];
 
-    [self.outputView scrollToEndOfDocument:self];
+    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(outputFrameChanged:) name:NSViewFrameDidChangeNotification object:self.outputView];
+}
+
+- (void)dealloc;
+{
+    [[NSNotificationCenter defaultCenter] removeObserver:self];
+}
+
+- (void)outputFrameChanged:(NSNotification *)notification;
+{
+    // TODO: Add a check to see if we are already scrolled to the bottom, and only scroll down then.
+    NSRect clipViewFrame = self.outputView.superview.frame;
+    [((NSClipView *)self.outputView.superview) scrollToPoint:NSMakePoint(0, self.outputView.frame.size.height - clipViewFrame.size.height)];
 }
 
 - (CGFloat)heightToFitAllOfOutput;
 {
     return MIN(self.view.frame.size.height - self.outputView.minSize.height + self.outputView.frame.size.height, 425.0f);
-}
-
-- (void)scrollToBottom;
-{
-    [self.outputView scrollToEndOfDocument:self];
 }
 
 - (void)updateWithANSIOutput;
@@ -82,6 +89,9 @@
     [style setLineBreakMode:NSLineBreakByCharWrapping];
     [self.outputView.textStorage addAttribute:NSParagraphStyleAttributeName value:style range:NSMakeRange(0, [self.outputView.textStorage length])];
     [self.outputView setSelectedRange:NSMakeRange(cursorPositionByCharacters, 0)];
+
+    // Sometimes the NSViewFrameDidChangeNotification does not get issued, so we call it here to make sure that it gets sent.
+    [self outputFrameChanged:nil];
 }
 
 - (IBAction)saveTranscript:(id)sender;

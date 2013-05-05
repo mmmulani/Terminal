@@ -19,7 +19,6 @@
 @property (strong) MMTask *task;
 
 - (id)initWithTask:(MMTask *)task;
-- (void)scrollToBottom;
 - (CGFloat)heightToFitAllOfOutput;
 - (void)updateWithANSIOutput;
 - (IBAction)saveTranscript:(id)sender;

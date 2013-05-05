@@ -39,7 +39,22 @@
 {
     [super windowDidLoad];
 
+    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(terminalOutputFrameChanged:) name:NSViewFrameDidChangeNotification object:self.tableView];
+    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(terminalOutputFrameChanged:) name:NSViewFrameDidChangeNotification object:self.tableView.superview];
+
     self.originalCommandControlsLayoutConstraintConstant = self.commandControlsLayoutConstraint.constant;
+}
+
+- (void)dealloc;
+{
+    [[NSNotificationCenter defaultCenter] removeObserver:self];
+}
+
+- (void)terminalOutputFrameChanged:(NSNotification *)notification;
+{
+    // TODO: Add a check to see if we are already scrolled to the bottom, and only scroll down then.
+    NSRect clipViewFrame = self.tableView.superview.frame;
+    [((NSClipView *)self.tableView.superview) scrollToPoint:NSMakePoint(0, self.tableView.frame.size.height - clipViewFrame.size.height)];
 }
 
 - (void)handleOutput:(NSString *)message;
@@ -55,18 +70,7 @@
 
             [lastController.outputView.layoutManager ensureLayoutForCharacterRange:NSMakeRange(0, 10000)];
             [self.tableView noteHeightOfRowsWithIndexesChanged:[NSIndexSet indexSetWithIndex:([self.taskViewControllers count] - 1)]];
-            NSLog(@"Updating height of last");
         }
-
-        // XXX: Hack to scroll to bottom after output is added to the screen.
-        // Though we inform the NSTableView that a row's height is changed, calling scrollToEndOfDocument: at this point will not scroll to the bottom (possibly due to animations running concurrently).
-        // This (hopefully) runs after those animations are done.
-        double delayInSeconds = 0.2;
-        dispatch_time_t popTime = dispatch_time(DISPATCH_TIME_NOW, (int64_t)(delayInSeconds * NSEC_PER_SEC));
-        dispatch_after(popTime, dispatch_get_main_queue(), ^(void){
-            [self.tableView scrollToEndOfDocument:self];
-            NSLog(@"Trying to scroll to bottom");
-        });
     });
 }
 
@@ -80,7 +84,6 @@
     [controller updateWithANSIOutput];
 
     [self.tableView noteHeightOfRowsWithIndexesChanged:[NSIndexSet indexSetWithIndex:([self.taskViewControllers count] - 1)]];
-    [self.tableView scrollToEndOfDocument:self];
 
     [self.window makeFirstResponder:self.commandInput];
 
@@ -160,7 +163,6 @@
         self.commandHistoryIndex = self.tasks.count;
 
         [self.tableView insertRowsAtIndexes:[NSIndexSet indexSetWithIndex:(self.tasks.count - 1)] withAnimation:NSTableViewAnimationEffectNone];
-        [self.tableView scrollToEndOfDocument:self];
 
         MMTaskCellViewController *lastController = self.taskViewControllers.lastObject;
         [self.window makeFirstResponder:lastController.outputView];
