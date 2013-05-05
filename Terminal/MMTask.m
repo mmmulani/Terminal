@@ -267,6 +267,7 @@
 
 - (void)deleteCharacters:(NSUInteger)numberOfCharactersToDelete;
 {
+    // This implements the VT220 feature "Delete Character (DCH)".
     numberOfCharactersToDelete = MIN(MAX(1, numberOfCharactersToDelete), TERM_WIDTH);
 
     // Handle the case where the cursor is past the right margin.
