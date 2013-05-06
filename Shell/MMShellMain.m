@@ -86,6 +86,10 @@
         _exit(-1);
     }
 
+    if (signal(SIGINT, signalHandler) == SIG_ERR) {
+        MMLog(@"Unable to attach signal handler. :(");
+    }
+
     [NSThread detachNewThreadSelector:@selector(waitForChildToFinish:) toTarget:self withObject:@((int)child_pid)];
 }
 
@@ -95,6 +99,12 @@
 
     NSProxy *proxy = [[NSConnection connectionWithRegisteredName:ConnectionTerminalName host:nil] rootProxy];
     [proxy performSelector:@selector(processFinished)];
+}
+
+void signalHandler(int signalNumber) {
+    if (signalNumber == SIGINT) {
+        MMLog(@"Received SIGINT, should be dispatched to child process.");
+    }
 }
 
 - (void)handleSpecialCommand:(NSString *)command;
