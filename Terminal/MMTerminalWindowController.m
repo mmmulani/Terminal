@@ -6,8 +6,11 @@
 //  Copyright (c) 2013 Mehdi Mulani. All rights reserved.
 //
 
+#include <sys/event.h>
+
 #import "MMTerminalWindowController.h"
 #import "MMAppDelegate.h"
+#import "MMShared.h"
 #import "MMTask.h"
 #import "MMTaskCellViewController.h"
 #import <QuartzCore/QuartzCore.h>
@@ -20,6 +23,9 @@
 
 @property CGFloat originalCommandControlsLayoutConstraintConstant;
 
+@property NSMutableDictionary *directoriesBeingWatched;
+@property CFFileDescriptorRef directoryKqRef;
+
 @end
 
 @implementation MMTerminalWindowController
@@ -31,6 +37,7 @@
     self.tasks = [NSMutableArray array];
     self.taskViewControllers = [NSMutableArray array];
     self.commandHistoryIndex = 0;
+    self.directoriesBeingWatched = [NSMutableDictionary dictionary];
 
     return self;
 }
@@ -97,10 +104,20 @@
 
 - (void)directoryChangedTo:(NSString *)newPath;
 {
+    if (self.currentDirectory) {
+        [self unregisterDirectory:self.currentDirectory];
+    }
     self.currentDirectory = newPath;
-    [self.currentDirectoryLabel setStringValue:[NSString stringWithFormat:@"Current directory: %@", newPath]];
+    [self registerDirectoryToBeObserved:newPath];
 
-    NSArray *fileURLs = [[NSFileManager defaultManager] contentsOfDirectoryAtURL:[NSURL fileURLWithPath:newPath] includingPropertiesForKeys:@[NSURLCustomIconKey, NSURLEffectiveIconKey, NSURLFileResourceTypeKey, NSURLNameKey] options:NSDirectoryEnumerationSkipsHiddenFiles error:nil];
+    [self updateDirectoryView:newPath];
+}
+
+- (void)updateDirectoryView:(NSString *)directoryPath;
+{
+    [self.currentDirectoryLabel setStringValue:[NSString stringWithFormat:@"Current directory: %@", directoryPath]];
+
+    NSArray *fileURLs = [[NSFileManager defaultManager] contentsOfDirectoryAtURL:[NSURL fileURLWithPath:directoryPath] includingPropertiesForKeys:@[NSURLCustomIconKey, NSURLEffectiveIconKey, NSURLFileResourceTypeKey, NSURLNameKey] options:NSDirectoryEnumerationSkipsHiddenFiles error:nil];
     NSMutableArray *directoryCollectionViewData = [NSMutableArray arrayWithCapacity:[fileURLs count]];
     for (NSURL *file in fileURLs) {
         NSDictionary *fileResources = [file resourceValuesForKeys:@[NSURLCustomIconKey, NSURLEffectiveIconKey, NSURLFileResourceTypeKey, NSURLNameKey] error:nil];
@@ -136,6 +153,109 @@
     }
 
     self.directoryCollectionView.content = layoutedCollectionViewData;
+}
+
+# pragma mark - Directory watching
+
+- (void)directoryModified:(NSString *)path;
+{
+    if ([self.currentDirectory isEqualToString:path]) {
+        [self updateDirectoryView:path];
+    }
+}
+
+- (void)registerDirectoryToBeObserved:(NSString *)path;
+{
+    // TODO: Support multiple directories being observed. Maybe accomplish this by storing kqRefs instead of FDs in |directoriesBeingWatched|.
+
+    if (self.directoriesBeingWatched[path]) {
+        return;
+    }
+
+    int dirFD = open([path fileSystemRepresentation], O_EVTONLY);
+    if (dirFD < 0) {
+        MMLog(@"Ran into problem observing %@.", path);
+        return;
+    }
+
+    int kq = kqueue();
+    if (kq < 0) {
+        MMLog(@"Ran into a problem running kqueue() while observing %@.", path);
+        close(dirFD);
+        return;
+    }
+
+    struct kevent event;
+    event.ident = dirFD;
+    event.filter = EVFILT_VNODE;
+    event.flags = EV_ADD | EV_CLEAR;
+    event.fflags = NOTE_WRITE;
+    event.data = 0;
+    event.udata = NULL;
+
+    self.directoriesBeingWatched[path] = [NSNumber numberWithUnsignedLong:event.ident];
+
+    if (kevent(kq, &event, 1, NULL, 0, NULL)) {
+        MMLog(@"Ran into a problem with kevent() while observing %@.", path);
+        close(kq);
+        close(dirFD);
+        return;
+    }
+
+    CFFileDescriptorContext context = { 0, (__bridge void *)self, NULL, NULL, NULL };
+    self.directoryKqRef = CFFileDescriptorCreate(NULL, kq, true, directoryWatchingCallback, &context);
+    if (!self.directoryKqRef) {
+        MMLog(@"Ran into a problem creating a file descriptor for kq while observing %@,", path);
+        close(kq);
+        close(dirFD);
+        return;
+    }
+
+    CFRunLoopSourceRef runLoopSourceRef = CFFileDescriptorCreateRunLoopSource(NULL, self.directoryKqRef, 0);
+    if (!runLoopSourceRef) {
+        MMLog(@"Ran into a problem creating a run loop source while observing %@,", path);
+        CFFileDescriptorInvalidate(self.directoryKqRef);
+        close(dirFD);
+        return;
+    }
+
+    CFRunLoopAddSource(CFRunLoopGetCurrent(), runLoopSourceRef, kCFRunLoopDefaultMode);
+    CFRelease(runLoopSourceRef);
+
+    CFFileDescriptorEnableCallBacks(self.directoryKqRef, kCFFileDescriptorReadCallBack);
+}
+
+- (void)unregisterDirectory:(NSString *)path;
+{
+    NSAssert(self.directoriesBeingWatched[path], @"Directory must be currently watched");
+    int kq = CFFileDescriptorGetNativeDescriptor(self.directoryKqRef);
+    NSAssert(kq > 0, @"kq should exist.");
+
+    CFFileDescriptorDisableCallBacks(self.directoryKqRef, kCFFileDescriptorReadCallBack);
+    CFFileDescriptorInvalidate(self.directoryKqRef);
+    CFRelease(self.directoryKqRef);
+    self.directoryKqRef = NULL;
+    close([self.directoriesBeingWatched[path] intValue]);
+    [self.directoriesBeingWatched removeObjectForKey:path];
+}
+
+static void directoryWatchingCallback(CFFileDescriptorRef kqRef, CFOptionFlags callBackTypes, void *info) {
+    int kq = CFFileDescriptorGetNativeDescriptor(((__bridge MMTerminalWindowController *)info).directoryKqRef);
+    if (kq < 0) {
+        return;
+    }
+
+    struct kevent event;
+    struct timespec timeout = { 0, 0 };
+    if (kevent(kq, NULL, 0, &event, 1, &timeout) == 1) {
+        NSArray *directories = [((__bridge MMTerminalWindowController *)info).directoriesBeingWatched allKeysForObject:[NSNumber numberWithUnsignedLong:event.ident]];
+        MMLog(@"Directories modified: %@", directories);
+        for (NSString *path in directories) {
+            [((__bridge MMTerminalWindowController *)info) directoryModified:path];
+        }
+    }
+
+    CFFileDescriptorEnableCallBacks(((__bridge MMTerminalWindowController *)info).directoryKqRef, kCFFileDescriptorReadCallBack);
 }
 
 # pragma mark - NSTextFieldDelegate
