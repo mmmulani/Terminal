@@ -1,0 +1,67 @@
+%{
+#import "MMParserContext.h"
+#include <stdio.h>
+%}
+
+%pure-parser
+%locations
+%defines
+%error-verbose
+%parse-param { MMParserCtx* context }
+%lex-param { void* scanner  }
+%union { __unsafe_unretained id node; }
+
+%token WORD WHITESPACE SEMICOLON
+
+%type<node> commands command WORD
+
+%{
+
+void yyerror(YYLTYPE* locp, void* context, const char* err) {
+    fprintf(stderr,"Error at line %d: %s\n", locp->first_line, err);
+}
+
+int yylex(YYSTYPE* lvalp, YYLTYPE* llocp, void* scanner);
+
+#define scanner context->scanner
+
+%}
+
+%%
+start : commands {
+    context->result = $1;
+};
+
+commands : /* empty */ {
+    NSMutableArray *array = [NSMutableArray array];
+    [MMParserContext storeObject:array];
+    $$ = array;
+}
+| command SEMICOLON commands {
+    [$3 insertObject:$1 atIndex:0];
+    $$ = $3;
+}
+| command {
+    NSMutableArray *array = [NSMutableArray array];
+    [MMParserContext storeObject:array];
+    [array insertObject:$1 atIndex:0];
+    $$ = array;
+}
+;
+
+command : /* empty */ {
+    NSMutableArray *array = [NSMutableArray array];
+    [MMParserContext storeObject:array];
+    $$ = array;
+}
+| WORD {
+    NSMutableArray *array = [NSMutableArray array];
+    [MMParserContext storeObject:array];
+    [array insertObject:$1 atIndex:0];
+    $$ = array;
+}
+| WORD command {
+    [$2 insertObject:$1 atIndex:0];
+    $$ = $2;
+}
+;

@@ -1,0 +1,42 @@
+%option reentrant
+%option bison-bridge
+%option bison-locations
+%option noyywrap
+
+%{
+#import "MMParserContext.h"
+#import "y.tab.h"
+#define YY_USER_ACTION yylloc->first_line = yylineno;
+#define YY_EXTRA_TYPE MMParserCtx*
+
+#define YY_INPUT(buf, bytesRead, maxSize) \
+	{ \
+        MMParserContext *parserContext = [MMParserContext parserForContext:yyextra]; \
+        if (parserContext) { \
+            bytesRead = [parserContext inputToBuffer:buf maxBytesToRead:maxSize]; \
+        } else { \
+            bytesRead = YY_NULL; \
+        } \
+    }
+%}
+
+WS [ \t]+
+
+%%
+
+((\\.|[^\\; \t])|(\"(\\.|[^\\"])*\"))+ {
+    NSString *result = [NSString stringWithUTF8String:yytext];
+    [MMParserContext storeObject:result];
+    yylval->node = result;
+    return WORD;
+}
+
+\; {
+    return SEMICOLON;
+}
+
+{WS} {
+    /* empty */
+}
+
+%%
