@@ -12,15 +12,24 @@
 
 #import "MMAppDelegate.h"
 #import "MMShared.h"
+#import "MMParserContext.h"
 
 #define CTRLKEY(c)   ((c)-'A'+1)
 
 @implementation MMAppDelegate
 
-- (void)runCommand:(NSString *)command;
+- (void)runCommands:(NSString *)commandsText;
 {
+    // TODO: Support multiple commands.
+    // TODO: Handle quoted parameters, escaped characters and support tilde expansion.
+    NSArray *commands = [[[MMParserContext alloc] init] parseString:commandsText];
+
+    if (commands.count > 1) {
+        MMLog(@"Discarded all commands past the first in: %@", commandsText);
+    }
+
     NSProxy *proxy = [[NSConnection connectionWithRegisteredName:ConnectionShellName host:nil] rootProxy];
-    [proxy performSelector:@selector(executeCommand:) withObject:command];
+    [proxy performSelector:@selector(executeCommand:) withObject:commands[0]];
     [self.terminalWindow setRunning:YES];
 }
 

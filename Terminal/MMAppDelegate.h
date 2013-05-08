@@ -21,6 +21,6 @@
 @property (strong) MMTerminalWindowController *terminalWindow;
 
 - (void)handleTerminalInput:(NSString *)input;
-- (void)runCommand:(NSString *)command;
+- (void)runCommands:(NSString *)commandsText;
 
 @end

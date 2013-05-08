@@ -45,26 +45,25 @@
     [[NSRunLoop mainRunLoop] run];
 }
 
-- (void)executeCommand:(NSString *)command;
+- (void)executeCommand:(NSArray *)commandArguments;
 {
     dispatch_async(dispatch_get_main_queue(), ^{
-        [self _executeCommand:command];
+        [self _executeCommand:commandArguments];
     });
 
     return;
 }
 
-- (void)_executeCommand:(NSString *)command;
+- (void)_executeCommand:(NSArray *)commandArguments;
 {
-    NSArray *items = [command componentsSeparatedByString:@" "];
-    const char *argv[[items count] + 1];
-    for (NSUInteger i = 0; i < [items count]; i++) {
-        argv[i] = [items[i] cStringUsingEncoding:NSUTF8StringEncoding];
+    const char *argv[commandArguments.count + 1];
+    for (NSUInteger i = 0; i < commandArguments.count; i++) {
+        argv[i] = [commandArguments[i] cStringUsingEncoding:NSUTF8StringEncoding];
     }
-    argv[[items count]] = NULL;
+    argv[commandArguments.count] = NULL;
 
-    if ([items[0] isEqual:@"cd"]) {
-        [self handleSpecialCommand:command];
+    if ([commandArguments[0] isEqualToString:@"cd"]) {
+        [self handleSpecialCommand:commandArguments];
         NSProxy *proxy = [[NSConnection connectionWithRegisteredName:ConnectionTerminalName host:nil] rootProxy];
         [proxy performSelector:@selector(processFinished)];
 
@@ -107,18 +106,14 @@ void signalHandler(int signalNumber) {
     }
 }
 
-- (void)handleSpecialCommand:(NSString *)command;
+- (void)handleSpecialCommand:(NSArray *)commandArguments;
 {
-    NSArray *items = [command componentsSeparatedByString:@" "];
-
-    if ([items[0] isEqualToString:@"cd"]) {
-        NSRange whitespaceChars = [command rangeOfCharacterFromSet:[NSCharacterSet whitespaceCharacterSet]];
+    if ([commandArguments[0] isEqualToString:@"cd"]) {
         NSString *newDirectory = nil;
-        if ((whitespaceChars.location == NSNotFound) ||
-            ((whitespaceChars.location + whitespaceChars.length) == [command length])) {
+        if (commandArguments.count == 1) {
             newDirectory = @"~";
         } else {
-            newDirectory = [command substringFromIndex:(whitespaceChars.location + whitespaceChars.length)];
+            newDirectory = commandArguments[1];
         }
 
         newDirectory = [newDirectory stringByExpandingTildeInPath];

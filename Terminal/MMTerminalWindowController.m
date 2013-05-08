@@ -13,7 +13,6 @@
 #import "MMShared.h"
 #import "MMTask.h"
 #import "MMTaskCellViewController.h"
-#import "MMParserContext.h"
 #import <QuartzCore/QuartzCore.h>
 
 @interface MMTerminalWindowController ()
@@ -273,15 +272,12 @@ static void directoryWatchingCallback(CFFileDescriptorRef kqRef, CFOptionFlags c
 - (BOOL)control:(NSControl *)control textView:(NSTextView *)textView doCommandBySelector:(SEL)commandSelector;
 {
     if (commandSelector == @selector(insertNewline:)) {
-        id result = [[[MMParserContext alloc] init] parseString:textView.string];
-        NSLog(@"Result: %@", result);
-
         MMAppDelegate *appDelegate = (MMAppDelegate *)[[NSApplication sharedApplication] delegate];
         MMTask *newTask = [MMTask new];
         newTask.command = [textView.string copy];
         newTask.startedAt = [NSDate date];
         [self.tasks addObject:newTask];
-        [appDelegate runCommand:newTask.command];
+        [appDelegate runCommands:newTask.command];
 
         [textView setString:@""];
         self.commandHistoryIndex = self.tasks.count;
