@@ -55,6 +55,11 @@
     if (commands.count > 1) {
         MMLog(@"Discarded all commands past the first in: %@", commandsText);
     }
+    // TODO: Handle the case of no commands better. (Also detect it better.)
+    if (commands.count == 0) {
+        [self processFinished];
+        return;
+    }
 
     NSProxy *proxy = [[NSConnection connectionWithRegisteredName:[ConnectionShellName stringByAppendingFormat:@".%ld", (long)self.identifier] host:nil] rootProxy];
     [proxy performSelector:@selector(executeCommand:) withObject:commands[0]];
