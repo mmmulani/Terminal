@@ -8,7 +8,7 @@
 
 #import "MMTask.h"
 #import "MMShared.h"
-#import "MMAppDelegate.h"
+#import "MMTerminalConnection.h"
 
 @interface MMTask ()
 
@@ -48,8 +48,7 @@
 
 - (void)handleUserInput:(NSString *)input;
 {
-    MMAppDelegate *appDelegate = (MMAppDelegate *)[[NSApplication sharedApplication] delegate];
-    [appDelegate handleTerminalInput:input];
+    [self.terminalConnection handleTerminalInput:input];
 }
 
 - (void)handleCursorKeyInput:(MMArrowKey)arrowKey;

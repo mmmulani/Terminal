@@ -23,9 +23,11 @@
     return application;
 }
 
-- (void)start;
+- (void)startWithIdentifier:(NSInteger)identifier;
 {
-    self.shellConnection = [NSConnection serviceConnectionWithName:ConnectionShellName rootObject:self];
+    self.identifier = identifier;
+    self.shellConnection = [NSConnection serviceConnectionWithName:[ConnectionShellName stringByAppendingFormat:@".%ld", self.identifier] rootObject:self];
+    self.terminalConnection = [NSConnection connectionWithRegisteredName:[ConnectionTerminalName stringByAppendingFormat:@".%ld", (long)self.identifier] host:nil];
     MMLog(@"Shell connection: %@", self.shellConnection);
 
     [[NSFileManager defaultManager] changeCurrentDirectoryPath:NSHomeDirectory()];
@@ -64,7 +66,7 @@
 
     if ([commandArguments[0] isEqualToString:@"cd"]) {
         [self handleSpecialCommand:commandArguments];
-        NSProxy *proxy = [[NSConnection connectionWithRegisteredName:ConnectionTerminalName host:nil] rootProxy];
+        NSProxy *proxy = [self.terminalConnection rootProxy];
         [proxy performSelector:@selector(processFinished)];
 
         return;
@@ -96,7 +98,7 @@
 {
     waitpid([child_pid intValue], NULL, 0);
 
-    NSProxy *proxy = [[NSConnection connectionWithRegisteredName:ConnectionTerminalName host:nil] rootProxy];
+    NSProxy *proxy = [self.terminalConnection rootProxy];
     [proxy performSelector:@selector(processFinished)];
 }
 
@@ -128,7 +130,7 @@ void signalHandler(int signalNumber) {
 - (void)informTerminalOfCurrentDirectory;
 {
     NSFileManager *fileManager = [NSFileManager defaultManager];
-    NSProxy *proxy = [[NSConnection connectionWithRegisteredName:ConnectionTerminalName host:nil] rootProxy];
+    NSProxy *proxy = [self.terminalConnection rootProxy];
     [proxy performSelector:@selector(directoryChangedTo:) withObject:[fileManager currentDirectoryPath]];
 }
 

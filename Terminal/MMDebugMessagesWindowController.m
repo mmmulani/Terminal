@@ -34,7 +34,8 @@
 
 - (IBAction)allCharactersAction:(id)sender {
     MMAppDelegate *appDelegate = (MMAppDelegate *)[[NSApplication sharedApplication] delegate];
-    appDelegate.terminalWindow.logAllCharacters = [sender state] == NSOnState;
+    // TODO: Re-enable this.
+/*    appDelegate.terminalWindow.logAllCharacters = [sender state] == NSOnState; */
 }
 
 - (void)addDebugMessage:(NSString *)message;

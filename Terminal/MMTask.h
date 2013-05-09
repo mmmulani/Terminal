@@ -29,6 +29,8 @@ typedef enum {
     MMArrowKeyLeft,
 } MMArrowKey;
 
+@class MMTerminalConnection;
+
 @interface MMTask : NSObject
 
 @property (strong) NSTextStorage *output;
@@ -40,6 +42,8 @@ typedef enum {
 @property (readonly) NSMutableAttributedString *currentANSIDisplay;
 @property MMPosition cursorPosition;
 @property (readonly) NSInteger cursorPositionByCharacters;
+
+@property (strong) MMTerminalConnection *terminalConnection;
 
 - (void)handleUserInput:(NSString *)input;
 - (void)handleCursorKeyInput:(MMArrowKey)arrowKey;

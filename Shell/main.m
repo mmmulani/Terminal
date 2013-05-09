@@ -14,8 +14,9 @@ int main(int argc, const char * argv[])
 {
 
     @autoreleasepool {
-        
-        [[MMShellMain sharedApplication] start];
+
+        NSInteger identifier = [[NSString stringWithCString:argv[1] encoding:NSUTF8StringEncoding] intValue];
+        [[MMShellMain sharedApplication] startWithIdentifier:identifier];
 
     }
     return 0;

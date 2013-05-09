@@ -13,14 +13,9 @@
 
 @interface MMAppDelegate : NSObject <NSApplicationDelegate, NSTextFieldDelegate>
 
-@property int fd;
-@property BOOL running;
+@property (strong) MMDebugMessagesWindowController *debugWindow;
 @property (strong) NSConnection *terminalAppConnection;
 
-@property (strong) MMDebugMessagesWindowController *debugWindow;
-@property (strong) MMTerminalWindowController *terminalWindow;
-
-- (void)handleTerminalInput:(NSString *)input;
-- (void)runCommands:(NSString *)commandsText;
+- (IBAction)createNewTerminal:(id)sender;
 
 @end

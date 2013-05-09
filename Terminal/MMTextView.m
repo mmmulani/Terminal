@@ -7,7 +7,6 @@
 //
 
 #import "MMTextView.h"
-#import "MMAppDelegate.h"
 
 @implementation MMTextView
 

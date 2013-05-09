@@ -10,6 +10,8 @@
 
 #import "MMTextView.h"
 
+@class MMTerminalConnection;
+
 @interface MMTerminalWindowController : NSWindowController <NSTextFieldDelegate, NSTableViewDataSource, NSTableViewDelegate>
 
 @property (strong) IBOutlet NSTextField *commandInput;
@@ -20,8 +22,11 @@
 @property (strong) IBOutlet NSLayoutConstraint *commandControlsLayoutConstraint;
 @property (strong) NSMutableArray *tasks;
 @property (strong) NSMutableArray *taskViewControllers;
+@property (strong) MMTerminalConnection *terminalConnection;
 @property BOOL running;
 @property BOOL logAllCharacters;
+
+- (id)initWithTerminalConnection:(MMTerminalConnection *)terminalConnection;
 
 - (void)handleOutput:(NSString *)message;
 - (void)processFinished;

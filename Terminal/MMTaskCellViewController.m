@@ -7,7 +7,6 @@
 //
 
 #import "MMTaskCellViewController.h"
-#import "MMAppDelegate.h"
 
 @interface MMTaskCellViewController ()
 

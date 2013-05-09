@@ -8,9 +8,10 @@
 
 /* Begin PBXBuildFile section */
 		9103CD7216F7EE0900506F8B /* QuartzCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 9103CD7116F7EE0900506F8B /* QuartzCore.framework */; };
-		9106520916C313640010DC76 /* MMWindow.m in Sources */ = {isa = PBXBuildFile; fileRef = 9106520816C313640010DC76 /* MMWindow.m */; };
 		9106520C16C574160010DC76 /* MMTextView.m in Sources */ = {isa = PBXBuildFile; fileRef = 9106520B16C574160010DC76 /* MMTextView.m */; };
 		9126054E1739C5BC001962AE /* MMCommandLineParserTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 9126054C1739C4E0001962AE /* MMCommandLineParserTests.m */; };
+		912605511739E1EF001962AE /* MMCommandLineArgumentsParser.m in Sources */ = {isa = PBXBuildFile; fileRef = 912605501739E1EF001962AE /* MMCommandLineArgumentsParser.m */; };
+		9139E161173B2423009FFC1E /* MMTerminalConnection.m in Sources */ = {isa = PBXBuildFile; fileRef = 9139E160173B2423009FFC1E /* MMTerminalConnection.m */; };
 		917D1C42173963C800503158 /* lexer.lm in Sources */ = {isa = PBXBuildFile; fileRef = 917D1C41173963C800503158 /* lexer.lm */; };
 		917D1C4417396C8000503158 /* parser.ym in Sources */ = {isa = PBXBuildFile; fileRef = 917D1C4317396C8000503158 /* parser.ym */; };
 		917D1C47173973D600503158 /* MMParserContext.m in Sources */ = {isa = PBXBuildFile; fileRef = 917D1C46173973D600503158 /* MMParserContext.m */; };
@@ -74,12 +75,14 @@
 
 /* Begin PBXFileReference section */
 		9103CD7116F7EE0900506F8B /* QuartzCore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = QuartzCore.framework; path = System/Library/Frameworks/QuartzCore.framework; sourceTree = SDKROOT; };
-		9106520716C313640010DC76 /* MMWindow.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MMWindow.h; sourceTree = "<group>"; };
-		9106520816C313640010DC76 /* MMWindow.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MMWindow.m; sourceTree = "<group>"; };
 		9106520A16C574160010DC76 /* MMTextView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MMTextView.h; sourceTree = "<group>"; };
 		9106520B16C574160010DC76 /* MMTextView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MMTextView.m; sourceTree = "<group>"; };
 		9126054B1739C4E0001962AE /* MMCommandLineParserTests.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = MMCommandLineParserTests.h; path = TerminalTests/MMCommandLineParserTests.h; sourceTree = "<group>"; };
 		9126054C1739C4E0001962AE /* MMCommandLineParserTests.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = MMCommandLineParserTests.m; path = TerminalTests/MMCommandLineParserTests.m; sourceTree = "<group>"; };
+		9126054F1739E1EF001962AE /* MMCommandLineArgumentsParser.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = MMCommandLineArgumentsParser.h; path = CommandLine/MMCommandLineArgumentsParser.h; sourceTree = "<group>"; };
+		912605501739E1EF001962AE /* MMCommandLineArgumentsParser.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = MMCommandLineArgumentsParser.m; path = CommandLine/MMCommandLineArgumentsParser.m; sourceTree = "<group>"; };
+		9139E15F173B2423009FFC1E /* MMTerminalConnection.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MMTerminalConnection.h; sourceTree = "<group>"; };
+		9139E160173B2423009FFC1E /* MMTerminalConnection.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MMTerminalConnection.m; sourceTree = "<group>"; };
 		917D1C41173963C800503158 /* lexer.lm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.lex; name = lexer.lm; path = CommandLine/lexer.lm; sourceTree = "<group>"; };
 		917D1C4317396C8000503158 /* parser.ym */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.yacc; name = parser.ym; path = CommandLine/parser.ym; sourceTree = "<group>"; };
 		917D1C45173973D600503158 /* MMParserContext.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = MMParserContext.h; path = CommandLine/MMParserContext.h; sourceTree = "<group>"; };
@@ -165,6 +168,8 @@
 				917D1C4317396C8000503158 /* parser.ym */,
 				917D1C45173973D600503158 /* MMParserContext.h */,
 				917D1C46173973D600503158 /* MMParserContext.m */,
+				9126054F1739E1EF001962AE /* MMCommandLineArgumentsParser.h */,
+				912605501739E1EF001962AE /* MMCommandLineArgumentsParser.m */,
 			);
 			name = "Command line input";
 			sourceTree = "<group>";
@@ -289,8 +294,6 @@
 				91F4EED216B8D63D00F65E91 /* MMAppDelegate.m */,
 				9106520A16C574160010DC76 /* MMTextView.h */,
 				9106520B16C574160010DC76 /* MMTextView.m */,
-				9106520716C313640010DC76 /* MMWindow.h */,
-				9106520816C313640010DC76 /* MMWindow.m */,
 				91F4EED416B8D63D00F65E91 /* MMMainMenu.xib */,
 				91F4EEC616B8D63D00F65E91 /* Supporting Files */,
 				9186499216D408700024D9BE /* MMTask.h */,
@@ -298,6 +301,8 @@
 				918649BB16D69A6F0024D9BE /* MMDebugMessagesWindowController.h */,
 				918649BC16D69A6F0024D9BE /* MMDebugMessagesWindowController.m */,
 				918649BD16D69A700024D9BE /* MMDebugMessagesPanel.xib */,
+				9139E15F173B2423009FFC1E /* MMTerminalConnection.h */,
+				9139E160173B2423009FFC1E /* MMTerminalConnection.m */,
 			);
 			path = Terminal;
 			sourceTree = "<group>";
@@ -470,7 +475,6 @@
 				918649B916D5D19E0024D9BE /* MMShared.m in Sources */,
 				91F4EECC16B8D63D00F65E91 /* main.m in Sources */,
 				91F4EED316B8D63D00F65E91 /* MMAppDelegate.m in Sources */,
-				9106520916C313640010DC76 /* MMWindow.m in Sources */,
 				9106520C16C574160010DC76 /* MMTextView.m in Sources */,
 				9186499016D2A6190024D9BE /* MMTerminalWindowController.m in Sources */,
 				9186499416D408700024D9BE /* MMTask.m in Sources */,
@@ -479,6 +483,8 @@
 				917D1C42173963C800503158 /* lexer.lm in Sources */,
 				917D1C4417396C8000503158 /* parser.ym in Sources */,
 				917D1C47173973D600503158 /* MMParserContext.m in Sources */,
+				912605511739E1EF001962AE /* MMCommandLineArgumentsParser.m in Sources */,
+				9139E161173B2423009FFC1E /* MMTerminalConnection.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

@@ -11,10 +11,12 @@
 @interface MMShellMain : NSObject
 
 @property (strong) NSConnection *shellConnection;
+@property (strong) NSConnection *terminalConnection;
+@property NSInteger identifier;
 
 + (MMShellMain *)sharedApplication;
 
-- (void)start;
+- (void)startWithIdentifier:(NSInteger)identifier;
 - (void)executeCommand:(NSArray *)commandArguments;
 
 @end

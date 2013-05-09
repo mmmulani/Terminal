@@ -9,10 +9,10 @@
 #include <sys/event.h>
 
 #import "MMTerminalWindowController.h"
-#import "MMAppDelegate.h"
 #import "MMShared.h"
 #import "MMTask.h"
 #import "MMTaskCellViewController.h"
+#import "MMTerminalConnection.h"
 #import <QuartzCore/QuartzCore.h>
 
 @interface MMTerminalWindowController ()
@@ -30,7 +30,7 @@
 
 @implementation MMTerminalWindowController
 
-- (id)init;
+- (id)initWithTerminalConnection:(MMTerminalConnection *)terminalConnection;
 {
     self = [self initWithWindowNibName:@"MMTerminalWindow"];
 
@@ -38,6 +38,7 @@
     self.taskViewControllers = [NSMutableArray array];
     self.commandHistoryIndex = 0;
     self.directoriesBeingWatched = [NSMutableDictionary dictionary];
+    self.terminalConnection = terminalConnection;
 
     return self;
 }
@@ -272,12 +273,11 @@ static void directoryWatchingCallback(CFFileDescriptorRef kqRef, CFOptionFlags c
 - (BOOL)control:(NSControl *)control textView:(NSTextView *)textView doCommandBySelector:(SEL)commandSelector;
 {
     if (commandSelector == @selector(insertNewline:)) {
-        MMAppDelegate *appDelegate = (MMAppDelegate *)[[NSApplication sharedApplication] delegate];
         MMTask *newTask = [MMTask new];
         newTask.command = [textView.string copy];
         newTask.startedAt = [NSDate date];
+        newTask.terminalConnection = self.terminalConnection;
         [self.tasks addObject:newTask];
-        [appDelegate runCommands:newTask.command];
 
         [textView setString:@""];
         self.commandHistoryIndex = self.tasks.count;
@@ -293,6 +293,8 @@ static void directoryWatchingCallback(CFFileDescriptorRef kqRef, CFOptionFlags c
         self.commandControlsLayoutConstraint.animations = @{@"constant": animation};
 
         [self.commandControlsLayoutConstraint.animator setConstant:20.0];
+
+        [self.terminalConnection runCommands:newTask.command];
 
         return YES;
     } else if (commandSelector == @selector(scrollPageUp:)) {
