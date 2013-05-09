@@ -16,13 +16,18 @@
 {
     static NSInteger uniqueIdentifier = 0;
     uniqueIdentifier++;
-    [[[MMTerminalConnection alloc] initWithIdentifier:uniqueIdentifier] createTerminalWindow];
+
+    MMTerminalConnection *terminalConnection = [[MMTerminalConnection alloc] initWithIdentifier:uniqueIdentifier];
+    [self.terminalConnections addObject:terminalConnection];
+    [terminalConnection createTerminalWindow];
 }
 
 # pragma mark - NSApplicationDelegate
 
 - (void)applicationDidFinishLaunching:(NSNotification *)aNotification;
 {
+    self.terminalConnections = [NSMutableArray array];
+
     self.terminalAppConnection = [NSConnection serviceConnectionWithName:ConnectionTerminalName rootObject:self];
 
     self.debugWindow = [[MMDebugMessagesWindowController alloc] init];

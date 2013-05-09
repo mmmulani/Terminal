@@ -8,6 +8,7 @@
 
 #import "MMDebugMessagesWindowController.h"
 #import "MMAppDelegate.h"
+#import "MMTerminalConnection.h"
 
 @interface MMDebugMessagesWindowController ()
 
@@ -34,8 +35,9 @@
 
 - (IBAction)allCharactersAction:(id)sender {
     MMAppDelegate *appDelegate = (MMAppDelegate *)[[NSApplication sharedApplication] delegate];
-    // TODO: Re-enable this.
-/*    appDelegate.terminalWindow.logAllCharacters = [sender state] == NSOnState; */
+    for (MMTerminalConnection *terminalConnection in appDelegate.terminalConnections) {
+        terminalConnection.terminalWindow.logAllCharacters = [sender state] == NSOnState;
+    }
 }
 
 - (void)addDebugMessage:(NSString *)message;

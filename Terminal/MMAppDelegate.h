@@ -15,6 +15,7 @@
 
 @property (strong) MMDebugMessagesWindowController *debugWindow;
 @property (strong) NSConnection *terminalAppConnection;
+@property (strong) NSMutableArray *terminalConnections;
 
 - (IBAction)createNewTerminal:(id)sender;
 
