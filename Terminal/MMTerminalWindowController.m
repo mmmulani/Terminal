@@ -53,6 +53,7 @@
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(terminalOutputFrameChanged:) name:NSViewFrameDidChangeNotification object:self.tableView.superview];
 
     self.originalCommandControlsLayoutConstraintConstant = self.commandControlsLayoutConstraint.constant;
+    self.commandInput.font = [NSFont systemFontOfSize:13.0];
 }
 
 - (void)dealloc;
@@ -261,9 +262,9 @@ static void directoryWatchingCallback(CFFileDescriptorRef kqRef, CFOptionFlags c
     CFFileDescriptorEnableCallBacks(((__bridge MMTerminalWindowController *)info).directoryKqRef, kCFFileDescriptorReadCallBack);
 }
 
-# pragma mark - NSTextFieldDelegate
+# pragma mark - NSTextDelegate
 
-- (BOOL)control:(NSControl *)control textShouldBeginEditing:(NSText *)fieldEditor;
+- (BOOL)textShouldBeginEditing:(NSText *)fieldEditor;
 {
     if (self.running) {
         MMTaskCellViewController *lastController = self.taskViewControllers.lastObject;
@@ -272,7 +273,7 @@ static void directoryWatchingCallback(CFFileDescriptorRef kqRef, CFOptionFlags c
     return !self.running;
 }
 
-- (BOOL)control:(NSControl *)control textView:(NSTextView *)textView doCommandBySelector:(SEL)commandSelector;
+- (BOOL)textView:(NSTextView *)textView doCommandBySelector:(SEL)commandSelector;
 {
     if (commandSelector == @selector(insertNewline:)) {
         MMTask *newTask = [MMTask new];
@@ -334,12 +335,13 @@ static void directoryWatchingCallback(CFFileDescriptorRef kqRef, CFOptionFlags c
     return NO;
 }
 
-- (NSArray *)control:(NSControl *)control textView:(NSTextView *)textView completions:(NSArray *)words forPartialWordRange:(NSRange)charRange indexOfSelectedItem:(NSInteger *)index;
+- (NSArray *)textView:(NSTextView *)textView completions:(NSArray *)words forPartialWordRange:(NSRange)charRange indexOfSelectedItem:(NSInteger *)index;
 {
     // TODO: Handle tilde expansion.
     // TODO: Handle empty partial completion. (e.g. attempting a completion with "cd ")
     NSLog(@"Parsed command line: %@\n%@", [MMCommandLineArgumentsParser parseCommandsFromCommandLine:textView.string], [MMCommandLineArgumentsParser tokenEndingsFromCommandLine:textView.string]);
     NSLog(@"Partial substring: %@", [textView.string substringWithRange:charRange]);
+    NSLog(@"Font in commandInput: %@", textView.font);
 
     NSRange whitespaceRange = [textView.string rangeOfCharacterFromSet:[NSCharacterSet whitespaceCharacterSet] options:NSBackwardsSearch range:NSMakeRange(0, MIN(charRange.location + 1, textView.string.length))];
     NSString *partial;

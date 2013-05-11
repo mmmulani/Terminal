@@ -14,7 +14,7 @@
 
 @interface MMTerminalWindowController : NSWindowController <NSTextFieldDelegate, NSTableViewDataSource, NSTableViewDelegate>
 
-@property (strong) IBOutlet NSTextField *commandInput;
+@property (strong) IBOutlet NSTextView *commandInput;
 @property (strong) IBOutlet NSTableView *tableView;
 @property (strong) IBOutlet NSCollectionView *directoryCollectionView;
 @property (strong) IBOutlet NSTextField *currentDirectoryLabel;
