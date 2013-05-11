@@ -12,11 +12,14 @@
 
 NSMutableDictionary *_parsers = nil;
 NSMutableArray *_storedObjects = nil;
+NSMutableDictionary *_tokenEnds = nil;
+NSInteger _currentPosition = 0;
 
 + (void)initialize;
 {
     _parsers = [NSMutableDictionary dictionary];
     _storedObjects = [NSMutableArray array];
+    _tokenEnds = [NSMutableDictionary dictionary];
 }
 
 + (MMParserContext *)parserForContext:(MMParserCtx *)context;
@@ -27,6 +30,21 @@ NSMutableArray *_storedObjects = nil;
 + (void)storeObject:(id)object;
 {
     [_storedObjects addObject:object];
+}
+
++ (NSInteger)currentPosition;
+{
+    return _currentPosition;
+}
+
++ (void)incrementCurrentPosition:(NSInteger)amount;
+{
+    _currentPosition += amount;
+}
+
++ (void)setEnd:(NSInteger)end forToken:(NSString *)token;
+{
+    _tokenEnds[[NSValue valueWithPointer:(__bridge const void *)token]] = [NSNumber numberWithInteger:end];
 }
 
 - (id)init;
@@ -53,6 +71,7 @@ NSMutableArray *_storedObjects = nil;
 
 - (void)initScanner;
 {
+    _currentPosition = 0;
     yylex_init(&(self.scanner->scanner));
 	yyset_extra(self.scanner,self.scanner->scanner);
 	self.scanner->error_text = nil;
@@ -94,6 +113,36 @@ NSMutableArray *_storedObjects = nil;
     }
     result = self.scanner->result;
     _storedObjects = [NSMutableArray array];
+    _tokenEnds = [NSMutableDictionary dictionary];
+    self.scanner->result = nil;
+    [self.stream close];
+    self.stream = nil;
+
+    return result;
+}
+
+- (id)parseStringForTokenEndings:(NSString *)commandLineInput;
+{
+    NSMutableArray *result;
+    NSData *data = [commandLineInput dataUsingEncoding:NSUTF8StringEncoding];
+    self.stream = [NSInputStream inputStreamWithData:data];
+    [self.stream open];
+    self.scanner->result = nil;
+    if (yyparse(self.scanner)) {
+        // TODO: Error handling.
+        return nil;
+    }
+    result = [self.scanner->result mutableCopy];
+    for (NSInteger i = 0; i < result.count; i++) {
+        NSMutableArray *command = [result[i] mutableCopy];
+        for (NSInteger j = 0; j < command.count; j++) {
+            NSString *token = command[j];
+            command[j] = _tokenEnds[[NSValue valueWithPointer:(__bridge const void *)token]];
+        }
+        result[i] = command;
+    }
+    _storedObjects = [NSMutableArray array];
+    _tokenEnds = [NSMutableDictionary dictionary];
     self.scanner->result = nil;
     [self.stream close];
     self.stream = nil;

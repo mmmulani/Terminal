@@ -25,6 +25,11 @@
     return commands;
 }
 
++ (NSArray *)tokenEndingsFromCommandLine:(NSString *)commandLineText;
+{
+    return [[[MMParserContext alloc] init] parseStringForTokenEndings:commandLineText];
+}
+
 + (NSString *)escapeArgument:(NSString *)argument;
 {
     NSMutableString *newArgument = [NSMutableString stringWithCapacity:argument.length];

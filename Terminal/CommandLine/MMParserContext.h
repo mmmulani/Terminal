@@ -31,8 +31,13 @@ int yylex_destroy(void *scanner);
 
 + (void)storeObject:(id)object;
 
++ (NSInteger)currentPosition;
++ (void)incrementCurrentPosition:(NSInteger)amount;
++ (void)setEnd:(NSInteger)end forToken:(NSString *)token;
+
 - (int)inputToBuffer:(char *)buffer maxBytesToRead:(size_t)maxBytesToRead;
 
 - (id)parseString:(NSString *)commandLineInput;
+- (id)parseStringForTokenEndings:(NSString *)commandLineInput;
 
 @end

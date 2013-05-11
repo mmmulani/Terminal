@@ -15,6 +15,8 @@
 #import "MMTerminalConnection.h"
 #import <QuartzCore/QuartzCore.h>
 
+#import "MMCommandLineArgumentsParser.h"
+
 @interface MMTerminalWindowController ()
 
 // An index into |self.tasks| of the current task shown in the command input field.
@@ -336,8 +338,10 @@ static void directoryWatchingCallback(CFFileDescriptorRef kqRef, CFOptionFlags c
 {
     // TODO: Handle tilde expansion.
     // TODO: Handle empty partial completion. (e.g. attempting a completion with "cd ")
+    NSLog(@"Parsed command line: %@\n%@", [MMCommandLineArgumentsParser parseCommandsFromCommandLine:textView.string], [MMCommandLineArgumentsParser tokenEndingsFromCommandLine:textView.string]);
+    NSLog(@"Partial substring: %@", [textView.string substringWithRange:charRange]);
 
-    NSRange whitespaceRange = [textView.string rangeOfCharacterFromSet:[NSCharacterSet whitespaceCharacterSet] options:NSBackwardsSearch range:NSMakeRange(0, charRange.location + 1)];
+    NSRange whitespaceRange = [textView.string rangeOfCharacterFromSet:[NSCharacterSet whitespaceCharacterSet] options:NSBackwardsSearch range:NSMakeRange(0, MIN(charRange.location + 1, textView.string.length))];
     NSString *partial;
     if (whitespaceRange.location == NSNotFound) {
         partial = [textView.string substringWithRange:NSMakeRange(0, charRange.length + charRange.location)];

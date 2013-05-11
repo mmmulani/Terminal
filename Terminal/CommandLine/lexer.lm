@@ -26,17 +26,20 @@ WS [ \t]+
 
 ((\\.|[^\\; \t])|(\"(\\.|[^\\"])*\"))+ {
     NSString *result = [NSString stringWithUTF8String:yytext];
+    [MMParserContext incrementCurrentPosition:yyleng];
     [MMParserContext storeObject:result];
+    [MMParserContext setEnd:[MMParserContext currentPosition] forToken:result];
     yylval->node = result;
     return WORD;
 }
 
 \; {
+    [MMParserContext incrementCurrentPosition:yyleng];
     return SEMICOLON;
 }
 
 {WS} {
-    /* empty */
+    [MMParserContext incrementCurrentPosition:yyleng];
 }
 
 %%
