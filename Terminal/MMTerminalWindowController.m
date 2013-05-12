@@ -13,9 +13,8 @@
 #import "MMTask.h"
 #import "MMTaskCellViewController.h"
 #import "MMTerminalConnection.h"
+#import "MMCompletionEngine.h"
 #import <QuartzCore/QuartzCore.h>
-
-#import "MMCommandLineArgumentsParser.h"
 
 @interface MMTerminalWindowController ()
 
@@ -337,44 +336,10 @@ static void directoryWatchingCallback(CFFileDescriptorRef kqRef, CFOptionFlags c
 
 - (NSArray *)textView:(NSTextView *)textView completions:(NSArray *)words forPartialWordRange:(NSRange)charRange indexOfSelectedItem:(NSInteger *)index;
 {
-    // TODO: Handle tilde expansion.
-    // TODO: Handle empty partial completion. (e.g. attempting a completion with "cd ")
-    NSLog(@"Parsed command line: %@\n%@", [MMCommandLineArgumentsParser parseCommandsFromCommandLine:textView.string], [MMCommandLineArgumentsParser tokenEndingsFromCommandLine:textView.string]);
     NSLog(@"Partial substring: %@", [textView.string substringWithRange:charRange]);
-    NSLog(@"Font in commandInput: %@", textView.font);
+    NSString *partial = [textView.string substringWithRange:charRange];
 
-    NSRange whitespaceRange = [textView.string rangeOfCharacterFromSet:[NSCharacterSet whitespaceCharacterSet] options:NSBackwardsSearch range:NSMakeRange(0, MIN(charRange.location + 1, textView.string.length))];
-    NSString *partial;
-    if (whitespaceRange.location == NSNotFound) {
-        partial = [textView.string substringWithRange:NSMakeRange(0, charRange.length + charRange.location)];
-    } else {
-        partial = [textView.string substringWithRange:NSMakeRange(whitespaceRange.location + 1, charRange.length + (charRange.location - (whitespaceRange.location + 1)))];
-    }
-    NSLog(@"partial: %@, whitespaceRange: %@", partial, NSStringFromRange(whitespaceRange));
-
-    NSString *absolutePartial = partial;
-    if (![partial isAbsolutePath]) {
-        absolutePartial = [self.currentDirectory stringByAppendingPathComponent:partial];
-    }
-    NSArray *matches;
-    NSString *longestMatch;
-    [absolutePartial completePathIntoString:&longestMatch caseSensitive:NO matchesIntoArray:&matches filterTypes:nil];
-    NSMutableArray *results = [NSMutableArray arrayWithCapacity:[matches count]];
-    NSUInteger startingPosition = [absolutePartial length] - [partial length];
-    for (NSString *result in matches) {
-        [results addObject:[result substringFromIndex:startingPosition]];
-    }
-
-    if ([results count] == 0) {
-        return nil;
-    }
-
-    // NSString completePathIntoString: will try to complete the path by traversing the directory tree
-    // until it finds multiple results. However, we only want to return one directory from that path.
-    NSRange slashAfterPartial = [results[0] rangeOfString:@"/" options:0 range:NSMakeRange([partial length] + 1, [results[0] length] - [partial length] - 1)];
-    if (slashAfterPartial.location != NSNotFound) {
-        return @[[results[0] substringToIndex:slashAfterPartial.location]];
-    }
+    NSArray *results = [[MMCompletionEngine defaultCompletionEngine] completionsForPartial:partial inDirectory:self.currentDirectory];
 
     return results;
 }

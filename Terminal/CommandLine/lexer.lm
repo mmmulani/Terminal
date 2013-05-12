@@ -24,9 +24,9 @@ WS [ \t]+
 
 %%
 
-((\\.|[^\\; \t])|(\"(\\.|[^\\"])*\"))+ {
+((\\.|[^\\; \t\"])|(\"(\\.|[^\\"])*\"))+ {
     NSString *result = [NSString stringWithUTF8String:yytext];
-    [MMParserContext incrementCurrentPosition:yyleng];
+    [MMParserContext incrementCurrentPosition:result.length];
     [MMParserContext storeObject:result];
     [MMParserContext setEnd:[MMParserContext currentPosition] forToken:result];
     yylval->node = result;
@@ -40,6 +40,10 @@ WS [ \t]+
 
 {WS} {
     [MMParserContext incrementCurrentPosition:yyleng];
+}
+
+. {
+    /* empty */
 }
 
 %%

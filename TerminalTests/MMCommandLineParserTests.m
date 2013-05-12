@@ -46,4 +46,13 @@ do {\
     CompareInputAgainstEscapedArgument(@"\"multiple words\"", @"multiple words");
 }
 
+- (void)testTokenEndings;
+{
+    NSArray *tokenEndings = [MMCommandLineArgumentsParser tokenEndingsFromCommandLine:@"abc def; ghi"];
+    STAssertEqualObjects(tokenEndings, (@[@[@3, @7], @[@12]]), @"");
+
+    NSArray *tokenEndingsWithAccent = [MMCommandLineArgumentsParser tokenEndingsFromCommandLine:@"cd Améli"];
+    STAssertEqualObjects(tokenEndingsWithAccent, (@[@[@2, @8]]), @"");
+}
+
 @end

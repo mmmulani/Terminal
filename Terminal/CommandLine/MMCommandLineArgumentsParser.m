@@ -25,6 +25,11 @@
     return commands;
 }
 
++ (NSArray *)parseCommandsFromCommandLineWithoutEscaping:(NSString *)commandLineText;
+{
+    return [[[MMParserContext alloc] init] parseString:commandLineText];
+}
+
 + (NSArray *)tokenEndingsFromCommandLine:(NSString *)commandLineText;
 {
     return [[[MMParserContext alloc] init] parseStringForTokenEndings:commandLineText];
