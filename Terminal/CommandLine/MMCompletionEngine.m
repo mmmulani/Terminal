@@ -28,12 +28,10 @@
         // TODO: Collect information about where the partial is so that we can suggest commands, parameters or files based on context.
         return [self filesAndFoldersInDirectory:path includeHiddenFiles:NO];
     }
-    NSString *absolutePartial = partial;
-    if (![partial isAbsolutePath]) {
-        absolutePartial = [path stringByAppendingPathComponent:partial];
-    }
-    NSString *fileToComplete = [[absolutePartial pathComponents] lastObject];
+
+    NSString *fileToComplete = [partial characterAtIndex:(partial.length - 1)] == '/' ? @"" : [partial lastPathComponent];
     NSString *prefix = [partial substringToIndex:(partial.length - fileToComplete.length)];
+    path = [path stringByAppendingPathComponent:prefix];
 
     NSArray *files = [self filesAndFoldersInDirectory:path includeHiddenFiles:(fileToComplete.length > 0 && [fileToComplete characterAtIndex:0] == '.')];
     NSMutableArray *matchingFiles = [NSMutableArray arrayWithCapacity:files.count];
@@ -48,10 +46,15 @@
 
 - (NSArray *)filesAndFoldersInDirectory:(NSString *)path includeHiddenFiles:(BOOL)hiddenFiles;
 {
-    NSArray *fileURLs = [[NSFileManager defaultManager] contentsOfDirectoryAtURL:[NSURL fileURLWithPath:path] includingPropertiesForKeys:@[NSURLNameKey] options:(hiddenFiles ? 0 : NSDirectoryEnumerationSkipsHiddenFiles) error:nil];
+    NSArray *fileURLs = [[NSFileManager defaultManager] contentsOfDirectoryAtURL:[NSURL fileURLWithPath:path] includingPropertiesForKeys:@[NSURLNameKey, NSURLFileResourceTypeKey] options:(hiddenFiles ? 0 : NSDirectoryEnumerationSkipsHiddenFiles) error:nil];
     NSMutableArray *files = [NSMutableArray arrayWithCapacity:[fileURLs count]];
     for (NSURL *file in fileURLs) {
-        [files addObject:[file resourceValuesForKeys:@[NSURLNameKey] error:nil][NSURLNameKey]];
+        NSDictionary *resourceValues = [file resourceValuesForKeys:@[NSURLNameKey, NSURLFileResourceTypeKey] error:nil];
+        // We append a "/" to the end of the name if the file is a directory.
+        NSString *fileNameWithSuffix = [resourceValues[NSURLNameKey] stringByAppendingString:([resourceValues[NSURLFileResourceTypeKey] isEqualToString:NSURLFileResourceTypeDirectory] ? @"/" : @"")];
+        // The strings returned by NSFileManager have seperate characters for diacratics.
+        // For example, "á" would have length 2. Calling |precomposedStringWithCanonicalMapping| composes these characters and diacratics into a single character.
+        [files addObject:fileNameWithSuffix.precomposedStringWithCanonicalMapping];
     }
     return files;
 }
