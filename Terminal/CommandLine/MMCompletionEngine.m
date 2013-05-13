@@ -8,6 +8,7 @@
 
 #import "MMCompletionEngine.h"
 #import "MMTerminalConnection.h"
+#import "MMCommandLineArgumentsParser.h"
 #import "MMCommandsTextView.h"
 
 @implementation MMCompletionEngine
@@ -60,6 +61,27 @@
     NSArray *results = [self completionsForPartial:partial inDirectory:self.terminalConnection.currentDirectory];
 
     return results;
+}
+
+- (NSRange)rangeForUserCompletion;
+{
+    // TODO: Handle a tab completion like: cd "Calibre<cursor here><TAB> ; echo test
+    // Maybe we can accomplish this by taking a substring up to the cursor and parsing with a special "partial" rule.
+    NSArray *commands = [MMCommandLineArgumentsParser parseCommandsFromCommandLineWithoutEscaping:self.commandsTextView.string];
+    NSArray *tokenEndings = [MMCommandLineArgumentsParser tokenEndingsFromCommandLine:self.commandsTextView.string];
+
+    NSInteger currentPosition = self.commandsTextView.selectedRange.location;
+    for (NSInteger i = 0; i < commands.count; i++) {
+        for (NSInteger j = 0; j < [commands[i] count]; j++) {
+            NSInteger tokenEnd = [tokenEndings[i][j] integerValue];
+            NSInteger tokenStart = tokenEnd - [commands[i][j] length];
+            if (tokenEnd >= currentPosition && tokenStart <= currentPosition) {
+                return NSMakeRange(tokenStart, currentPosition - tokenStart);
+            }
+        }
+    }
+
+    return NSMakeRange(currentPosition, 0);
 }
 
 @end

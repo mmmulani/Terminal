@@ -20,5 +20,6 @@
 
 // NSTextView methods
 - (NSArray *)completionsForPartialWordRange:(NSRange)charRange indexOfSelectedItem:(NSInteger *)index;
+- (NSRange)rangeForUserCompletion;
 
 @end
