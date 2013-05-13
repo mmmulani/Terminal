@@ -8,10 +8,17 @@
 
 #import <Foundation/Foundation.h>
 
+@class MMCommandsTextView;
+@class MMTerminalConnection;
+
 @interface MMCompletionEngine : NSObject
 
-+ (MMCompletionEngine *)defaultCompletionEngine;
+@property (strong) MMCommandsTextView *commandsTextView;
+@property (strong) MMTerminalConnection *terminalConnection;
 
 - (NSArray *)completionsForPartial:(NSString *)partial inDirectory:(NSString *)path;
+
+// NSTextView methods
+- (NSArray *)completionsForPartialWordRange:(NSRange)charRange indexOfSelectedItem:(NSInteger *)index;
 
 @end

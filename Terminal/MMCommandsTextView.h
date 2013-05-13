@@ -8,6 +8,10 @@
 
 #import <Cocoa/Cocoa.h>
 
+@class MMCompletionEngine;
+
 @interface MMCommandsTextView : NSTextView
+
+@property (strong) MMCompletionEngine *completionEngine;
 
 @end

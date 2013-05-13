@@ -14,6 +14,7 @@
 #import "MMTaskCellViewController.h"
 #import "MMTerminalConnection.h"
 #import "MMCompletionEngine.h"
+#import "MMCommandsTextView.h"
 #import <QuartzCore/QuartzCore.h>
 
 @interface MMTerminalWindowController ()
@@ -53,6 +54,7 @@
 
     self.originalCommandControlsLayoutConstraintConstant = self.commandControlsLayoutConstraint.constant;
     self.commandInput.font = [NSFont systemFontOfSize:13.0];
+    self.commandInput.completionEngine.terminalConnection = self.terminalConnection;
 
     [self.window makeFirstResponder:self.commandInput];
 }
@@ -334,16 +336,6 @@ static void directoryWatchingCallback(CFFileDescriptorRef kqRef, CFOptionFlags c
     }
 
     return NO;
-}
-
-- (NSArray *)textView:(NSTextView *)textView completions:(NSArray *)words forPartialWordRange:(NSRange)charRange indexOfSelectedItem:(NSInteger *)index;
-{
-    NSLog(@"Partial substring: %@", [textView.string substringWithRange:charRange]);
-    NSString *partial = [textView.string substringWithRange:charRange];
-
-    NSArray *results = [[MMCompletionEngine defaultCompletionEngine] completionsForPartial:partial inDirectory:self.currentDirectory];
-
-    return results;
 }
 
 # pragma mark - NSTableViewDataSource

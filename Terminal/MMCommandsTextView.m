@@ -8,13 +8,20 @@
 
 #import "MMCommandsTextView.h"
 #import "MMCommandLineArgumentsParser.h"
+#import "MMCompletionEngine.h"
 
 @implementation MMCommandsTextView
 
-- (id)initWithFrame:(NSRect)frame
+- (id)initWithCoder:(NSCoder *)aDecoder;
 {
-    self = [super initWithFrame:frame];
-    
+    self = [super initWithCoder:aDecoder];
+    if (!self) {
+        return nil;
+    }
+
+    self.completionEngine = [[MMCompletionEngine alloc] init];
+    self.completionEngine.commandsTextView = self;
+
     return self;
 }
 
@@ -37,6 +44,17 @@
     }
 
     return NSMakeRange(currentPosition, 0);
+}
+
+- (void)insertCompletion:(NSString *)word forPartialWordRange:(NSRange)charRange movement:(NSInteger)movement isFinal:(BOOL)flag;
+{
+    NSLog(@"insertCompletion:%@ forPartialWordRange:%@ movement:%ld isFinal:%d", word, NSStringFromRange(charRange), (long)movement, flag);
+    [super insertCompletion:word forPartialWordRange:charRange movement:movement isFinal:flag];
+}
+
+- (NSArray *)completionsForPartialWordRange:(NSRange)charRange indexOfSelectedItem:(NSInteger *)index;
+{
+    return [self.completionEngine completionsForPartialWordRange:charRange indexOfSelectedItem:index];
 }
 
 @end

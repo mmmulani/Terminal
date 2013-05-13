@@ -250,6 +250,7 @@ void iconvFallback(const char *inbuf, size_t inbufsize, void (*write_replacement
 
 - (void)directoryChangedTo:(NSString *)newPath;
 {
+    self.currentDirectory = newPath;
     [self.terminalWindow directoryChangedTo:newPath];
 }
 

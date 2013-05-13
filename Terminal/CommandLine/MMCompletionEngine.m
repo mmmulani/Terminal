@@ -7,19 +7,10 @@
 //
 
 #import "MMCompletionEngine.h"
+#import "MMTerminalConnection.h"
+#import "MMCommandsTextView.h"
 
 @implementation MMCompletionEngine
-
-+ (MMCompletionEngine *)defaultCompletionEngine;
-{
-    static MMCompletionEngine *completionEngine = nil;
-    static dispatch_once_t onceToken;
-    dispatch_once(&onceToken, ^{
-        completionEngine = [[[self class] alloc] init];
-    });
-
-    return completionEngine;
-}
 
 - (NSArray *)completionsForPartial:(NSString *)partial inDirectory:(NSString *)path;
 {
@@ -57,6 +48,18 @@
         [files addObject:fileNameWithSuffix.precomposedStringWithCanonicalMapping];
     }
     return files;
+}
+
+# pragma mark - NSTextView methods
+
+- (NSArray *)completionsForPartialWordRange:(NSRange)charRange indexOfSelectedItem:(NSInteger *)index;
+{
+    NSLog(@"Partial substring: %@", [self.commandsTextView.string substringWithRange:charRange]);
+    NSString *partial = [self.commandsTextView.string substringWithRange:charRange];
+
+    NSArray *results = [self completionsForPartial:partial inDirectory:self.terminalConnection.currentDirectory];
+
+    return results;
 }
 
 @end

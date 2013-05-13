@@ -15,6 +15,7 @@
 @property int fd;
 @property BOOL running;
 @property (strong) MMTerminalWindowController *terminalWindow;
+@property (strong) NSString *currentDirectory;
 @property NSInteger identifier;
 
 - (id)initWithIdentifier:(NSInteger)identifier;

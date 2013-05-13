@@ -11,10 +11,11 @@
 #import "MMTextView.h"
 
 @class MMTerminalConnection;
+@class MMCommandsTextView;
 
 @interface MMTerminalWindowController : NSWindowController <NSTextFieldDelegate, NSTableViewDataSource, NSTableViewDelegate>
 
-@property (strong) IBOutlet NSTextView *commandInput;
+@property (strong) IBOutlet MMCommandsTextView *commandInput;
 @property (strong) IBOutlet NSTableView *tableView;
 @property (strong) IBOutlet NSCollectionView *directoryCollectionView;
 @property (strong) IBOutlet NSTextField *currentDirectoryLabel;
