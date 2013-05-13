@@ -31,8 +31,7 @@
 
 - (void)insertCompletion:(NSString *)word forPartialWordRange:(NSRange)charRange movement:(NSInteger)movement isFinal:(BOOL)flag;
 {
-    NSLog(@"insertCompletion:%@ forPartialWordRange:%@ movement:%ld isFinal:%d", word, NSStringFromRange(charRange), (long)movement, flag);
-    [super insertCompletion:word forPartialWordRange:charRange movement:movement isFinal:flag];
+    [super insertCompletion:[self.completionEngine typeableCompletionForDisplayCompletion:word] forPartialWordRange:charRange movement:movement isFinal:flag];
 }
 
 - (NSArray *)completionsForPartialWordRange:(NSRange)charRange indexOfSelectedItem:(NSInteger *)index;

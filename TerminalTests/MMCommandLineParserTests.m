@@ -20,7 +20,7 @@ do {\
 
 #define CompareInputAgainstEscapedArgument(input, output) \
 do {\
-    NSString *result = [MMCommandLineArgumentsParser escapeArgument:input]; \
+    NSString *result = [MMCommandLineArgumentsParser unescapeArgument:input]; \
     STAssertEqualObjects(result, output, @"Compared parser output to provided output."); \
 } while (0)
 
@@ -34,7 +34,7 @@ do {\
     CompareInputAgainstExpectedParsedOutput(@"cp \"test file\" a.out", (@[@[@"cp", @"\"test file\"", @"a.out"]]));
 }
 
-- (void)testArgumentEscaping;
+- (void)testArgumentUnescaping;
 {
     CompareInputAgainstEscapedArgument(@"echo", @"echo");
     CompareInputAgainstEscapedArgument(@"ec\"ho\"", @"echo");

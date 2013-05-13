@@ -18,7 +18,7 @@
     for (NSInteger i = 0; i < commands.count; i++) {
         NSMutableArray *command = [commands[i] mutableCopy];
         for (NSInteger j = 0; j < command.count; j++) {
-            command[j] = [self escapeArgument:command[j]];
+            command[j] = [self unescapeArgument:command[j]];
         }
         commands[i] = command;
     }
@@ -35,7 +35,7 @@
     return [[[MMParserContext alloc] init] parseStringForTokenEndings:commandLineText];
 }
 
-+ (NSString *)escapeArgument:(NSString *)argument;
++ (NSString *)unescapeArgument:(NSString *)argument;
 {
     NSMutableString *newArgument = [NSMutableString stringWithCapacity:argument.length];
     NSCharacterSet *charSet = [NSCharacterSet characterSetWithCharactersInString:@"\"\\"];

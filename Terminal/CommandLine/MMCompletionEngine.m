@@ -11,9 +11,19 @@
 #import "MMCommandLineArgumentsParser.h"
 #import "MMCommandsTextView.h"
 
+@interface MMCompletionEngine ()
+
+// These are all values calculated by |prepareCompletions| to be returned by the various NSTextView completion methods.
+@property NSRange rangeForTokenUnderCursor;
+@property NSRange rangeForPartialToBeCompleted;
+@property NSMutableDictionary *escapedCompletionsForPartial;
+@property NSArray *displayableCompletionsForPartial;
+
+@end
+
 @implementation MMCompletionEngine
 
-- (NSArray *)completionsForPartial:(NSString *)partial inDirectory:(NSString *)path;
+- (NSMutableArray *)completionsForPartial:(NSString *)partial inDirectory:(NSString *)path;
 {
     // TODO: Handle tilde expansion.
     if (partial.length == 0) {
@@ -36,7 +46,7 @@
     return matchingFiles;
 }
 
-- (NSArray *)filesAndFoldersInDirectory:(NSString *)path includeHiddenFiles:(BOOL)hiddenFiles;
+- (NSMutableArray *)filesAndFoldersInDirectory:(NSString *)path includeHiddenFiles:(BOOL)hiddenFiles;
 {
     NSArray *fileURLs = [[NSFileManager defaultManager] contentsOfDirectoryAtURL:[NSURL fileURLWithPath:path] includingPropertiesForKeys:@[NSURLNameKey, NSURLFileResourceTypeKey] options:(hiddenFiles ? 0 : NSDirectoryEnumerationSkipsHiddenFiles) error:nil];
     NSMutableArray *files = [NSMutableArray arrayWithCapacity:[fileURLs count]];
@@ -51,37 +61,83 @@
     return files;
 }
 
-# pragma mark - NSTextView methods
-
-- (NSArray *)completionsForPartialWordRange:(NSRange)charRange indexOfSelectedItem:(NSInteger *)index;
-{
-    NSLog(@"Partial substring: %@", [self.commandsTextView.string substringWithRange:charRange]);
-    NSString *partial = [self.commandsTextView.string substringWithRange:charRange];
-
-    NSArray *results = [self completionsForPartial:partial inDirectory:self.terminalConnection.currentDirectory];
-
-    return results;
-}
-
-- (NSRange)rangeForUserCompletion;
+- (NSRange)tokenContainingPosition:(NSInteger)position;
 {
     // TODO: Handle a tab completion like: cd "Calibre<cursor here><TAB> ; echo test
     // Maybe we can accomplish this by taking a substring up to the cursor and parsing with a special "partial" rule.
     NSArray *commands = [MMCommandLineArgumentsParser parseCommandsFromCommandLineWithoutEscaping:self.commandsTextView.string];
     NSArray *tokenEndings = [MMCommandLineArgumentsParser tokenEndingsFromCommandLine:self.commandsTextView.string];
 
-    NSInteger currentPosition = self.commandsTextView.selectedRange.location;
     for (NSInteger i = 0; i < commands.count; i++) {
         for (NSInteger j = 0; j < [commands[i] count]; j++) {
             NSInteger tokenEnd = [tokenEndings[i][j] integerValue];
             NSInteger tokenStart = tokenEnd - [commands[i][j] length];
-            if (tokenEnd >= currentPosition && tokenStart <= currentPosition) {
-                return NSMakeRange(tokenStart, currentPosition - tokenStart);
+            if (tokenEnd >= position && tokenStart <= position) {
+                return NSMakeRange(tokenStart, position - tokenStart);
             }
         }
     }
 
-    return NSMakeRange(currentPosition, 0);
+    return NSMakeRange(NSNotFound, 0);
+}
+
+- (void)prepareCompletions;
+{
+    // This handles the 4 step process around preparing completions to be displayed.
+    // 1. Recognize what is to be completed, i.e. what "word", and determine the relevant context around the word.
+    // 2. Extract a partial from that "word" and convert it into the form in which it will be interpreted.
+    //    (This usually means escaping it.)
+    // 3. Calculate completions given the interpreted partial and its context.
+    // 4. Convert completions into the form that they will be typed for insertion.
+
+    // Step 1.
+    NSInteger currentPosition = self.commandsTextView.selectedRange.location;
+    self.rangeForTokenUnderCursor = [self tokenContainingPosition:currentPosition];
+    if (self.rangeForTokenUnderCursor.location == NSNotFound) {
+        self.rangeForTokenUnderCursor = NSMakeRange(currentPosition, 0);
+    }
+    NSString *argument = [self.commandsTextView.string substringWithRange:self.rangeForTokenUnderCursor];
+
+    // Step 2.
+    // TODO: Support double-quoted arguments.
+    // We want to separate the argument into the path prefix and the path being completed.
+    NSRegularExpression *pathComponentRegEx = [NSRegularExpression regularExpressionWithPattern:@"((\\.)|[^/])*$" options:0 error:NULL];
+    NSRange partialRange = [pathComponentRegEx rangeOfFirstMatchInString:argument options:0 range:NSMakeRange(0, argument.length)];
+    NSString *partialPrefix = [MMCommandLineArgumentsParser unescapeArgument:[argument substringToIndex:partialRange.location]];
+    NSString *partial = [MMCommandLineArgumentsParser unescapeArgument:[argument substringWithRange:partialRange]];
+    self.rangeForPartialToBeCompleted = NSMakeRange(self.rangeForTokenUnderCursor.location + partialRange.location, partialRange.length);
+
+    // Step 3.
+    NSString *path = [partialPrefix stringByExpandingTildeInPath];
+    if (![path isAbsolutePath]) {
+        path = [self.terminalConnection.currentDirectory stringByAppendingPathComponent:partialPrefix];
+    }
+    self.displayableCompletionsForPartial = [self completionsForPartial:partial inDirectory:path];
+
+    // Step 4.
+    self.escapedCompletionsForPartial = [NSMutableDictionary dictionary];
+    for (NSString *completion in self.displayableCompletionsForPartial) {
+        self.escapedCompletionsForPartial[completion] = [completion stringByReplacingOccurrencesOfString:@" " withString:@"\\ "];
+    }
+}
+
+- (NSString *)typeableCompletionForDisplayCompletion:(NSString *)displayableCompletion;
+{
+    return self.escapedCompletionsForPartial[displayableCompletion];
+}
+
+# pragma mark - NSTextView methods
+
+- (NSArray *)completionsForPartialWordRange:(NSRange)charRange indexOfSelectedItem:(NSInteger *)index;
+{
+    return self.displayableCompletionsForPartial;
+}
+
+- (NSRange)rangeForUserCompletion;
+{
+    [self prepareCompletions];
+
+    return self.rangeForPartialToBeCompleted;
 }
 
 @end

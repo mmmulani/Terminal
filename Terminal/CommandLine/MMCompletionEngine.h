@@ -16,10 +16,9 @@
 @property (strong) MMCommandsTextView *commandsTextView;
 @property (strong) MMTerminalConnection *terminalConnection;
 
-- (NSArray *)completionsForPartial:(NSString *)partial inDirectory:(NSString *)path;
-
 // NSTextView methods
 - (NSArray *)completionsForPartialWordRange:(NSRange)charRange indexOfSelectedItem:(NSInteger *)index;
 - (NSRange)rangeForUserCompletion;
+- (NSString *)typeableCompletionForDisplayCompletion:(NSString *)displayableCompletion;
 
 @end
