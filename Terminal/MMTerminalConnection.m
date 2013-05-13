@@ -9,6 +9,7 @@
 #include <termios.h>
 #include <util.h>
 #include <sys/wait.h>
+#include "iconv.h"
 
 #import "MMTerminalConnection.h"
 #import "MMTerminalWindowController.h"
@@ -153,6 +154,7 @@
 
         if (FD_ISSET(self.fd, &rfds)) {
             // Mac OS X caps read() to 1024 bytes (for some reason), we expect that 4KiB is the most that will be sent in one read.
+            // TODO: Handle the case where a UTF-8 character is split by the 4KiB partitioning.
             NSMutableData *data = [NSMutableData dataWithLength:1024 * 4];
             ssize_t totalBytesRead = 0;
             for (NSUInteger i = 0; i < 4; i++) {
@@ -190,6 +192,25 @@
 
             [data setLength:totalBytesRead];
             NSString *readData = [[NSString alloc] initWithData:data encoding:NSUTF8StringEncoding];
+            if (!readData) {
+                iconv_t cd = iconv_open("UTF-8", "UTF-8");
+                int discardIlseq = 1;
+                struct iconv_fallbacks fallbacks;
+                fallbacks.mb_to_uc_fallback = iconvFallback;
+                size_t iconvResult = iconvctl(cd, ICONV_SET_FALLBACKS, &fallbacks);
+                size_t inBytesLeft = data.length;
+                size_t outBytesLeft = data.length;
+                char *cleanBuffer = malloc(sizeof(char) * data.length);
+                char *inPtr = (char *)data.mutableBytes;
+                char *outPtr = cleanBuffer;
+                iconvResult = iconv(cd, &inPtr, &inBytesLeft, &outPtr, &outBytesLeft);
+
+                NSData *cleanData = [NSData dataWithBytes:cleanBuffer length:(data.length - outBytesLeft)];
+                iconv_close(cd);
+                free(cleanBuffer);
+
+                readData = [[NSString alloc] initWithData:cleanData encoding:NSUTF8StringEncoding];
+            }
             [proxy performSelector:@selector(handleOutput:) withObject:readData];
         }
         
@@ -200,6 +221,11 @@
     
     close(self.fd);
     self.fd = -1;
+}
+
+void iconvFallback(const char *inbuf, size_t inbufsize, void (*write_replacement)(const unsigned int *buf, size_t buflen, void *callback_arg), void *callback_arg, void *data) {
+    unsigned int replacementChar = '?';
+    write_replacement(&replacementChar, 1, callback_arg);
 }
 
 - (void)handleTerminalInput:(NSString *)input;

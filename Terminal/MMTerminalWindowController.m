@@ -53,6 +53,8 @@
 
     self.originalCommandControlsLayoutConstraintConstant = self.commandControlsLayoutConstraint.constant;
     self.commandInput.font = [NSFont systemFontOfSize:13.0];
+
+    [self.window makeFirstResponder:self.commandInput];
 }
 
 - (void)dealloc;

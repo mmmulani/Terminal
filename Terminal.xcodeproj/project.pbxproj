@@ -35,6 +35,7 @@
 		91B8051216FF9BDA00E6D9DF /* TerminalTests-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = 91B8051016FF9BD900E6D9DF /* TerminalTests-Info.plist */; };
 		91C7D984173ECE0900875974 /* MMCommandsTextView.m in Sources */ = {isa = PBXBuildFile; fileRef = 91C7D983173ECE0900875974 /* MMCommandsTextView.m */; };
 		91C7D987173F250300875974 /* MMCompletionEngine.m in Sources */ = {isa = PBXBuildFile; fileRef = 91C7D986173F250300875974 /* MMCompletionEngine.m */; };
+		91C7D98D1740793800875974 /* libiconv.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 91C7D9881740575700875974 /* libiconv.dylib */; };
 		91F1747216ED0CF0002E2594 /* SenTestingKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 91F1747116ED0CF0002E2594 /* SenTestingKit.framework */; };
 		91F1747316ED0CF0002E2594 /* Cocoa.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 91F4EEBF16B8D63D00F65E91 /* Cocoa.framework */; };
 		91F4EEC016B8D63D00F65E91 /* Cocoa.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 91F4EEBF16B8D63D00F65E91 /* Cocoa.framework */; };
@@ -120,6 +121,7 @@
 		91C7D983173ECE0900875974 /* MMCommandsTextView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MMCommandsTextView.m; sourceTree = "<group>"; };
 		91C7D985173F250300875974 /* MMCompletionEngine.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = MMCompletionEngine.h; path = CommandLine/MMCompletionEngine.h; sourceTree = "<group>"; };
 		91C7D986173F250300875974 /* MMCompletionEngine.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = MMCompletionEngine.m; path = CommandLine/MMCompletionEngine.m; sourceTree = "<group>"; };
+		91C7D9881740575700875974 /* libiconv.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libiconv.dylib; path = usr/lib/libiconv.dylib; sourceTree = SDKROOT; };
 		91F1747016ED0CF0002E2594 /* TerminalTests.octest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = TerminalTests.octest; sourceTree = BUILT_PRODUCTS_DIR; };
 		91F1747116ED0CF0002E2594 /* SenTestingKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SenTestingKit.framework; path = Library/Frameworks/SenTestingKit.framework; sourceTree = DEVELOPER_DIR; };
 		91F4EEBC16B8D63D00F65E91 /* Terminal.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Terminal.app; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -159,6 +161,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				91C7D98D1740793800875974 /* libiconv.dylib in Frameworks */,
 				9103CD7216F7EE0900506F8B /* QuartzCore.framework in Frameworks */,
 				91F4EEC016B8D63D00F65E91 /* Cocoa.framework in Frameworks */,
 			);
@@ -254,6 +257,7 @@
 		91F4EEB316B8D63C00F65E91 = {
 			isa = PBXGroup;
 			children = (
+				91C7D9881740575700875974 /* libiconv.dylib */,
 				9103CD7116F7EE0900506F8B /* QuartzCore.framework */,
 				91F4EEC516B8D63D00F65E91 /* Terminal */,
 				919BA9B216C875C40091CB1B /* Shell */,
