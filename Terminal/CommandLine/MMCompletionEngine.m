@@ -126,6 +126,15 @@
     return self.escapedCompletionsForPartial[displayableCompletion];
 }
 
+- (NSString *)singleCompletionOrNil;
+{
+    if (self.displayableCompletionsForPartial.count != 1) {
+        return nil;
+    }
+
+    return self.displayableCompletionsForPartial[0];
+}
+
 # pragma mark - NSTextView methods
 
 - (NSArray *)completionsForPartialWordRange:(NSRange)charRange indexOfSelectedItem:(NSInteger *)index;
@@ -135,8 +144,6 @@
 
 - (NSRange)rangeForUserCompletion;
 {
-    [self prepareCompletions];
-
     return self.rangeForPartialToBeCompleted;
 }
 

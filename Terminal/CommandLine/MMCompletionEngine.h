@@ -16,6 +16,9 @@
 @property (strong) MMCommandsTextView *commandsTextView;
 @property (strong) MMTerminalConnection *terminalConnection;
 
+- (void)prepareCompletions;
+- (NSString *)singleCompletionOrNil;
+
 // NSTextView methods
 - (NSArray *)completionsForPartialWordRange:(NSRange)charRange indexOfSelectedItem:(NSInteger *)index;
 - (NSRange)rangeForUserCompletion;

@@ -24,6 +24,17 @@
     return self;
 }
 
+- (void) complete:(id)sender;
+{
+    [self.completionEngine prepareCompletions];
+    NSString *singleCompletion = self.completionEngine.singleCompletionOrNil;
+    if (singleCompletion) {
+        [self replaceCharactersInRange:self.rangeForUserCompletion withString:[self.completionEngine typeableCompletionForDisplayCompletion:singleCompletion]];
+    } else {
+        [super complete:sender];
+    }
+}
+
 - (NSRange)rangeForUserCompletion;
 {
     return [self.completionEngine rangeForUserCompletion];
