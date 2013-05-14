@@ -122,4 +122,9 @@
     return newArgument;
 }
 
++ (NSString *)escapeArgument:(NSString *)argument;
+{
+    return [[argument stringByReplacingOccurrencesOfString:@"\\" withString:@"\\\\"] stringByReplacingOccurrencesOfString:@" " withString:@"\\ "];
+}
+
 @end

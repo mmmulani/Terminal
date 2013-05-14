@@ -117,7 +117,7 @@
     // Step 4.
     self.escapedCompletionsForPartial = [NSMutableDictionary dictionary];
     for (NSString *completion in self.displayableCompletionsForPartial) {
-        self.escapedCompletionsForPartial[completion] = [completion stringByReplacingOccurrencesOfString:@" " withString:@"\\ "];
+        self.escapedCompletionsForPartial[completion] = [MMCommandLineArgumentsParser escapeArgument:completion];
     }
 }
 
