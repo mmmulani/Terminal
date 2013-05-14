@@ -24,7 +24,7 @@
     return self;
 }
 
-- (void) complete:(id)sender;
+- (void)complete:(id)sender;
 {
     [self.completionEngine prepareCompletions];
     NSString *singleCompletion = self.completionEngine.singleCompletionOrNil;
