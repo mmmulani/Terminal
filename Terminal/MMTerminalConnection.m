@@ -245,7 +245,9 @@ void iconvFallback(const char *inbuf, size_t inbufsize, void (*write_replacement
 {
     NSLog(@"Process finished");
 
-    [self.terminalWindow processFinished];
+    dispatch_async(dispatch_get_main_queue(), ^{
+        [self.terminalWindow processFinished];
+    });
 }
 
 - (void)directoryChangedTo:(NSString *)newPath;
