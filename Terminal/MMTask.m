@@ -251,7 +251,13 @@
         self.cursorPosition = MMPositionMake(x, y);
     } else {
         // We are guaranteed that y >= 2.
-        // Add newlines when necessary starting from the final row and moving up.
+        // Add new lines as needed.
+        NSInteger linesToAdd = TERM_HEIGHT + self.currentRowOffset - self.ansiLines.count;
+        for (NSInteger i = 0; i < linesToAdd; i++) {
+            [self.ansiLines addObject:[NSMutableString stringWithString:[@"" stringByPaddingToLength:81 withString:@"\0" startingAtIndex:0]]];
+        }
+
+        // Add newline characters when necessary starting from the final row and moving up.
         for (NSUInteger row = y; row > self.cursorPosition.y; row--) {
             if ([self ansiCharacterAtScrollRow:(row - 1) column:0] != '\0') {
                 continue;
@@ -304,7 +310,6 @@
     // 2. Remove any lines that were pushed below the scroll margin.
     // 3. Move the cursor to the correct spot.
     numberOfLinesToInsert = MIN(MAX(1, numberOfLinesToInsert), self.scrollBottomMargin - self.cursorPosition.y + 1);
-    NSInteger numberOfLinesToRemove = numberOfLinesToInsert + MIN(self.ansiLines.count - self.currentRowOffset, self.scrollBottomMargin) - (self.scrollBottomMargin - self.scrollTopMargin + 1);
 
     // Step 1.
     // We either insert a completely blank line or a line ending with a newline character.
@@ -325,7 +330,7 @@
     }
 
     // Step 2.
-    [self.ansiLines removeObjectsInRange:NSMakeRange(self.currentRowOffset + self.scrollBottomMargin + numberOfLinesToInsert - numberOfLinesToRemove, numberOfLinesToRemove)];
+    [self.ansiLines removeObjectsInRange:NSMakeRange(self.currentRowOffset + self.scrollBottomMargin, numberOfLinesToInsert)];
 
     // Step 3.
     self.cursorPosition = MMPositionMake(1, self.cursorPosition.y);
@@ -333,7 +338,7 @@
 
 - (void)deleteLinesFromCursor:(NSInteger)numberOfLinesToDelete;
 {
-    // This is called the Delete Line (DL) sequence.
+    // This is called the Delete Line (DL) sequence. It has the escape sequence: ESC[(0-9)*M
     // It is only handled when the cursor is within the scroll region.
     if (!self.isCursorInScrollRegion) {
         return;

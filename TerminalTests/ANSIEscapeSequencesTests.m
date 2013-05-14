@@ -41,6 +41,13 @@ do {\
     STAssertEquals(task.cursorPosition.y, cursorPosition_.y, @"Y coord of cursor position"); \
 } while (0)
 
+#define CheckThatInputDoesNotCauseACrash(input) \
+do {\
+    MMTask *task = [MMTask new]; \
+    [task handleCommandOutput:input withVerbosity:NO]; \
+    STAssertNotNil([task.currentANSIDisplay string], nil); \
+} while (0)
+
 - (void)testNonANSIPrograms;
 {
     CheckInputAgainstExpectedOutput(@"a", @"a");
@@ -238,6 +245,11 @@ do {\
 
     CheckInputAgainstExpectedOutput(@"\033[2;3ra\nb\nc\nd\ne\nf\n", @"a\nf\n");
     CheckInputAgainstExpectedOutput(@"\033[2;5ra\nb\nc\nd\ne\nf\n", @"a\nd\ne\nf\n");
+}
+
+- (void)testPossibleCrashers;
+{
+    CheckThatInputDoesNotCauseACrash(@"\033[M\033[24;1Ha");
 }
 
 @end

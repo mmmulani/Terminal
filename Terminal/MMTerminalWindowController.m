@@ -68,6 +68,13 @@
 {
     // TODO: Add a check to see if we are already scrolled to the bottom, and only scroll down then.
     NSRect clipViewFrame = self.tableView.superview.frame;
+    NSString *tableViewFrameText = NSStringFromRect(self.tableView.frame);
+    NSString *clipViewFrameText = NSStringFromRect(clipViewFrame);
+    double delayInSeconds = 2.0;
+    dispatch_time_t popTime = dispatch_time(DISPATCH_TIME_NOW, (int64_t)(delayInSeconds * NSEC_PER_SEC));
+    dispatch_after(popTime, dispatch_get_main_queue(), ^(void){
+        NSLog(@"clip view frame: %@, table view frame: %@", clipViewFrameText, tableViewFrameText);
+    });
     [((NSClipView *)self.tableView.superview) scrollToPoint:NSMakePoint(0, self.tableView.frame.size.height - clipViewFrame.size.height)];
 }
 
