@@ -37,6 +37,10 @@
 		91C7D987173F250300875974 /* MMCompletionEngine.m in Sources */ = {isa = PBXBuildFile; fileRef = 91C7D986173F250300875974 /* MMCompletionEngine.m */; };
 		91C7D98D1740793800875974 /* libiconv.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 91C7D9881740575700875974 /* libiconv.dylib */; };
 		91E4C02C1742C65400062EF5 /* Icon.icns in Resources */ = {isa = PBXBuildFile; fileRef = 91E4C02B1742C65400062EF5 /* Icon.icns */; };
+		91E4C0601745682800062EF5 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 919BA9B016C875C40091CB1B /* Foundation.framework */; };
+		91E4C0631745682800062EF5 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 91E4C0621745682800062EF5 /* main.m */; };
+		91E4C0671745682800062EF5 /* ProcessMonitor.1 in CopyFiles */ = {isa = PBXBuildFile; fileRef = 91E4C0661745682800062EF5 /* ProcessMonitor.1 */; };
+		91E4C06D1745685000062EF5 /* MMProcessMonitorMain.m in Sources */ = {isa = PBXBuildFile; fileRef = 91E4C06C1745685000062EF5 /* MMProcessMonitorMain.m */; };
 		91F1747216ED0CF0002E2594 /* SenTestingKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 91F1747116ED0CF0002E2594 /* SenTestingKit.framework */; };
 		91F1747316ED0CF0002E2594 /* Cocoa.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 91F4EEBF16B8D63D00F65E91 /* Cocoa.framework */; };
 		91F4EEC016B8D63D00F65E91 /* Cocoa.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 91F4EEBF16B8D63D00F65E91 /* Cocoa.framework */; };
@@ -55,6 +59,13 @@
 			remoteGlobalIDString = 919BA9AE16C875C40091CB1B;
 			remoteInfo = Shell;
 		};
+		91E4C06E174569A000062EF5 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 91F4EEB416B8D63C00F65E91 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 91E4C05E1745682800062EF5;
+			remoteInfo = ProcessMonitor;
+		};
 		91F1748116ED0F31002E2594 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = 91F4EEB416B8D63C00F65E91 /* Project object */;
@@ -72,6 +83,16 @@
 			dstSubfolderSpec = 0;
 			files = (
 				919BA9B816C875C40091CB1B /* Shell.1 in CopyFiles */,
+			);
+			runOnlyForDeploymentPostprocessing = 1;
+		};
+		91E4C05D1745682800062EF5 /* CopyFiles */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = /usr/share/man/man1/;
+			dstSubfolderSpec = 0;
+			files = (
+				91E4C0671745682800062EF5 /* ProcessMonitor.1 in CopyFiles */,
 			);
 			runOnlyForDeploymentPostprocessing = 1;
 		};
@@ -124,6 +145,12 @@
 		91C7D986173F250300875974 /* MMCompletionEngine.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = MMCompletionEngine.m; path = CommandLine/MMCompletionEngine.m; sourceTree = "<group>"; };
 		91C7D9881740575700875974 /* libiconv.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libiconv.dylib; path = usr/lib/libiconv.dylib; sourceTree = SDKROOT; };
 		91E4C02B1742C65400062EF5 /* Icon.icns */ = {isa = PBXFileReference; lastKnownFileType = image.icns; path = Icon.icns; sourceTree = "<group>"; };
+		91E4C05F1745682800062EF5 /* ProcessMonitor */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = ProcessMonitor; sourceTree = BUILT_PRODUCTS_DIR; };
+		91E4C0621745682800062EF5 /* main.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
+		91E4C0651745682800062EF5 /* ProcessMonitor-Prefix.pch */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "ProcessMonitor-Prefix.pch"; sourceTree = "<group>"; };
+		91E4C0661745682800062EF5 /* ProcessMonitor.1 */ = {isa = PBXFileReference; lastKnownFileType = text.man; path = ProcessMonitor.1; sourceTree = "<group>"; };
+		91E4C06B1745685000062EF5 /* MMProcessMonitorMain.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MMProcessMonitorMain.h; sourceTree = "<group>"; };
+		91E4C06C1745685000062EF5 /* MMProcessMonitorMain.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MMProcessMonitorMain.m; sourceTree = "<group>"; };
 		91F1747016ED0CF0002E2594 /* TerminalTests.octest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = TerminalTests.octest; sourceTree = BUILT_PRODUCTS_DIR; };
 		91F1747116ED0CF0002E2594 /* SenTestingKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SenTestingKit.framework; path = Library/Frameworks/SenTestingKit.framework; sourceTree = DEVELOPER_DIR; };
 		91F4EEBC16B8D63D00F65E91 /* Terminal.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Terminal.app; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -147,6 +174,14 @@
 			buildActionMask = 2147483647;
 			files = (
 				919BA9B116C875C40091CB1B /* Foundation.framework in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		91E4C05C1745682800062EF5 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				91E4C0601745682800062EF5 /* Foundation.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -232,6 +267,26 @@
 			name = "Supporting Files";
 			sourceTree = "<group>";
 		};
+		91E4C0611745682800062EF5 /* ProcessMonitor */ = {
+			isa = PBXGroup;
+			children = (
+				91E4C0621745682800062EF5 /* main.m */,
+				91E4C0661745682800062EF5 /* ProcessMonitor.1 */,
+				91E4C0641745682800062EF5 /* Supporting Files */,
+				91E4C06B1745685000062EF5 /* MMProcessMonitorMain.h */,
+				91E4C06C1745685000062EF5 /* MMProcessMonitorMain.m */,
+			);
+			path = ProcessMonitor;
+			sourceTree = "<group>";
+		};
+		91E4C0641745682800062EF5 /* Supporting Files */ = {
+			isa = PBXGroup;
+			children = (
+				91E4C0651745682800062EF5 /* ProcessMonitor-Prefix.pch */,
+			);
+			name = "Supporting Files";
+			sourceTree = "<group>";
+		};
 		91F1747416ED0CF0002E2594 /* TerminalTests */ = {
 			isa = PBXGroup;
 			children = (
@@ -265,6 +320,7 @@
 				91F4EEC516B8D63D00F65E91 /* Terminal */,
 				919BA9B216C875C40091CB1B /* Shell */,
 				91F1747416ED0CF0002E2594 /* TerminalTests */,
+				91E4C0611745682800062EF5 /* ProcessMonitor */,
 				91F4EEBE16B8D63D00F65E91 /* Frameworks */,
 				91F4EEBD16B8D63D00F65E91 /* Products */,
 				918649B716D5D16F0024D9BE /* Shared */,
@@ -277,6 +333,7 @@
 				91F4EEBC16B8D63D00F65E91 /* Terminal.app */,
 				919BA9AF16C875C40091CB1B /* Shell */,
 				91F1747016ED0CF0002E2594 /* TerminalTests.octest */,
+				91E4C05F1745682800062EF5 /* ProcessMonitor */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -356,6 +413,23 @@
 			productReference = 919BA9AF16C875C40091CB1B /* Shell */;
 			productType = "com.apple.product-type.tool";
 		};
+		91E4C05E1745682800062EF5 /* ProcessMonitor */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 91E4C06A1745682800062EF5 /* Build configuration list for PBXNativeTarget "ProcessMonitor" */;
+			buildPhases = (
+				91E4C05B1745682800062EF5 /* Sources */,
+				91E4C05C1745682800062EF5 /* Frameworks */,
+				91E4C05D1745682800062EF5 /* CopyFiles */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = ProcessMonitor;
+			productName = ProcessMonitor;
+			productReference = 91E4C05F1745682800062EF5 /* ProcessMonitor */;
+			productType = "com.apple.product-type.tool";
+		};
 		91F1746F16ED0CF0002E2594 /* TerminalTests */ = {
 			isa = PBXNativeTarget;
 			buildConfigurationList = 91F1748016ED0CF0002E2594 /* Build configuration list for PBXNativeTarget "TerminalTests" */;
@@ -386,6 +460,7 @@
 			buildRules = (
 			);
 			dependencies = (
+				91E4C06F174569A000062EF5 /* PBXTargetDependency */,
 				919BA9BD16C876260091CB1B /* PBXTargetDependency */,
 			);
 			name = Terminal;
@@ -418,6 +493,7 @@
 				91F4EEBB16B8D63D00F65E91 /* Terminal */,
 				919BA9AE16C875C40091CB1B /* Shell */,
 				91F1746F16ED0CF0002E2594 /* TerminalTests */,
+				91E4C05E1745682800062EF5 /* ProcessMonitor */,
 			);
 		};
 /* End PBXProject section */
@@ -475,6 +551,15 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		91E4C05B1745682800062EF5 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				91E4C0631745682800062EF5 /* main.m in Sources */,
+				91E4C06D1745685000062EF5 /* MMProcessMonitorMain.m in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		91F1746B16ED0CF0002E2594 /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
@@ -515,6 +600,11 @@
 			isa = PBXTargetDependency;
 			target = 919BA9AE16C875C40091CB1B /* Shell */;
 			targetProxy = 919BA9BC16C876260091CB1B /* PBXContainerItemProxy */;
+		};
+		91E4C06F174569A000062EF5 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 91E4C05E1745682800062EF5 /* ProcessMonitor */;
+			targetProxy = 91E4C06E174569A000062EF5 /* PBXContainerItemProxy */;
 		};
 		91F1748216ED0F31002E2594 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
@@ -573,6 +663,24 @@
 			buildSettings = {
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "Shell/Shell-Prefix.pch";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+			};
+			name = Release;
+		};
+		91E4C0681745682800062EF5 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				GCC_PRECOMPILE_PREFIX_HEADER = YES;
+				GCC_PREFIX_HEADER = "ProcessMonitor/ProcessMonitor-Prefix.pch";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+			};
+			name = Debug;
+		};
+		91E4C0691745682800062EF5 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				GCC_PRECOMPILE_PREFIX_HEADER = YES;
+				GCC_PREFIX_HEADER = "ProcessMonitor/ProcessMonitor-Prefix.pch";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 			};
 			name = Release;
@@ -703,6 +811,14 @@
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
+		};
+		91E4C06A1745682800062EF5 /* Build configuration list for PBXNativeTarget "ProcessMonitor" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				91E4C0681745682800062EF5 /* Debug */,
+				91E4C0691745682800062EF5 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
 		};
 		91F1748016ED0CF0002E2594 /* Build configuration list for PBXNativeTarget "TerminalTests" */ = {
 			isa = XCConfigurationList;
