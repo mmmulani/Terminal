@@ -16,6 +16,7 @@ int main(int argc, const char * argv[])
     @autoreleasepool {
 
         NSInteger identifier = [[NSString stringWithCString:argv[1] encoding:NSUTF8StringEncoding] intValue];
+        MMLog(@"Starting Shell with identifier: %ld", (long)identifier);
         [[MMShellMain sharedApplication] startWithIdentifier:identifier];
 
     }
