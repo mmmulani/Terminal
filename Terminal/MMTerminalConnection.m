@@ -109,25 +109,25 @@
 	win.ws_xpixel = 0;
 	win.ws_ypixel = 0;
 
+    const char *args[3];
+    NSFileManager *fileManager = [[NSFileManager alloc] init];
+    args[0] = [[[fileManager currentDirectoryPath] stringByAppendingPathComponent:@"Shell"] cStringUsingEncoding:NSUTF8StringEncoding];
+    args[1] = ((NSString *)[NSString stringWithFormat:@"%ld", (long)self.identifier]).UTF8String;
+    args[2] = NULL;
+
     char ttyname[PATH_MAX];
     pid_t pid;
-    {
-        int fd;
-        pid = forkpty(&fd, ttyname, &term, &win);
-        self.fd = fd;
-    }
+    int fd;
+    pid = forkpty(&fd, ttyname, &term, &win);
+
+    // From here until we start the Shell, we must make sure to not get the child process in deadlock.
+    // One way to do this is to use objc_msgSend on an uncached method. Therefore, we do all object calls before the fork.
 
     if (pid == (pid_t)0) {
         // Running as the shell.
         // These pipes are written from the shell's point-of-view.
         // That is, the shell intends to write into the writepipe, and read from the readpipe.
 
-        NSFileManager *fileManager = [[NSFileManager alloc] init];
-
-        const char *args[3];
-        args[0] = [[[fileManager currentDirectoryPath] stringByAppendingPathComponent:@"Shell"] cStringUsingEncoding:NSUTF8StringEncoding];
-        args[1] = ((NSString *)[NSString stringWithFormat:@"%ld", (long)self.identifier]).UTF8String;
-        args[2] = NULL;
         NSLog(@"Starting %s", args[0]);
         execv(args[0], args);
 
@@ -135,6 +135,8 @@
 
         exit(1);
     }
+
+    self.fd = fd;
 
     NSLog(@"Started with pid %d", pid);
 
