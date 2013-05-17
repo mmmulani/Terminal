@@ -44,6 +44,7 @@
 		91E4C07217456FF200062EF5 /* Security.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 91E4C07017456FE600062EF5 /* Security.framework */; };
 		91E4C0741745712200062EF5 /* ServiceManagement.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 91E4C0731745712200062EF5 /* ServiceManagement.framework */; };
 		91E4C07817459E7400062EF5 /* mmm.ProcessMonitor in CopyFiles */ = {isa = PBXBuildFile; fileRef = 91E4C05F1745682800062EF5 /* mmm.ProcessMonitor */; };
+		91E4C07A1745E00900062EF5 /* MMShared.m in Sources */ = {isa = PBXBuildFile; fileRef = 918649B116D5A6A80024D9BE /* MMShared.m */; };
 		91F1747216ED0CF0002E2594 /* SenTestingKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 91F1747116ED0CF0002E2594 /* SenTestingKit.framework */; };
 		91F1747316ED0CF0002E2594 /* Cocoa.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 91F4EEBF16B8D63D00F65E91 /* Cocoa.framework */; };
 		91F4EEC016B8D63D00F65E91 /* Cocoa.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 91F4EEBF16B8D63D00F65E91 /* Cocoa.framework */; };
@@ -579,6 +580,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				91E4C07A1745E00900062EF5 /* MMShared.m in Sources */,
 				91E4C0631745682800062EF5 /* main.m in Sources */,
 				91E4C06D1745685000062EF5 /* MMProcessMonitorMain.m in Sources */,
 			);
