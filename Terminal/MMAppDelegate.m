@@ -75,7 +75,7 @@
 
     [self createNewTerminal:nil];
 
-    [self startProcessMonitor];
+//    [self startProcessMonitor];
 }
 
 - (void)_logMessage:(NSString *)message;
