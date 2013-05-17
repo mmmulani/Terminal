@@ -83,7 +83,11 @@
             [lastController updateWithANSIOutput];
 
             [lastController.outputView.layoutManager ensureLayoutForCharacterRange:NSMakeRange(0, lastController.outputView.string.length)];
+
+            [NSAnimationContext beginGrouping];
+            [[NSAnimationContext currentContext] setDuration:0.0];
             [self.tableView noteHeightOfRowsWithIndexesChanged:[NSIndexSet indexSetWithIndex:([self.taskViewControllers count] - 1)]];
+            [NSAnimationContext endGrouping];
         }
     });
 }
@@ -97,7 +101,10 @@
     MMTaskCellViewController *controller = [self.taskViewControllers lastObject];
     [controller updateWithANSIOutput];
 
+    [NSAnimationContext beginGrouping];
+    [[NSAnimationContext currentContext] setDuration:0.0];
     [self.tableView noteHeightOfRowsWithIndexesChanged:[NSIndexSet indexSetWithIndex:([self.taskViewControllers count] - 1)]];
+    [NSAnimationContext endGrouping];
 
     [self.window makeFirstResponder:self.commandInput];
 
@@ -348,7 +355,7 @@ static void directoryWatchingCallback(CFFileDescriptorRef kqRef, CFOptionFlags c
 - (CGFloat)tableView:(NSTableView *)tableView heightOfRow:(NSInteger)row;
 {
     [self _prepareViewControllersUntilRow:row];
-    return [(MMTaskCellViewController *)self.taskViewControllers[row] heightToFitAllOfOutput];;
+    return [(MMTaskCellViewController *)self.taskViewControllers[row] heightToFitAllOfOutput];
 }
 
 - (NSView *)tableView:(NSTableView *)tableView viewForTableColumn:(NSTableColumn *)tableColumn row:(NSInteger)row;
