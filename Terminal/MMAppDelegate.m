@@ -29,16 +29,37 @@
 {
     // In order for the process monitor to observer processes and determine information about them, it must be run as root.
     NSString *programId = @"mmm.ProcessMonitor";
+    NSError *error = nil;
     OSStatus status;
     AuthorizationFlags authFlags = kAuthorizationFlagDefaults;
     AuthorizationRef authRef;
     status = AuthorizationCreate(NULL, kAuthorizationEmptyEnvironment, authFlags, &authRef);
+    if (status != errAuthorizationSuccess) {
+        NSLog(@"Error with creating authorization: %d", status);
+    }
 
     AuthorizationItem authItem = { kSMRightBlessPrivilegedHelper, 0, NULL, 0 };
 	AuthorizationRights authRights = { 1, &authItem };
     authFlags = kAuthorizationFlagDefaults | kAuthorizationFlagInteractionAllowed | kAuthorizationFlagPreAuthorize | kAuthorizationFlagExtendRights;
     status = AuthorizationCopyRights(authRef, &authRights, kAuthorizationEmptyEnvironment, authFlags, NULL);
-    SMJobBless(kSMDomainSystemLaunchd, (__bridge CFStringRef)programId, authRef, NULL);
+    if (status != errAuthorizationSuccess) {
+        NSLog(@"Error with copying rights: %d", status);
+    }
+    CFErrorRef errorRef;
+    BOOL result = (BOOL)SMJobBless(kSMDomainSystemLaunchd, (__bridge CFStringRef)programId, authRef, &errorRef);
+    if (!result) {
+        error = CFBridgingRelease(errorRef);
+        NSLog(@"Unable to start blessed job: %@", error);
+    }
+
+    xpc_connection_t connection = xpc_connection_create_mach_service("mmm.ProcessMonitor", NULL, 0);
+    if (!connection) {
+        NSLog(@"Unable to create connection");
+    }
+    xpc_connection_set_event_handler(connection, ^(xpc_object_t event) {
+        
+    });
+    xpc_connection_resume(connection);
 }
 
 # pragma mark - NSApplicationDelegate
