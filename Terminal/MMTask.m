@@ -135,6 +135,15 @@
     }
 }
 
+- (BOOL)shouldDrawFullTerminalScreen;
+{
+    // TODO: Handle the case where the command issued an escape sequence and should be treated like a "full" terminal screen.
+    return self.ansiLines.count > TERM_HEIGHT ||
+        (self.ansiLines.count == TERM_HEIGHT &&
+         ([self.ansiLines.lastObject characterAtIndex:0] != '\0' ||
+          [self.ansiLines.lastObject characterAtIndex:TERM_WIDTH] != '\0'));
+}
+
 # pragma mark - ANSI display methods
 
 - (NSMutableString *)ansiLineAtScrollRow:(NSUInteger)row;

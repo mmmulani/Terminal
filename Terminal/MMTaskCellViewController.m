@@ -55,17 +55,23 @@
 
 - (CGFloat)heightToFitAllOfOutput;
 {
+    CGFloat textHeight = 0.0f;
+    if (self.task.shouldDrawFullTerminalScreen) {
+        // We let the default maximum later take over, rather than calculate a max height.
+        textHeight = 999.0f;
+    } else {
+        NSAttributedString *output = [self.outputView.textStorage attributedSubstringFromRange:NSMakeRange(0, self.outputView.textStorage.length)];
+
+        NSTextStorage *textStorage = [[NSTextStorage alloc] initWithAttributedString:output];
+        NSTextContainer *textContainer = [[NSTextContainer alloc] initWithContainerSize:NSMakeSize(self.outputView.textContainer.containerSize.width, FLT_MAX)];
+        NSLayoutManager *layoutManager = [[NSLayoutManager alloc] init];
+        [layoutManager addTextContainer:textContainer];
+        [textStorage addLayoutManager:layoutManager];
+        [layoutManager glyphRangeForTextContainer:textContainer];
+        textHeight = [layoutManager usedRectForTextContainer:textContainer].size.height + 2.0; // + 2.0 for padding.
+    }
+
     NSScrollView *textScrollView = (NSScrollView *)self.outputView.superview.superview;
-    NSAttributedString *output = [self.outputView.textStorage attributedSubstringFromRange:NSMakeRange(0, self.outputView.textStorage.length)];
-
-    NSTextStorage *textStorage = [[NSTextStorage alloc] initWithAttributedString:output];
-    NSTextContainer *textContainer = [[NSTextContainer alloc] initWithContainerSize:NSMakeSize(self.outputView.textContainer.containerSize.width, FLT_MAX)];
-    NSLayoutManager *layoutManager = [[NSLayoutManager alloc] init];
-    [layoutManager addTextContainer:textContainer];
-    [textStorage addLayoutManager:layoutManager];
-    [layoutManager glyphRangeForTextContainer:textContainer];
-
-    CGFloat textHeight = [layoutManager usedRectForTextContainer:textContainer].size.height + 2.0; // + 2.0 for padding.
     return MIN(self.view.frame.size.height - textScrollView.frame.size.height + textHeight, 425.0f);
 }
 
