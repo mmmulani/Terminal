@@ -9,6 +9,7 @@
 #include <termios.h>
 #include <util.h>
 #include <sys/wait.h>
+#include <syslog.h>
 #include "iconv.h"
 
 #import "MMTerminalConnection.h"
@@ -128,10 +129,10 @@
         // These pipes are written from the shell's point-of-view.
         // That is, the shell intends to write into the writepipe, and read from the readpipe.
 
-        NSLog(@"Starting %s", args[0]);
+        syslog(LOG_NOTICE, "Starting %s", args[0]);
         execv(args[0], args);
 
-        NSLog(@"Reached bad part. %s", args[0]);
+        syslog(LOG_NOTICE, "Reached bad part. %s", args[0]);
 
         exit(1);
     }
