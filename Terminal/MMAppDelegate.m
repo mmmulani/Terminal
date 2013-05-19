@@ -13,7 +13,25 @@
 #import <ServiceManagement/ServiceManagement.h>
 #import <Security/Authorization.h>
 
+@interface MMAppDelegate ()
+
+@property (strong) NSMutableArray *unassignedWindowShortcuts;
+
+@end
+
 @implementation MMAppDelegate
+
+- (id)init;
+{
+    self = [super init];
+    if (!self) {
+        return nil;
+    }
+
+    self.unassignedWindowShortcuts = [NSMutableArray arrayWithArray:@[@1, @2, @3, @4, @5, @6, @7, @8, @9, @0]];
+
+    return self;
+}
 
 - (IBAction)createNewTerminal:(id)sender;
 {
@@ -23,6 +41,38 @@
     MMTerminalConnection *terminalConnection = [[MMTerminalConnection alloc] initWithIdentifier:uniqueIdentifier];
     [self.terminalConnections addObject:terminalConnection];
     [terminalConnection createTerminalWindow];
+}
+
+- (NSInteger)uniqueWindowShortcut;
+{
+    if (self.unassignedWindowShortcuts.count == 0) {
+        return -1;
+    }
+
+    NSNumber *newShortcut = self.unassignedWindowShortcuts[0];
+    [self.unassignedWindowShortcuts removeObjectAtIndex:0];
+
+    return [newShortcut integerValue];
+}
+
+- (void)resignWindowShortcut:(NSInteger)shortcut;
+{
+    [self.unassignedWindowShortcuts addObject:[NSNumber numberWithInteger:shortcut]];
+}
+
+- (void)updateWindowMenu;
+{
+    NSArray *menuItems = self.windowMenu.submenu.itemArray;
+    NSInteger i;
+    for (i = menuItems.count - 1; i >= 0 && [[menuItems[i] target] isKindOfClass:[NSWindow class]]; i--);
+    i++;
+
+    NSArray *windowMenuItems = [menuItems subarrayWithRange:NSMakeRange(i, menuItems.count - i)];
+    for (NSMenuItem *menuItem in windowMenuItems) {
+        MMTerminalWindowController *terminalWindowController = [menuItem.target windowController];
+        menuItem.keyEquivalent = [NSNumber numberWithInteger:terminalWindowController.keyboardShortcut].stringValue;
+        menuItem.keyEquivalentModifierMask = NSCommandKeyMask;
+    }
 }
 
 - (void)startProcessMonitor;

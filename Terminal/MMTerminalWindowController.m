@@ -15,6 +15,7 @@
 #import "MMTerminalConnection.h"
 #import "MMCompletionEngine.h"
 #import "MMCommandsTextView.h"
+#import "MMAppDelegate.h"
 #import <QuartzCore/QuartzCore.h>
 
 @interface MMTerminalWindowController ()
@@ -27,6 +28,8 @@
 
 @property NSMutableDictionary *directoriesBeingWatched;
 @property CFFileDescriptorRef directoryKqRef;
+
+@property NSInteger keyboardShortcut;
 
 @end
 
@@ -56,7 +59,20 @@
     self.commandInput.font = [NSFont systemFontOfSize:13.0];
     self.commandInput.completionEngine.terminalConnection = self.terminalConnection;
 
+    MMAppDelegate *appDelegate = [NSApp delegate];
+    self.keyboardShortcut = [appDelegate uniqueWindowShortcut];
+    [appDelegate updateWindowMenu];
+
     [self.window makeFirstResponder:self.commandInput];
+}
+
+- (void)close;
+{
+    MMAppDelegate *appDelegate = [NSApp delegate];
+    [appDelegate resignWindowShortcut:self.keyboardShortcut];
+    [appDelegate updateWindowMenu];
+
+    [super close];
 }
 
 - (void)dealloc;

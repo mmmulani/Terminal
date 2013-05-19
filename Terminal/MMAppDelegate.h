@@ -16,7 +16,12 @@
 @property (strong) MMDebugMessagesWindowController *debugWindow;
 @property (strong) NSConnection *terminalAppConnection;
 @property (strong) NSMutableArray *terminalConnections;
+@property (strong) IBOutlet NSMenuItem *windowMenu;
 
 - (IBAction)createNewTerminal:(id)sender;
+
+- (NSInteger)uniqueWindowShortcut;
+- (void)resignWindowShortcut:(NSInteger)shortcut;
+- (void)updateWindowMenu;
 
 @end

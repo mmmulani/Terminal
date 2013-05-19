@@ -26,6 +26,7 @@
 @property (strong) MMTerminalConnection *terminalConnection;
 @property BOOL running;
 @property BOOL logAllCharacters;
+@property (readonly) NSInteger keyboardShortcut;
 
 - (id)initWithTerminalConnection:(MMTerminalConnection *)terminalConnection;
 
