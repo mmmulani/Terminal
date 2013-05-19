@@ -61,7 +61,8 @@
 
     MMAppDelegate *appDelegate = [NSApp delegate];
     self.keyboardShortcut = [appDelegate uniqueWindowShortcut];
-    [appDelegate updateWindowMenu];
+    // Though we have assigned a keyboard shortcut, we have not updated the MainMenu with it.
+    // Since we are required to update the MainMenu with keyboard shortcuts after the title changes, we set it in |updateTitle|.
 
     [self.window makeFirstResponder:self.commandInput];
 }
@@ -132,6 +133,7 @@
     [self registerDirectoryToBeObserved:newPath];
 
     [self updateDirectoryView:newPath];
+    [self updateTitle];
 }
 
 - (void)updateDirectoryView:(NSString *)directoryPath;
@@ -174,6 +176,22 @@
     }
 
     self.directoryCollectionView.content = layoutedCollectionViewData;
+}
+
+- (void)updateTitle;
+{
+    NSString *title;
+    if (self.keyboardShortcut != -1) {
+        title = [NSString stringWithFormat:@"%@ — ⌘%ld", [self.currentDirectory stringByAbbreviatingWithTildeInPath], self.keyboardShortcut];
+    } else {
+        title = [self.currentDirectory stringByAbbreviatingWithTildeInPath];
+    }
+
+    self.window.title = title;
+
+    // Changing the title resets the window shortcut, so we must reassign it.
+    MMAppDelegate *appDelegate = [NSApp delegate];
+    [appDelegate updateWindowMenu];
 }
 
 # pragma mark - Directory watching
