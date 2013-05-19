@@ -57,7 +57,9 @@
 
 - (void)resignWindowShortcut:(NSInteger)shortcut;
 {
-    [self.unassignedWindowShortcuts addObject:[NSNumber numberWithInteger:shortcut]];
+    if (shortcut != -1) {
+        [self.unassignedWindowShortcuts addObject:[NSNumber numberWithInteger:shortcut]];
+    }
 }
 
 - (void)updateWindowMenu;

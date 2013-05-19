@@ -66,15 +66,6 @@
     [self.window makeFirstResponder:self.commandInput];
 }
 
-- (void)close;
-{
-    MMAppDelegate *appDelegate = [NSApp delegate];
-    [appDelegate resignWindowShortcut:self.keyboardShortcut];
-    [appDelegate updateWindowMenu];
-
-    [super close];
-}
-
 - (void)dealloc;
 {
     [[NSNotificationCenter defaultCenter] removeObserver:self];
@@ -385,6 +376,15 @@ static void directoryWatchingCallback(CFFileDescriptorRef kqRef, CFOptionFlags c
     for (NSInteger i = [self.taskViewControllers count]; i <= row; i++) {
         [self.taskViewControllers addObject:[[MMTaskCellViewController alloc] initWithTask:self.tasks[i]]];
     }
+}
+
+# pragma mark - NSWindowDelegate
+
+- (void)windowWillClose:(NSNotification *)notification;
+{
+    MMAppDelegate *appDelegate = [NSApp delegate];
+    [appDelegate resignWindowShortcut:self.keyboardShortcut];
+    [appDelegate updateWindowMenu];
 }
 
 @end

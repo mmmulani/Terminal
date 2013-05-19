@@ -13,7 +13,7 @@
 @class MMTerminalConnection;
 @class MMCommandsTextView;
 
-@interface MMTerminalWindowController : NSWindowController <NSTextFieldDelegate, NSTableViewDataSource, NSTableViewDelegate>
+@interface MMTerminalWindowController : NSWindowController <NSTextFieldDelegate, NSTableViewDataSource, NSTableViewDelegate, NSWindowDelegate>
 
 @property (strong) IBOutlet MMCommandsTextView *commandInput;
 @property (strong) IBOutlet NSTableView *tableView;
