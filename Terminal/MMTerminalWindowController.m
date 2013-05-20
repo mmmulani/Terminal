@@ -116,12 +116,17 @@
 
     [self.window makeFirstResponder:self.commandInput];
 
+    [NSAnimationContext beginGrouping];
     CABasicAnimation *animation = [CABasicAnimation animation];
     animation.timingFunction = [CAMediaTimingFunction functionWithName:kCAMediaTimingFunctionDefault];
     animation.duration = 0.25;
     self.commandControlsLayoutConstraint.animations = @{@"constant": animation};
+    [[NSAnimationContext currentContext] setCompletionHandler:^{
+        [self.window.contentView layout];
+    }];
 
     [self.commandControlsLayoutConstraint.animator setConstant:self.originalCommandControlsLayoutConstraintConstant];
+    [NSAnimationContext endGrouping];
 }
 
 - (void)directoryChangedTo:(NSString *)newPath;
@@ -325,12 +330,17 @@ static void directoryWatchingCallback(CFFileDescriptorRef kqRef, CFOptionFlags c
         MMTaskCellViewController *lastController = self.taskViewControllers.lastObject;
         [self.window makeFirstResponder:lastController.outputView];
 
+        [NSAnimationContext beginGrouping];
         CABasicAnimation *animation = [CABasicAnimation animation];
         animation.timingFunction = [CAMediaTimingFunction functionWithName:kCAMediaTimingFunctionDefault];
         animation.duration = 0.25;
         self.commandControlsLayoutConstraint.animations = @{@"constant": animation};
+        [[NSAnimationContext currentContext] setCompletionHandler:^{
+            [self.window.contentView layout];
+        }];
 
         [self.commandControlsLayoutConstraint.animator setConstant:20.0];
+        [NSAnimationContext endGrouping];
 
         [self.terminalConnection runCommands:newTask.command];
 
