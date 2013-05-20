@@ -127,6 +127,14 @@
 
     [self createNewTerminal:nil];
 
+#ifdef DEBUG
+    // F-Script can be found here: http://www.fscript.org/download/download.htm
+    int loadedFscript = [[NSBundle bundleWithPath:@"/Library/Frameworks/FScript.framework"] load];
+    if (loadedFscript) {
+        [[NSApp mainMenu] addItem:[[NSClassFromString(@"FScriptMenuItem") alloc] init]];
+    }
+#endif
+
 //    [self startProcessMonitor];
 }
 
