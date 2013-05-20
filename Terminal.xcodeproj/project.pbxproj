@@ -12,6 +12,7 @@
 		9126054E1739C5BC001962AE /* MMCommandLineParserTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 9126054C1739C4E0001962AE /* MMCommandLineParserTests.m */; };
 		912605511739E1EF001962AE /* MMCommandLineArgumentsParser.m in Sources */ = {isa = PBXBuildFile; fileRef = 912605501739E1EF001962AE /* MMCommandLineArgumentsParser.m */; };
 		9139E161173B2423009FFC1E /* MMTerminalConnection.m in Sources */ = {isa = PBXBuildFile; fileRef = 9139E160173B2423009FFC1E /* MMTerminalConnection.m */; };
+		913CC1C1174A92AD00E002AD /* Shell in CopyFiles */ = {isa = PBXBuildFile; fileRef = 919BA9AF16C875C40091CB1B /* Shell */; };
 		917D1C42173963C800503158 /* lexer.lm in Sources */ = {isa = PBXBuildFile; fileRef = 917D1C41173963C800503158 /* lexer.lm */; };
 		917D1C4417396C8000503158 /* parser.ym in Sources */ = {isa = PBXBuildFile; fileRef = 917D1C4317396C8000503158 /* parser.ym */; };
 		917D1C47173973D600503158 /* MMParserContext.m in Sources */ = {isa = PBXBuildFile; fileRef = 917D1C46173973D600503158 /* MMParserContext.m */; };
@@ -80,6 +81,16 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXCopyFilesBuildPhase section */
+		913CC1C0174A929F00E002AD /* CopyFiles */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = "";
+			dstSubfolderSpec = 6;
+			files = (
+				913CC1C1174A92AD00E002AD /* Shell in CopyFiles */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		919BA9AD16C875C40091CB1B /* CopyFiles */ = {
 			isa = PBXCopyFilesBuildPhase;
 			buildActionMask = 2147483647;
@@ -481,6 +492,7 @@
 				91F4EEB916B8D63D00F65E91 /* Frameworks */,
 				91F4EEBA16B8D63D00F65E91 /* Resources */,
 				91E4C07717459E6100062EF5 /* CopyFiles */,
+				913CC1C0174A929F00E002AD /* CopyFiles */,
 			);
 			buildRules = (
 			);
@@ -875,6 +887,7 @@
 				91E4C0691745682800062EF5 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 		91F1748016ED0CF0002E2594 /* Build configuration list for PBXNativeTarget "TerminalTests" */ = {
 			isa = XCConfigurationList;

@@ -111,8 +111,7 @@
 	win.ws_ypixel = 0;
 
     const char *args[3];
-    NSFileManager *fileManager = [[NSFileManager alloc] init];
-    args[0] = [[[fileManager currentDirectoryPath] stringByAppendingPathComponent:@"Shell"] cStringUsingEncoding:NSUTF8StringEncoding];
+    args[0] = [[[NSBundle mainBundle] pathForAuxiliaryExecutable:@"Shell"] cStringUsingEncoding:NSUTF8StringEncoding];
     args[1] = ((NSString *)[NSString stringWithFormat:@"%ld", (long)self.identifier]).UTF8String;
     args[2] = NULL;
 
