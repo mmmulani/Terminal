@@ -50,7 +50,11 @@
 {
     // TODO: Add a check to see if we are already scrolled to the bottom, and only scroll down then.
     NSRect clipViewFrame = self.outputView.superview.frame;
-    [((NSClipView *)self.outputView.superview) scrollToPoint:NSMakePoint(0, self.outputView.frame.size.height - clipViewFrame.size.height)];
+    // XXX: If we issue |scrollToPoint| right now, sometimes it will not take complete effect as the NSTextView is still dealing with the display text that was copied in.
+    // Maybe once we update the NSTextView in place we can get rid of this |dispatch_async| call.
+    dispatch_async(dispatch_get_main_queue(), ^{
+        [((NSClipView *)self.outputView.superview) scrollToPoint:NSMakePoint(0, self.outputView.frame.size.height - clipViewFrame.size.height)];
+    });
 }
 
 - (CGFloat)heightToFitAllOfOutput;
