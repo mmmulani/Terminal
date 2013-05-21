@@ -9,6 +9,7 @@
 #import "MMTask.h"
 #import "MMShared.h"
 #import "MMTerminalConnection.h"
+#import "MMMoveCursor.h"
 
 @interface MMTask ()
 
@@ -84,12 +85,17 @@
             if (verbosity) {
                 MMLog(@"Handling carriage return.");
             }
-            [self moveCursorBackward:(self.cursorPosition.x - 1)];
+            MMANSIAction *action = [[MMMoveCursorBackward alloc] initWithArguments:@[@(self.cursorPosition.x - 1)]];
+            action.delegate = self;
+            [action do];
         } else if (currentChar == '\b') {
             if (verbosity) {
                 MMLog(@"Handling backspace.");
             }
-            [self moveCursorBackward:1];
+
+            MMANSIAction *action = [[MMMoveCursorBackward alloc] initWithArguments:@[@1]];
+            action.delegate = self;
+            [action do];
         } else if (currentChar == '\a') { // Bell (beep).
             NSBeep();
             MMLog(@"Beeping.");
@@ -193,61 +199,6 @@
 - (void)moveToFrontOfLine;
 {
     self.cursorPosition = MMPositionMake(1, self.cursorPosition.y);
-}
-
-- (void)moveCursorUp:(NSInteger)lines;
-{
-    lines = MAX(lines, 1);
-    // Comparing it to TERM_WIDTH handles the case where the cursor is past the right margin (which occurs when we right a character at the right margin).
-    NSInteger newPositionX = MIN(self.cursorPosition.x, TERM_WIDTH);
-    if (lines >= self.cursorPosition.y) {
-        newPositionX = 1;
-    }
-    NSInteger newPositionY = MAX(1, self.cursorPosition.y - lines);
-
-    self.cursorPosition = MMPositionMake(newPositionX, newPositionY);
-}
-
-- (void)moveCursorDown:(NSInteger)lines;
-{
-    lines = MAX(lines, 1);
-
-    NSInteger newPositionY = MIN(self.cursorPosition.y + lines, TERM_HEIGHT + 1);
-    self.cursorPosition = MMPositionMake(self.cursorPosition.x, newPositionY);
-
-    [self checkIfExceededLastLineAndObeyScrollMargin:NO];
-}
-
-- (void)moveCursorForward:(NSInteger)spaces;
-{
-    // Unlike the control command to move the cursor backwards, this does not have to deal with wrapping around the margin.
-
-    spaces = MAX(spaces, 1);
-
-    self.cursorPosition = MMPositionMake(MIN(TERM_WIDTH, self.cursorPosition.x + spaces), self.cursorPosition.y);
-}
-
-- (void)moveCursorBackward:(NSInteger)spaces;
-{
-    spaces = MAX(spaces, 1);
-
-    NSInteger newPositionX = self.cursorPosition.x;
-    NSInteger newPositionY = self.cursorPosition.y;
-    while (spaces > 0) {
-        NSInteger distanceToMove = MIN(spaces, newPositionX - 1);
-
-        newPositionX -= distanceToMove;
-        spaces -= distanceToMove;
-
-        if (newPositionY == 1 || [self ansiCharacterAtScrollRow:(newPositionY - 2) column:TERM_WIDTH] == '\n') {
-            spaces = 0;
-        } else if (spaces > 0) {
-            newPositionY--;
-            newPositionX = TERM_WIDTH + 1;
-        }
-    }
-
-    self.cursorPosition = MMPositionMake(newPositionX, newPositionY);
 }
 
 - (void)moveCursorToX:(NSUInteger)x Y:(NSUInteger)y;
@@ -519,13 +470,21 @@
     if ([escapeSequence characterAtIndex:1] == '[') {
         NSArray *items = [[escapeSequence substringWithRange:NSMakeRange(2, [escapeSequence length] - 3)] componentsSeparatedByString:@";"];
         if (escapeCode == 'A') {
-            [self moveCursorUp:[items[0] intValue]];
+            MMANSIAction *action = [[MMMoveCursorUp alloc] initWithArguments:items];
+            action.delegate = self;
+            [action do];
         } else if (escapeCode == 'B') {
-            [self moveCursorDown:[items[0] intValue]];
+            MMANSIAction *action = [[MMMoveCursorDown alloc] initWithArguments:items];
+            action.delegate = self;
+            [action do];
         } else if (escapeCode == 'C') {
-            [self moveCursorForward:[items[0] intValue]];
+            MMANSIAction *action = [[MMMoveCursorForward alloc] initWithArguments:items];
+            action.delegate = self;
+            [action do];
         } else if (escapeCode == 'D') {
-            [self moveCursorBackward:[items[0] intValue]];
+            MMANSIAction *action = [[MMMoveCursorBackward alloc] initWithArguments:items];
+            action.delegate = self;
+            [action do];
         } else if (escapeCode == 'G') {
             NSUInteger x = [items count] >= 1 ? [items[0] intValue] : 1;
             [self moveCursorToX:x Y:self.cursorPosition.y];
@@ -573,6 +532,33 @@
             MMLog(@"Unhandled early escape sequence: %@", escapeSequence);
         }
     }
+}
+
+# pragma mark - MMANSIActionDelegate methods
+
+- (NSInteger)termHeight;
+{
+    return TERM_HEIGHT;
+}
+
+- (NSInteger)termWidth;
+{
+    return TERM_WIDTH;
+}
+
+- (NSInteger)cursorPositionX;
+{
+    return self.cursorPosition.x;
+}
+
+- (NSInteger)cursorPositionY;
+{
+    return self.cursorPosition.y;
+}
+
+- (void)setCursorToX:(NSInteger)x Y:(NSInteger)y;
+{
+    self.cursorPosition = MMPositionMake(x, y);
 }
 
 @end

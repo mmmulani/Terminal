@@ -8,6 +8,8 @@
 
 #import <Foundation/Foundation.h>
 
+#import "MMANSIAction.h"
+
 #define TERM_WIDTH 80
 #define TERM_HEIGHT 24
 
@@ -31,7 +33,7 @@ typedef enum {
 
 @class MMTerminalConnection;
 
-@interface MMTask : NSObject
+@interface MMTask : NSObject <MMANSIActionDelegate>
 
 @property (strong) NSTextStorage *output;
 @property pid_t processId;

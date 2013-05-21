@@ -13,6 +13,10 @@
 		912605511739E1EF001962AE /* MMCommandLineArgumentsParser.m in Sources */ = {isa = PBXBuildFile; fileRef = 912605501739E1EF001962AE /* MMCommandLineArgumentsParser.m */; };
 		9139E161173B2423009FFC1E /* MMTerminalConnection.m in Sources */ = {isa = PBXBuildFile; fileRef = 9139E160173B2423009FFC1E /* MMTerminalConnection.m */; };
 		913CC1C1174A92AD00E002AD /* Shell in CopyFiles */ = {isa = PBXBuildFile; fileRef = 919BA9AF16C875C40091CB1B /* Shell */; };
+		913CC1C5174C31FD00E002AD /* MMANSIAction.m in Sources */ = {isa = PBXBuildFile; fileRef = 913CC1C4174C31FD00E002AD /* MMANSIAction.m */; };
+		913CC1C6174C31FD00E002AD /* MMANSIAction.m in Sources */ = {isa = PBXBuildFile; fileRef = 913CC1C4174C31FD00E002AD /* MMANSIAction.m */; };
+		913CC1C9174C34E100E002AD /* MMMoveCursor.m in Sources */ = {isa = PBXBuildFile; fileRef = 913CC1C8174C34E100E002AD /* MMMoveCursor.m */; };
+		913CC1CA174C34E100E002AD /* MMMoveCursor.m in Sources */ = {isa = PBXBuildFile; fileRef = 913CC1C8174C34E100E002AD /* MMMoveCursor.m */; };
 		917D1C42173963C800503158 /* lexer.lm in Sources */ = {isa = PBXBuildFile; fileRef = 917D1C41173963C800503158 /* lexer.lm */; };
 		917D1C4417396C8000503158 /* parser.ym in Sources */ = {isa = PBXBuildFile; fileRef = 917D1C4317396C8000503158 /* parser.ym */; };
 		917D1C47173973D600503158 /* MMParserContext.m in Sources */ = {isa = PBXBuildFile; fileRef = 917D1C46173973D600503158 /* MMParserContext.m */; };
@@ -133,6 +137,10 @@
 		912605501739E1EF001962AE /* MMCommandLineArgumentsParser.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = MMCommandLineArgumentsParser.m; path = CommandLine/MMCommandLineArgumentsParser.m; sourceTree = "<group>"; };
 		9139E15F173B2423009FFC1E /* MMTerminalConnection.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MMTerminalConnection.h; sourceTree = "<group>"; };
 		9139E160173B2423009FFC1E /* MMTerminalConnection.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MMTerminalConnection.m; sourceTree = "<group>"; };
+		913CC1C3174C31FD00E002AD /* MMANSIAction.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = MMANSIAction.h; path = Task/MMANSIAction.h; sourceTree = "<group>"; };
+		913CC1C4174C31FD00E002AD /* MMANSIAction.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = MMANSIAction.m; path = Task/MMANSIAction.m; sourceTree = "<group>"; };
+		913CC1C7174C34E100E002AD /* MMMoveCursor.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = MMMoveCursor.h; path = Task/MMMoveCursor.h; sourceTree = "<group>"; };
+		913CC1C8174C34E100E002AD /* MMMoveCursor.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = MMMoveCursor.m; path = Task/MMMoveCursor.m; sourceTree = "<group>"; };
 		917D1C41173963C800503158 /* lexer.lm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.lex; name = lexer.lm; path = CommandLine/lexer.lm; sourceTree = "<group>"; };
 		917D1C4317396C8000503158 /* parser.ym */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.yacc; name = parser.ym; path = CommandLine/parser.ym; sourceTree = "<group>"; };
 		917D1C45173973D600503158 /* MMParserContext.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = MMParserContext.h; path = CommandLine/MMParserContext.h; sourceTree = "<group>"; };
@@ -238,6 +246,19 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		913CC1C2174C310300E002AD /* Task and xterm simulation */ = {
+			isa = PBXGroup;
+			children = (
+				9186499216D408700024D9BE /* MMTask.h */,
+				9186499316D408700024D9BE /* MMTask.m */,
+				913CC1C3174C31FD00E002AD /* MMANSIAction.h */,
+				913CC1C4174C31FD00E002AD /* MMANSIAction.m */,
+				913CC1C7174C34E100E002AD /* MMMoveCursor.h */,
+				913CC1C8174C34E100E002AD /* MMMoveCursor.m */,
+			);
+			name = "Task and xterm simulation";
+			sourceTree = "<group>";
+		};
 		917D1C3E17385FBE00503158 /* Command line input */ = {
 			isa = PBXGroup;
 			children = (
@@ -397,6 +418,7 @@
 		91F4EEC516B8D63D00F65E91 /* Terminal */ = {
 			isa = PBXGroup;
 			children = (
+				913CC1C2174C310300E002AD /* Task and xterm simulation */,
 				917D1C3E17385FBE00503158 /* Command line input */,
 				9186499C16D46A5E0024D9BE /* Terminal window */,
 				91F4EED116B8D63D00F65E91 /* MMAppDelegate.h */,
@@ -405,8 +427,6 @@
 				9106520B16C574160010DC76 /* MMTextView.m */,
 				91F4EED416B8D63D00F65E91 /* MMMainMenu.xib */,
 				91F4EEC616B8D63D00F65E91 /* Supporting Files */,
-				9186499216D408700024D9BE /* MMTask.h */,
-				9186499316D408700024D9BE /* MMTask.m */,
 				918649BB16D69A6F0024D9BE /* MMDebugMessagesWindowController.h */,
 				918649BC16D69A6F0024D9BE /* MMDebugMessagesWindowController.m */,
 				918649BD16D69A700024D9BE /* MMDebugMessagesPanel.xib */,
@@ -606,6 +626,8 @@
 				91B8050B16FBC70B00E6D9DF /* MMShellMain.m in Sources */,
 				91B8050F16FF9BCD00E6D9DF /* ANSIEscapeSequencesTests.m in Sources */,
 				919ABB5016FFA22900BB7108 /* MMTaskTests.m in Sources */,
+				913CC1C6174C31FD00E002AD /* MMANSIAction.m in Sources */,
+				913CC1CA174C34E100E002AD /* MMMoveCursor.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -628,6 +650,8 @@
 				9139E161173B2423009FFC1E /* MMTerminalConnection.m in Sources */,
 				91C7D984173ECE0900875974 /* MMCommandsTextView.m in Sources */,
 				91C7D987173F250300875974 /* MMCompletionEngine.m in Sources */,
+				913CC1C5174C31FD00E002AD /* MMANSIAction.m in Sources */,
+				913CC1C9174C34E100E002AD /* MMMoveCursor.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
