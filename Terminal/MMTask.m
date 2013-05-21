@@ -101,7 +101,7 @@
             }
 
             if ([outputToHandle characterAtIndex:(firstAlphabeticIndex + 1)] != '[') {
-                MMLog(@"Early unhandled escape sequence: %@", [outputToHandle substringWithRange:NSMakeRange(firstAlphabeticIndex, 2)]);
+                [self handleEscapeSequence:[outputToHandle substringWithRange:NSMakeRange(firstAlphabeticIndex, 2)]];
                 i = i + 1;
                 continue;
             }
@@ -418,6 +418,32 @@
     }
 }
 
+- (void)index;
+{
+    // This corresponds to ESC D and is called IND.
+    // This escape sequence moves the cursor down by one line and if it passes the bottom, scrolls down.
+    NSInteger newXPosition = self.cursorPosition.x == TERM_WIDTH + 1 ? 1 : self.cursorPosition.x;
+    self.cursorPosition = MMPositionMake(newXPosition, self.cursorPosition.y + 1);
+    [self checkIfExceededLastLineAndObeyScrollMargin:YES];
+}
+
+- (void)reverseIndex;
+{
+    // This corresponds to ESC M and is called RI.
+    // This escape sequence moves the cursor up by one line and if it passes the top margin, scrolls up.
+    // When we scroll up, we remove a newline from the last line if it exists.
+    if (self.cursorPosition.y == self.scrollTopMargin) {
+        if (self.ansiLines.count >= self.currentRowOffset + self.scrollBottomMargin) {
+            [self setAnsiCharacterAtScrollRow:(TERM_HEIGHT - 2) column:TERM_WIDTH withCharacter:'\0'];
+            [self.ansiLines removeObjectAtIndex:(self.currentRowOffset + self.scrollBottomMargin - 1)];
+        }
+        NSMutableString *newLine = [NSMutableString stringWithString:[[@"" stringByPaddingToLength:80 withString:@"\0" startingAtIndex:0] stringByAppendingString:@"\n"]];
+        [self.ansiLines insertObject:newLine atIndex:(self.currentRowOffset + self.scrollTopMargin - 1)];
+    } else {
+        self.cursorPosition = MMPositionMake(self.cursorPosition.x, self.cursorPosition.y - 1);
+    }
+}
+
 - (void)checkIfExceededLastLineAndObeyScrollMargin:(BOOL)obeyScrollMargin;
 {
     if (obeyScrollMargin && (self.cursorPosition.y > self.scrollBottomMargin)) {
@@ -488,58 +514,64 @@
 
 - (void)handleEscapeSequence:(NSString *)escapeSequence;
 {
-    if ([escapeSequence characterAtIndex:1] != '[') {
-        MMLog(@"Unsupported escape sequence: %@", escapeSequence);
-        return;
-    }
-
-    NSArray *items = [[escapeSequence substringWithRange:NSMakeRange(2, [escapeSequence length] - 3)] componentsSeparatedByString:@";"];
 
     unichar escapeCode = [escapeSequence characterAtIndex:([escapeSequence length] - 1)];
-    if (escapeCode == 'A') {
-        [self moveCursorUp:[items[0] intValue]];
-    } else if (escapeCode == 'B') {
-        [self moveCursorDown:[items[0] intValue]];
-    } else if (escapeCode == 'C') {
-        [self moveCursorForward:[items[0] intValue]];
-    } else if (escapeCode == 'D') {
-        [self moveCursorBackward:[items[0] intValue]];
-    } else if (escapeCode == 'G') {
-        NSUInteger x = [items count] >= 1 ? [items[0] intValue] : 1;
-        [self moveCursorToX:x Y:self.cursorPosition.y];
-    } else if (escapeCode == 'H' || escapeCode == 'f') {
-        NSUInteger x = [items count] >= 2 ? [items[1] intValue] : 1;
-        NSUInteger y = [items count] >= 1 ? [items[0] intValue] : 1;
-        [self moveCursorToX:x Y:y];
-    } else if (escapeCode == 'K') {
-        [self clearUntilEndOfLine];
-    } else if (escapeCode == 'J') {
-        if ([items count] && [items[0] isEqualToString:@"2"]) {
-            [self clearScreen];
+    if ([escapeSequence characterAtIndex:1] == '[') {
+        NSArray *items = [[escapeSequence substringWithRange:NSMakeRange(2, [escapeSequence length] - 3)] componentsSeparatedByString:@";"];
+        if (escapeCode == 'A') {
+            [self moveCursorUp:[items[0] intValue]];
+        } else if (escapeCode == 'B') {
+            [self moveCursorDown:[items[0] intValue]];
+        } else if (escapeCode == 'C') {
+            [self moveCursorForward:[items[0] intValue]];
+        } else if (escapeCode == 'D') {
+            [self moveCursorBackward:[items[0] intValue]];
+        } else if (escapeCode == 'G') {
+            NSUInteger x = [items count] >= 1 ? [items[0] intValue] : 1;
+            [self moveCursorToX:x Y:self.cursorPosition.y];
+        } else if (escapeCode == 'H' || escapeCode == 'f') {
+            NSUInteger x = [items count] >= 2 ? [items[1] intValue] : 1;
+            NSUInteger y = [items count] >= 1 ? [items[0] intValue] : 1;
+            [self moveCursorToX:x Y:y];
+        } else if (escapeCode == 'K') {
+            [self clearUntilEndOfLine];
+        } else if (escapeCode == 'J') {
+            if ([items count] && [items[0] isEqualToString:@"2"]) {
+                [self clearScreen];
+            } else {
+                MMLog(@"Unsupported clear mode with escape sequence: %@", escapeSequence);
+            }
+        } else if (escapeCode == 'L') {
+            [self insertBlankLinesFromCursor:[items[0] intValue]];
+        } else if (escapeCode == 'M') {
+            [self deleteLinesFromCursor:[items[0] intValue]];
+        } else if (escapeCode == 'P') {
+            NSUInteger num = [items count] >= 1 ? [items[0] intValue] : 0;
+            [self deleteCharacters:num];
+        } else if (escapeCode == 'c') {
+            [self handleUserInput:@"\033[?1;2c"];
+        } else if (escapeCode == 'd') {
+            [self moveCursorToX:self.cursorPosition.x Y:[items[0] intValue]];
+        } else if ([escapeSequence isEqualToString:@"\033[?1h"]) {
+            self.cursorKeyMode = YES;
+        } else if ([escapeSequence isEqualToString:@"\033[?1l"]) {
+            self.cursorKeyMode = NO;
+        } else if (escapeCode == 'r') {
+            NSUInteger bottom = [items count] >= 2 ? [items[1] intValue] : TERM_HEIGHT;
+            NSUInteger top = [items count] >= 1 ? [items[0] intValue] : 1;
+            [self setScrollMarginTop:top ScrollMarginBottom:bottom];
         } else {
-            MMLog(@"Unsupported clear mode with escape sequence: %@", escapeSequence);
+            MMLog(@"Unhandled escape sequence: %@", escapeSequence);
         }
-    } else if (escapeCode == 'L') {
-        [self insertBlankLinesFromCursor:[items[0] intValue]];
-    } else if (escapeCode == 'M') {
-        [self deleteLinesFromCursor:[items[0] intValue]];
-    } else if (escapeCode == 'P') {
-        NSUInteger num = [items count] >= 1 ? [items[0] intValue] : 0;
-        [self deleteCharacters:num];
-    } else if (escapeCode == 'c') {
-        [self handleUserInput:@"\033[?1;2c"];
-    } else if (escapeCode == 'd') {
-        [self moveCursorToX:self.cursorPosition.x Y:[items[0] intValue]];
-    } else if ([escapeSequence isEqualToString:@"\033[?1h"]) {
-        self.cursorKeyMode = YES;
-    } else if ([escapeSequence isEqualToString:@"\033[?1l"]) {
-        self.cursorKeyMode = NO;
-    } else if (escapeCode == 'r') {
-        NSUInteger bottom = [items count] >= 2 ? [items[1] intValue] : TERM_HEIGHT;
-        NSUInteger top = [items count] >= 1 ? [items[0] intValue] : 1;
-        [self setScrollMarginTop:top ScrollMarginBottom:bottom];
     } else {
-        MMLog(@"Unhandled escape sequence: %@", escapeSequence);
+        // This covers all escape sequences that do not start with '['.
+        if (escapeCode == 'D') {
+            [self index];
+        } else if (escapeCode == 'M') {
+            [self reverseIndex];
+        } else {
+            MMLog(@"Unhandled early escape sequence: %@", escapeSequence);
+        }
     }
 }
 

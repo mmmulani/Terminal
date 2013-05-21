@@ -9,13 +9,23 @@
 #import "ANSIEscapeSequencesTests.h"
 #import "MMTask.h"
 
+@interface ANSIEscapeSequencesTests ()
+
+@property NSArray *twentyFourNumberedLines;
+
+@end
+
 @implementation ANSIEscapeSequencesTests
 
 - (void)setUp;
 {
     [super setUp];
-    
-    // Set-up code here.
+
+    NSMutableArray *numberedLines = [NSMutableArray array];
+    for (NSInteger i = 1; i <= TERM_HEIGHT; i++) {
+        [numberedLines addObject:[[NSString stringWithFormat:@"%ld", i] stringByPaddingToLength:TERM_WIDTH withString:@"-" startingAtIndex:0]];
+    }
+    self.twentyFourNumberedLines = numberedLines;
 }
 
 - (void)tearDown;
@@ -250,6 +260,32 @@ do {\
 - (void)testPossibleCrashers;
 {
     CheckThatInputDoesNotCauseACrash(@"\033[M\033[24;1Ha");
+}
+
+- (void)testReverseIndex;
+{
+    NSString *riTest = [[self.twentyFourNumberedLines componentsJoinedByString:@""] stringByAppendingString:@"\033[1;5H\033M"];
+    NSString *riTestOutput = [@"\n" stringByAppendingString:[[self.twentyFourNumberedLines subarrayWithRange:NSMakeRange(0, 23)]componentsJoinedByString:@""]];
+    CheckInputAgainstExpectedOutputWithExpectedCursor(riTest, riTestOutput, MMPositionMake(5, 1));
+
+    NSString *scrollRiTest = [[self.twentyFourNumberedLines componentsJoinedByString:@""] stringByAppendingString:@"\033[5;10r\033[5;1H\033M"];
+    NSString *scrollRiOutput = [NSString stringWithFormat:@"%@%@%@%@",
+                                [[self.twentyFourNumberedLines subarrayWithRange:NSMakeRange(0, 4)] componentsJoinedByString:@""],
+                                @"\n",
+                                [[self.twentyFourNumberedLines subarrayWithRange:NSMakeRange(4, 5)] componentsJoinedByString:@""],
+                                [[self.twentyFourNumberedLines subarrayWithRange:NSMakeRange(10, 14)] componentsJoinedByString:@""]];
+    CheckInputAgainstExpectedOutputWithExpectedCursor(scrollRiTest, scrollRiOutput, MMPositionMake(1, 5));
+
+    // Test that the last newline is removed from the last line.
+    CheckInputAgainstExpectedOutput([[@"1" stringByPaddingToLength:24 withString:@"\n" startingAtIndex:0] stringByAppendingString:@"!\033[1;1H\033M"], [@"\n1" stringByPaddingToLength:24 withString:@"\n" startingAtIndex:0]);
+}
+
+- (void)testIndex;
+{
+    CheckInputAgainstExpectedOutput([[self.twentyFourNumberedLines componentsJoinedByString:@""] stringByAppendingString:@"\033D!"], [[self.twentyFourNumberedLines componentsJoinedByString:@""] stringByAppendingString:@"!"]);
+    CheckInputAgainstExpectedOutput([[self.twentyFourNumberedLines componentsJoinedByString:@""] stringByAppendingString:@"\033[24;5H\033D!"], [[self.twentyFourNumberedLines componentsJoinedByString:@""] stringByAppendingString:@"    !"]);
+    // Make sure that newline is added if necessary.
+    CheckInputAgainstExpectedOutput([[@"" stringByPaddingToLength:23 withString:@"\n" startingAtIndex:0] stringByAppendingString:@"\033[24;5H\033D!"], [[@"" stringByPaddingToLength:24 withString:@"\n" startingAtIndex:0] stringByAppendingString:@"    !"]);
 }
 
 @end
