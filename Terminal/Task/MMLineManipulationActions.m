@@ -46,8 +46,32 @@
 
 @end
 
-@implementation MMDeleteLine
+@implementation MMDeleteLines
 
 + (NSArray *)_defaultArguments { return @[@1]; }
+
+- (void)do;
+{
+    // This is called the Delete Line (DL) sequence. It has the escape sequence: ESC[(0-9)*M
+    // It is only handled when the cursor is within the scroll region.
+    if (!self.delegate.isCursorInScrollRegion) {
+        return;
+    }
+    NSInteger numberOfLinesToDelete = MIN(MAX(1, [[self defaultedArgumentAtIndex:0] integerValue]), self.delegate.scrollMarginBottom - self.delegate.cursorPositionY + 1);
+
+    for (NSInteger i = 0; i < numberOfLinesToDelete; i++) {
+        [self.delegate removeLineAtScrollRow:self.delegate.cursorPositionY];
+    }
+
+    NSInteger newLineScrollRow = MIN(self.delegate.scrollMarginBottom - numberOfLinesToDelete, self.delegate.numberOfRowsOnScreen) + 1;
+    BOOL fillWithNewlines =
+        (self.delegate.cursorPositionY + numberOfLinesToDelete <= self.delegate.numberOfRowsOnScreen) &&
+        [self.delegate numberOfCharactersInScrollRow:(self.delegate.cursorPositionY + numberOfLinesToDelete)] > 0;
+    for (NSInteger i = 0; i < numberOfLinesToDelete; i++) {
+        [self.delegate insertBlankLineAtScrollRow:newLineScrollRow withNewline:fillWithNewlines];
+    }
+
+    [self.delegate setCursorToX:1 Y:self.delegate.cursorPositionY];
+}
 
 @end

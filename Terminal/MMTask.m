@@ -200,61 +200,9 @@
     [self checkIfExceededLastLineAndObeyScrollMargin:YES];
 }
 
-- (void)deleteCharacters:(NSUInteger)numberOfCharactersToDelete;
-{
-    // This implements the VT220 feature "Delete Character (DCH)".
-    numberOfCharactersToDelete = MIN(MAX(1, numberOfCharactersToDelete), TERM_WIDTH);
-
-    // Handle the case where the cursor is past the right margin.
-    NSInteger adjustedXPosition = self.cursorPosition.x;
-
-    NSInteger numberOfCharactersToMove = MAX(TERM_WIDTH - numberOfCharactersToDelete - (adjustedXPosition - 1), 0);
-    for (NSInteger i = 0; i < numberOfCharactersToMove; i++) {
-        [self setAnsiCharacterAtScrollRow:(self.cursorPosition.y - 1) column:(adjustedXPosition - 1 + i) withCharacter:[self ansiCharacterAtScrollRow:(self.cursorPosition.y - 1) column:(adjustedXPosition - 1 + i + numberOfCharactersToDelete)]];
-    }
-    for (NSInteger i = adjustedXPosition + numberOfCharactersToMove - 1; i < TERM_WIDTH; i++) {
-        [self setAnsiCharacterAtScrollRow:(self.cursorPosition.y - 1) column:i withCharacter:'\0'];
-    }
-
-    if (self.cursorPosition.y < TERM_HEIGHT &&
-        ([self ansiCharacterAtScrollRow:self.cursorPosition.y column:0] != '\0' ||
-         [self ansiCharacterAtScrollRow:self.cursorPosition.y column:TERM_WIDTH] != '\0')) {
-        [self setAnsiCharacterAtScrollRow:(self.cursorPosition.y - 1) column:TERM_WIDTH withCharacter:'\n'];
-    }
-}
-
 - (BOOL)isCursorInScrollRegion;
 {
     return self.cursorPosition.y >= self.scrollMarginTop && self.cursorPosition.y <= self.scrollMarginBottom;
-}
-
-- (void)deleteLinesFromCursor:(NSInteger)numberOfLinesToDelete;
-{
-    // This is called the Delete Line (DL) sequence. It has the escape sequence: ESC[(0-9)*M
-    // It is only handled when the cursor is within the scroll region.
-    if (!self.isCursorInScrollRegion) {
-        return;
-    }
-    numberOfLinesToDelete = MIN(MAX(1, numberOfLinesToDelete), self.scrollMarginBottom - self.cursorPosition.y + 1);
-
-    NSInteger numberOfLinesToMove = self.scrollMarginBottom - (self.cursorPosition.y - 1) - numberOfLinesToDelete;
-    for (NSInteger i = 0; i < numberOfLinesToMove; i++) {
-        for (NSInteger j = 0; j <= TERM_WIDTH; j++) {
-            [self setAnsiCharacterAtScrollRow:(self.cursorPosition.y - 1 + i) column:j withCharacter:[self ansiCharacterAtScrollRow:(self.cursorPosition.y - 1 + i + numberOfLinesToDelete) column:j]];
-        }
-    }
-
-    BOOL fillWithNewlines = self.currentRowOffset + self.cursorPosition.y - 1 + numberOfLinesToDelete < self.ansiLines.count &&
-        ([self ansiCharacterAtScrollRow:(self.cursorPosition.y - 1 + numberOfLinesToDelete) column:0] != '\0' ||
-         [self ansiCharacterAtScrollRow:(self.cursorPosition.y - 1 + numberOfLinesToDelete) column:TERM_WIDTH] != '\0');
-    for (NSInteger i = 0; i < numberOfLinesToDelete; i++) {
-        for (NSInteger j = 0; j < TERM_WIDTH; j++) {
-            [self setAnsiCharacterAtScrollRow:(self.cursorPosition.y - 1 + numberOfLinesToMove + i) column:j withCharacter:'\0'];
-        }
-        [self setAnsiCharacterAtScrollRow:(self.cursorPosition.y - 1 + numberOfLinesToMove + i) column:TERM_WIDTH withCharacter:(fillWithNewlines ? '\n' : '\0')];
-    }
-
-    self.cursorPosition = MMPositionMake(1, self.cursorPosition.y);
 }
 
 - (void)fillCurrentScreenWithSpacesUpToCursor;
@@ -401,7 +349,7 @@
         } else if (escapeCode == 'L') {
             action = [[MMInsertBlankLines alloc] initWithArguments:items];
         } else if (escapeCode == 'M') {
-            [self deleteLinesFromCursor:[items[0] intValue]];
+            action = [[MMDeleteLines alloc] initWithArguments:items];
         } else if (escapeCode == 'P') {
             action = [[MMDeleteCharacters alloc] initWithArguments:items];
         } else if (escapeCode == 'c') {

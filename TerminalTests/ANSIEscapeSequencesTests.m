@@ -255,6 +255,7 @@ do {\
 
     CheckInputAgainstExpectedOutput(@"a\nb\nc\nd\ne\nf\033[1;3r\033[4;1H\033[1M", @"a\nb\nc\nd\ne\nf");
     CheckInputAgainstExpectedOutput(@"a\nb\nc\nd\ne\nf\033[1;3r\033[1;1H\033[1M", @"b\nc\n\nd\ne\nf");
+    CheckInputAgainstExpectedOutput(@"a\nb\nc\nd\ne\nf\033[1;3r\033[1;1H\033[2M", @"c\n\n\nd\ne\nf");
 }
 
 - (void)testBeep;

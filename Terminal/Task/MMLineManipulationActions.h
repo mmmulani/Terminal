@@ -12,6 +12,6 @@
 
 @end
 
-@interface MMDeleteLine : MMANSIAction
+@interface MMDeleteLines : MMANSIAction
 
 @end
