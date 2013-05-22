@@ -11,6 +11,7 @@
 #import "MMTerminalConnection.h"
 #import "MMMoveCursor.h"
 #import "MMErasingActions.h"
+#import "MMLineManipulationActions.h"
 
 @interface MMTask ()
 
@@ -19,8 +20,8 @@
 @property NSString *unreadOutput;
 @property NSInteger cursorPositionByCharacters;
 @property BOOL cursorKeyMode;
-@property NSInteger scrollTopMargin;
-@property NSInteger scrollBottomMargin;
+@property NSInteger scrollMarginTop;
+@property NSInteger scrollMarginBottom;
 
 @end
 
@@ -41,8 +42,8 @@
     }
     self.currentRowOffset = 0;
     self.cursorPosition = MMPositionMake(1, 1);
-    self.scrollTopMargin = 1;
-    self.scrollBottomMargin = 24;
+    self.scrollMarginTop = 1;
+    self.scrollMarginBottom = 24;
     MMANSIAction *action = [[MMClearScreen alloc] initWithArguments:@[@2]];
     action.delegate = self;
     [action do];
@@ -224,45 +225,7 @@
 
 - (BOOL)isCursorInScrollRegion;
 {
-    return self.cursorPosition.y >= self.scrollTopMargin && self.cursorPosition.y <= self.scrollBottomMargin;
-}
-
-- (void)insertBlankLinesFromCursor:(NSInteger)numberOfLinesToInsert;
-{
-    // We only handle this control sequence when the cursor is within the scroll region.
-    if (!self.isCursorInScrollRegion) {
-        return;
-    }
-
-    // Three step process:
-    // 1. Insert |numberOfLinesToInsert| blank lines starting at the cursor.
-    // 2. Remove any lines that were pushed below the scroll margin.
-    // 3. Move the cursor to the correct spot.
-    numberOfLinesToInsert = MIN(MAX(1, numberOfLinesToInsert), self.scrollBottomMargin - self.cursorPosition.y + 1);
-
-    // Step 1.
-    // We either insert a completely blank line or a line ending with a newline character.
-    // We insert a completely blank line if there is content after the lines to be inserted.
-    NSString *newLineText;
-    if (self.currentRowOffset + self.cursorPosition.y - 1 + numberOfLinesToInsert < self.ansiLines.count &&
-        ([self ansiCharacterAtScrollRow:(self.cursorPosition.y - 1 + numberOfLinesToInsert) column:0] != '\0' ||
-         [self ansiCharacterAtScrollRow:(self.cursorPosition.y - 1 + numberOfLinesToInsert) column:(TERM_WIDTH)] != '\0')) {
-        newLineText = [[@"" stringByPaddingToLength:80 withString:@"\0" startingAtIndex:0] stringByAppendingString:@"\n"];
-    } else {
-        newLineText = [@"" stringByPaddingToLength:81 withString:@"\0" startingAtIndex:0];
-    }
-    for (NSInteger i = 0; i < numberOfLinesToInsert; i++) {
-        [self.ansiLines insertObject:[newLineText mutableCopy] atIndex:(self.currentRowOffset + self.cursorPosition.y - 1)];
-    }
-    if (self.cursorPosition.y + numberOfLinesToInsert == TERM_HEIGHT) {
-        [self setAnsiCharacterAtScrollRow:(self.cursorPosition.y - 1 + numberOfLinesToInsert) column:80 withCharacter:'\0'];
-    }
-
-    // Step 2.
-    [self.ansiLines removeObjectsInRange:NSMakeRange(self.currentRowOffset + self.scrollBottomMargin, numberOfLinesToInsert)];
-
-    // Step 3.
-    self.cursorPosition = MMPositionMake(1, self.cursorPosition.y);
+    return self.cursorPosition.y >= self.scrollMarginTop && self.cursorPosition.y <= self.scrollMarginBottom;
 }
 
 - (void)deleteLinesFromCursor:(NSInteger)numberOfLinesToDelete;
@@ -272,9 +235,9 @@
     if (!self.isCursorInScrollRegion) {
         return;
     }
-    numberOfLinesToDelete = MIN(MAX(1, numberOfLinesToDelete), self.scrollBottomMargin - self.cursorPosition.y + 1);
+    numberOfLinesToDelete = MIN(MAX(1, numberOfLinesToDelete), self.scrollMarginBottom - self.cursorPosition.y + 1);
 
-    NSInteger numberOfLinesToMove = self.scrollBottomMargin - (self.cursorPosition.y - 1) - numberOfLinesToDelete;
+    NSInteger numberOfLinesToMove = self.scrollMarginBottom - (self.cursorPosition.y - 1) - numberOfLinesToDelete;
     for (NSInteger i = 0; i < numberOfLinesToMove; i++) {
         for (NSInteger j = 0; j <= TERM_WIDTH; j++) {
             [self setAnsiCharacterAtScrollRow:(self.cursorPosition.y - 1 + i) column:j withCharacter:[self ansiCharacterAtScrollRow:(self.cursorPosition.y - 1 + i + numberOfLinesToDelete) column:j]];
@@ -332,13 +295,13 @@
     // This corresponds to ESC M and is called RI.
     // This escape sequence moves the cursor up by one line and if it passes the top margin, scrolls up.
     // When we scroll up, we remove a newline from the last line if it exists.
-    if (self.cursorPosition.y == self.scrollTopMargin) {
-        if (self.ansiLines.count >= self.currentRowOffset + self.scrollBottomMargin) {
+    if (self.cursorPosition.y == self.scrollMarginTop) {
+        if (self.ansiLines.count >= self.currentRowOffset + self.scrollMarginBottom) {
             [self setAnsiCharacterAtScrollRow:(TERM_HEIGHT - 2) column:TERM_WIDTH withCharacter:'\0'];
-            [self.ansiLines removeObjectAtIndex:(self.currentRowOffset + self.scrollBottomMargin - 1)];
+            [self.ansiLines removeObjectAtIndex:(self.currentRowOffset + self.scrollMarginBottom - 1)];
         }
         NSMutableString *newLine = [NSMutableString stringWithString:[[@"" stringByPaddingToLength:80 withString:@"\0" startingAtIndex:0] stringByAppendingString:@"\n"]];
-        [self.ansiLines insertObject:newLine atIndex:(self.currentRowOffset + self.scrollTopMargin - 1)];
+        [self.ansiLines insertObject:newLine atIndex:(self.currentRowOffset + self.scrollMarginTop - 1)];
     } else {
         self.cursorPosition = MMPositionMake(self.cursorPosition.x, self.cursorPosition.y - 1);
     }
@@ -346,16 +309,16 @@
 
 - (void)checkIfExceededLastLineAndObeyScrollMargin:(BOOL)obeyScrollMargin;
 {
-    if (obeyScrollMargin && (self.cursorPosition.y > self.scrollBottomMargin)) {
-        NSAssert(self.cursorPosition.y == (self.scrollBottomMargin + 1), @"Cursor should only be one line below the bottom margin");
+    if (obeyScrollMargin && (self.cursorPosition.y > self.scrollMarginBottom)) {
+        NSAssert(self.cursorPosition.y == (self.scrollMarginBottom + 1), @"Cursor should only be one line below the bottom margin");
 
         NSMutableString *newLine = [NSMutableString stringWithString:[@"" stringByPaddingToLength:81 withString:@"\0" startingAtIndex:0]];
-        if (self.scrollTopMargin > 1) {
-            [self.ansiLines removeObjectAtIndex:(self.currentRowOffset + self.scrollTopMargin - 1)];
-            [self.ansiLines insertObject:newLine atIndex:(self.currentRowOffset + self.scrollBottomMargin - 1)];
+        if (self.scrollMarginTop > 1) {
+            [self.ansiLines removeObjectAtIndex:(self.currentRowOffset + self.scrollMarginTop - 1)];
+            [self.ansiLines insertObject:newLine atIndex:(self.currentRowOffset + self.scrollMarginBottom - 1)];
         } else {
             self.currentRowOffset++;
-            [self.ansiLines insertObject:newLine atIndex:(self.currentRowOffset + self.scrollBottomMargin - 1)];
+            [self.ansiLines insertObject:newLine atIndex:(self.currentRowOffset + self.scrollMarginBottom - 1)];
         }
 
         self.cursorPosition = MMPositionMake(self.cursorPosition.x, self.cursorPosition.y - 1);
@@ -376,8 +339,8 @@
     top = MIN(MAX(top, 1), TERM_HEIGHT - 1);
     bottom = MAX(MIN(bottom, TERM_HEIGHT), top + 1);
 
-    self.scrollBottomMargin = bottom;
-    self.scrollTopMargin = top;
+    self.scrollMarginBottom = bottom;
+    self.scrollMarginTop = top;
 }
 
 - (NSMutableAttributedString *)currentANSIDisplay;
@@ -436,7 +399,7 @@
         } else if (escapeCode == 'J') {
             action = [[MMClearScreen alloc] initWithArguments:items];
         } else if (escapeCode == 'L') {
-            [self insertBlankLinesFromCursor:[items[0] intValue]];
+            action = [[MMInsertBlankLines alloc] initWithArguments:items];
         } else if (escapeCode == 'M') {
             [self deleteLinesFromCursor:[items[0] intValue]];
         } else if (escapeCode == 'P') {

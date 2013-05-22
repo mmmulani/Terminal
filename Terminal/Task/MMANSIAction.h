@@ -44,6 +44,7 @@
 - (void)setCursorToX:(NSInteger)x Y:(NSInteger)y;
 - (NSInteger)numberOfCharactersInScrollRow:(NSInteger)row;
 - (BOOL)isScrollRowTerminatedInNewline:(NSInteger)row;
+- (BOOL)isCursorInScrollRegion;
 - (NSInteger)numberOfRowsOnScreen;
 
 - (void)replaceCharactersAtScrollRow:(NSInteger)row scrollColumn:(NSInteger)column withString:(NSString *)replacementString;
