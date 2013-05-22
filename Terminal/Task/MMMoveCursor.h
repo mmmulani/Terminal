@@ -23,3 +23,7 @@
 @interface MMMoveCursorBackward : MMANSIAction
 
 @end
+
+@interface MMMoveCursorPosition : MMANSIAction
+
+@end

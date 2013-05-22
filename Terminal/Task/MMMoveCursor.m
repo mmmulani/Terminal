@@ -85,3 +85,38 @@
 }
 
 @end
+
+@implementation MMMoveCursorPosition
+
++ (NSArray *)_defaultArguments { return @[@1, @1]; }
+
+- (void)do;
+{
+    // Sanitize the input.
+    NSInteger x = MIN(MAX([[self defaultedArgumentAtIndex:1] integerValue], 1), self.delegate.termWidth);
+    NSInteger y = MIN(MAX([[self defaultedArgumentAtIndex:0] integerValue], 1), self.delegate.termHeight);
+
+    if (y <= self.delegate.cursorPositionY) {
+        [self.delegate setCursorToX:x Y:y];
+    } else {
+        // We are guaranteed that y >= 2.
+        // Add new lines as needed.
+        NSInteger linesToAdd = self.delegate.termHeight - self.delegate.numberOfRowsOnScreen;
+        for (NSInteger i = 0; i < linesToAdd; i++) {
+            [self.delegate insertBlankLineAtScrollRow:(self.delegate.numberOfRowsOnScreen + 1) withNewline:NO];
+        }
+
+        // Add newline characters when necessary starting from the final row and moving up.
+        for (NSUInteger row = y; row > self.delegate.cursorPositionY; row--) {
+            if ([self.delegate numberOfCharactersInScrollRow:row] > 0) {
+                continue;
+            }
+
+            [self.delegate setScrollRow:(row - 1) hasNewline:YES];
+        }
+
+        [self.delegate setCursorToX:x Y:y];
+    }
+}
+
+@end

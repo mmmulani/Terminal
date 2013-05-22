@@ -30,12 +30,26 @@
 
 @protocol MMANSIActionDelegate <NSObject>
 
+// These x, y and row positions are all 1-indexed to match with the ANSI positioning system.
+// (i.e. 1 <= x <= termWidth and 1 <= row, y <= termHeight)
+
 - (NSInteger)cursorPositionX;
 - (NSInteger)cursorPositionY;
 - (NSInteger)termHeight;
 - (NSInteger)termWidth;
+- (NSInteger)scrollMarginTop;
+- (NSInteger)scrollMarginBottom;
 
 - (void)setCursorToX:(NSInteger)x Y:(NSInteger)y;
+- (NSInteger)numberOfCharactersInScrollRow:(NSInteger)row;
+- (BOOL)isScrollRowTerminatedInNewline:(NSInteger)row;
+- (NSInteger)numberOfRowsOnScreen;
+
+- (void)replaceCharactersAtScrollRow:(NSInteger)row scrollColumn:(NSInteger)column withString:(NSString *)replacementString;
+
+- (void)insertBlankLineAtScrollRow:(NSInteger)row withNewline:(BOOL)newline;
+- (void)removeLineAtScrollRow:(NSInteger)row;
+- (void)setScrollRow:(NSInteger)row hasNewline:(BOOL)hasNewline;
 
 // XXX: Try to remove these or change them to ensure that all calculations for ANSIActions can be done in |setUp|.
 - (void)checkIfExceededLastLineAndObeyScrollMargin:(BOOL)obeyScrollMargin;

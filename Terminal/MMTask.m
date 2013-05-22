@@ -196,35 +196,6 @@
     [self checkIfExceededLastLineAndObeyScrollMargin:YES];
 }
 
-- (void)moveCursorToX:(NSUInteger)x Y:(NSUInteger)y;
-{
-    // Sanitize the input.
-    x = MIN(MAX(x, 1), TERM_WIDTH);
-    y = MIN(MAX(y, 1), TERM_HEIGHT);
-
-    if (y <= self.cursorPosition.y) {
-        self.cursorPosition = MMPositionMake(x, y);
-    } else {
-        // We are guaranteed that y >= 2.
-        // Add new lines as needed.
-        NSInteger linesToAdd = TERM_HEIGHT + self.currentRowOffset - self.ansiLines.count;
-        for (NSInteger i = 0; i < linesToAdd; i++) {
-            [self.ansiLines addObject:[NSMutableString stringWithString:[@"" stringByPaddingToLength:81 withString:@"\0" startingAtIndex:0]]];
-        }
-
-        // Add newline characters when necessary starting from the final row and moving up.
-        for (NSUInteger row = y; row > self.cursorPosition.y; row--) {
-            if ([self ansiCharacterAtScrollRow:(row - 1) column:0] != '\0') {
-                continue;
-            }
-
-            [self setAnsiCharacterAtScrollRow:(row - 2) column:TERM_WIDTH withCharacter:'\n'];
-        }
-
-        self.cursorPosition = MMPositionMake(x, y);
-    }
-}
-
 - (void)deleteCharacters:(NSUInteger)numberOfCharactersToDelete;
 {
     // This implements the VT220 feature "Delete Character (DCH)".
@@ -461,32 +432,22 @@
 - (void)handleEscapeSequence:(NSString *)escapeSequence;
 {
 
+    MMANSIAction *action = nil;
     unichar escapeCode = [escapeSequence characterAtIndex:([escapeSequence length] - 1)];
     if ([escapeSequence characterAtIndex:1] == '[') {
         NSArray *items = [[escapeSequence substringWithRange:NSMakeRange(2, [escapeSequence length] - 3)] componentsSeparatedByString:@";"];
         if (escapeCode == 'A') {
-            MMANSIAction *action = [[MMMoveCursorUp alloc] initWithArguments:items];
-            action.delegate = self;
-            [action do];
+            action = [[MMMoveCursorUp alloc] initWithArguments:items];
         } else if (escapeCode == 'B') {
-            MMANSIAction *action = [[MMMoveCursorDown alloc] initWithArguments:items];
-            action.delegate = self;
-            [action do];
+            action = [[MMMoveCursorDown alloc] initWithArguments:items];
         } else if (escapeCode == 'C') {
-            MMANSIAction *action = [[MMMoveCursorForward alloc] initWithArguments:items];
-            action.delegate = self;
-            [action do];
+            action = [[MMMoveCursorForward alloc] initWithArguments:items];
         } else if (escapeCode == 'D') {
-            MMANSIAction *action = [[MMMoveCursorBackward alloc] initWithArguments:items];
-            action.delegate = self;
-            [action do];
+            action = [[MMMoveCursorBackward alloc] initWithArguments:items];
         } else if (escapeCode == 'G') {
-            NSUInteger x = [items count] >= 1 ? [items[0] intValue] : 1;
-            [self moveCursorToX:x Y:self.cursorPosition.y];
+            action = [[MMMoveCursorPosition alloc] initWithArguments:[@[@1] arrayByAddingObjectsFromArray:items]];
         } else if (escapeCode == 'H' || escapeCode == 'f') {
-            NSUInteger x = [items count] >= 2 ? [items[1] intValue] : 1;
-            NSUInteger y = [items count] >= 1 ? [items[0] intValue] : 1;
-            [self moveCursorToX:x Y:y];
+            action = [[MMMoveCursorPosition alloc] initWithArguments:items];
         } else if (escapeCode == 'K') {
             [self clearUntilEndOfLine];
         } else if (escapeCode == 'J') {
@@ -505,7 +466,8 @@
         } else if (escapeCode == 'c') {
             [self handleUserInput:@"\033[?1;2c"];
         } else if (escapeCode == 'd') {
-            [self moveCursorToX:self.cursorPosition.x Y:[items[0] intValue]];
+            id firstArg = items.count >= 1 ? items[0] : MMMoveCursorPosition.defaultArguments[0];
+            action = [[MMMoveCursorPosition alloc] initWithArguments:@[firstArg, @(self.cursorPosition.x)]];
         } else if ([escapeSequence isEqualToString:@"\033[?1h"]) {
             self.cursorKeyMode = YES;
         } else if ([escapeSequence isEqualToString:@"\033[?1l"]) {
@@ -526,6 +488,11 @@
         } else {
             MMLog(@"Unhandled early escape sequence: %@", escapeSequence);
         }
+    }
+
+    if (action) {
+        action.delegate = self;
+        [action do];
     }
 }
 
@@ -554,6 +521,56 @@
 - (void)setCursorToX:(NSInteger)x Y:(NSInteger)y;
 {
     self.cursorPosition = MMPositionMake(x, y);
+}
+
+- (NSInteger)numberOfCharactersInScrollRow:(NSInteger)row;
+{
+    NSInteger count;
+    for (count = 0; count < TERM_WIDTH; count++) {
+        if ([self ansiCharacterAtScrollRow:(row - 1) column:count] == '\0') {
+            break;
+        }
+    }
+
+    return count;
+}
+
+- (BOOL)isScrollRowTerminatedInNewline:(NSInteger)row;
+{
+    return [self ansiCharacterAtScrollRow:(row - 1) column:TERM_WIDTH] == '\n';
+}
+
+- (NSInteger)numberOfRowsOnScreen;
+{
+    return self.ansiLines.count - self.currentRowOffset;
+}
+
+- (void)replaceCharactersAtScrollRow:(NSInteger)row scrollColumn:(NSInteger)column withString:(NSString *)replacementString;
+{
+    NSAssert(column + replacementString.length - 1 <= TERM_WIDTH, @"replacementString too large or incorrect column specified");
+    [((NSMutableString *)self.ansiLines[self.currentRowOffset + row - 1]) replaceCharactersInRange:NSMakeRange(column - 1, replacementString.length) withString:replacementString];
+}
+
+- (void)insertBlankLineAtScrollRow:(NSInteger)row withNewline:(BOOL)newline;
+{
+    NSAssert(self.numberOfRowsOnScreen < TERM_HEIGHT, @"inserting a line would cause more than termHeight lines to be displayed");
+    NSString *newLineText;
+    if (newline) {
+        newLineText = [[@"" stringByPaddingToLength:80 withString:@"\0" startingAtIndex:0] stringByAppendingString:@"\n"];
+    } else {
+        newLineText = [@"" stringByPaddingToLength:81 withString:@"\0" startingAtIndex:0];
+    }
+    [self.ansiLines insertObject:[newLineText mutableCopy] atIndex:(self.currentRowOffset + row - 1)];
+}
+
+- (void)removeLineAtScrollRow:(NSInteger)row;
+{
+    [self.ansiLines removeObjectAtIndex:(self.currentRowOffset + row - 1)];
+}
+
+- (void)setScrollRow:(NSInteger)row hasNewline:(BOOL)hasNewline;
+{
+    [self setAnsiCharacterAtScrollRow:(row - 1) column:TERM_WIDTH withCharacter:(hasNewline ? '\n' : '\0')];
 }
 
 @end
