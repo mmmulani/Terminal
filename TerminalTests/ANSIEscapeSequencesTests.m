@@ -214,6 +214,7 @@ do {\
 
     CheckInputAgainstExpectedOutput(@"abc\033[1;1H\033[0K", @"");
     CheckInputAgainstExpectedOutput(@"abc\033[1;2H\033[0K", @"a");
+    CheckInputAgainstExpectedOutput(@"abc\033[1;3H\033[0K", @"ab");
     CheckInputAgainstExpectedOutput(@"abc\033[1;4H\033[0K", @"abc");
 
     CheckInputAgainstExpectedOutput(@"a\033[1;1H\033[1K", @"");

@@ -19,7 +19,7 @@
     NSInteger numberOfCharactersLeftInLine;
     switch ([[self defaultedArgumentAtIndex:0] integerValue]) {
         case 0:
-            numberOfCharactersLeftInLine = MAX(0, [self.delegate numberOfCharactersInScrollRow:self.delegate.cursorPositionY] - self.delegate.cursorPositionX);
+            numberOfCharactersLeftInLine = MAX(0, [self.delegate numberOfCharactersInScrollRow:self.delegate.cursorPositionY] - self.delegate.cursorPositionX + 1);
             rangeToRemove = NSMakeRange(self.delegate.cursorPositionX, numberOfCharactersLeftInLine);
             break;
         case 1:
