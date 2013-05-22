@@ -196,11 +196,6 @@
     [self checkIfExceededLastLineAndObeyScrollMargin:YES];
 }
 
-- (void)moveToFrontOfLine;
-{
-    self.cursorPosition = MMPositionMake(1, self.cursorPosition.y);
-}
-
 - (void)moveCursorToX:(NSUInteger)x Y:(NSUInteger)y;
 {
     // Sanitize the input.
