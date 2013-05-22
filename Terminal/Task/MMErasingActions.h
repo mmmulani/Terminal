@@ -15,3 +15,7 @@
 @interface MMClearScreen : MMANSIAction
 
 @end
+
+@interface MMDeleteCharacters : MMANSIAction
+
+@end

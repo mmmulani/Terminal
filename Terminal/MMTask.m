@@ -440,8 +440,7 @@
         } else if (escapeCode == 'M') {
             [self deleteLinesFromCursor:[items[0] intValue]];
         } else if (escapeCode == 'P') {
-            NSUInteger num = [items count] >= 1 ? [items[0] intValue] : 0;
-            [self deleteCharacters:num];
+            action = [[MMDeleteCharacters alloc] initWithArguments:items];
         } else if (escapeCode == 'c') {
             [self handleUserInput:@"\033[?1;2c"];
         } else if (escapeCode == 'd') {
@@ -531,10 +530,18 @@
     [((NSMutableString *)self.ansiLines[self.currentRowOffset + row - 1]) replaceCharactersInRange:NSMakeRange(column - 1, replacementString.length) withString:replacementString];
 }
 
-- (void)removeCharactersInScrollRow:(NSInteger)row range:(NSRange)range;
+- (void)removeCharactersInScrollRow:(NSInteger)row range:(NSRange)range shiftCharactersAfter:(BOOL)shift;
 {
     NSAssert(range.location > 0, @"Range location must be provided in ANSI column form");
-    [((NSMutableString *)self.ansiLines[self.currentRowOffset + row - 1]) replaceCharactersInRange:NSMakeRange(range.location - 1, range.length) withString:[@"" stringByPaddingToLength:range.length withString:@"\0" startingAtIndex:0]];
+    if (shift) {
+        NSMutableString *line = self.ansiLines[self.currentRowOffset + row - 1];
+        NSInteger indexAfterRemovedRange = range.location - 1 + range.length;
+        NSString *stringAfterRemovedRange = [line substringWithRange:NSMakeRange(indexAfterRemovedRange, TERM_WIDTH - indexAfterRemovedRange)];
+        [line replaceCharactersInRange:NSMakeRange(range.location - 1, TERM_WIDTH - range.location + 1) withString:[@"" stringByPaddingToLength:(TERM_WIDTH - range.location + 1) withString:@"\0" startingAtIndex:0]];
+        [line replaceCharactersInRange:NSMakeRange(range.location - 1, TERM_WIDTH - indexAfterRemovedRange) withString:stringAfterRemovedRange];
+    } else {
+        [((NSMutableString *)self.ansiLines[self.currentRowOffset + row - 1]) replaceCharactersInRange:NSMakeRange(range.location - 1, range.length) withString:[@"" stringByPaddingToLength:range.length withString:@"\0" startingAtIndex:0]];
+    }
 }
 
 - (void)insertBlankLineAtScrollRow:(NSInteger)row withNewline:(BOOL)newline;

@@ -33,7 +33,7 @@
     if (fillWithSpaces) {
         [self.delegate replaceCharactersAtScrollRow:self.delegate.cursorPositionY scrollColumn:rangeToRemove.location withString:[@"" stringByPaddingToLength:rangeToRemove.length withString:@" " startingAtIndex:0]];
     } else {
-        [self.delegate removeCharactersInScrollRow:self.delegate.cursorPositionY range:rangeToRemove];
+        [self.delegate removeCharactersInScrollRow:self.delegate.cursorPositionY range:rangeToRemove shiftCharactersAfter:NO];
     }
 }
 
@@ -48,9 +48,29 @@
     // TODO: Support other types of clearing the screen.
     if ([[self defaultedArgumentAtIndex:0] integerValue] == 2) {
         for (NSInteger i = 1; i <= self.delegate.termHeight; i++) {
-            [self.delegate removeCharactersInScrollRow:i range:NSMakeRange(1, [self.delegate numberOfCharactersInScrollRow:i])];
+            [self.delegate removeCharactersInScrollRow:i range:NSMakeRange(1, [self.delegate numberOfCharactersInScrollRow:i]) shiftCharactersAfter:NO];
             [self.delegate setScrollRow:i hasNewline:NO];
         }
+    }
+}
+
+@end
+
+@implementation MMDeleteCharacters
+
++ (NSArray *)_defaultArguments { return @[@1]; }
+
+- (void)do;
+{
+    // This implements the VT220 feature "Delete Character (DCH)".
+    NSInteger numberOfCharactersToDelete = MIN(MAX(1, [[self defaultedArgumentAtIndex:0] integerValue]), self.delegate.termWidth);
+    NSInteger adjustedPositionX = MIN(self.delegate.cursorPositionX, self.delegate.termWidth);
+
+    [self.delegate removeCharactersInScrollRow:self.delegate.cursorPositionY range:NSMakeRange(adjustedPositionX, numberOfCharactersToDelete) shiftCharactersAfter:YES];
+
+    if (self.delegate.cursorPositionY < self.delegate.termHeight &&
+        [self.delegate numberOfCharactersInScrollRow:(self.delegate.cursorPositionY + 1)] > 0) {
+        [self.delegate setScrollRow:self.delegate.cursorPositionY hasNewline:YES];
     }
 }
 
