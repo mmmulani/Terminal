@@ -10,6 +10,7 @@
 #import "MMShared.h"
 #import "MMTerminalConnection.h"
 #import "MMMoveCursor.h"
+#import "MMErasingActions.h"
 
 @interface MMTask ()
 
@@ -449,7 +450,7 @@
         } else if (escapeCode == 'H' || escapeCode == 'f') {
             action = [[MMMoveCursorPosition alloc] initWithArguments:items];
         } else if (escapeCode == 'K') {
-            [self clearUntilEndOfLine];
+            action = [[MMClearUntilEndOfLine alloc] initWithArguments:items];
         } else if (escapeCode == 'J') {
             if ([items count] && [items[0] isEqualToString:@"2"]) {
                 [self clearScreen];
@@ -466,6 +467,7 @@
         } else if (escapeCode == 'c') {
             [self handleUserInput:@"\033[?1;2c"];
         } else if (escapeCode == 'd') {
+            // TODO: Make this determine the second argument at evaluation-time.
             id firstArg = items.count >= 1 ? items[0] : MMMoveCursorPosition.defaultArguments[0];
             action = [[MMMoveCursorPosition alloc] initWithArguments:@[firstArg, @(self.cursorPosition.x)]];
         } else if ([escapeSequence isEqualToString:@"\033[?1h"]) {
@@ -549,6 +551,12 @@
 {
     NSAssert(column + replacementString.length - 1 <= TERM_WIDTH, @"replacementString too large or incorrect column specified");
     [((NSMutableString *)self.ansiLines[self.currentRowOffset + row - 1]) replaceCharactersInRange:NSMakeRange(column - 1, replacementString.length) withString:replacementString];
+}
+
+- (void)removeCharactersInScrollRow:(NSInteger)row range:(NSRange)range;
+{
+    NSAssert(range.location > 0, @"Range location must be provided in ANSI column form");
+    [((NSMutableString *)self.ansiLines[self.currentRowOffset + row - 1]) replaceCharactersInRange:NSMakeRange(range.location - 1, range.length) withString:[@"" stringByPaddingToLength:range.length withString:@"\0" startingAtIndex:0]];
 }
 
 - (void)insertBlankLineAtScrollRow:(NSInteger)row withNewline:(BOOL)newline;

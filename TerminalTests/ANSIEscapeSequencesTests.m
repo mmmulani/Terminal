@@ -207,6 +207,22 @@ do {\
     CheckInputAgainstExpectedOutput(@"12345678901234567890123456789012345678901234567890123456789012345678901234567890123\033[1;1H\033[1P", @"2345678901234567890123456789012345678901234567890123456789012345678901234567890\n123");
 }
 
+- (void)testClearingUntilEndOfLine;
+{
+    // Test handling the default case.
+    CheckInputAgainstExpectedOutput(@"abc\033[1;2H\033[K", @"a");
+
+    CheckInputAgainstExpectedOutput(@"abc\033[1;1H\033[0K", @"");
+    CheckInputAgainstExpectedOutput(@"abc\033[1;2H\033[0K", @"a");
+    CheckInputAgainstExpectedOutput(@"abc\033[1;4H\033[0K", @"abc");
+
+    CheckInputAgainstExpectedOutput(@"a\033[1;1H\033[1K", @"");
+    CheckInputAgainstExpectedOutput(@"\033[1K", @"");
+    CheckInputAgainstExpectedOutput(@"abc\033[1;2H\033[1K", @"  c");
+
+    CheckInputAgainstExpectedOutput(@"abc\033[1;2H\033[2K", @"");
+}
+
 - (void)testInsertLine;
 {
     CheckInputAgainstExpectedOutput(@"a\nb\nc\nd\ne\033[1;1H\033[L", @"\na\nb\nc\nd\ne");

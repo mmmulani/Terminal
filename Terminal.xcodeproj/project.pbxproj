@@ -17,6 +17,8 @@
 		913CC1C6174C31FD00E002AD /* MMANSIAction.m in Sources */ = {isa = PBXBuildFile; fileRef = 913CC1C4174C31FD00E002AD /* MMANSIAction.m */; };
 		913CC1C9174C34E100E002AD /* MMMoveCursor.m in Sources */ = {isa = PBXBuildFile; fileRef = 913CC1C8174C34E100E002AD /* MMMoveCursor.m */; };
 		913CC1CA174C34E100E002AD /* MMMoveCursor.m in Sources */ = {isa = PBXBuildFile; fileRef = 913CC1C8174C34E100E002AD /* MMMoveCursor.m */; };
+		913CC1CD174D2D8100E002AD /* MMErasingActions.m in Sources */ = {isa = PBXBuildFile; fileRef = 913CC1CC174D2D8100E002AD /* MMErasingActions.m */; };
+		913CC1CE174D2D8100E002AD /* MMErasingActions.m in Sources */ = {isa = PBXBuildFile; fileRef = 913CC1CC174D2D8100E002AD /* MMErasingActions.m */; };
 		917D1C42173963C800503158 /* lexer.lm in Sources */ = {isa = PBXBuildFile; fileRef = 917D1C41173963C800503158 /* lexer.lm */; };
 		917D1C4417396C8000503158 /* parser.ym in Sources */ = {isa = PBXBuildFile; fileRef = 917D1C4317396C8000503158 /* parser.ym */; };
 		917D1C47173973D600503158 /* MMParserContext.m in Sources */ = {isa = PBXBuildFile; fileRef = 917D1C46173973D600503158 /* MMParserContext.m */; };
@@ -141,6 +143,8 @@
 		913CC1C4174C31FD00E002AD /* MMANSIAction.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = MMANSIAction.m; path = Task/MMANSIAction.m; sourceTree = "<group>"; };
 		913CC1C7174C34E100E002AD /* MMMoveCursor.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = MMMoveCursor.h; path = Task/MMMoveCursor.h; sourceTree = "<group>"; };
 		913CC1C8174C34E100E002AD /* MMMoveCursor.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = MMMoveCursor.m; path = Task/MMMoveCursor.m; sourceTree = "<group>"; };
+		913CC1CB174D2D8100E002AD /* MMErasingActions.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = MMErasingActions.h; path = Task/MMErasingActions.h; sourceTree = "<group>"; };
+		913CC1CC174D2D8100E002AD /* MMErasingActions.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = MMErasingActions.m; path = Task/MMErasingActions.m; sourceTree = "<group>"; };
 		917D1C41173963C800503158 /* lexer.lm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.lex; name = lexer.lm; path = CommandLine/lexer.lm; sourceTree = "<group>"; };
 		917D1C4317396C8000503158 /* parser.ym */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.yacc; name = parser.ym; path = CommandLine/parser.ym; sourceTree = "<group>"; };
 		917D1C45173973D600503158 /* MMParserContext.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = MMParserContext.h; path = CommandLine/MMParserContext.h; sourceTree = "<group>"; };
@@ -253,6 +257,8 @@
 				9186499316D408700024D9BE /* MMTask.m */,
 				913CC1C3174C31FD00E002AD /* MMANSIAction.h */,
 				913CC1C4174C31FD00E002AD /* MMANSIAction.m */,
+				913CC1CB174D2D8100E002AD /* MMErasingActions.h */,
+				913CC1CC174D2D8100E002AD /* MMErasingActions.m */,
 				913CC1C7174C34E100E002AD /* MMMoveCursor.h */,
 				913CC1C8174C34E100E002AD /* MMMoveCursor.m */,
 			);
@@ -628,6 +634,7 @@
 				919ABB5016FFA22900BB7108 /* MMTaskTests.m in Sources */,
 				913CC1C6174C31FD00E002AD /* MMANSIAction.m in Sources */,
 				913CC1CA174C34E100E002AD /* MMMoveCursor.m in Sources */,
+				913CC1CE174D2D8100E002AD /* MMErasingActions.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -652,6 +659,7 @@
 				91C7D987173F250300875974 /* MMCompletionEngine.m in Sources */,
 				913CC1C5174C31FD00E002AD /* MMANSIAction.m in Sources */,
 				913CC1C9174C34E100E002AD /* MMMoveCursor.m in Sources */,
+				913CC1CD174D2D8100E002AD /* MMErasingActions.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

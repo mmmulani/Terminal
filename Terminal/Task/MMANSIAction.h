@@ -32,6 +32,7 @@
 
 // These x, y and row positions are all 1-indexed to match with the ANSI positioning system.
 // (i.e. 1 <= x <= termWidth and 1 <= row, y <= termHeight)
+// The location in NSRange fields are also 1-indexed.
 
 - (NSInteger)cursorPositionX;
 - (NSInteger)cursorPositionY;
@@ -46,6 +47,7 @@
 - (NSInteger)numberOfRowsOnScreen;
 
 - (void)replaceCharactersAtScrollRow:(NSInteger)row scrollColumn:(NSInteger)column withString:(NSString *)replacementString;
+- (void)removeCharactersInScrollRow:(NSInteger)row range:(NSRange)range;
 
 - (void)insertBlankLineAtScrollRow:(NSInteger)row withNewline:(BOOL)newline;
 - (void)removeLineAtScrollRow:(NSInteger)row;
