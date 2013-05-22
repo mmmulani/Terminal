@@ -43,7 +43,9 @@
     self.cursorPosition = MMPositionMake(1, 1);
     self.scrollTopMargin = 1;
     self.scrollBottomMargin = 24;
-    [self clearScreen];
+    MMANSIAction *action = [[MMClearScreen alloc] initWithArguments:@[@2]];
+    action.delegate = self;
+    [action do];
 
     return self;
 }
@@ -316,26 +318,6 @@
     }
 }
 
-- (void)clearUntilEndOfLine;
-{
-    for (NSUInteger i = self.cursorPosition.x - 1; i < TERM_WIDTH; i++) {
-        if ([self ansiCharacterAtScrollRow:(self.cursorPosition.y - 1) column:i] == '\0') {
-            break;
-        }
-
-        [self setAnsiCharacterAtScrollRow:(self.cursorPosition.y - 1) column:i withCharacter:'\0'];
-    }
-}
-
-- (void)clearScreen;
-{
-    for (NSUInteger i = 0; i < TERM_HEIGHT; i++) {
-        for (NSUInteger j = 0; j < TERM_WIDTH + 1; j++) {
-            [self setAnsiCharacterAtScrollRow:i column:j withCharacter:'\0'];
-        }
-    }
-}
-
 - (void)index;
 {
     // This corresponds to ESC D and is called IND.
@@ -452,11 +434,7 @@
         } else if (escapeCode == 'K') {
             action = [[MMClearUntilEndOfLine alloc] initWithArguments:items];
         } else if (escapeCode == 'J') {
-            if ([items count] && [items[0] isEqualToString:@"2"]) {
-                [self clearScreen];
-            } else {
-                MMLog(@"Unsupported clear mode with escape sequence: %@", escapeSequence);
-            }
+            action = [[MMClearScreen alloc] initWithArguments:items];
         } else if (escapeCode == 'L') {
             [self insertBlankLinesFromCursor:[items[0] intValue]];
         } else if (escapeCode == 'M') {

@@ -11,3 +11,7 @@
 @interface MMClearUntilEndOfLine : MMANSIAction
 
 @end
+
+@interface MMClearScreen : MMANSIAction
+
+@end

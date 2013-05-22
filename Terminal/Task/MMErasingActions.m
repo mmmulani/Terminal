@@ -38,3 +38,20 @@
 }
 
 @end
+
+@implementation MMClearScreen
+
++ (NSArray *)_defaultArguments { return @[@0]; }
+
+- (void)do;
+{
+    // TODO: Support other types of clearing the screen.
+    if ([[self defaultedArgumentAtIndex:0] integerValue] == 2) {
+        for (NSInteger i = 1; i <= self.delegate.termHeight; i++) {
+            [self.delegate removeCharactersInScrollRow:i range:NSMakeRange(1, [self.delegate numberOfCharactersInScrollRow:i])];
+            [self.delegate setScrollRow:i hasNewline:NO];
+        }
+    }
+}
+
+@end
