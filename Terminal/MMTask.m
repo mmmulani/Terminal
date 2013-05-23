@@ -247,7 +247,7 @@
         NSAssert(self.cursorPosition.y == (TERM_HEIGHT + 1), @"Cursor should only be one line from the bottom");
 
         [self incrementRowOffset];
-        [self.ansiLines addObject:[NSMutableString stringWithString:[@"" stringByPaddingToLength:81 withString:@"\0" startingAtIndex:0]]];
+        [self insertBlankLineAtScrollRow:TERM_HEIGHT withNewline:NO];
 
         self.cursorPosition = MMPositionMake(self.cursorPosition.x, self.cursorPosition.y - 1);
     }
