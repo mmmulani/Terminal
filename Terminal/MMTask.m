@@ -195,7 +195,7 @@
 
 - (void)addNewline;
 {
-    [self setAnsiCharacterAtScrollRow:(self.cursorPosition.y - 1) column:TERM_WIDTH withCharacter:'\n'];
+    [self setScrollRow:self.cursorPosition.y hasNewline:YES];
     self.cursorPosition = MMPositionMake(1, self.cursorPosition.y + 1);
 
     [self checkIfExceededLastLineAndObeyScrollMargin:YES];
@@ -205,24 +205,19 @@
 {
     // Create blank lines up to the cursor.
     for (NSInteger i = self.ansiLines.count; i < self.currentRowOffset + self.cursorPosition.y; i++) {
-        [self.ansiLines addObject:[NSMutableString stringWithString:[@"" stringByPaddingToLength:81 withString:@"\0" startingAtIndex:0]]];
+        [self insertBlankLineAtScrollRow:self.numberOfRowsOnScreen withNewline:NO];
     }
 
-    for (NSInteger i = self.cursorPosition.y - 2; i >= 0; i--) {
-        if ([self ansiCharacterAtScrollRow:i column:TERM_WIDTH] != '\0' || [self ansiCharacterAtScrollRow:i column:(TERM_WIDTH - 1)] != '\0') {
+    for (NSInteger i = self.cursorPosition.y - 1; i > 0; i--) {
+        if ([self numberOfCharactersInScrollRow:i] > 0 || [self isScrollRowTerminatedInNewline:i]) {
             break;
         }
 
-        [self setAnsiCharacterAtScrollRow:i column:TERM_WIDTH withCharacter:'\n'];
+        [self setScrollRow:i hasNewline:YES];
     }
 
-    for (NSInteger i = self.cursorPosition.x - 2; i >= 0; i--) {
-        if ([self ansiCharacterAtScrollRow:(self.cursorPosition.y - 1) column:i] != '\0') {
-            break;
-        }
-
-        [self setAnsiCharacterAtScrollRow:(self.cursorPosition.y - 1) column:i withCharacter:' '];
-    }
+    NSInteger numberOfSpacesToInsert = MAX(self.cursorPosition.x - [self numberOfCharactersInScrollRow:self.cursorPosition.y] - 1, 0);
+    [self replaceCharactersAtScrollRow:self.cursorPosition.y scrollColumn:(self.cursorPosition.x - numberOfSpacesToInsert) withString:[@"" stringByPaddingToLength:numberOfSpacesToInsert withString:@" " startingAtIndex:0]];
 }
 
 - (void)incrementRowOffset;
