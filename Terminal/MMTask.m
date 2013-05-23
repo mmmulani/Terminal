@@ -23,6 +23,7 @@
 @property NSInteger scrollMarginTop;
 @property NSInteger scrollMarginBottom;
 @property NSInteger characterOffsetToScreen;
+@property NSMutableArray *characterCountsOnVisibleRows;
 
 @end
 
@@ -40,6 +41,10 @@
     self.ansiLines = [NSMutableArray arrayWithCapacity:TERM_HEIGHT];
     for (NSInteger i = 0; i < TERM_HEIGHT; i++) {
         [self.ansiLines addObject:[NSMutableString stringWithString:[@"" stringByPaddingToLength:81 withString:@"\0" startingAtIndex:0]]];
+    }
+    self.characterCountsOnVisibleRows = [NSMutableArray arrayWithCapacity:TERM_WIDTH];
+    for (NSInteger i = 0; i < TERM_WIDTH; i++) {
+        [self.characterCountsOnVisibleRows addObject:@0];
     }
     self.currentRowOffset = 0;
     self.cursorPosition = MMPositionMake(1, 1);
@@ -178,6 +183,11 @@
     [[self ansiLineAtScrollRow:row] replaceCharactersInRange:NSMakeRange(column, 1) withString:[NSString stringWithCharacters:&character length:1]];
 }
 
+- (void)adjustNumberOfCharactersOnScrollRow:(NSInteger)row byAmount:(NSInteger)change;
+{
+    self.characterCountsOnVisibleRows[row - 1] = @([self.characterCountsOnVisibleRows[row - 1] integerValue] + change);
+}
+
 
 - (void)ansiPrint:(unichar)character;
 {
@@ -190,6 +200,9 @@
         [self checkIfExceededLastLineAndObeyScrollMargin:YES];
     }
 
+    if (self.cursorPosition.x > [self numberOfCharactersInScrollRow:self.cursorPosition.y]) {
+        [self adjustNumberOfCharactersOnScrollRow:self.cursorPosition.y byAmount:1];
+    }
     [self setAnsiCharacterAtScrollRow:(self.cursorPosition.y - 1) column:(self.cursorPosition.x - 1) withCharacter:character];
     self.cursorPosition = MMPositionMake(self.cursorPosition.x + 1, self.cursorPosition.y);
 }
@@ -228,6 +241,8 @@
         self.characterOffsetToScreen++;
     }
     self.currentRowOffset++;
+
+    [self.characterCountsOnVisibleRows removeObjectAtIndex:0];
 }
 
 - (void)checkIfExceededLastLineAndObeyScrollMargin:(BOOL)obeyScrollMargin;
@@ -414,6 +429,7 @@
         }
     }
 
+    NSAssert(count == [self.characterCountsOnVisibleRows[row - 1] integerValue], @"Character counts mismatched in row %ld, cached value: %@, row text: %@", row, self.characterCountsOnVisibleRows[row - 1], self.ansiLines[row - 1]);
     return count;
 }
 
@@ -435,12 +451,15 @@
 - (void)replaceCharactersAtScrollRow:(NSInteger)row scrollColumn:(NSInteger)column withString:(NSString *)replacementString;
 {
     NSAssert(column + replacementString.length - 1 <= TERM_WIDTH, @"replacementString too large or incorrect column specified");
+    [self adjustNumberOfCharactersOnScrollRow:row byAmount:MAX(0, (column + ((NSInteger)replacementString.length) - 1) - [self numberOfCharactersInScrollRow:row])];
     [((NSMutableString *)self.ansiLines[self.currentRowOffset + row - 1]) replaceCharactersInRange:NSMakeRange(column - 1, replacementString.length) withString:replacementString];
 }
 
 - (void)removeCharactersInScrollRow:(NSInteger)row range:(NSRange)range shiftCharactersAfter:(BOOL)shift;
 {
     NSAssert(range.location > 0, @"Range location must be provided in ANSI column form");
+    NSInteger numberOfCharactersBeingRemoved = MIN([self numberOfCharactersInScrollRow:row], range.location + range.length - 1) - range.location + 1;
+    [self adjustNumberOfCharactersOnScrollRow:row byAmount:(-numberOfCharactersBeingRemoved)];
     if (shift) {
         NSMutableString *line = self.ansiLines[self.currentRowOffset + row - 1];
         NSInteger indexAfterRemovedRange = range.location - 1 + range.length;
@@ -462,11 +481,13 @@
         newLineText = [@"" stringByPaddingToLength:81 withString:@"\0" startingAtIndex:0];
     }
     [self.ansiLines insertObject:[newLineText mutableCopy] atIndex:(self.currentRowOffset + row - 1)];
+    [self.characterCountsOnVisibleRows insertObject:@0 atIndex:(row - 1)];
 }
 
 - (void)removeLineAtScrollRow:(NSInteger)row;
 {
     [self.ansiLines removeObjectAtIndex:(self.currentRowOffset + row - 1)];
+    [self.characterCountsOnVisibleRows removeObjectAtIndex:(row - 1)];
 }
 
 - (void)setScrollRow:(NSInteger)row hasNewline:(BOOL)hasNewline;
