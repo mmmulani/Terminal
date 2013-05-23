@@ -18,10 +18,10 @@
 @property NSMutableArray *ansiLines;
 @property NSInteger currentRowOffset;
 @property NSString *unreadOutput;
-@property NSInteger cursorPositionByCharacters;
 @property BOOL cursorKeyMode;
 @property NSInteger scrollMarginTop;
 @property NSInteger scrollMarginBottom;
+@property NSInteger characterOffsetToScreen;
 
 @end
 
@@ -255,6 +255,15 @@
     }
 }
 
+- (void)incrementRowOffset;
+{
+    self.characterOffsetToScreen += [self numberOfCharactersInScrollRow:1];
+    if ([self isScrollRowTerminatedInNewline:1]) {
+        self.characterOffsetToScreen++;
+    }
+    self.currentRowOffset++;
+}
+
 - (void)checkIfExceededLastLineAndObeyScrollMargin:(BOOL)obeyScrollMargin;
 {
     if (obeyScrollMargin && (self.cursorPosition.y > self.scrollMarginBottom)) {
@@ -264,7 +273,7 @@
             [self removeLineAtScrollRow:self.scrollMarginTop];
             [self insertBlankLineAtScrollRow:self.scrollMarginBottom withNewline:NO];
         } else {
-            self.currentRowOffset++;
+            [self incrementRowOffset];
             [self insertBlankLineAtScrollRow:self.scrollMarginBottom withNewline:NO];
         }
 
@@ -272,7 +281,7 @@
     } else if (self.cursorPosition.y > TERM_HEIGHT) {
         NSAssert(self.cursorPosition.y == (TERM_HEIGHT + 1), @"Cursor should only be one line from the bottom");
 
-        self.currentRowOffset++;
+        [self incrementRowOffset];
         [self.ansiLines addObject:[NSMutableString stringWithString:[@"" stringByPaddingToLength:81 withString:@"\0" startingAtIndex:0]]];
 
         self.cursorPosition = MMPositionMake(self.cursorPosition.x, self.cursorPosition.y - 1);
@@ -288,6 +297,21 @@
 
     self.scrollMarginBottom = bottom;
     self.scrollMarginTop = top;
+}
+
+- (NSInteger)cursorPositionByCharacters;
+{
+    NSInteger cursorPosition = self.characterOffsetToScreen;
+    for (NSInteger i = 1; i < self.cursorPosition.y; i++) {
+        cursorPosition += [self numberOfCharactersInScrollRow:i];
+        if ([self isScrollRowTerminatedInNewline:i]) {
+            cursorPosition++;
+        }
+    }
+
+    cursorPosition = cursorPosition + MIN(self.cursorPosition.x - 1, [self numberOfCharactersInScrollRow:self.cursorPosition.y]);
+
+    return cursorPosition;
 }
 
 - (NSMutableAttributedString *)currentANSIDisplay;
@@ -317,7 +341,7 @@
         }
     }
 
-    self.cursorPositionByCharacters = cursorPosition;
+    NSAssert(self.cursorPositionByCharacters == cursorPosition, @"");
 
     return display;
 }
