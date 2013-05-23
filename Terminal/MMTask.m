@@ -260,13 +260,12 @@
     if (obeyScrollMargin && (self.cursorPosition.y > self.scrollMarginBottom)) {
         NSAssert(self.cursorPosition.y == (self.scrollMarginBottom + 1), @"Cursor should only be one line below the bottom margin");
 
-        NSMutableString *newLine = [NSMutableString stringWithString:[@"" stringByPaddingToLength:81 withString:@"\0" startingAtIndex:0]];
         if (self.scrollMarginTop > 1) {
-            [self.ansiLines removeObjectAtIndex:(self.currentRowOffset + self.scrollMarginTop - 1)];
-            [self.ansiLines insertObject:newLine atIndex:(self.currentRowOffset + self.scrollMarginBottom - 1)];
+            [self removeLineAtScrollRow:self.scrollMarginTop];
+            [self insertBlankLineAtScrollRow:self.scrollMarginBottom withNewline:NO];
         } else {
             self.currentRowOffset++;
-            [self.ansiLines insertObject:newLine atIndex:(self.currentRowOffset + self.scrollMarginBottom - 1)];
+            [self insertBlankLineAtScrollRow:self.scrollMarginBottom withNewline:NO];
         }
 
         self.cursorPosition = MMPositionMake(self.cursorPosition.x, self.cursorPosition.y - 1);
