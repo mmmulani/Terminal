@@ -21,6 +21,8 @@
 		913CC1CE174D2D8100E002AD /* MMErasingActions.m in Sources */ = {isa = PBXBuildFile; fileRef = 913CC1CC174D2D8100E002AD /* MMErasingActions.m */; };
 		913CC1D1174D703D00E002AD /* MMLineManipulationActions.m in Sources */ = {isa = PBXBuildFile; fileRef = 913CC1D0174D703C00E002AD /* MMLineManipulationActions.m */; };
 		913CC1D2174D703D00E002AD /* MMLineManipulationActions.m in Sources */ = {isa = PBXBuildFile; fileRef = 913CC1D0174D703C00E002AD /* MMLineManipulationActions.m */; };
+		913CC1D5174DA22500E002AD /* MMIndexActions.m in Sources */ = {isa = PBXBuildFile; fileRef = 913CC1D4174DA22500E002AD /* MMIndexActions.m */; };
+		913CC1D6174DA22500E002AD /* MMIndexActions.m in Sources */ = {isa = PBXBuildFile; fileRef = 913CC1D4174DA22500E002AD /* MMIndexActions.m */; };
 		917D1C42173963C800503158 /* lexer.lm in Sources */ = {isa = PBXBuildFile; fileRef = 917D1C41173963C800503158 /* lexer.lm */; };
 		917D1C4417396C8000503158 /* parser.ym in Sources */ = {isa = PBXBuildFile; fileRef = 917D1C4317396C8000503158 /* parser.ym */; };
 		917D1C47173973D600503158 /* MMParserContext.m in Sources */ = {isa = PBXBuildFile; fileRef = 917D1C46173973D600503158 /* MMParserContext.m */; };
@@ -149,6 +151,8 @@
 		913CC1CC174D2D8100E002AD /* MMErasingActions.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = MMErasingActions.m; path = Task/MMErasingActions.m; sourceTree = "<group>"; };
 		913CC1CF174D703C00E002AD /* MMLineManipulationActions.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = MMLineManipulationActions.h; path = Task/MMLineManipulationActions.h; sourceTree = "<group>"; };
 		913CC1D0174D703C00E002AD /* MMLineManipulationActions.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = MMLineManipulationActions.m; path = Task/MMLineManipulationActions.m; sourceTree = "<group>"; };
+		913CC1D3174DA22400E002AD /* MMIndexActions.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = MMIndexActions.h; path = Task/MMIndexActions.h; sourceTree = "<group>"; };
+		913CC1D4174DA22500E002AD /* MMIndexActions.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = MMIndexActions.m; path = Task/MMIndexActions.m; sourceTree = "<group>"; };
 		917D1C41173963C800503158 /* lexer.lm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.lex; name = lexer.lm; path = CommandLine/lexer.lm; sourceTree = "<group>"; };
 		917D1C4317396C8000503158 /* parser.ym */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.yacc; name = parser.ym; path = CommandLine/parser.ym; sourceTree = "<group>"; };
 		917D1C45173973D600503158 /* MMParserContext.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = MMParserContext.h; path = CommandLine/MMParserContext.h; sourceTree = "<group>"; };
@@ -267,6 +271,8 @@
 				913CC1C8174C34E100E002AD /* MMMoveCursor.m */,
 				913CC1CF174D703C00E002AD /* MMLineManipulationActions.h */,
 				913CC1D0174D703C00E002AD /* MMLineManipulationActions.m */,
+				913CC1D3174DA22400E002AD /* MMIndexActions.h */,
+				913CC1D4174DA22500E002AD /* MMIndexActions.m */,
 			);
 			name = "Task and xterm simulation";
 			sourceTree = "<group>";
@@ -642,6 +648,7 @@
 				913CC1CA174C34E100E002AD /* MMMoveCursor.m in Sources */,
 				913CC1CE174D2D8100E002AD /* MMErasingActions.m in Sources */,
 				913CC1D2174D703D00E002AD /* MMLineManipulationActions.m in Sources */,
+				913CC1D6174DA22500E002AD /* MMIndexActions.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -668,6 +675,7 @@
 				913CC1C9174C34E100E002AD /* MMMoveCursor.m in Sources */,
 				913CC1CD174D2D8100E002AD /* MMErasingActions.m in Sources */,
 				913CC1D1174D703D00E002AD /* MMLineManipulationActions.m in Sources */,
+				913CC1D5174DA22500E002AD /* MMIndexActions.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

@@ -26,15 +26,26 @@
     return defaultArguments;
 }
 
-- (id)initWithArguments:(NSArray *)arguments;
+- (id)init;
 {
     self = [super init];
     if (!self) {
         return nil;
     }
 
-    self.arguments = arguments;
     self.data = [NSMutableDictionary dictionary];
+
+    return self;
+}
+
+- (id)initWithArguments:(NSArray *)arguments;
+{
+    self = [self init];
+    if (!self) {
+        return nil;
+    }
+
+    self.arguments = arguments;
 
     return self;
 }

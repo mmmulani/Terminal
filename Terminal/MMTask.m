@@ -12,6 +12,7 @@
 #import "MMMoveCursor.h"
 #import "MMErasingActions.h"
 #import "MMLineManipulationActions.h"
+#import "MMIndexActions.h"
 
 @interface MMTask ()
 
@@ -200,11 +201,6 @@
     [self checkIfExceededLastLineAndObeyScrollMargin:YES];
 }
 
-- (BOOL)isCursorInScrollRegion;
-{
-    return self.cursorPosition.y >= self.scrollMarginTop && self.cursorPosition.y <= self.scrollMarginBottom;
-}
-
 - (void)fillCurrentScreenWithSpacesUpToCursor;
 {
     // Create blank lines up to the cursor.
@@ -226,32 +222,6 @@
         }
 
         [self setAnsiCharacterAtScrollRow:(self.cursorPosition.y - 1) column:i withCharacter:' '];
-    }
-}
-
-- (void)index;
-{
-    // This corresponds to ESC D and is called IND.
-    // This escape sequence moves the cursor down by one line and if it passes the bottom, scrolls down.
-    NSInteger newXPosition = self.cursorPosition.x == TERM_WIDTH + 1 ? 1 : self.cursorPosition.x;
-    self.cursorPosition = MMPositionMake(newXPosition, self.cursorPosition.y + 1);
-    [self checkIfExceededLastLineAndObeyScrollMargin:YES];
-}
-
-- (void)reverseIndex;
-{
-    // This corresponds to ESC M and is called RI.
-    // This escape sequence moves the cursor up by one line and if it passes the top margin, scrolls up.
-    // When we scroll up, we remove a newline from the last line if it exists.
-    if (self.cursorPosition.y == self.scrollMarginTop) {
-        if (self.ansiLines.count >= self.currentRowOffset + self.scrollMarginBottom) {
-            [self setAnsiCharacterAtScrollRow:(TERM_HEIGHT - 2) column:TERM_WIDTH withCharacter:'\0'];
-            [self.ansiLines removeObjectAtIndex:(self.currentRowOffset + self.scrollMarginBottom - 1)];
-        }
-        NSMutableString *newLine = [NSMutableString stringWithString:[[@"" stringByPaddingToLength:80 withString:@"\0" startingAtIndex:0] stringByAppendingString:@"\n"]];
-        [self.ansiLines insertObject:newLine atIndex:(self.currentRowOffset + self.scrollMarginTop - 1)];
-    } else {
-        self.cursorPosition = MMPositionMake(self.cursorPosition.x, self.cursorPosition.y - 1);
     }
 }
 
@@ -395,9 +365,9 @@
     } else {
         // This covers all escape sequences that do not start with '['.
         if (escapeCode == 'D') {
-            [self index];
+            action = [[MMIndex alloc] init];
         } else if (escapeCode == 'M') {
-            [self reverseIndex];
+            action = [[MMReverseIndex alloc] init];
         } else {
             MMLog(@"Unhandled early escape sequence: %@", escapeSequence);
         }
@@ -451,6 +421,11 @@
 - (BOOL)isScrollRowTerminatedInNewline:(NSInteger)row;
 {
     return [self ansiCharacterAtScrollRow:(row - 1) column:TERM_WIDTH] == '\n';
+}
+
+- (BOOL)isCursorInScrollRegion;
+{
+    return self.cursorPosition.y >= self.scrollMarginTop && self.cursorPosition.y <= self.scrollMarginBottom;
 }
 
 - (NSInteger)numberOfRowsOnScreen;
