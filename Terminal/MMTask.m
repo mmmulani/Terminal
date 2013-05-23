@@ -74,6 +74,7 @@
     [self.output appendAttributedString:[[NSAttributedString alloc] initWithString:output]];
 
     NSString *outputToHandle = self.unreadOutput ? [self.unreadOutput stringByAppendingString:output] : output;
+    self.unreadOutput = nil;
     for (NSUInteger i = 0; i < [outputToHandle length]; i++) {
         if (self.cursorPosition.y > TERM_HEIGHT) {
             MMLog(@"Cursor position too low");
@@ -350,6 +351,9 @@
             self.cursorKeyMode = YES;
         } else if ([escapeSequence isEqualToString:@"\033[?1l"]) {
             self.cursorKeyMode = NO;
+        } else if (escapeCode == 'm') {
+            // Character attributes escape sequence that is unsupported.
+            // We don't log this as it fires often and makes debugging other issues much more difficult.
         } else if (escapeCode == 'r') {
             NSUInteger bottom = [items count] >= 2 ? [items[1] intValue] : TERM_HEIGHT;
             NSUInteger top = [items count] >= 1 ? [items[0] intValue] : 1;

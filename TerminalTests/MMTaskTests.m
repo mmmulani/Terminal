@@ -37,4 +37,13 @@ do {\
     CheckInputAgainstExpectedCursorPositionByCharacters(lotsOfNewlines, 30);
 }
 
+- (void)testOutputHandling;
+{
+    MMTask *task = [MMTask new];
+    [task handleCommandOutput:@"\033[" withVerbosity:NO];
+    [task handleCommandOutput:@"K" withVerbosity:NO];
+    [task handleCommandOutput:@"K" withVerbosity:NO];
+    STAssertEqualObjects(task.currentANSIDisplay.string, @"K", @"Broken escape sequence should not be handled twice");
+}
+
 @end
