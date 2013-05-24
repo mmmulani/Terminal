@@ -38,6 +38,7 @@
 #define CheckInputAgainstExpectedOutput(input, output) \
 do {\
     MMTask *task = [MMTask new]; \
+    task.displayTextStorage = [NSTextStorage new]; \
     [task handleCommandOutput:input withVerbosity:NO]; \
     STAssertEqualObjects([task.currentANSIDisplay string], output, @"Compared task output to provided output."); \
 } while (0)
@@ -45,6 +46,7 @@ do {\
 #define CheckInputAgainstExpectedOutputWithExpectedCursor(input, output, cursorPosition_) \
 do {\
     MMTask *task = [MMTask new]; \
+    task.displayTextStorage = [NSTextStorage new]; \
     [task handleCommandOutput:input withVerbosity:NO]; \
     STAssertEqualObjects([task.currentANSIDisplay string], output, @"Compared task output to provided output."); \
     STAssertEquals(task.cursorPosition.x, cursorPosition_.x, @"X coord of cursor position"); \
@@ -54,6 +56,7 @@ do {\
 #define CheckThatInputDoesNotCauseACrash(input) \
 do {\
     MMTask *task = [MMTask new]; \
+    task.displayTextStorage = [NSTextStorage new]; \
     [task handleCommandOutput:input withVerbosity:NO]; \
     STAssertNotNil([task.currentANSIDisplay string], nil); \
 } while (0)

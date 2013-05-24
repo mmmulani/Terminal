@@ -328,6 +328,7 @@ static void directoryWatchingCallback(CFFileDescriptorRef kqRef, CFOptionFlags c
         [self.tableView insertRowsAtIndexes:[NSIndexSet indexSetWithIndex:(self.tasks.count - 1)] withAnimation:NSTableViewAnimationEffectNone];
 
         MMTaskCellViewController *lastController = self.taskViewControllers.lastObject;
+        newTask.displayTextStorage = lastController.outputView.textStorage;
         [self.window makeFirstResponder:lastController.outputView];
 
         [NSAnimationContext beginGrouping];

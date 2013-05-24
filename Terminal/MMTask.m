@@ -16,7 +16,6 @@
 
 @interface MMTask ()
 
-@property NSMutableArray *ansiLines;
 @property NSInteger currentRowOffset;
 @property NSString *unreadOutput;
 @property BOOL cursorKeyMode;
@@ -24,6 +23,7 @@
 @property NSInteger scrollMarginBottom;
 @property NSInteger characterOffsetToScreen;
 @property NSMutableArray *characterCountsOnVisibleRows;
+@property NSMutableArray *scrollRowHasNewline;
 
 @end
 
@@ -38,21 +38,16 @@
 
     self.output = [[NSTextStorage alloc] init];
 
-    self.ansiLines = [NSMutableArray arrayWithCapacity:TERM_HEIGHT];
+    self.characterCountsOnVisibleRows = [NSMutableArray arrayWithCapacity:TERM_HEIGHT];
+    self.scrollRowHasNewline = [NSMutableArray arrayWithCapacity:TERM_HEIGHT];
     for (NSInteger i = 0; i < TERM_HEIGHT; i++) {
-        [self.ansiLines addObject:[NSMutableString stringWithString:[@"" stringByPaddingToLength:81 withString:@"\0" startingAtIndex:0]]];
-    }
-    self.characterCountsOnVisibleRows = [NSMutableArray arrayWithCapacity:TERM_WIDTH];
-    for (NSInteger i = 0; i < TERM_WIDTH; i++) {
         [self.characterCountsOnVisibleRows addObject:@0];
+        [self.scrollRowHasNewline addObject:@NO];
     }
     self.currentRowOffset = 0;
     self.cursorPosition = MMPositionMake(1, 1);
     self.scrollMarginTop = 1;
     self.scrollMarginBottom = 24;
-    MMANSIAction *action = [[MMClearScreen alloc] initWithArguments:@[@2]];
-    action.delegate = self;
-    [action do];
 
     return self;
 }
@@ -79,14 +74,25 @@
     [self.output appendAttributedString:[[NSAttributedString alloc] initWithString:output]];
 
     NSString *outputToHandle = self.unreadOutput ? [self.unreadOutput stringByAppendingString:output] : output;
+    NSCharacterSet *nonPrintableCharacters = [NSCharacterSet characterSetWithCharactersInString:@"\n\r\b\a\033"];
     self.unreadOutput = nil;
     for (NSUInteger i = 0; i < [outputToHandle length]; i++) {
         if (self.cursorPosition.y > TERM_HEIGHT) {
             MMLog(@"Cursor position too low");
             break;
         }
-
         unichar currentChar = [outputToHandle characterAtIndex:i];
+
+        if (![nonPrintableCharacters characterIsMember:currentChar]) {
+            NSInteger end = i + 1;
+            for (end = i + 1; end < outputToHandle.length && ![nonPrintableCharacters characterIsMember:[outputToHandle characterAtIndex:end]]; end++);
+
+            [self ansiPrint:[outputToHandle substringWithRange:NSMakeRange(i, end - i)]];
+
+            i = end - 1;
+            continue;
+        }
+
         if (currentChar == '\n') {
             if (verbosity) {
                 MMLog(@"Handling newline.");
@@ -143,11 +149,6 @@
             }
             [self handleEscapeSequence:escapeSequence];
             i = firstAlphabeticIndex;
-        } else {
-            [self ansiPrint:currentChar];
-            if (verbosity) {
-                MMLog(@"Printed character %c", currentChar);
-            }
         }
     }
 }
@@ -155,33 +156,13 @@
 - (BOOL)shouldDrawFullTerminalScreen;
 {
     // TODO: Handle the case where the command issued an escape sequence and should be treated like a "full" terminal screen.
-    return self.ansiLines.count > TERM_HEIGHT ||
-        (self.ansiLines.count == TERM_HEIGHT &&
-         ([self.ansiLines.lastObject characterAtIndex:0] != '\0' ||
-          [self.ansiLines.lastObject characterAtIndex:TERM_WIDTH] != '\0'));
+    return self.numberOfRowsOnScreen > TERM_HEIGHT ||
+        (self.numberOfRowsOnScreen == TERM_HEIGHT &&
+         ([self numberOfCharactersInScrollRow:TERM_HEIGHT] > 0 ||
+          [self isScrollRowTerminatedInNewline:TERM_HEIGHT]));
 }
 
 # pragma mark - ANSI display methods
-
-- (NSMutableString *)ansiLineAtScrollRow:(NSUInteger)row;
-{
-    return (NSMutableString *)self.ansiLines[self.currentRowOffset + row];
-}
-
-- (unichar)ansiCharacterAtExactRow:(NSUInteger)row column:(NSUInteger)column;
-{
-    return [(NSMutableString *)self.ansiLines[row] characterAtIndex:column];
-}
-
-- (unichar)ansiCharacterAtScrollRow:(NSUInteger)scrollRow column:(NSUInteger)column;
-{
-    return [(NSMutableString *)self.ansiLines[self.currentRowOffset + scrollRow] characterAtIndex:column];
-}
-
-- (void)setAnsiCharacterAtScrollRow:(NSUInteger)row column:(NSUInteger)column withCharacter:(unichar)character;
-{
-    [[self ansiLineAtScrollRow:row] replaceCharactersInRange:NSMakeRange(column, 1) withString:[NSString stringWithCharacters:&character length:1]];
-}
 
 - (void)adjustNumberOfCharactersOnScrollRow:(NSInteger)row byAmount:(NSInteger)change;
 {
@@ -189,22 +170,32 @@
 }
 
 
-- (void)ansiPrint:(unichar)character;
+- (void)ansiPrint:(NSString *)string;
 {
     [self fillCurrentScreenWithSpacesUpToCursor];
 
-    if (self.cursorPosition.x == TERM_WIDTH + 1) {
-        // If there is a newline present at the end of this line, we clear it as the text will now flow to the next line.
-        [self setAnsiCharacterAtScrollRow:(self.cursorPosition.y - 1) column:(self.cursorPosition.x - 1) withCharacter:'\0'];
-        self.cursorPosition = MMPositionMake(1, self.cursorPosition.y + 1);
-        [self checkIfExceededLastLineAndObeyScrollMargin:YES];
-    }
+    NSInteger i = 0;
 
-    if (self.cursorPosition.x > [self numberOfCharactersInScrollRow:self.cursorPosition.y]) {
-        [self adjustNumberOfCharactersOnScrollRow:self.cursorPosition.y byAmount:1];
+    while (i < string.length) {
+        if (self.cursorPosition.x == TERM_WIDTH + 1) {
+            // If there is a newline present at the end of this line, we clear it as the text will now flow to the next line.
+            [self setScrollRow:self.cursorPosition.y hasNewline:NO];
+            self.cursorPosition = MMPositionMake(1, self.cursorPosition.y + 1);
+            [self checkIfExceededLastLineAndObeyScrollMargin:YES];
+        }
+
+        NSInteger lengthToPrintOnLine = MIN(string.length - i, TERM_WIDTH - self.cursorPosition.x + 1);
+        NSAttributedString *attributedString = [[NSAttributedString alloc] initWithString:[string substringWithRange:NSMakeRange(i, lengthToPrintOnLine)]];
+        NSInteger numberOfCharactersToDelete = MIN(lengthToPrintOnLine, [self numberOfCharactersInScrollRow:self.cursorPosition.y] - self.cursorPosition.x + 1);
+        if (numberOfCharactersToDelete > 0) {
+            [self.displayTextStorage deleteCharactersInRange:NSMakeRange(self.cursorPositionByCharacters, numberOfCharactersToDelete)];
+        }
+        [self.displayTextStorage insertAttributedString:attributedString atIndex:self.cursorPositionByCharacters];
+        [self adjustNumberOfCharactersOnScrollRow:self.cursorPosition.y byAmount:(lengthToPrintOnLine - numberOfCharactersToDelete)];
+        self.cursorPosition = MMPositionMake(self.cursorPosition.x + lengthToPrintOnLine, self.cursorPosition.y);
+
+        i += lengthToPrintOnLine;
     }
-    [self setAnsiCharacterAtScrollRow:(self.cursorPosition.y - 1) column:(self.cursorPosition.x - 1) withCharacter:character];
-    self.cursorPosition = MMPositionMake(self.cursorPosition.x + 1, self.cursorPosition.y);
 }
 
 - (void)addNewline;
@@ -218,8 +209,8 @@
 - (void)fillCurrentScreenWithSpacesUpToCursor;
 {
     // Create blank lines up to the cursor.
-    for (NSInteger i = self.ansiLines.count; i < self.currentRowOffset + self.cursorPosition.y; i++) {
-        [self insertBlankLineAtScrollRow:self.numberOfRowsOnScreen withNewline:NO];
+    for (NSInteger i = self.numberOfRowsOnScreen; i < self.cursorPosition.y; i++) {
+        [self insertBlankLineAtScrollRow:(self.numberOfRowsOnScreen + 1) withNewline:NO];
     }
 
     for (NSInteger i = self.cursorPosition.y - 1; i > 0; i--) {
@@ -231,7 +222,9 @@
     }
 
     NSInteger numberOfSpacesToInsert = MAX(self.cursorPosition.x - [self numberOfCharactersInScrollRow:self.cursorPosition.y] - 1, 0);
-    [self replaceCharactersAtScrollRow:self.cursorPosition.y scrollColumn:(self.cursorPosition.x - numberOfSpacesToInsert) withString:[@"" stringByPaddingToLength:numberOfSpacesToInsert withString:@" " startingAtIndex:0]];
+    if (numberOfSpacesToInsert > 0) {
+        [self replaceCharactersAtScrollRow:self.cursorPosition.y scrollColumn:(self.cursorPosition.x - numberOfSpacesToInsert) withString:[@"" stringByPaddingToLength:numberOfSpacesToInsert withString:@" " startingAtIndex:0]];
+    }
 }
 
 - (void)incrementRowOffset;
@@ -240,9 +233,22 @@
     if ([self isScrollRowTerminatedInNewline:1]) {
         self.characterOffsetToScreen++;
     }
-    self.currentRowOffset++;
 
     [self.characterCountsOnVisibleRows removeObjectAtIndex:0];
+    [self.scrollRowHasNewline removeObjectAtIndex:0];
+}
+
+- (NSInteger)characterOffsetUpToScrollRow:(NSInteger)row;
+{
+    NSInteger offset = self.characterOffsetToScreen;
+    for (NSInteger i = 1; i < row; i++) {
+        offset += [self numberOfCharactersInScrollRow:i];
+        if ([self isScrollRowTerminatedInNewline:i]) {
+            offset++;
+        }
+    }
+
+    return offset;
 }
 
 - (void)checkIfExceededLastLineAndObeyScrollMargin:(BOOL)obeyScrollMargin;
@@ -297,34 +303,7 @@
 
 - (NSMutableAttributedString *)currentANSIDisplay;
 {
-    NSUInteger cursorPosition = 0;
-
-    NSMutableAttributedString *display = [[NSMutableAttributedString alloc] init];
-    for (NSInteger i = 0; i < self.ansiLines.count; i++) {
-        for (NSInteger j = 0; j < TERM_WIDTH; j++) {
-            unichar currentChar = [self ansiCharacterAtExactRow:i column:j];
-            if (currentChar == '\0') {
-                break;
-            }
-
-            NSInteger adjustedYPosition = i - self.currentRowOffset;
-            if (self.cursorPosition.y - 1 > adjustedYPosition ||
-                (self.cursorPosition.y - 1 == adjustedYPosition && self.cursorPosition.x - 1 > j)) {
-                cursorPosition++;
-            }
-            [display appendAttributedString:[[NSAttributedString alloc] initWithString:[NSString stringWithCharacters:&currentChar length:1]]];
-        }
-        if ([self ansiCharacterAtExactRow:i column:TERM_WIDTH] == '\n') {
-            if (self.cursorPosition.y - 1 > i - self.currentRowOffset) {
-                cursorPosition++;
-            }
-            [display appendAttributedString:[[NSAttributedString alloc] initWithString:@"\n"]];
-        }
-    }
-
-    NSAssert(self.cursorPositionByCharacters == cursorPosition, @"");
-
-    return display;
+    return [self.displayTextStorage copy];
 }
 
 - (void)handleEscapeSequence:(NSString *)escapeSequence;
@@ -422,20 +401,12 @@
 
 - (NSInteger)numberOfCharactersInScrollRow:(NSInteger)row;
 {
-    NSInteger count;
-    for (count = 0; count < TERM_WIDTH; count++) {
-        if ([self ansiCharacterAtScrollRow:(row - 1) column:count] == '\0') {
-            break;
-        }
-    }
-
-    NSAssert(count == [self.characterCountsOnVisibleRows[row - 1] integerValue], @"Character counts mismatched in row %ld, cached value: %@, row text: %@", row, self.characterCountsOnVisibleRows[row - 1], self.ansiLines[row - 1]);
-    return count;
+    return [self.characterCountsOnVisibleRows[row - 1] integerValue];
 }
 
 - (BOOL)isScrollRowTerminatedInNewline:(NSInteger)row;
 {
-    return [self ansiCharacterAtScrollRow:(row - 1) column:TERM_WIDTH] == '\n';
+    return [self.scrollRowHasNewline[row - 1] boolValue];
 }
 
 - (BOOL)isCursorInScrollRegion;
@@ -445,14 +416,15 @@
 
 - (NSInteger)numberOfRowsOnScreen;
 {
-    return self.ansiLines.count - self.currentRowOffset;
+    return self.characterCountsOnVisibleRows.count;
 }
 
 - (void)replaceCharactersAtScrollRow:(NSInteger)row scrollColumn:(NSInteger)column withString:(NSString *)replacementString;
 {
     NSAssert(column + replacementString.length - 1 <= TERM_WIDTH, @"replacementString too large or incorrect column specified");
-    [self adjustNumberOfCharactersOnScrollRow:row byAmount:MAX(0, (column + ((NSInteger)replacementString.length) - 1) - [self numberOfCharactersInScrollRow:row])];
-    [((NSMutableString *)self.ansiLines[self.currentRowOffset + row - 1]) replaceCharactersInRange:NSMakeRange(column - 1, replacementString.length) withString:replacementString];
+    NSInteger enlargementSize = MAX(0, (column + ((NSInteger)replacementString.length) - 1) - [self numberOfCharactersInScrollRow:row]);
+    [self adjustNumberOfCharactersOnScrollRow:row byAmount:enlargementSize];
+    [self.displayTextStorage replaceCharactersInRange:NSMakeRange([self characterOffsetUpToScrollRow:row] + column - 1, replacementString.length - enlargementSize) withString:replacementString];
 }
 
 - (void)removeCharactersInScrollRow:(NSInteger)row range:(NSRange)range shiftCharactersAfter:(BOOL)shift;
@@ -460,39 +432,37 @@
     NSAssert(range.location > 0, @"Range location must be provided in ANSI column form");
     NSInteger numberOfCharactersBeingRemoved = MIN([self numberOfCharactersInScrollRow:row], range.location + range.length - 1) - range.location + 1;
     [self adjustNumberOfCharactersOnScrollRow:row byAmount:(-numberOfCharactersBeingRemoved)];
-    if (shift) {
-        NSMutableString *line = self.ansiLines[self.currentRowOffset + row - 1];
-        NSInteger indexAfterRemovedRange = range.location - 1 + range.length;
-        NSString *stringAfterRemovedRange = [line substringWithRange:NSMakeRange(indexAfterRemovedRange, TERM_WIDTH - indexAfterRemovedRange)];
-        [line replaceCharactersInRange:NSMakeRange(range.location - 1, TERM_WIDTH - range.location + 1) withString:[@"" stringByPaddingToLength:(TERM_WIDTH - range.location + 1) withString:@"\0" startingAtIndex:0]];
-        [line replaceCharactersInRange:NSMakeRange(range.location - 1, TERM_WIDTH - indexAfterRemovedRange) withString:stringAfterRemovedRange];
-    } else {
-        [((NSMutableString *)self.ansiLines[self.currentRowOffset + row - 1]) replaceCharactersInRange:NSMakeRange(range.location - 1, range.length) withString:[@"" stringByPaddingToLength:range.length withString:@"\0" startingAtIndex:0]];
-    }
+    [self.displayTextStorage deleteCharactersInRange:NSMakeRange([self characterOffsetUpToScrollRow:row] + range.location - 1, numberOfCharactersBeingRemoved)];
 }
 
 - (void)insertBlankLineAtScrollRow:(NSInteger)row withNewline:(BOOL)newline;
 {
     NSAssert(self.numberOfRowsOnScreen < TERM_HEIGHT, @"inserting a line would cause more than termHeight lines to be displayed");
-    NSString *newLineText;
-    if (newline) {
-        newLineText = [[@"" stringByPaddingToLength:80 withString:@"\0" startingAtIndex:0] stringByAppendingString:@"\n"];
-    } else {
-        newLineText = [@"" stringByPaddingToLength:81 withString:@"\0" startingAtIndex:0];
-    }
-    [self.ansiLines insertObject:[newLineText mutableCopy] atIndex:(self.currentRowOffset + row - 1)];
     [self.characterCountsOnVisibleRows insertObject:@0 atIndex:(row - 1)];
+    [self.scrollRowHasNewline insertObject:@NO atIndex:(row - 1)];
+    [self setScrollRow:row hasNewline:newline];
 }
 
 - (void)removeLineAtScrollRow:(NSInteger)row;
 {
-    [self.ansiLines removeObjectAtIndex:(self.currentRowOffset + row - 1)];
+    NSInteger lengthIncludingNewline = ([self isScrollRowTerminatedInNewline:row] ? 1 : 0) + [self numberOfCharactersInScrollRow:row];
+    [self.displayTextStorage deleteCharactersInRange:NSMakeRange([self characterOffsetUpToScrollRow:row], lengthIncludingNewline)];
     [self.characterCountsOnVisibleRows removeObjectAtIndex:(row - 1)];
+    [self.scrollRowHasNewline removeObjectAtIndex:(row - 1)];
 }
 
 - (void)setScrollRow:(NSInteger)row hasNewline:(BOOL)hasNewline;
 {
-    [self setAnsiCharacterAtScrollRow:(row - 1) column:TERM_WIDTH withCharacter:(hasNewline ? '\n' : '\0')];
+    if ([self isScrollRowTerminatedInNewline:row] == hasNewline) {
+        return;
+    }
+
+    if (hasNewline) {
+        [self.displayTextStorage insertAttributedString:[[NSAttributedString alloc] initWithString:@"\n"] atIndex:[self characterOffsetUpToScrollRow:(row + 1)]];
+    } else {
+        [self.displayTextStorage deleteCharactersInRange:NSMakeRange([self characterOffsetUpToScrollRow:(row + 1)] - 1, 1)];
+    }
+    [self.scrollRowHasNewline setObject:@(hasNewline) atIndexedSubscript:(row - 1)];
 }
 
 @end

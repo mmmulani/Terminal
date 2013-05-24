@@ -81,7 +81,7 @@
 
 - (void)updateWithANSIOutput;
 {
-    NSMutableAttributedString *displayString = self.task.currentANSIDisplay;
+    NSTextStorage *displayString = self.outputView.textStorage;
     NSUInteger cursorPositionByCharacters = self.task.cursorPositionByCharacters;
 
     // If the process has finished, we remove a trailing newline if it exists.
@@ -93,21 +93,7 @@
             [displayString replaceCharactersInRange:NSMakeRange(displayString.length - 1, 1) withString:@""];
         }
     }
-
-    static NSDictionary *attributes = nil;
-    if (!attributes) {
-        NSFont *font = [NSFont userFixedPitchFontOfSize:[NSFont systemFontSize]];
-        attributes =
-        @{
-          NSFontAttributeName: font,
-          };
-    }
-    [displayString setAttributes:attributes range:NSMakeRange(0, displayString.length)];
-
-    [self.outputView.textStorage setAttributedString:displayString];
-    NSMutableParagraphStyle *style = [[NSParagraphStyle defaultParagraphStyle] mutableCopy];
-    [style setLineBreakMode:NSLineBreakByCharWrapping];
-    [self.outputView.textStorage addAttribute:NSParagraphStyleAttributeName value:style range:NSMakeRange(0, [self.outputView.textStorage length])];
+    
     [self.outputView setSelectedRange:NSMakeRange(cursorPositionByCharacters, 0)];
 
     // Sometimes the NSViewFrameDidChangeNotification does not get issued, so we call it here to make sure that it gets sent.

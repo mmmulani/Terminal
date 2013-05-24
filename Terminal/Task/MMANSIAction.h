@@ -56,6 +56,5 @@
 
 // XXX: Try to remove these or change them to ensure that all calculations for ANSIActions can be done in |setUp|.
 - (void)checkIfExceededLastLineAndObeyScrollMargin:(BOOL)obeyScrollMargin;
-- (unichar)ansiCharacterAtScrollRow:(NSUInteger)scrollRow column:(NSUInteger)column;
 
 @end

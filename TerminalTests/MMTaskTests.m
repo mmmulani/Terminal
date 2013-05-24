@@ -14,6 +14,7 @@
 #define CheckInputAgainstExpectedCursorPositionByCharacters(input, cursorPositionByCharacters_) \
 do {\
     MMTask *task = [MMTask new]; \
+    task.displayTextStorage = [NSTextStorage new]; \
     [task handleCommandOutput:input withVerbosity:NO]; \
     (void) task.currentANSIDisplay; \
     STAssertEquals(task.cursorPositionByCharacters, (NSInteger)cursorPositionByCharacters_, @"Comparing cursor position by characters."); \
@@ -40,6 +41,7 @@ do {\
 - (void)testOutputHandling;
 {
     MMTask *task = [MMTask new];
+    task.displayTextStorage = [NSTextStorage new];
     [task handleCommandOutput:@"\033[" withVerbosity:NO];
     [task handleCommandOutput:@"K" withVerbosity:NO];
     [task handleCommandOutput:@"K" withVerbosity:NO];

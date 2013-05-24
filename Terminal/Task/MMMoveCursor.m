@@ -73,7 +73,7 @@
         newPositionX -= distanceToMove;
         spaces -= distanceToMove;
 
-        if (newPositionY == 1 || [self.delegate ansiCharacterAtScrollRow:(newPositionY - 2) column:self.delegate.termWidth] == '\n') {
+        if (newPositionY == 1 || [self.delegate isScrollRowTerminatedInNewline:(newPositionY - 1)]) {
             spaces = 0;
         } else if (spaces > 0) {
             newPositionY--;
