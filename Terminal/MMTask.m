@@ -24,6 +24,7 @@
 @property NSInteger characterOffsetToScreen;
 @property NSMutableArray *characterCountsOnVisibleRows;
 @property NSMutableArray *scrollRowHasNewline;
+@property NSMutableDictionary *characterAttributes;
 
 @end
 
@@ -48,6 +49,8 @@
     self.cursorPosition = MMPositionMake(1, 1);
     self.scrollMarginTop = 1;
     self.scrollMarginBottom = 24;
+    self.characterAttributes = [NSMutableDictionary dictionary];
+    self.characterAttributes[NSFontAttributeName] = [NSFont userFixedPitchFontOfSize:[NSFont systemFontSize]];
 
     return self;
 }
@@ -185,7 +188,7 @@
         }
 
         NSInteger lengthToPrintOnLine = MIN(string.length - i, TERM_WIDTH - self.cursorPosition.x + 1);
-        NSAttributedString *attributedString = [[NSAttributedString alloc] initWithString:[string substringWithRange:NSMakeRange(i, lengthToPrintOnLine)]];
+        NSAttributedString *attributedString = [[NSAttributedString alloc] initWithString:[string substringWithRange:NSMakeRange(i, lengthToPrintOnLine)] attributes:self.characterAttributes];
         NSInteger numberOfCharactersToDelete = MIN(lengthToPrintOnLine, [self numberOfCharactersInScrollRow:self.cursorPosition.y] - self.cursorPosition.x + 1);
         if (numberOfCharactersToDelete > 0) {
             [self.displayTextStorage deleteCharactersInRange:NSMakeRange(self.cursorPositionByCharacters, numberOfCharactersToDelete)];
