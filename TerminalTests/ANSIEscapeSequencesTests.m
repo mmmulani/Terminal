@@ -97,6 +97,8 @@ do {\
     CheckInputAgainstExpectedOutput(@"\033[80Gta", @"                                                                               ta");
     NSString *expectedOutput = [[@"test" stringByPaddingToLength:79 withString:@" " startingAtIndex:0] stringByAppendingString:@"A"];
     CheckInputAgainstExpectedOutput(@"test\033[90GA", expectedOutput);
+
+    CheckInputAgainstExpectedOutput(@"abc\ndef\033[2G_", @"abc\nd_f");
 }
 
 - (void)testCursorVerticalAbsolute;

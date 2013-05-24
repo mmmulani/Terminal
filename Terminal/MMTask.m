@@ -325,7 +325,7 @@
         } else if (escapeCode == 'D') {
             action = [[MMMoveCursorBackward alloc] initWithArguments:items];
         } else if (escapeCode == 'G') {
-            action = [[MMMoveCursorPosition alloc] initWithArguments:[@[@1] arrayByAddingObjectsFromArray:items]];
+            action = [[MMMoveCursorPosition alloc] initWithArguments:[@[@(self.cursorPosition.y)] arrayByAddingObjectsFromArray:items]];
         } else if (escapeCode == 'H' || escapeCode == 'f') {
             action = [[MMMoveCursorPosition alloc] initWithArguments:items];
         } else if (escapeCode == 'K') {
