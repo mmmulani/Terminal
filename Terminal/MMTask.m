@@ -37,7 +37,7 @@
         return nil;
     }
 
-    self.output = [[NSTextStorage alloc] init];
+    self.output = [NSMutableString string];
 
     self.characterCountsOnVisibleRows = [NSMutableArray arrayWithCapacity:TERM_HEIGHT];
     self.scrollRowHasNewline = [NSMutableArray arrayWithCapacity:TERM_HEIGHT];
@@ -74,7 +74,7 @@
 
 - (void)handleCommandOutput:(NSString *)output withVerbosity:(BOOL)verbosity;
 {
-    [self.output appendAttributedString:[[NSAttributedString alloc] initWithString:output]];
+    [self.output appendString:output];
 
     NSString *outputToHandle = self.unreadOutput ? [self.unreadOutput stringByAppendingString:output] : output;
     NSCharacterSet *nonPrintableCharacters = [NSCharacterSet characterSetWithCharactersInString:@"\n\r\b\a\033"];

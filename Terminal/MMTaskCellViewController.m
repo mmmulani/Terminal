@@ -109,7 +109,7 @@
             return;
         }
 
-        [self.task.output.string writeToURL:savePanel.URL atomically:YES encoding:NSUTF8StringEncoding error:NULL];
+        [self.task.output writeToURL:savePanel.URL atomically:YES encoding:NSUTF8StringEncoding error:NULL];
     }];
 }
 
