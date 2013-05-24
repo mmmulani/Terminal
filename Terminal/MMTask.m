@@ -386,8 +386,14 @@
                 [self.characterAttributes removeAllObjects];
                 self.characterAttributes[NSFontAttributeName] = [NSFont userFixedPitchFontOfSize:[NSFont systemFontSize]];
                 break;
+            case 1:
+                self.characterAttributes[NSFontAttributeName] = [[NSFontManager sharedFontManager] convertFont:self.characterAttributes[NSFontAttributeName] toHaveTrait:NSBoldFontMask];
+                break;
             case 4:
                 self.characterAttributes[NSUnderlineStyleAttributeName] = @(NSUnderlineStyleSingle);
+                break;
+            case 22:
+                self.characterAttributes[NSFontAttributeName] = [[NSFontManager sharedFontManager] convertFont:self.characterAttributes[NSFontAttributeName] toHaveTrait:NSUnboldFontMask];
                 break;
             case 24:
                 [self.characterAttributes removeObjectForKey:NSUnderlineStyleAttributeName];
@@ -396,49 +402,49 @@
                 self.characterAttributes[NSForegroundColorAttributeName] = [NSColor blackColor];
                 break;
             case 31:
-                self.characterAttributes[NSForegroundColorAttributeName] = [NSColor redColor];
+                self.characterAttributes[NSForegroundColorAttributeName] = [NSColor colorWithCalibratedHue:0.0 saturation:1.0 brightness:0.6 alpha:1.0];
                 break;
             case 32:
-                self.characterAttributes[NSForegroundColorAttributeName] = [NSColor greenColor];
+                self.characterAttributes[NSForegroundColorAttributeName] = [NSColor colorWithCalibratedHue:(120.0 / 360.0) saturation:1.0 brightness:0.65 alpha:1.0];
                 break;
             case 33:
-                self.characterAttributes[NSForegroundColorAttributeName] = [NSColor yellowColor];
+                self.characterAttributes[NSForegroundColorAttributeName] = [NSColor colorWithCalibratedHue:(60.0 / 360.0) saturation:1.0 brightness:0.5 alpha:1.0];
                 break;
             case 34:
-                self.characterAttributes[NSForegroundColorAttributeName] = [NSColor blueColor];
+                self.characterAttributes[NSForegroundColorAttributeName] = [NSColor colorWithCalibratedHue:(240.0 / 360.0) saturation:1.0 brightness:0.7 alpha:1.0];
                 break;
             case 35:
-                self.characterAttributes[NSForegroundColorAttributeName] = [NSColor magentaColor];
+                self.characterAttributes[NSForegroundColorAttributeName] = [NSColor colorWithCalibratedHue:(300.0 / 360.0) saturation:1.0 brightness:0.7 alpha:1.0];
                 break;
             case 36:
-                self.characterAttributes[NSForegroundColorAttributeName] = [NSColor cyanColor];
+                self.characterAttributes[NSForegroundColorAttributeName] = [NSColor colorWithCalibratedHue:(184.0 / 360.0) saturation:1.0 brightness:0.7 alpha:1.0];
                 break;
             case 37:
-                self.characterAttributes[NSForegroundColorAttributeName] = [NSColor whiteColor];
+                self.characterAttributes[NSForegroundColorAttributeName] = [NSColor colorWithCalibratedHue:(184.0 / 360.0) saturation:0.0 brightness:0.75 alpha:1.0];
                 break;
             case 40:
                 self.characterAttributes[NSBackgroundColorAttributeName] = [NSColor blackColor];
                 break;
             case 41:
-                self.characterAttributes[NSBackgroundColorAttributeName] = [NSColor redColor];
+                self.characterAttributes[NSBackgroundColorAttributeName] = [NSColor colorWithCalibratedHue:0.0 saturation:1.0 brightness:0.6 alpha:1.0];
                 break;
             case 42:
-                self.characterAttributes[NSBackgroundColorAttributeName] = [NSColor greenColor];
+                self.characterAttributes[NSBackgroundColorAttributeName] = [NSColor colorWithCalibratedHue:(120.0 / 360.0) saturation:1.0 brightness:0.65 alpha:1.0];
                 break;
             case 43:
-                self.characterAttributes[NSBackgroundColorAttributeName] = [NSColor yellowColor];
+                self.characterAttributes[NSBackgroundColorAttributeName] = [NSColor colorWithCalibratedHue:(60.0 / 360.0) saturation:1.0 brightness:0.5 alpha:1.0];
                 break;
             case 44:
-                self.characterAttributes[NSBackgroundColorAttributeName] = [NSColor blueColor];
+                self.characterAttributes[NSBackgroundColorAttributeName] = [NSColor colorWithCalibratedHue:(240.0 / 360.0) saturation:1.0 brightness:0.7 alpha:1.0];
                 break;
             case 45:
-                self.characterAttributes[NSBackgroundColorAttributeName] = [NSColor magentaColor];
+                self.characterAttributes[NSBackgroundColorAttributeName] = [NSColor colorWithCalibratedHue:(300.0 / 360.0) saturation:1.0 brightness:0.7 alpha:1.0];
                 break;
             case 46:
-                self.characterAttributes[NSBackgroundColorAttributeName] = [NSColor cyanColor];
+                self.characterAttributes[NSBackgroundColorAttributeName] = [NSColor colorWithCalibratedHue:(184.0 / 360.0) saturation:1.0 brightness:0.7 alpha:1.0];
                 break;
             case 47:
-                self.characterAttributes[NSBackgroundColorAttributeName] = [NSColor whiteColor];
+                self.characterAttributes[NSBackgroundColorAttributeName] = [NSColor colorWithCalibratedHue:(184.0 / 360.0) saturation:0.0 brightness:0.75 alpha:1.0];
                 break;
         }
     }
