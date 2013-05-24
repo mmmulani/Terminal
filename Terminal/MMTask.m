@@ -430,6 +430,10 @@
 - (void)removeCharactersInScrollRow:(NSInteger)row range:(NSRange)range shiftCharactersAfter:(BOOL)shift;
 {
     NSAssert(range.location > 0, @"Range location must be provided in ANSI column form");
+    if (range.location > [self numberOfCharactersInScrollRow:row]) {
+        return;
+    }
+
     NSInteger numberOfCharactersBeingRemoved = MIN([self numberOfCharactersInScrollRow:row], range.location + range.length - 1) - range.location + 1;
     [self adjustNumberOfCharactersOnScrollRow:row byAmount:(-numberOfCharactersBeingRemoved)];
     [self.displayTextStorage deleteCharactersInRange:NSMakeRange([self characterOffsetUpToScrollRow:row] + range.location - 1, numberOfCharactersBeingRemoved)];
