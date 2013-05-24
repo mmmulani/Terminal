@@ -349,8 +349,7 @@
         } else if ([escapeSequence isEqualToString:@"\033[?1l"]) {
             self.cursorKeyMode = NO;
         } else if (escapeCode == 'm') {
-            // Character attributes escape sequence that is unsupported.
-            // We don't log this as it fires often and makes debugging other issues much more difficult.
+            [self handleCharacterAttributes:items];
         } else if (escapeCode == 'r') {
             NSUInteger bottom = [items count] >= 2 ? [items[1] intValue] : TERM_HEIGHT;
             NSUInteger top = [items count] >= 1 ? [items[0] intValue] : 1;
@@ -372,6 +371,76 @@
     if (action) {
         action.delegate = self;
         [action do];
+    }
+}
+
+- (void)handleCharacterAttributes:(NSArray *)items;
+{
+    if (items.count == 0) {
+        items = @[@0];
+    }
+
+    for (NSNumber *argument in items) {
+        switch ([argument integerValue]) {
+            case 0:
+                [self.characterAttributes removeAllObjects];
+                self.characterAttributes[NSFontAttributeName] = [NSFont userFixedPitchFontOfSize:[NSFont systemFontSize]];
+                break;
+            case 4:
+                self.characterAttributes[NSUnderlineStyleAttributeName] = @(NSUnderlineStyleSingle);
+                break;
+            case 24:
+                [self.characterAttributes removeObjectForKey:NSUnderlineStyleAttributeName];
+                break;
+            case 30:
+                self.characterAttributes[NSForegroundColorAttributeName] = [NSColor blackColor];
+                break;
+            case 31:
+                self.characterAttributes[NSForegroundColorAttributeName] = [NSColor redColor];
+                break;
+            case 32:
+                self.characterAttributes[NSForegroundColorAttributeName] = [NSColor greenColor];
+                break;
+            case 33:
+                self.characterAttributes[NSForegroundColorAttributeName] = [NSColor yellowColor];
+                break;
+            case 34:
+                self.characterAttributes[NSForegroundColorAttributeName] = [NSColor blueColor];
+                break;
+            case 35:
+                self.characterAttributes[NSForegroundColorAttributeName] = [NSColor magentaColor];
+                break;
+            case 36:
+                self.characterAttributes[NSForegroundColorAttributeName] = [NSColor cyanColor];
+                break;
+            case 37:
+                self.characterAttributes[NSForegroundColorAttributeName] = [NSColor whiteColor];
+                break;
+            case 40:
+                self.characterAttributes[NSBackgroundColorAttributeName] = [NSColor blackColor];
+                break;
+            case 41:
+                self.characterAttributes[NSBackgroundColorAttributeName] = [NSColor redColor];
+                break;
+            case 42:
+                self.characterAttributes[NSBackgroundColorAttributeName] = [NSColor greenColor];
+                break;
+            case 43:
+                self.characterAttributes[NSBackgroundColorAttributeName] = [NSColor yellowColor];
+                break;
+            case 44:
+                self.characterAttributes[NSBackgroundColorAttributeName] = [NSColor blueColor];
+                break;
+            case 45:
+                self.characterAttributes[NSBackgroundColorAttributeName] = [NSColor magentaColor];
+                break;
+            case 46:
+                self.characterAttributes[NSBackgroundColorAttributeName] = [NSColor cyanColor];
+                break;
+            case 47:
+                self.characterAttributes[NSBackgroundColorAttributeName] = [NSColor whiteColor];
+                break;
+        }
     }
 }
 
