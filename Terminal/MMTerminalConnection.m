@@ -245,8 +245,6 @@ void iconvFallback(const char *inbuf, size_t inbufsize, void (*write_replacement
 
 - (void)processFinished;
 {
-    NSLog(@"Process finished");
-
     dispatch_async(dispatch_get_main_queue(), ^{
         [self.terminalWindow processFinished];
     });

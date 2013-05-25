@@ -77,19 +77,8 @@
 
 - (void)updateWithANSIOutput;
 {
-    NSTextStorage *displayString = self.outputView.textStorage;
     NSUInteger cursorPositionByCharacters = self.task.cursorPositionByCharacters;
 
-    // If the process has finished, we remove a trailing newline if it exists.
-    if (self.task.finishedAt) {
-        if (displayString.length && [displayString.mutableString characterAtIndex:(displayString.length - 1)] == '\n') {
-            if (cursorPositionByCharacters == displayString.length) {
-                cursorPositionByCharacters--;
-            }
-            [displayString replaceCharactersInRange:NSMakeRange(displayString.length - 1, 1) withString:@""];
-        }
-    }
-    
     [self.outputView setSelectedRange:NSMakeRange(cursorPositionByCharacters, 0)];
 
     // Sometimes the NSViewFrameDidChangeNotification does not get issued, so we call it here to make sure that it gets sent.

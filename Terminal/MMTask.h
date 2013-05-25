@@ -51,6 +51,7 @@ typedef enum {
 - (void)handleUserInput:(NSString *)input;
 - (void)handleCursorKeyInput:(MMArrowKey)arrowKey;
 - (void)handleCommandOutput:(NSString *)output withVerbosity:(BOOL)verbosity;
+- (void)processFinished;
 
 // In some cases, the task does not have enough output to fill a terminal screen but we should still render the full screen.
 // (e.g. after we receive a clear escape sequence.)

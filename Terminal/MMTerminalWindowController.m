@@ -105,7 +105,7 @@
 - (void)processFinished;
 {
     MMTask *task = [self.tasks lastObject];
-    task.finishedAt = [NSDate date];
+    [task processFinished];
     self.running = NO;
 
     MMTaskCellViewController *controller = [self.taskViewControllers lastObject];

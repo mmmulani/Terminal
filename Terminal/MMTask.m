@@ -25,6 +25,7 @@
 @property NSMutableArray *characterCountsOnVisibleRows;
 @property NSMutableArray *scrollRowHasNewline;
 @property NSMutableDictionary *characterAttributes;
+@property NSInteger removedTrailingNewlineInScrollLine;
 
 @end
 
@@ -45,6 +46,7 @@
         [self.characterCountsOnVisibleRows addObject:@0];
         [self.scrollRowHasNewline addObject:@NO];
     }
+    self.removedTrailingNewlineInScrollLine = 0;
     self.currentRowOffset = 0;
     self.cursorPosition = MMPositionMake(1, 1);
     self.scrollMarginTop = 1;
@@ -74,6 +76,8 @@
 
 - (void)handleCommandOutput:(NSString *)output withVerbosity:(BOOL)verbosity;
 {
+    [self readdTrailingNewlineIfNecessary];
+
     [self.output appendString:output];
 
     NSString *outputToHandle = self.unreadOutput ? [self.unreadOutput stringByAppendingString:output] : output;
@@ -154,6 +158,8 @@
             i = firstAlphabeticIndex;
         }
     }
+
+    [self removeTrailingNewlineIfNecessary];
 }
 
 - (BOOL)shouldDrawFullTerminalScreen;
@@ -163,6 +169,40 @@
         (self.numberOfRowsOnScreen == TERM_HEIGHT &&
          ([self numberOfCharactersInScrollRow:TERM_HEIGHT] > 0 ||
           [self isScrollRowTerminatedInNewline:TERM_HEIGHT]));
+}
+
+- (void)readdTrailingNewlineIfNecessary;
+{
+    if (self.removedTrailingNewlineInScrollLine == 0) {
+        return;
+    }
+
+    [self setScrollRow:self.removedTrailingNewlineInScrollLine hasNewline:YES];
+    self.removedTrailingNewlineInScrollLine = 0;
+}
+
+- (void)removeTrailingNewlineIfNecessary;
+{
+    if (!self.finishedAt || self.removedTrailingNewlineInScrollLine != 0) {
+        return;
+    }
+
+    if (self.displayTextStorage.length > 0 && [[self.displayTextStorage attributedSubstringFromRange:NSMakeRange(self.displayTextStorage.length - 1, 1)].string isEqualToString:@"\n"]) {
+        for (NSInteger i = TERM_HEIGHT; i >= 1; i--) {
+            if ([self isScrollRowTerminatedInNewline:i]) {
+                self.removedTrailingNewlineInScrollLine = i;
+                [self setScrollRow:i hasNewline:NO];
+                break;
+            }
+        }
+    }
+}
+
+- (void)processFinished;
+{
+    self.finishedAt = [NSDate date];
+
+    [self removeTrailingNewlineIfNecessary];
 }
 
 # pragma mark - ANSI display methods

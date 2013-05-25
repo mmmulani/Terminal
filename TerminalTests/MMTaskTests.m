@@ -48,4 +48,16 @@ do {\
     STAssertEqualObjects(task.currentANSIDisplay.string, @"K", @"Broken escape sequence should not be handled twice");
 }
 
+- (void)testProcessFinished;
+{
+    MMTask *task = [MMTask new];
+    task.displayTextStorage = [NSTextStorage new];
+    [task handleCommandOutput:@"test\n" withVerbosity:NO];
+    STAssertEqualObjects(task.currentANSIDisplay.string, @"test\n", @"Newline should not be removed before process is finished");
+    [task processFinished];
+    STAssertEqualObjects(task.currentANSIDisplay.string, @"test", @"Newline should be removed after process is finished");
+    [task handleCommandOutput:@"test2\n" withVerbosity:NO];
+    STAssertEqualObjects(task.currentANSIDisplay.string, @"test\ntest2", @"Newline should be readded if task has to handle more output");
+}
+
 @end
