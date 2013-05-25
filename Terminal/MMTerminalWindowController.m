@@ -83,7 +83,9 @@
 {
     dispatch_async(dispatch_get_main_queue(), ^{
         MMTask *lastTask = [self.tasks lastObject];
+        [lastTask.displayTextStorage beginEditing];
         [lastTask handleCommandOutput:message withVerbosity:self.logAllCharacters];
+        [lastTask.displayTextStorage endEditing];
 
         if ([self.taskViewControllers count] == [self.tasks count]) {
             // Force the outputView to re-layout its text and then resize it accordingly.
