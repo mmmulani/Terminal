@@ -34,10 +34,15 @@
     // We either insert a completely blank line or a line ending with a newline character.
     // We insert a completely blank line if there is content after the lines to be inserted.
     BOOL fillWithNewlines =
-        (self.delegate.cursorPositionY + numberOfLinesToInsert <= self.delegate.numberOfRowsOnScreen) &&
-        [self.delegate numberOfCharactersInScrollRow:(self.delegate.cursorPositionY + numberOfLinesToInsert)] > 0;
+        (self.delegate.cursorPositionY + numberOfLinesToInsert < self.delegate.numberOfRowsOnScreen) &&
+        ([self.delegate numberOfCharactersInScrollRow:(self.delegate.cursorPositionY + numberOfLinesToInsert)] > 0 ||
+         [self.delegate isScrollRowTerminatedInNewline:(self.delegate.cursorPositionY + numberOfLinesToInsert)]);
     for (NSInteger i = 0; i < numberOfLinesToInsert; i++) {
         [self.delegate insertBlankLineAtScrollRow:self.delegate.cursorPositionY withNewline:fillWithNewlines];
+    }
+
+    if (self.delegate.numberOfRowsOnScreen == self.delegate.termHeight) {
+        [self.delegate setScrollRow:self.delegate.termHeight hasNewline:NO];
     }
 
     // Step 3.
@@ -66,9 +71,14 @@
     NSInteger newLineScrollRow = MIN(self.delegate.scrollMarginBottom - numberOfLinesToDelete, self.delegate.numberOfRowsOnScreen) + 1;
     BOOL fillWithNewlines =
         (self.delegate.cursorPositionY + numberOfLinesToDelete <= self.delegate.numberOfRowsOnScreen) &&
-        [self.delegate numberOfCharactersInScrollRow:(self.delegate.cursorPositionY + numberOfLinesToDelete)] > 0;
+         ([self.delegate numberOfCharactersInScrollRow:(self.delegate.cursorPositionY + numberOfLinesToDelete)] > 0 ||
+          [self.delegate isScrollRowTerminatedInNewline:(self.delegate.cursorPositionY + numberOfLinesToDelete)]);
     for (NSInteger i = 0; i < numberOfLinesToDelete; i++) {
         [self.delegate insertBlankLineAtScrollRow:newLineScrollRow withNewline:fillWithNewlines];
+    }
+
+    if (self.delegate.numberOfRowsOnScreen == self.delegate.termHeight) {
+        [self.delegate setScrollRow:self.delegate.termHeight hasNewline:NO];
     }
 
     [self.delegate setCursorToX:1 Y:self.delegate.cursorPositionY];

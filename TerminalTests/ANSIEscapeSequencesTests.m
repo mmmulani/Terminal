@@ -242,11 +242,14 @@ do {\
     CheckInputAgainstExpectedOutputWithExpectedCursor(@"abc\ndef\033[1;2H\033[1Lg", @"g\nabc\ndef", MMPositionMake(2, 1));
 
     CheckInputAgainstExpectedOutput(@"\033[24;1H12345678901234567890123456789012345678901234567890123456789012345678901234567890\033[10;1H\033[100L", @"\n\n\n\n\n\n\n\n\n");
-    CheckInputAgainstExpectedOutput(@"\033[24;1Habc\033[23;1H\033[1Ld", [[@"" stringByPaddingToLength:22 withString:@"\n" startingAtIndex:0] stringByAppendingString:@"d\n"]);
+    CheckInputAgainstExpectedOutput(@"\033[24;1Habc\033[23;1H\033[1Ld", [[@"" stringByPaddingToLength:22 withString:@"\n" startingAtIndex:0] stringByAppendingString:@"d"]);
     CheckInputAgainstExpectedOutput(@"\033[24;1Ha\033[1Lb", [[@"" stringByPaddingToLength:23 withString:@"\n" startingAtIndex:0] stringByAppendingString:@"b"]);
 
     // Make sure that nothing happens when we are not in the scroll region.
     CheckInputAgainstExpectedOutput(@"a\nb\nc\033[2;3r\033[1;1H\033[1L", @"a\nb\nc");
+
+    // Make sure that the bottom line doesn't inherit a newline character when it is pushed down by the insert line command.
+    CheckInputAgainstExpectedOutput(@"\033[23;1HA\n\033[1;1H\033[L", [[@"" stringByPaddingToLength:23 withString:@"\n" startingAtIndex:0] stringByAppendingString:@"A"]);
 }
 
 - (void)testDeleteLine;
