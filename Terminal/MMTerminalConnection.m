@@ -16,6 +16,7 @@
 #import "MMTerminalWindowController.h"
 #import "MMShared.h"
 #import "MMCommandLineArgumentsParser.h"
+#import "MMCommandGroup.h"
 
 #define CTRLKEY(c)   ((c)-'A'+1)
 
@@ -52,19 +53,22 @@
 - (void)runCommands:(NSString *)commandsText;
 {
     // TODO: Support multiple commands.
-    NSArray *commands = [MMCommandLineArgumentsParser parseCommandsFromCommandLine:commandsText];
+    NSArray *commandGroups = [MMCommandLineArgumentsParser commandGroupsFromCommandLine:commandsText];
 
-    if (commands.count > 1) {
-        MMLog(@"Discarded all commands past the first in: %@", commandsText);
-    }
     // TODO: Handle the case of no commands better. (Also detect it better.)
-    if (commands.count == 0) {
+    if (commandGroups.count == 0 || [commandGroups[0] commands].count == 0) {
         [self processFinished];
         return;
     }
 
+    if (commandGroups.count > 1 || [commandGroups[0] commands].count == 0) {
+        MMLog(@"Discarded all commands past the first in: %@", commandsText);
+    }
+
+    MMCommand *command = [commandGroups[0] commands][0];
+    NSArray *unescapedArguments = command.unescapedArguments;
     NSProxy *proxy = [[NSConnection connectionWithRegisteredName:[ConnectionShellName stringByAppendingFormat:@".%ld", (long)self.identifier] host:nil] rootProxy];
-    [proxy performSelector:@selector(executeCommand:) withObject:commands[0]];
+    [proxy performSelector:@selector(executeCommand:) withObject:unescapedArguments];
     [self.terminalWindow setRunning:YES];
 }
 

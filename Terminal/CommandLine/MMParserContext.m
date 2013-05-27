@@ -7,6 +7,7 @@
 //
 
 #import "MMParserContext.h"
+#import "MMCommandGroup.h"
 
 @implementation MMParserContext
 
@@ -132,14 +133,19 @@ NSInteger _currentPosition = 0;
         // TODO: Error handling.
         return nil;
     }
-    result = [self.scanner->result mutableCopy];
+    NSMutableArray *tokenEndings = [NSMutableArray array];
+    result = self.scanner->result;
     for (NSInteger i = 0; i < result.count; i++) {
-        NSMutableArray *command = [result[i] mutableCopy];
-        for (NSInteger j = 0; j < command.count; j++) {
-            NSString *token = command[j];
-            command[j] = _tokenEnds[[NSValue valueWithPointer:(__bridge const void *)token]];
+        MMCommandGroup *commandGroup = result[i];
+        for (NSInteger j = 0; j < commandGroup.commands.count; j++) {
+            NSMutableArray *commandEndings = [NSMutableArray array];
+            for (NSInteger k = 0; k < [[commandGroup.commands[j] arguments] count]; k++) {
+                NSString *token = [commandGroup.commands[j] arguments][k];
+                [commandEndings addObject:_tokenEnds[[NSValue valueWithPointer:(__bridge const void *)token]]];
+            }
+
+            [tokenEndings addObject:commandEndings];
         }
-        result[i] = command;
     }
     _storedObjects = [NSMutableArray array];
     _tokenEnds = [NSMutableDictionary dictionary];
@@ -147,7 +153,7 @@ NSInteger _currentPosition = 0;
     [self.stream close];
     self.stream = nil;
 
-    return result;
+    return tokenEndings;
 }
 
 @end

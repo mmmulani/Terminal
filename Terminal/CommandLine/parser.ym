@@ -1,5 +1,6 @@
 %{
 #import "MMParserContext.h"
+#import "MMCommandGroup.h"
 #include <stdio.h>
 %}
 
@@ -12,8 +13,9 @@
 %union { __unsafe_unretained id node; }
 
 %token WORD WHITESPACE SEMICOLON
+%token PIPE AMPERSAND DOUBLE_AMPERSAND GREATER_THAN LESS_THAN DOUBLE_PIPE
 
-%type<node> commands command WORD
+%type<node> command_groups command_group command WORD
 
 %{
 
@@ -28,20 +30,20 @@ int yylex(YYSTYPE* lvalp, YYLTYPE* llocp, void* scanner);
 %}
 
 %%
-start : commands {
+start : command_groups {
     context->result = $1;
 };
 
-commands : /* empty */ {
+command_groups : /* empty */ {
     NSMutableArray *array = [NSMutableArray array];
     [MMParserContext storeObject:array];
     $$ = array;
 }
-| command SEMICOLON commands {
+| command_group SEMICOLON command_groups {
     [$3 insertObject:$1 atIndex:0];
     $$ = $3;
 }
-| command {
+| command_group {
     NSMutableArray *array = [NSMutableArray array];
     [MMParserContext storeObject:array];
     [array insertObject:$1 atIndex:0];
@@ -49,19 +51,42 @@ commands : /* empty */ {
 }
 ;
 
+command_group : /* empty */ {
+    MMCommandGroup *commandGroup = [MMCommandGroup new];
+    [MMParserContext storeObject:commandGroup];
+    $$ = commandGroup;
+}
+| command PIPE command_group {
+    [$3 insertCommand:$1 withBinaryOperator:MMCommandOperatorPipe];
+    $$ = $3;
+}
+| command DOUBLE_AMPERSAND command_group {
+    [$3 insertCommand:$1 withBinaryOperator:MMCommandOperatorAnd];
+    $$ = $3;
+}
+| command DOUBLE_PIPE command_group {
+    [$3 insertCommand:$1 withBinaryOperator:MMCommandOperatorOr];
+    $$ = $3;
+}
+| command {
+    MMCommandGroup *commandGroup = [MMCommandGroup commandGroupWithSingleCommand:$1];
+    [MMParserContext storeObject:commandGroup];
+    $$ = commandGroup;
+}
+
 command : /* empty */ {
-    NSMutableArray *array = [NSMutableArray array];
-    [MMParserContext storeObject:array];
-    $$ = array;
+    MMCommand *command = [MMCommand new];
+    [MMParserContext storeObject:command];
+    $$ = command;
 }
 | WORD {
-    NSMutableArray *array = [NSMutableArray array];
-    [MMParserContext storeObject:array];
-    [array insertObject:$1 atIndex:0];
-    $$ = array;
+    MMCommand *command = [MMCommand new];
+    [MMParserContext storeObject:command];
+    [command insertArgumentAtFront:$1];
+    $$ = command;
 }
 | WORD command {
-    [$2 insertObject:$1 atIndex:0];
+    [$2 insertArgumentAtFront:$1];
     $$ = $2;
 }
 ;

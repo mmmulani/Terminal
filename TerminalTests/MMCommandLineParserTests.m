@@ -9,13 +9,15 @@
 #import "MMCommandLineParserTests.h"
 #import "MMParserContext.h"
 #import "MMCommandLineArgumentsParser.h"
+#import "MMCommandGroup.h"
 
 @implementation MMCommandLineParserTests
 
 #define CompareInputAgainstExpectedParsedOutput(input, output) \
 do {\
     id result = [[[MMParserContext alloc] init] parseString:input]; \
-    STAssertEqualObjects(result, output, @"Compared parser output to provided output."); \
+    id a2 = (output); \
+    STAssertEqualObjects([result valueForKey:@"textOnlyForm"], a2, @"Compared parser output to provided output."); \
 } while (0)
 
 #define CompareInputAgainstEscapedArgument(input, output) \
@@ -26,12 +28,20 @@ do {\
 
 - (void)testCommandSplitting;
 {
-    CompareInputAgainstExpectedParsedOutput(@"echo", @[@[@"echo"]]);
-    CompareInputAgainstExpectedParsedOutput(@";echo", (@[@[], @[@"echo"]]));
-    CompareInputAgainstExpectedParsedOutput(@";echo;", (@[@[], @[@"echo"]]));
-    CompareInputAgainstExpectedParsedOutput(@"ec\"ho\"", @[@[@"ec\"ho\""]]);
-    CompareInputAgainstExpectedParsedOutput(@"echo 1 2 3; test", (@[@[@"echo", @"1", @"2", @"3"], @[@"test"]]));
-    CompareInputAgainstExpectedParsedOutput(@"cp \"test file\" a.out", (@[@[@"cp", @"\"test file\"", @"a.out"]]));
+    CompareInputAgainstExpectedParsedOutput(@"echo", @[@[@[@"echo"]]]);
+    CompareInputAgainstExpectedParsedOutput(@";echo", (@[@[], @[@[@"echo"]]]));
+    CompareInputAgainstExpectedParsedOutput(@";echo;", (@[@[], @[@[@"echo"]]]));
+    CompareInputAgainstExpectedParsedOutput(@"ec\"ho\"", @[@[@[@"ec\"ho\""]]]);
+    CompareInputAgainstExpectedParsedOutput(@"echo 1 2 3; test", (@[@[@[@"echo", @"1", @"2", @"3"]], @[@[@"test"]]]));
+    CompareInputAgainstExpectedParsedOutput(@"cp \"test file\" a.out", (@[@[@[@"cp", @"\"test file\"", @"a.out"]]]));
+}
+
+- (void)testSemicolonHandling;
+{
+    CompareInputAgainstExpectedParsedOutput(@"echo 123 ; touch test", (@[@[@[@"echo", @"123"]], @[@[@"touch", @"test"]]]));
+    CompareInputAgainstExpectedParsedOutput(@"echo 123; touch test", (@[@[@[@"echo", @"123"]], @[@[@"touch", @"test"]]]));
+    CompareInputAgainstExpectedParsedOutput(@"echo 123 ;touch test", (@[@[@[@"echo", @"123"]], @[@[@"touch", @"test"]]]));
+    CompareInputAgainstExpectedParsedOutput(@"echo 123;touch test", (@[@[@[@"echo", @"123"]], @[@[@"touch", @"test"]]]));
 }
 
 - (void)testArgumentUnescaping;
@@ -44,6 +54,12 @@ do {\
     CompareInputAgainstEscapedArgument(@"\"\\xff\"", @"\u00ff");
     CompareInputAgainstEscapedArgument(@"t\"es\"t", @"test");
     CompareInputAgainstEscapedArgument(@"\"multiple words\"", @"multiple words");
+}
+
+- (void)testUnescapedArguments;
+{
+    NSArray *commands = [MMCommandLineArgumentsParser parseCommandsFromCommandLineWithoutEscaping:@"test 123 ; echo 456"];
+    STAssertEqualObjects(commands, (@[@[@"test", @"123"], @[@"echo", @"456"]]), @"");
 }
 
 - (void)testTokenEndings;

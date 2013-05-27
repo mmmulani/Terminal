@@ -8,26 +8,28 @@
 
 #import "MMCommandLineArgumentsParser.h"
 #import "MMParserContext.h"
+#import "MMCommandGroup.h"
 
 @implementation MMCommandLineArgumentsParser
 
-+ (NSArray *)parseCommandsFromCommandLine:(NSString *)commandLineText;
++ (NSArray *)commandGroupsFromCommandLine:(NSString *)commandLineText;
 {
-    // TODO: Support tilde expansion.
-    NSMutableArray *commands = [[[[MMParserContext alloc] init] parseString:commandLineText] mutableCopy];
-    for (NSInteger i = 0; i < commands.count; i++) {
-        NSMutableArray *command = [commands[i] mutableCopy];
-        for (NSInteger j = 0; j < command.count; j++) {
-            command[j] = [self unescapeArgument:command[j]];
-        }
-        commands[i] = command;
-    }
-    return commands;
+    return [[MMParserContext new] parseString:commandLineText];
 }
 
 + (NSArray *)parseCommandsFromCommandLineWithoutEscaping:(NSString *)commandLineText;
 {
-    return [[[MMParserContext alloc] init] parseString:commandLineText];
+    // This method is only used by the completion engine, which doesn't care about the idea of command groups.
+    // As such, we flatten command groups into one array.
+    NSArray *commandGroups = [[[MMParserContext alloc] init] parseString:commandLineText];
+    NSMutableArray *commandStrings = [NSMutableArray array];
+    for (MMCommandGroup *commandGroup in commandGroups) {
+        for (MMCommand *command in commandGroup.commands) {
+            [commandStrings addObject:command.arguments];
+        }
+    }
+
+    return commandStrings;
 }
 
 + (NSArray *)tokenEndingsFromCommandLine:(NSString *)commandLineText;

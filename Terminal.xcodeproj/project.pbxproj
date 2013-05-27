@@ -42,6 +42,7 @@
 		91C7D984173ECE0900875974 /* MMCommandsTextView.m in Sources */ = {isa = PBXBuildFile; fileRef = 91C7D983173ECE0900875974 /* MMCommandsTextView.m */; };
 		91C7D987173F250300875974 /* MMCompletionEngine.m in Sources */ = {isa = PBXBuildFile; fileRef = 91C7D986173F250300875974 /* MMCompletionEngine.m */; };
 		91C7D98D1740793800875974 /* libiconv.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 91C7D9881740575700875974 /* libiconv.dylib */; };
+		91E4A26A1753F9EF00EFDDBE /* MMCommandGroup.m in Sources */ = {isa = PBXBuildFile; fileRef = 91E4A2691753F9EF00EFDDBE /* MMCommandGroup.m */; };
 		91E4C02C1742C65400062EF5 /* Icon.icns in Resources */ = {isa = PBXBuildFile; fileRef = 91E4C02B1742C65400062EF5 /* Icon.icns */; };
 		91E4C0601745682800062EF5 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 919BA9B016C875C40091CB1B /* Foundation.framework */; };
 		91E4C0631745682800062EF5 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 91E4C0621745682800062EF5 /* main.m */; };
@@ -184,6 +185,8 @@
 		91C7D985173F250300875974 /* MMCompletionEngine.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = MMCompletionEngine.h; path = CommandLine/MMCompletionEngine.h; sourceTree = "<group>"; };
 		91C7D986173F250300875974 /* MMCompletionEngine.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = MMCompletionEngine.m; path = CommandLine/MMCompletionEngine.m; sourceTree = "<group>"; };
 		91C7D9881740575700875974 /* libiconv.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libiconv.dylib; path = usr/lib/libiconv.dylib; sourceTree = SDKROOT; };
+		91E4A2681753F9EF00EFDDBE /* MMCommandGroup.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = MMCommandGroup.h; path = CommandLine/MMCommandGroup.h; sourceTree = "<group>"; };
+		91E4A2691753F9EF00EFDDBE /* MMCommandGroup.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = MMCommandGroup.m; path = CommandLine/MMCommandGroup.m; sourceTree = "<group>"; };
 		91E4C02B1742C65400062EF5 /* Icon.icns */ = {isa = PBXFileReference; lastKnownFileType = image.icns; path = Icon.icns; sourceTree = "<group>"; };
 		91E4C05F1745682800062EF5 /* mmm.ProcessMonitor */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = mmm.ProcessMonitor; sourceTree = BUILT_PRODUCTS_DIR; };
 		91E4C0621745682800062EF5 /* main.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
@@ -283,6 +286,8 @@
 				912605501739E1EF001962AE /* MMCommandLineArgumentsParser.m */,
 				91C7D985173F250300875974 /* MMCompletionEngine.h */,
 				91C7D986173F250300875974 /* MMCompletionEngine.m */,
+				91E4A2681753F9EF00EFDDBE /* MMCommandGroup.h */,
+				91E4A2691753F9EF00EFDDBE /* MMCommandGroup.m */,
 			);
 			name = "Command line input";
 			sourceTree = "<group>";
@@ -666,6 +671,7 @@
 				913CC1CD174D2D8100E002AD /* MMErasingActions.m in Sources */,
 				913CC1D1174D703D00E002AD /* MMLineManipulationActions.m in Sources */,
 				913CC1D5174DA22500E002AD /* MMIndexActions.m in Sources */,
+				91E4A26A1753F9EF00EFDDBE /* MMCommandGroup.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
