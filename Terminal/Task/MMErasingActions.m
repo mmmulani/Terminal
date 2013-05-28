@@ -45,8 +45,30 @@
 
 - (void)do;
 {
-    // TODO: Support other types of clearing the screen.
-    if ([[self defaultedArgumentAtIndex:0] integerValue] == 2) {
+    if ([[self defaultedArgumentAtIndex:0] integerValue] == 0) {
+        // Erase at and below cursor.
+        for (NSInteger i = self.delegate.cursorPositionY + 1; i <= self.delegate.numberOfRowsOnScreen; ) {
+            [self.delegate removeLineAtScrollRow:(self.delegate.cursorPositionY + 1)];
+        }
+        [self.delegate setScrollRow:self.delegate.cursorPositionY hasNewline:NO];
+        NSInteger numberOfCharactersToRemove = MAX(0, [self.delegate numberOfCharactersInScrollRow:self.delegate.cursorPositionY] - self.delegate.cursorPositionX + 1);
+        [self.delegate removeCharactersInScrollRow:self.delegate.cursorPositionY range:NSMakeRange(self.delegate.cursorPositionX, numberOfCharactersToRemove) shiftCharactersAfter:NO];
+    } else if ([[self defaultedArgumentAtIndex:0] integerValue] == 1) {
+        // Erase at and above cursor.
+        BOOL fillWithNewlines =
+            [self.delegate numberOfCharactersInScrollRow:self.delegate.cursorPositionY] > self.delegate.cursorPositionY ||
+            [self.delegate isScrollRowTerminatedInNewline:self.delegate.cursorPositionY] ||
+            (self.delegate.cursorPositionY < self.delegate.termHeight && ([self.delegate numberOfCharactersInScrollRow:(self.delegate.cursorPositionY + 1)] > 0 || [self.delegate isScrollRowTerminatedInNewline:(self.delegate.cursorPositionY + 1)]));
+        for (NSInteger i = 1; i < self.delegate.cursorPositionY; i++) {
+            [self.delegate removeCharactersInScrollRow:i range:NSMakeRange(1, [self.delegate numberOfCharactersInScrollRow:i]) shiftCharactersAfter:NO];
+            [self.delegate setScrollRow:i hasNewline:fillWithNewlines];
+        }
+        [self.delegate removeCharactersInScrollRow:self.delegate.cursorPositionY range:NSMakeRange(1, MIN(self.delegate.cursorPositionX, [self.delegate numberOfCharactersInScrollRow:self.delegate.cursorPositionY])) shiftCharactersAfter:NO];
+        if (self.delegate.cursorPositionX == self.delegate.termWidth) {
+            [self.delegate setScrollRow:self.delegate.cursorPositionY hasNewline:fillWithNewlines];
+        }
+    } else if ([[self defaultedArgumentAtIndex:0] integerValue] == 2) {
+        // Erase entire screen.
         for (NSInteger i = 1; i <= self.delegate.termHeight; i++) {
             [self.delegate removeCharactersInScrollRow:i range:NSMakeRange(1, [self.delegate numberOfCharactersInScrollRow:i]) shiftCharactersAfter:NO];
             [self.delegate setScrollRow:i hasNewline:NO];

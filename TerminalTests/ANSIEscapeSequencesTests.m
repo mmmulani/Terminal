@@ -74,6 +74,17 @@ do {\
 
 - (void)testClearingScreen;
 {
+    CheckInputAgainstExpectedOutput(@"1\n2\n345\033[3;2H\033[J", @"1\n2\n3");
+
+    CheckInputAgainstExpectedOutput(@"1\n2\n345\033[3;2H\033[0J", @"1\n2\n3");
+    CheckInputAgainstExpectedOutput(@"1\n2\n3\n4\n5\n\033[2;1H\033[0J", @"1\n");
+    CheckInputAgainstExpectedOutput(@"\033[0J\n\n", @"\n\n");
+
+    CheckInputAgainstExpectedOutput(@"1\n2\033[1J_", @"\n _");
+    CheckInputAgainstExpectedOutput(@"1\n2\033[2;1H\033[1J", @"");
+    CheckInputAgainstExpectedOutput(@"1\n2\n3\033[2;1H\033[1J", @"\n\n3");
+    CheckInputAgainstExpectedOutput([[@"" stringByPaddingToLength:82 withString:@" " startingAtIndex:0] stringByAppendingString:@"\033[1;80H\033[1J"], @"\n  ");
+
     CheckInputAgainstExpectedOutputWithExpectedCursor(@"\033[2J", @"", MMPositionMake(1,1));
     CheckInputAgainstExpectedOutputWithExpectedCursor(@"_\033[2J", @"", MMPositionMake(2,1));
     CheckInputAgainstExpectedOutputWithExpectedCursor(@"_\033[2Ja", @" a", MMPositionMake(3,1));

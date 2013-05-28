@@ -243,18 +243,24 @@
 
 - (void)addNewline;
 {
+    [self createBlankLinesUpToCursor];
+
     [self setScrollRow:self.cursorPosition.y hasNewline:YES];
     self.cursorPosition = MMPositionMake(1, self.cursorPosition.y + 1);
 
     [self checkIfExceededLastLineAndObeyScrollMargin:YES];
 }
 
-- (void)fillCurrentScreenWithSpacesUpToCursor;
+- (void)createBlankLinesUpToCursor;
 {
-    // Create blank lines up to the cursor.
     for (NSInteger i = self.numberOfRowsOnScreen; i < self.cursorPosition.y; i++) {
         [self insertBlankLineAtScrollRow:(self.numberOfRowsOnScreen + 1) withNewline:NO];
     }
+}
+
+- (void)fillCurrentScreenWithSpacesUpToCursor;
+{
+    [self createBlankLinesUpToCursor];
 
     for (NSInteger i = self.cursorPosition.y - 1; i > 0; i--) {
         if ([self numberOfCharactersInScrollRow:i] > 0 || [self isScrollRowTerminatedInNewline:i]) {
