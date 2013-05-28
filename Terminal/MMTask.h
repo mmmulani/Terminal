@@ -33,7 +33,7 @@ typedef enum {
 
 @class MMTerminalConnection;
 
-@interface MMTask : NSObject <MMANSIActionDelegate>
+@interface MMTask : NSObject <MMANSIActionDelegate, NSCoding>
 
 @property (strong) NSMutableString *output;
 @property NSTextStorage *displayTextStorage;

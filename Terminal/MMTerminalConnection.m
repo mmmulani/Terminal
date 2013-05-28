@@ -23,6 +23,7 @@
 @interface MMTerminalConnection ()
 
 @property NSConnection *connectionToSelf;
+@property NSString *directoryToStartIn;
 
 @end
 
@@ -40,10 +41,17 @@
     return self;
 }
 
-- (void)createTerminalWindow;
+- (void)createTerminalWindowWithState:(NSCoder *)state completionHandler:(void (^)(NSWindow *, NSError *))completionHandler;
 {
-    self.terminalWindow = [[MMTerminalWindowController alloc] initWithTerminalConnection:self];
+    self.terminalWindow = [[MMTerminalWindowController alloc] initWithTerminalConnection:self withState:state completionHandler:completionHandler];
     [self.terminalWindow showWindow:nil];
+    if (state) {
+        self.directoryToStartIn = [state decodeObjectForKey:@"currentDirectory"];
+        completionHandler(self.terminalWindow.window, NULL);
+    }
+    if (!self.directoryToStartIn) {
+        self.directoryToStartIn = NSHomeDirectory();
+    }
 
     self.connectionToSelf = [NSConnection serviceConnectionWithName:[ConnectionTerminalName stringByAppendingFormat:@".%ld", (long)self.identifier] rootObject:self];
 
@@ -121,6 +129,10 @@
     char ttyname[PATH_MAX];
     pid_t pid;
     int fd;
+    const char *directory = NULL;
+    if (self.directoryToStartIn) {
+        directory = [self.directoryToStartIn cStringUsingEncoding:NSUTF8StringEncoding];
+    }
     pid = forkpty(&fd, ttyname, &term, &win);
 
     // From here until we start the Shell, we must make sure to not get the child process in deadlock.
@@ -130,6 +142,10 @@
         // Running as the shell.
         // These pipes are written from the shell's point-of-view.
         // That is, the shell intends to write into the writepipe, and read from the readpipe.
+
+        if (directory) {
+            chdir(directory);
+        }
 
         syslog(LOG_NOTICE, "Starting %s", args[0]);
         execv(args[0], args);

@@ -587,4 +587,31 @@
     [self.scrollRowHasNewline setObject:@(hasNewline) atIndexedSubscript:(row - 1)];
 }
 
+# pragma mark - NSCoding
+
+- (void)encodeWithCoder:(NSCoder *)coder;
+{
+    [coder encodeObject:self.startedAt forKey:MMSelfKey(startedAt)];
+    [coder encodeObject:self.finishedAt forKey:MMSelfKey(finishedAt)];
+    [coder encodeObject:self.displayTextStorage forKey:MMSelfKey(displayTextStorage)];
+    [coder encodeObject:self.command forKey:MMSelfKey(command)];
+    [coder encodeInteger:self.cursorPositionByCharacters forKey:MMSelfKey(cursorPositionByCharacters)];
+}
+
+- (id)initWithCoder:(NSCoder *)decoder;
+{
+    self = [self init];
+    if (!self) {
+        return nil;
+    }
+
+    self.startedAt = [decoder decodeObjectForKey:MMSelfKey(startedAt)];
+    self.finishedAt = [decoder decodeObjectForKey:MMSelfKey(finishedAt)];
+    self.displayTextStorage = [decoder decodeObjectForKey:MMSelfKey(displayTextStorage)];
+    self.command = [decoder decodeObjectForKey:MMSelfKey(command)];
+    self.characterOffsetToScreen = [decoder decodeIntegerForKey:MMSelfKey(cursorPositionByCharacters)];
+
+    return self;
+}
+
 @end

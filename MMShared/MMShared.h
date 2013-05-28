@@ -11,6 +11,8 @@ FOUNDATION_EXPORT NSString *const ConnectionTerminalName;
 
 FOUNDATION_EXPORT void MMLog(NSString *format, ...) NS_FORMAT_FUNCTION(1,2);
 
+#define MMSelfKey(key) ((NO && self.key) ? nil : @#key)
+
 @interface MMShared : NSObject
 
 @end

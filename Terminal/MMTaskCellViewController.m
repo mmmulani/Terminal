@@ -36,6 +36,10 @@
 {
     [super loadView];
 
+    if (self.task.displayTextStorage) {
+        [self.outputView.layoutManager replaceTextStorage:self.task.displayTextStorage];
+    }
+
     [self.label setStringValue:[NSString stringWithFormat:@"Ran %@", self.task.command]];
 
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(outputFrameChanged:) name:NSViewFrameDidChangeNotification object:self.outputView];

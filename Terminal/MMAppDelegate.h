@@ -11,7 +11,7 @@
 #import "MMTerminalWindowController.h"
 #import "MMDebugMessagesWindowController.h"
 
-@interface MMAppDelegate : NSObject <NSApplicationDelegate, NSTextFieldDelegate>
+@interface MMAppDelegate : NSObject <NSApplicationDelegate, NSTextFieldDelegate, NSWindowRestoration>
 
 @property (strong) MMDebugMessagesWindowController *debugWindow;
 @property (strong) NSConnection *terminalAppConnection;

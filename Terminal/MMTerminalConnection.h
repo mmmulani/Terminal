@@ -20,7 +20,7 @@
 
 - (id)initWithIdentifier:(NSInteger)identifier;
 
-- (void)createTerminalWindow;
+- (void)createTerminalWindowWithState:(NSCoder *)state completionHandler:(void (^)(NSWindow *, NSError *))completionHandler;
 
 - (void)handleTerminalInput:(NSString *)input;
 - (void)runCommands:(NSString *)commandsText;

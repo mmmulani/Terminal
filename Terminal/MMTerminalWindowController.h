@@ -28,7 +28,7 @@
 @property BOOL logAllCharacters;
 @property (readonly) NSInteger keyboardShortcut;
 
-- (id)initWithTerminalConnection:(MMTerminalConnection *)terminalConnection;
+- (id)initWithTerminalConnection:(MMTerminalConnection *)terminalConnection withState:(NSCoder *)state completionHandler:(void (^)(NSWindow *, NSError *))completionHandler;
 
 - (void)handleOutput:(NSString *)message;
 - (void)processFinished;

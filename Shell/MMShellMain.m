@@ -31,8 +31,6 @@
     self.terminalConnection = [NSConnection connectionWithRegisteredName:[ConnectionTerminalName stringByAppendingFormat:@".%ld", (long)self.identifier] host:nil];
     MMLog(@"Shell connection: %@", self.shellConnection);
 
-    [[NSFileManager defaultManager] changeCurrentDirectoryPath:NSHomeDirectory()];
-
     NSDictionary *environmentVariables =
     @{
       @"TERM": @"xterm-256color",

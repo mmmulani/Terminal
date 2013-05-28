@@ -29,18 +29,24 @@
     }
 
     self.unassignedWindowShortcuts = [NSMutableArray arrayWithArray:@[@1, @2, @3, @4, @5, @6, @7, @8, @9, @0]];
+    self.terminalConnections = [NSMutableArray array];
 
     return self;
 }
 
 - (IBAction)createNewTerminal:(id)sender;
 {
+    [self createNewTerminalWithState:nil completionHandler:nil];
+}
+
+- (void)createNewTerminalWithState:(NSCoder *)state completionHandler:(void (^)(NSWindow *, NSError *))completionHandler;
+{
     static NSInteger uniqueIdentifier = 0;
     uniqueIdentifier++;
 
     MMTerminalConnection *terminalConnection = [[MMTerminalConnection alloc] initWithIdentifier:uniqueIdentifier];
     [self.terminalConnections addObject:terminalConnection];
-    [terminalConnection createTerminalWindow];
+    [terminalConnection createTerminalWindowWithState:state completionHandler:completionHandler];
 }
 
 - (NSInteger)uniqueWindowShortcut;
@@ -118,14 +124,14 @@
 
 - (void)applicationDidFinishLaunching:(NSNotification *)aNotification;
 {
-    self.terminalConnections = [NSMutableArray array];
-
     self.terminalAppConnection = [NSConnection serviceConnectionWithName:ConnectionTerminalName rootObject:self];
+
+    if ([NSApp windows].count == 0) {
+        [self createNewTerminal:nil];
+    }
 
     self.debugWindow = [[MMDebugMessagesWindowController alloc] init];
     [self.debugWindow showWindow:nil];
-
-    [self createNewTerminal:nil];
 
 #ifdef DEBUG
     // F-Script can be found here: http://www.fscript.org/download/download.htm
@@ -136,11 +142,22 @@
 #endif
 
 //    [self startProcessMonitor];
+
+    if (self.terminalConnections.count > 0) {
+        [[(MMTerminalConnection *)self.terminalConnections[0] terminalWindow].window makeKeyWindow];
+    }
 }
 
 - (void)_logMessage:(NSString *)message;
 {
     [self.debugWindow addDebugMessage:message];
+}
+
+# pragma mark - NSWindowRestoration
+
++ (void)restoreWindowWithIdentifier:(NSString *)identifier state:(NSCoder *)state completionHandler:(void (^)(NSWindow *, NSError *))completionHandler;
+{
+    [[NSApp delegate] createNewTerminalWithState:state completionHandler:completionHandler];
 }
 
 @end

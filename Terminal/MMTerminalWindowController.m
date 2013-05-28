@@ -35,7 +35,7 @@
 
 @implementation MMTerminalWindowController
 
-- (id)initWithTerminalConnection:(MMTerminalConnection *)terminalConnection;
+- (id)initWithTerminalConnection:(MMTerminalConnection *)terminalConnection withState:(NSCoder *)state completionHandler:(void (^)(NSWindow *, NSError *))completionHandler;
 {
     self = [self initWithWindowNibName:@"MMTerminalWindow"];
 
@@ -44,6 +44,20 @@
     self.commandHistoryIndex = 0;
     self.directoriesBeingWatched = [NSMutableDictionary dictionary];
     self.terminalConnection = terminalConnection;
+    self.window.restorationClass = [[NSApp delegate] class];
+
+    if (state) {
+        self.tasks = [state decodeObjectForKey:MMSelfKey(tasks)];
+        if (!self.tasks) {
+            self.tasks = [NSMutableArray array];
+        }
+        [self _prepareViewControllersUntilRow:(self.tasks.count - 1)];
+        [NSAnimationContext beginGrouping];
+        [[NSAnimationContext currentContext] setDuration:0.0];
+        [self.tableView insertRowsAtIndexes:[NSIndexSet indexSetWithIndexesInRange:NSMakeRange(0, self.tasks.count)] withAnimation:NSTableViewAnimationEffectNone];
+        [self.tableView noteHeightOfRowsWithIndexesChanged:[NSIndexSet indexSetWithIndexesInRange:NSMakeRange(0, self.tasks.count)]];
+        [NSAnimationContext endGrouping];
+    }
 
     return self;
 }
@@ -65,6 +79,8 @@
     // Since we are required to update the MainMenu with keyboard shortcuts after the title changes, we set it in |updateTitle|.
 
     [self.window makeFirstResponder:self.commandInput];
+
+    [self invalidateRestorableState];
 }
 
 - (void)dealloc;
@@ -129,6 +145,8 @@
 
     [self.commandControlsLayoutConstraint.animator setConstant:self.originalCommandControlsLayoutConstraintConstant];
     [NSAnimationContext endGrouping];
+
+    [self invalidateRestorableState];
 }
 
 - (void)directoryChangedTo:(NSString *)newPath;
@@ -416,6 +434,14 @@ static void directoryWatchingCallback(CFFileDescriptorRef kqRef, CFOptionFlags c
     MMAppDelegate *appDelegate = [NSApp delegate];
     [appDelegate resignWindowShortcut:self.keyboardShortcut];
     [appDelegate updateWindowMenu];
+}
+
+# pragma mark - NSWindowRestoration
+
+- (void)encodeRestorableStateWithCoder:(NSCoder *)coder;
+{
+    [coder encodeObject:self.tasks forKey:MMSelfKey(tasks)];
+    [coder encodeObject:self.currentDirectory forKey:MMSelfKey(currentDirectory)];
 }
 
 @end
