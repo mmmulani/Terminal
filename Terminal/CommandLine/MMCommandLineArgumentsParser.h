@@ -13,7 +13,5 @@
 + (NSArray *)commandGroupsFromCommandLine:(NSString *)commandLineText;
 + (NSArray *)parseCommandsFromCommandLineWithoutEscaping:(NSString *)commandLineText;
 + (NSArray *)tokenEndingsFromCommandLine:(NSString *)commandLineText;
-+ (NSString *)escapeArgument:(NSString *)argument;
-+ (NSString *)unescapeArgument:(NSString *)argument;
 
 @end

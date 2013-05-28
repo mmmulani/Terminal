@@ -20,7 +20,7 @@ typedef enum {
     MMCommandOperatorOr,
 } MMCommandOperator;
 
-@interface MMCommand : NSObject
+@interface MMCommand : NSObject <NSCoding>
 
 @property NSMutableArray *arguments;
 @property MMSourceType standardInputSourceType;
@@ -30,8 +30,15 @@ typedef enum {
 @property MMSourceType standardErrorSourceType;
 @property id standardError;
 
-- (void)insertArgumentAtFront:(NSString *)argument;
++ (NSString *)escapeArgument:(NSString *)argument;
++ (NSString *)unescapeArgument:(NSString *)argument;
+
 - (NSArray *)unescapedArguments;
+
+// These methods should only be called from the yacc-generated parser.
+- (void)insertArgumentAtFront:(NSString *)argument;
+- (void)treatFirstArgumentAsStandardOutput;
+- (void)treatFirstArgumentAsStandardInput;
 
 @end
 
@@ -41,7 +48,8 @@ typedef enum {
 
 + (MMCommandGroup *)commandGroupWithSingleCommand:(MMCommand *)command;
 
-- (void)insertCommand:(MMCommand *)command withBinaryOperator:(MMCommandOperator)operator;
 - (NSArray *)textOnlyForm;
+
+- (void)insertCommand:(MMCommand *)command withBinaryOperator:(MMCommandOperator)operator;
 
 @end

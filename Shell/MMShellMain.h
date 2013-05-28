@@ -8,6 +8,8 @@
 
 #import <Foundation/Foundation.h>
 
+@class MMCommand;
+
 @interface MMShellMain : NSObject
 
 @property (strong) NSConnection *shellConnection;
@@ -17,6 +19,6 @@
 + (MMShellMain *)sharedApplication;
 
 - (void)startWithIdentifier:(NSInteger)identifier;
-- (void)executeCommand:(NSArray *)commandArguments;
+- (void)executeCommand:(MMCommand *)command;
 
 @end

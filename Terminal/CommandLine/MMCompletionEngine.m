@@ -10,6 +10,7 @@
 #import "MMTerminalConnection.h"
 #import "MMCommandLineArgumentsParser.h"
 #import "MMCommandsTextView.h"
+#import "MMCommandGroup.h"
 
 @interface MMCompletionEngine ()
 
@@ -103,8 +104,8 @@
     // We want to separate the argument into the path prefix and the path being completed.
     NSRegularExpression *pathComponentRegEx = [NSRegularExpression regularExpressionWithPattern:@"((\\.)|[^/])*$" options:0 error:NULL];
     NSRange partialRange = [pathComponentRegEx rangeOfFirstMatchInString:argument options:0 range:NSMakeRange(0, argument.length)];
-    NSString *partialPrefix = [MMCommandLineArgumentsParser unescapeArgument:[argument substringToIndex:partialRange.location]];
-    NSString *partial = [MMCommandLineArgumentsParser unescapeArgument:[argument substringWithRange:partialRange]];
+    NSString *partialPrefix = [MMCommand unescapeArgument:[argument substringToIndex:partialRange.location]];
+    NSString *partial = [MMCommand unescapeArgument:[argument substringWithRange:partialRange]];
     self.rangeForPartialToBeCompleted = NSMakeRange(self.rangeForTokenUnderCursor.location + partialRange.location, partialRange.length);
 
     // Step 3.
@@ -117,7 +118,7 @@
     // Step 4.
     self.escapedCompletionsForPartial = [NSMutableDictionary dictionary];
     for (NSString *completion in self.displayableCompletionsForPartial) {
-        self.escapedCompletionsForPartial[completion] = [MMCommandLineArgumentsParser escapeArgument:completion];
+        self.escapedCompletionsForPartial[completion] = [MMCommand escapeArgument:completion];
     }
 }
 

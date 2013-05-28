@@ -22,7 +22,7 @@ do {\
 
 #define CompareInputAgainstEscapedArgument(input, output) \
 do {\
-    NSString *result = [MMCommandLineArgumentsParser unescapeArgument:input]; \
+    NSString *result = [MMCommand unescapeArgument:input]; \
     STAssertEqualObjects(result, output, @"Compared parser output to provided output."); \
 } while (0)
 

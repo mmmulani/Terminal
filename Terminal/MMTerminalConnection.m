@@ -66,9 +66,8 @@
     }
 
     MMCommand *command = [commandGroups[0] commands][0];
-    NSArray *unescapedArguments = command.unescapedArguments;
     NSProxy *proxy = [[NSConnection connectionWithRegisteredName:[ConnectionShellName stringByAppendingFormat:@".%ld", (long)self.identifier] host:nil] rootProxy];
-    [proxy performSelector:@selector(executeCommand:) withObject:unescapedArguments];
+    [proxy performSelector:@selector(executeCommand:) withObject:command];
     [self.terminalWindow setRunning:YES];
 }
 

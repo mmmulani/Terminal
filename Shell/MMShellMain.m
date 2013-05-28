@@ -8,6 +8,7 @@
 
 #import "MMShellMain.h"
 #import "MMShared.h"
+#import "MMCommandGroup.h"
 
 @implementation MMShellMain
 
@@ -47,17 +48,19 @@
     [[NSRunLoop mainRunLoop] run];
 }
 
-- (void)executeCommand:(NSArray *)commandArguments;
+- (void)executeCommand:(MMCommand *)command;
 {
     dispatch_async(dispatch_get_main_queue(), ^{
-        [self _executeCommand:commandArguments];
+        [self _executeCommand:command];
     });
 
     return;
 }
 
-- (void)_executeCommand:(NSArray *)commandArguments;
+- (void)_executeCommand:(MMCommand *)command;
 {
+    NSArray *commandArguments = command.unescapedArguments;
+
     const char *argv[commandArguments.count + 1];
     for (NSUInteger i = 0; i < commandArguments.count; i++) {
         argv[i] = [commandArguments[i] cStringUsingEncoding:NSUTF8StringEncoding];

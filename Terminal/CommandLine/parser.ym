@@ -89,4 +89,12 @@ command : /* empty */ {
     [$2 insertArgumentAtFront:$1];
     $$ = $2;
 }
+| GREATER_THAN command {
+    [$2 treatFirstArgumentAsStandardOutput];
+    $$ = $2;
+}
+| LESS_THAN command {
+    [$2 treatFirstArgumentAsStandardInput];
+    $$ = $2;
+}
 ;
