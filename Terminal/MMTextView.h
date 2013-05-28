@@ -9,9 +9,9 @@
 #import <Cocoa/Cocoa.h>
 
 @protocol MMTextViewDelegate <NSTextViewDelegate>
-@optional
 
 - (void)handleKeyPress:(NSEvent *)keyEvent;
+- (void)handleInput:(NSString *)input;
 
 @end
 

@@ -23,6 +23,4 @@
 - (void)updateWithANSIOutput;
 - (IBAction)saveTranscript:(id)sender;
 
-- (void)handleKeyPress:(NSEvent *)keyEvent;
-
 @end

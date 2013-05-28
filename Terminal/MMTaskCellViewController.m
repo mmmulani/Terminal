@@ -111,4 +111,9 @@
     }
 }
 
+- (void)handleInput:(NSString *)input;
+{
+    [self.task handleUserInput:input];
+}
+
 @end
