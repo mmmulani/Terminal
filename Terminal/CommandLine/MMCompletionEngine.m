@@ -66,16 +66,14 @@
 {
     // TODO: Handle a tab completion like: cd "Calibre<cursor here><TAB> ; echo test
     // Maybe we can accomplish this by taking a substring up to the cursor and parsing with a special "partial" rule.
-    NSArray *commands = [MMCommandLineArgumentsParser parseCommandsFromCommandLineWithoutEscaping:self.commandsTextView.string];
+    NSArray *tokens = [MMCommandLineArgumentsParser tokensFromCommandLineWithoutEscaping:self.commandsTextView.string];
     NSArray *tokenEndings = [MMCommandLineArgumentsParser tokenEndingsFromCommandLine:self.commandsTextView.string];
 
-    for (NSInteger i = 0; i < commands.count; i++) {
-        for (NSInteger j = 0; j < [commands[i] count]; j++) {
-            NSInteger tokenEnd = [tokenEndings[i][j] integerValue];
-            NSInteger tokenStart = tokenEnd - [commands[i][j] length];
-            if (tokenEnd >= position && tokenStart <= position) {
-                return NSMakeRange(tokenStart, position - tokenStart);
-            }
+    for (NSInteger i = 0; i < tokens.count; i++) {
+        NSInteger tokenEnd = [tokenEndings[i] integerValue];
+        NSInteger tokenStart = tokenEnd - [tokens[i] length];
+        if (tokenEnd >= position && tokenStart <= position) {
+            return NSMakeRange(tokenStart, position - tokenStart);
         }
     }
 

@@ -75,6 +75,17 @@
         return;
     }
 
+    int fdInput = -1;
+    int fdOutput = -1;
+    int fdError = -1;
+    if (command.standardInputSourceType == MMSourceTypeFile) {
+        fdInput = open([command.standardInput cStringUsingEncoding:NSUTF8StringEncoding], O_RDONLY);
+    }
+    if (command.standardOutputSourceType == MMSourceTypeFile) {
+        // TODO: Do not truncate the file if it is specified as input or somehow handle the situation better.
+        fdOutput = open([command.standardOutput cStringUsingEncoding:NSUTF8StringEncoding], O_CREAT | O_WRONLY | O_TRUNC);
+    }
+
     MMLog(@"Running %s", argv[0]);
 
     pid_t child_pid;
@@ -82,6 +93,19 @@
     MMLog(@"Child pid: %d", child_pid);
     if (child_pid == 0) {
         // This will run the program.
+
+        if (fdInput != -1) {
+            dup2(fdInput, STDIN_FILENO);
+            close(fdInput);
+        }
+        if (fdOutput != -1) {
+            dup2(fdOutput, STDOUT_FILENO);
+            close(fdOutput);
+        }
+        if (fdError != -1) {
+            dup2(fdError, STDERR_FILENO);
+            close(fdError);
+        }
 
         int status = execvp(argv[0],(char* const*)argv);
 
@@ -92,6 +116,16 @@
 
     if (signal(SIGINT, signalHandler) == SIG_ERR) {
         MMLog(@"Unable to attach signal handler. :(");
+    }
+
+    if (fdInput != -1) {
+        close(fdInput);
+    }
+    if (fdOutput != -1) {
+        close(fdOutput);
+    }
+    if (fdError != -1) {
+        close(fdError);
     }
 
     [NSThread detachNewThreadSelector:@selector(waitForChildToFinish:) toTarget:self withObject:@((int)child_pid)];

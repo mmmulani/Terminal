@@ -11,7 +11,7 @@
 @interface MMCommandLineArgumentsParser : NSObject
 
 + (NSArray *)commandGroupsFromCommandLine:(NSString *)commandLineText;
-+ (NSArray *)parseCommandsFromCommandLineWithoutEscaping:(NSString *)commandLineText;
++ (NSArray *)tokensFromCommandLineWithoutEscaping:(NSString *)commandLineText;
 + (NSArray *)tokenEndingsFromCommandLine:(NSString *)commandLineText;
 
 @end

@@ -15,12 +15,14 @@ NSMutableDictionary *_parsers = nil;
 NSMutableArray *_storedObjects = nil;
 NSMutableDictionary *_tokenEnds = nil;
 NSInteger _currentPosition = 0;
+NSMutableArray *_scannedTokens = nil;
 
 + (void)initialize;
 {
     _parsers = [NSMutableDictionary dictionary];
     _storedObjects = [NSMutableArray array];
     _tokenEnds = [NSMutableDictionary dictionary];
+    _scannedTokens = [NSMutableArray array];
 }
 
 + (MMParserContext *)parserForContext:(MMParserCtx *)context;
@@ -46,6 +48,11 @@ NSInteger _currentPosition = 0;
 + (void)setEnd:(NSInteger)end forToken:(NSString *)token;
 {
     _tokenEnds[[NSValue valueWithPointer:(__bridge const void *)token]] = [NSNumber numberWithInteger:end];
+}
+
++ (void)addScannedToken:(NSString *)token;
+{
+    [_scannedTokens addObject:token];
 }
 
 - (id)init;
@@ -101,7 +108,7 @@ NSInteger _currentPosition = 0;
     return (int)bytesRead;
 }
 
-- (id)parseString:(NSString *)commandLineInput;
+- (id)parseString:(NSString *)commandLineInput forTokens:(BOOL)forTokens;
 {
     id result;
     NSData *data = [commandLineInput dataUsingEncoding:NSUTF8StringEncoding];
@@ -112,9 +119,14 @@ NSInteger _currentPosition = 0;
         // TODO: Error handling.
         return nil;
     }
-    result = self.scanner->result;
+    if (forTokens) {
+        result = _scannedTokens;
+    } else {
+        result = self.scanner->result;
+    }
     _storedObjects = [NSMutableArray array];
     _tokenEnds = [NSMutableDictionary dictionary];
+    _scannedTokens = [NSMutableArray array];
     self.scanner->result = nil;
     [self.stream close];
     self.stream = nil;
@@ -134,21 +146,12 @@ NSInteger _currentPosition = 0;
         return nil;
     }
     NSMutableArray *tokenEndings = [NSMutableArray array];
-    result = self.scanner->result;
-    for (NSInteger i = 0; i < result.count; i++) {
-        MMCommandGroup *commandGroup = result[i];
-        for (NSInteger j = 0; j < commandGroup.commands.count; j++) {
-            NSMutableArray *commandEndings = [NSMutableArray array];
-            for (NSInteger k = 0; k < [[commandGroup.commands[j] arguments] count]; k++) {
-                NSString *token = [commandGroup.commands[j] arguments][k];
-                [commandEndings addObject:_tokenEnds[[NSValue valueWithPointer:(__bridge const void *)token]]];
-            }
-
-            [tokenEndings addObject:commandEndings];
-        }
+    for (NSString *token in _scannedTokens) {
+        [tokenEndings addObject:_tokenEnds[[NSValue valueWithPointer:(__bridge const void *)token]]];
     }
     _storedObjects = [NSMutableArray array];
     _tokenEnds = [NSMutableDictionary dictionary];
+    _scannedTokens = [NSMutableArray array];
     self.scanner->result = nil;
     [self.stream close];
     self.stream = nil;

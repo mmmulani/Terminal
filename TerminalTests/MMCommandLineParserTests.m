@@ -15,7 +15,7 @@
 
 #define CompareInputAgainstExpectedParsedOutput(input, output) \
 do {\
-    id result = [[[MMParserContext alloc] init] parseString:input]; \
+    id result = [[[MMParserContext alloc] init] parseString:input forTokens:NO]; \
     id a2 = (output); \
     STAssertEqualObjects([result valueForKey:@"textOnlyForm"], a2, @"Compared parser output to provided output."); \
 } while (0)
@@ -58,17 +58,20 @@ do {\
 
 - (void)testUnescapedArguments;
 {
-    NSArray *commands = [MMCommandLineArgumentsParser parseCommandsFromCommandLineWithoutEscaping:@"test 123 ; echo 456"];
-    STAssertEqualObjects(commands, (@[@[@"test", @"123"], @[@"echo", @"456"]]), @"");
+    NSArray *commands = [MMCommandLineArgumentsParser tokensFromCommandLineWithoutEscaping:@"test 123 ; echo 456"];
+    STAssertEqualObjects(commands, (@[@"test", @"123", @"echo", @"456"]), @"");
 }
 
 - (void)testTokenEndings;
 {
     NSArray *tokenEndings = [MMCommandLineArgumentsParser tokenEndingsFromCommandLine:@"abc def; ghi"];
-    STAssertEqualObjects(tokenEndings, (@[@[@3, @7], @[@12]]), @"");
+    STAssertEqualObjects(tokenEndings, (@[@3, @7, @12]), @"");
 
     NSArray *tokenEndingsWithAccent = [MMCommandLineArgumentsParser tokenEndingsFromCommandLine:@"cd Améli"];
-    STAssertEqualObjects(tokenEndingsWithAccent, (@[@[@2, @8]]), @"");
+    STAssertEqualObjects(tokenEndingsWithAccent, (@[@2, @8]), @"");
+
+    NSArray *tokenEndingsWithRedirection = [MMCommandLineArgumentsParser tokenEndingsFromCommandLine:@"echo test < /dev/null > /dev/test"];
+    STAssertEqualObjects(tokenEndingsWithRedirection, (@[@4, @9, @21, @33]), @"");
 }
 
 - (void)testInputOutputRedirection;

@@ -64,6 +64,7 @@ EXCLUDECOMMANDJOIN [^\\ \t\";&<>|]
     NSString *result = [NSString stringWithUTF8String:yytext];
     [MMParserContext incrementCurrentPosition:result.length];
     [MMParserContext storeObject:result];
+    [MMParserContext addScannedToken:result];
     [MMParserContext setEnd:[MMParserContext currentPosition] forToken:result];
     yylval->node = result;
     return WORD;

@@ -132,7 +132,11 @@
 
 - (void)treatFirstArgumentAsStandardOutput;
 {
-    NSAssert(self.arguments.count > 0, @"Standard output must be specified already");
+    // We could be calling this method as a result of parsing the command line input for a completion, in which case there might not be an argument after.
+    if (self.arguments.count == 0) {
+        return;
+    }
+
     self.standardOutput = [MMCommand unescapeArgument:self.arguments[0]];
     [self.arguments removeObjectAtIndex:0];
     self.standardOutputSourceType = MMSourceTypeFile;
@@ -140,7 +144,11 @@
 
 - (void)treatFirstArgumentAsStandardInput;
 {
-    NSAssert(self.arguments.count > 0, @"Standard input must be specified already");
+    // We could be calling this method as a result of parsing the command line input for a completion, in which case there might not be an argument after.
+    if (self.arguments.count == 0) {
+        return;
+    }
+
     self.standardInput = [MMCommand unescapeArgument:self.arguments[0]];
     [self.arguments removeObjectAtIndex:0];
     self.standardInputSourceType = MMSourceTypeFile;
@@ -211,7 +219,12 @@
 
 - (void)insertCommand:(MMCommand *)command withBinaryOperator:(MMCommandOperator)operator;
 {
-    NSAssert(self.commands.count > 0, @"Must already have a command to use operator with");
+    // As this is called by the parser, it might be parsing a command for completion.
+    // Thus it is possible that no command has been specified yet.
+    if (self.commands.count == 0) {
+        return;
+    }
+
     [self.commands insertObject:command atIndex:0];
     MMCommand *secondCommand = self.commands[1];
 

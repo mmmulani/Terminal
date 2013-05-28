@@ -14,22 +14,12 @@
 
 + (NSArray *)commandGroupsFromCommandLine:(NSString *)commandLineText;
 {
-    return [[MMParserContext new] parseString:commandLineText];
+    return [[MMParserContext new] parseString:commandLineText forTokens:NO];
 }
 
-+ (NSArray *)parseCommandsFromCommandLineWithoutEscaping:(NSString *)commandLineText;
++ (NSArray *)tokensFromCommandLineWithoutEscaping:(NSString *)commandLineText;
 {
-    // This method is only used by the completion engine, which doesn't care about the idea of command groups.
-    // As such, we flatten command groups into one array.
-    NSArray *commandGroups = [[[MMParserContext alloc] init] parseString:commandLineText];
-    NSMutableArray *commandStrings = [NSMutableArray array];
-    for (MMCommandGroup *commandGroup in commandGroups) {
-        for (MMCommand *command in commandGroup.commands) {
-            [commandStrings addObject:command.arguments];
-        }
-    }
-
-    return commandStrings;
+    return [[MMParserContext new] parseString:commandLineText forTokens:YES];
 }
 
 + (NSArray *)tokenEndingsFromCommandLine:(NSString *)commandLineText;
