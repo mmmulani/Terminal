@@ -87,6 +87,17 @@ do {\
     MMCommandGroup *unescapedCommandGroup = [MMCommandLineArgumentsParser commandGroupsFromCommandLine:@"echo test > /dev/\"\\u00e9\"test"][0];
     MMCommand *unescapedCommandTest = unescapedCommandGroup.commands[0];
     STAssertEqualObjects(unescapedCommandTest.standardOutput, @"/dev/étest", @"Testing whether standard output is unescaped");
+
+    MMCommandGroup *pipedCommandGroup = [MMCommandLineArgumentsParser commandGroupsFromCommandLine:@"echo test | cat -"][0];
+    STAssertEquals(pipedCommandGroup.commands.count, (NSUInteger)2, @"");
+    MMCommand *echoCommand = pipedCommandGroup.commands[0];
+    STAssertEqualObjects(echoCommand.arguments, (@[@"echo", @"test"]), @"");
+    STAssertEquals(echoCommand.standardInputSourceType, MMSourceTypeDefault, @"");
+    STAssertEquals(echoCommand.standardOutputSourceType, MMSourceTypePipe, @"");
+    MMCommand *catCommand = pipedCommandGroup.commands[1];
+    STAssertEqualObjects(catCommand.arguments, (@[@"cat", @"-"]), @"");
+    STAssertEquals(catCommand.standardInputSourceType, MMSourceTypePipe, @"");
+    STAssertEquals(echoCommand.standardInputSourceType, MMSourceTypeDefault, @"");
 }
 
 @end

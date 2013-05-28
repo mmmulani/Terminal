@@ -95,15 +95,20 @@
         }
     }
 
+    int fdInput = -1;
+    int fdOutput = -1;
+    int pipedFdOutput = -1;
+    int pipedFdInput = -1;
     pid_t child_pid;
     NSInteger totalCommands = commandGroup.commands.count;
     NSInteger currentCommand;
+    // This loop sets up the file descriptors and forks the appropriate number of times so that afterwards:
+    // - |currentCommand| should be executed
     for (currentCommand = 0; currentCommand < totalCommands; currentCommand++) {
-        int fdInput = -1;
-        int fdOutput = -1;
-
         if (inputType[currentCommand] == MMSourceTypeFile) {
             fdInput = open(inputSource[currentCommand], O_RDONLY);
+        } else if (inputType[currentCommand] == MMSourceTypePipe) {
+            fdInput = pipedFdInput;
         }
 
         if (outputType[currentCommand] == MMSourceTypeFile) {
@@ -113,21 +118,29 @@
 
         child_pid = fork();
         if (child_pid == 0) {
-            // This will run argv[currentCommand].
+            if (pipedFdOutput != -1) {
+                close(pipedFdOutput);
+            }
+
+            // This will run argv[currentCommand] after exitting the loop.
+            if (outputType[currentCommand] == MMSourceTypePipe) {
+                int pipeFd[2];
+                pipe(pipeFd);
+
+                pipedFdOutput = pipeFd[1];
+                pipedFdInput = pipeFd[0];
+            }
+
             if (fdInput != -1) {
                 dup2(fdInput, STDIN_FILENO);
                 close(fdInput);
+                fdInput = -1;
             }
             if (fdOutput != -1) {
                 dup2(fdOutput, STDOUT_FILENO);
                 close(fdOutput);
+                fdOutput = -1;
             }
-
-            int status = execvp(argv[currentCommand][0], (char * const *)argv[currentCommand]);
-
-            NSLog(@"Exec failed :( %d", status);
-
-            _exit(-1);
         } else {
             if (fdInput != -1) {
                 close(fdInput);
@@ -139,8 +152,9 @@
             break;
         }
     }
+    currentCommand--;
 
-    if (currentCommand == 0) {
+    if (currentCommand == -1) {
         MMLog(@"Child pid: %d", child_pid);
 
         if (signal(SIGINT, signalHandler) == SIG_ERR) {
@@ -148,7 +162,21 @@
         }
 
         [NSThread detachNewThreadSelector:@selector(waitForChildToFinish:) toTarget:self withObject:@((int)child_pid)];
+
+        return;
     }
+
+    if (pipedFdOutput != -1) {
+        dup2(pipedFdOutput, STDOUT_FILENO);
+        close(pipedFdOutput);
+    }
+
+    int status = execvp(argv[currentCommand][0], (char * const *)argv[currentCommand]);
+
+    NSLog(@"Exec failed :( %d %d", status, errno);
+    NSLog(@"currentCommand %ld argv[0] %s", currentCommand, argv[currentCommand][0]);
+
+    _exit(-1);
 }
 
 - (void)waitForChildToFinish:(NSNumber *)child_pid;
