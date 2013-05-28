@@ -65,9 +65,9 @@
         MMLog(@"Discarded all commands past the first in: %@", commandsText);
     }
 
-    MMCommand *command = [commandGroups[0] commands][0];
+    MMCommandGroup *commandGroup = commandGroups[0];
     NSProxy *proxy = [[NSConnection connectionWithRegisteredName:[ConnectionShellName stringByAppendingFormat:@".%ld", (long)self.identifier] host:nil] rootProxy];
-    [proxy performSelector:@selector(executeCommand:) withObject:command];
+    [proxy performSelector:@selector(executeCommand:) withObject:commandGroup];
     [self.terminalWindow setRunning:YES];
 }
 
