@@ -71,4 +71,19 @@ do {\
     STAssertEqualObjects(tokenEndingsWithAccent, (@[@[@2, @8]]), @"");
 }
 
+- (void)testInputOutputRedirection;
+{
+    MMCommandGroup *commandGroup = [MMCommandLineArgumentsParser commandGroupsFromCommandLine:@"echo test > /dev/null < /input/file"][0];
+    MMCommand *command = commandGroup.commands[0];
+    STAssertEquals(command.standardInputSourceType, MMSourceTypeFile, @"");
+    STAssertEqualObjects(command.standardInput, @"/input/file", @"");
+    STAssertEquals(command.standardOutputSourceType, MMSourceTypeFile, @"");
+    STAssertEqualObjects(command.standardOutput, @"/dev/null", @"");
+    STAssertEqualObjects(command.arguments, (@[@"echo", @"test"]), @"");
+
+    MMCommandGroup *unescapedCommandGroup = [MMCommandLineArgumentsParser commandGroupsFromCommandLine:@"echo test > /dev/\"\\u00e9\"test"][0];
+    MMCommand *unescapedCommandTest = unescapedCommandGroup.commands[0];
+    STAssertEqualObjects(unescapedCommandTest.standardOutput, @"/dev/étest", @"Testing whether standard output is unescaped");
+}
+
 @end

@@ -133,7 +133,7 @@
 - (void)treatFirstArgumentAsStandardOutput;
 {
     NSAssert(self.arguments.count > 0, @"Standard output must be specified already");
-    self.standardOutput = self.arguments[0];
+    self.standardOutput = [MMCommand unescapeArgument:self.arguments[0]];
     [self.arguments removeObjectAtIndex:0];
     self.standardOutputSourceType = MMSourceTypeFile;
 }
@@ -141,7 +141,7 @@
 - (void)treatFirstArgumentAsStandardInput;
 {
     NSAssert(self.arguments.count > 0, @"Standard input must be specified already");
-    self.standardInput = self.arguments[0];
+    self.standardInput = [MMCommand unescapeArgument:self.arguments[0]];
     [self.arguments removeObjectAtIndex:0];
     self.standardInputSourceType = MMSourceTypeFile;
 }
