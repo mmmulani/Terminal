@@ -188,7 +188,7 @@
     }
 
     if (self.displayTextStorage.length > 0 && [[self.displayTextStorage attributedSubstringFromRange:NSMakeRange(self.displayTextStorage.length - 1, 1)].string isEqualToString:@"\n"]) {
-        for (NSInteger i = TERM_HEIGHT; i >= 1; i--) {
+        for (NSInteger i = self.numberOfRowsOnScreen; i >= 1; i--) {
             if ([self isScrollRowTerminatedInNewline:i]) {
                 self.removedTrailingNewlineInScrollLine = i;
                 [self setScrollRow:i hasNewline:NO];
@@ -338,14 +338,14 @@
 - (NSInteger)cursorPositionByCharacters;
 {
     NSInteger cursorPosition = self.characterOffsetToScreen;
-    for (NSInteger i = 1; i < self.cursorPosition.y; i++) {
+    for (NSInteger i = 1; i < MIN(self.cursorPosition.y, self.numberOfRowsOnScreen); i++) {
         cursorPosition += [self numberOfCharactersInScrollRow:i];
         if ([self isScrollRowTerminatedInNewline:i]) {
             cursorPosition++;
         }
     }
 
-    cursorPosition = cursorPosition + MIN(self.cursorPosition.x - 1, [self numberOfCharactersInScrollRow:self.cursorPosition.y]);
+    cursorPosition = cursorPosition + (self.numberOfRowsOnScreen >= self.cursorPosition.y ? MIN(self.cursorPosition.x - 1, [self numberOfCharactersInScrollRow:self.cursorPosition.y]) : 0);
 
     return cursorPosition;
 }

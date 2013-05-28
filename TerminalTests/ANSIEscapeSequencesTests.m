@@ -298,6 +298,12 @@ do {\
 - (void)testPossibleCrashers;
 {
     CheckThatInputDoesNotCauseACrash(@"\033[M\033[24;1Ha");
+
+    MMTask *task = [MMTask new];
+    task.displayTextStorage = [NSTextStorage new];
+    [task handleCommandOutput:@"\033[0J\n\n\n" withVerbosity:NO];
+    STAssertEquals(task.cursorPositionByCharacters, (NSInteger)2, @"Should not crash in looking at the cursor position for a row which does not exist");
+
 }
 
 - (void)testReverseIndex;
