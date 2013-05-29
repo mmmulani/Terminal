@@ -9,8 +9,13 @@
 #import "MMShared.h"
 #import <pthread.h>
 
+#ifdef DEBUG
+NSString *const ConnectionShellName = @"com.mm.shelldebug";
+NSString *const ConnectionTerminalName = @"com.mm.terminaldebug";
+#else
 NSString *const ConnectionShellName = @"com.mm.shell";
 NSString *const ConnectionTerminalName = @"com.mm.terminal";
+#endif
 
 void MMLog(NSString *format, ...)
 {
