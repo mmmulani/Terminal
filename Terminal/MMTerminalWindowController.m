@@ -360,7 +360,7 @@ static void directoryWatchingCallback(CFFileDescriptorRef kqRef, CFOptionFlags c
             [self.window.contentView layout];
         }];
 
-        [self.commandControlsLayoutConstraint.animator setConstant:20.0];
+        [self.commandControlsLayoutConstraint.animator setConstant:17.0];
         [NSAnimationContext endGrouping];
 
         [self.terminalConnection runCommands:newTask.command];
