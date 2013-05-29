@@ -70,7 +70,7 @@
         }
     } else if ([[self defaultedArgumentAtIndex:0] integerValue] == 2) {
         // Erase entire screen.
-        for (NSInteger i = 1; i <= self.delegate.termHeight; i++) {
+        for (NSInteger i = 1; i <= MIN(self.delegate.termHeight, self.delegate.numberOfRowsOnScreen); i++) {
             [self.delegate removeCharactersInScrollRow:i range:NSMakeRange(1, [self.delegate numberOfCharactersInScrollRow:i]) shiftCharactersAfter:NO];
             [self.delegate setScrollRow:i hasNewline:NO];
         }

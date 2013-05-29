@@ -15,3 +15,7 @@
 @interface MMReverseIndex : MMANSIAction
 
 @end
+
+@interface MMNextLine : MMANSIAction
+
+@end

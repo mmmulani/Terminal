@@ -40,3 +40,21 @@
 }
 
 @end
+
+@implementation MMNextLine
+
+- (void)do;
+{
+    // This corresponds to ESC E and is called NEL.
+    // This moves the cursor down by one line and to the front of the line.
+    // If it passes the bottom margin, it scrolls down.
+    // However, if it passes the bottom of the screen but the bottom of the screen is not the scroll margin, it does not scroll down.
+    if (self.delegate.cursorPositionY == self.delegate.scrollMarginBottom) {
+        [self.delegate setCursorToX:1 Y:(self.delegate.cursorPositionY + 1)];
+        [self.delegate checkIfExceededLastLineAndObeyScrollMargin:YES];
+    } else {
+        [self.delegate setCursorToX:1 Y:MIN(self.delegate.termHeight, self.delegate.cursorPositionY + 1)];
+    }
+}
+
+@end

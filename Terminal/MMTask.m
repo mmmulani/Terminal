@@ -262,7 +262,7 @@
     [self createBlankLinesUpToCursor];
 
     for (NSInteger i = self.cursorPosition.y - 1; i > 0; i--) {
-        if ([self numberOfCharactersInScrollRow:i] > 0 || [self isScrollRowTerminatedInNewline:i]) {
+        if ([self numberOfCharactersInScrollRow:i] == TERM_WIDTH || [self isScrollRowTerminatedInNewline:i]) {
             break;
         }
 
@@ -406,6 +406,8 @@
         // This covers all escape sequences that do not start with '['.
         if (escapeCode == 'D') {
             action = [[MMIndex alloc] init];
+        } else if (escapeCode == 'E') {
+            action = [MMNextLine new];
         } else if (escapeCode == 'M') {
             action = [[MMReverseIndex alloc] init];
         } else {

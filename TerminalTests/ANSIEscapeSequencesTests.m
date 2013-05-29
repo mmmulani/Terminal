@@ -91,10 +91,11 @@ do {\
     CheckInputAgainstExpectedOutput(@"__\033[2Ja", @"  a");
     CheckInputAgainstExpectedOutput(@"12\n34\n\033[2J", @"");
 
-    // This is mainly a test against crashes.
+    // The rest of these tests are against crashes.
     NSString *lotsOfNewLines = [@"" stringByPaddingToLength:80 withString:@"\n" startingAtIndex:0];
     CheckInputAgainstExpectedOutput([lotsOfNewLines stringByAppendingString:@"\033[2J"], [@"" stringByPaddingToLength:(80 - 23) withString:@"\n" startingAtIndex:0]);
 
+    CheckInputAgainstExpectedOutput(@"\033[0J\033[2J", @"");
     CheckInputAgainstExpectedOutput(@"\033[24;1H\n\n\n\033[2Ja", [[@"" stringByPaddingToLength:26 withString:@"\n" startingAtIndex:0] stringByAppendingString:@"a"]);
 }
 
@@ -330,6 +331,15 @@ do {\
     CheckInputAgainstExpectedOutput([[self.twentyFourNumberedLines componentsJoinedByString:@""] stringByAppendingString:@"\033[24;5H\033D!"], [[self.twentyFourNumberedLines componentsJoinedByString:@""] stringByAppendingString:@"    !"]);
     // Make sure that newline is added if necessary.
     CheckInputAgainstExpectedOutput([[@"" stringByPaddingToLength:23 withString:@"\n" startingAtIndex:0] stringByAppendingString:@"\033[24;5H\033D!"], [[@"" stringByPaddingToLength:24 withString:@"\n" startingAtIndex:0] stringByAppendingString:@"    !"]);
+}
+
+- (void)testNextLine;
+{
+    CheckInputAgainstExpectedOutput(@"\033E!", @"\n!");
+    CheckInputAgainstExpectedOutput([[@"" stringByPaddingToLength:79 withString:@" " startingAtIndex:0] stringByAppendingString:@"\033E_"], [[@"" stringByPaddingToLength:79 withString:@" " startingAtIndex:0] stringByAppendingString:@"\n_"]);
+    CheckInputAgainstExpectedOutput([[@"" stringByPaddingToLength:80 withString:@" " startingAtIndex:0] stringByAppendingString:@"\033E_"], [[@"" stringByPaddingToLength:80 withString:@" " startingAtIndex:0] stringByAppendingString:@"_"]);
+    CheckInputAgainstExpectedOutput([[self.twentyFourNumberedLines componentsJoinedByString:@""] stringByAppendingString:@"\033E!"], [[self.twentyFourNumberedLines componentsJoinedByString:@""] stringByAppendingString:@"!"]);
+    CheckInputAgainstExpectedOutput([[@"" stringByPaddingToLength:23 withString:@"\n" startingAtIndex:0] stringByAppendingString:@"\033[1;10r1\033E2"], [[@"" stringByPaddingToLength:23 withString:@"\n" startingAtIndex:0] stringByAppendingString:@"2"]);
 }
 
 @end
