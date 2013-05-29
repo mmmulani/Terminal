@@ -41,6 +41,7 @@ typedef enum {
 @property (strong) NSDate *startedAt;
 @property (strong) NSDate *finishedAt;
 @property (strong) NSString *command;
+@property BOOL hasUsedWholeScreen;
 
 @property (readonly) NSMutableAttributedString *currentANSIDisplay;
 @property MMPosition cursorPosition;

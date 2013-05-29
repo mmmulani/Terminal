@@ -34,12 +34,14 @@
 // (i.e. 1 <= x <= termWidth and 1 <= row, y <= termHeight)
 // The location in NSRange fields are also 1-indexed.
 
-- (NSInteger)cursorPositionX;
-- (NSInteger)cursorPositionY;
-- (NSInteger)termHeight;
-- (NSInteger)termWidth;
-- (NSInteger)scrollMarginTop;
-- (NSInteger)scrollMarginBottom;
+@property (readonly) NSInteger cursorPositionX;
+@property (readonly) NSInteger cursorPositionY;
+@property (readonly) NSInteger termHeight;
+@property (readonly) NSInteger termWidth;
+@property (readonly) NSInteger scrollMarginTop;
+@property (readonly) NSInteger scrollMarginBottom;
+
+@property BOOL hasUsedWholeScreen;
 
 - (void)setCursorToX:(NSInteger)x Y:(NSInteger)y;
 - (NSInteger)numberOfCharactersInScrollRow:(NSInteger)row;

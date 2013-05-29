@@ -45,6 +45,7 @@
 
 - (void)do;
 {
+    [self.delegate setHasUsedWholeScreen:YES];
     if ([[self defaultedArgumentAtIndex:0] integerValue] == 0) {
         // Erase at and below cursor.
         for (NSInteger i = self.delegate.cursorPositionY + 1; i <= self.delegate.numberOfRowsOnScreen; ) {

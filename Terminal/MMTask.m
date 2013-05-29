@@ -164,8 +164,7 @@
 
 - (BOOL)shouldDrawFullTerminalScreen;
 {
-    // TODO: Handle the case where the command issued an escape sequence and should be treated like a "full" terminal screen.
-    return self.numberOfRowsOnScreen > TERM_HEIGHT ||
+    return self.hasUsedWholeScreen || self.numberOfRowsOnScreen > TERM_HEIGHT ||
         (self.numberOfRowsOnScreen == TERM_HEIGHT &&
          ([self numberOfCharactersInScrollRow:TERM_HEIGHT] > 0 ||
           [self isScrollRowTerminatedInNewline:TERM_HEIGHT]));
@@ -602,6 +601,7 @@
     [coder encodeObject:self.displayTextStorage forKey:MMSelfKey(displayTextStorage)];
     [coder encodeObject:self.command forKey:MMSelfKey(command)];
     [coder encodeInteger:self.cursorPositionByCharacters forKey:MMSelfKey(cursorPositionByCharacters)];
+    [coder encodeBool:self.hasUsedWholeScreen forKey:MMSelfKey(hasUsedWholeScreen)];
 }
 
 - (id)initWithCoder:(NSCoder *)decoder;
@@ -616,6 +616,7 @@
     self.displayTextStorage = [decoder decodeObjectForKey:MMSelfKey(displayTextStorage)];
     self.command = [decoder decodeObjectForKey:MMSelfKey(command)];
     self.characterOffsetToScreen = [decoder decodeIntegerForKey:MMSelfKey(cursorPositionByCharacters)];
+    self.hasUsedWholeScreen = [decoder decodeBoolForKey:MMSelfKey(hasUsedWholeScreen)];
 
     return self;
 }
