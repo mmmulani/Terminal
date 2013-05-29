@@ -523,9 +523,9 @@
 			productReference = 91F1747016ED0CF0002E2594 /* TerminalTests.octest */;
 			productType = "com.apple.product-type.bundle";
 		};
-		91F4EEBB16B8D63D00F65E91 /* Terminal */ = {
+		91F4EEBB16B8D63D00F65E91 /* Term */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = 91F4EED916B8D63D00F65E91 /* Build configuration list for PBXNativeTarget "Terminal" */;
+			buildConfigurationList = 91F4EED916B8D63D00F65E91 /* Build configuration list for PBXNativeTarget "Term" */;
 			buildPhases = (
 				91F4EEB816B8D63D00F65E91 /* Sources */,
 				91F4EEB916B8D63D00F65E91 /* Frameworks */,
@@ -539,7 +539,7 @@
 				91E4C06F174569A000062EF5 /* PBXTargetDependency */,
 				919BA9BD16C876260091CB1B /* PBXTargetDependency */,
 			);
-			name = Terminal;
+			name = Term;
 			productName = Terminal;
 			productReference = 91F4EEBC16B8D63D00F65E91 /* Terminal.app */;
 			productType = "com.apple.product-type.application";
@@ -566,7 +566,7 @@
 			projectDirPath = "";
 			projectRoot = "";
 			targets = (
-				91F4EEBB16B8D63D00F65E91 /* Terminal */,
+				91F4EEBB16B8D63D00F65E91 /* Term */,
 				919BA9AE16C875C40091CB1B /* Shell */,
 				91F1746F16ED0CF0002E2594 /* TerminalTests */,
 				91E4C05E1745682800062EF5 /* ProcessMonitor */,
@@ -692,7 +692,7 @@
 		};
 		91F1748216ED0F31002E2594 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
-			target = 91F4EEBB16B8D63D00F65E91 /* Terminal */;
+			target = 91F4EEBB16B8D63D00F65E91 /* Term */;
 			targetProxy = 91F1748116ED0F31002E2594 /* PBXContainerItemProxy */;
 		};
 /* End PBXTargetDependency section */
@@ -953,7 +953,7 @@
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
-		91F4EED916B8D63D00F65E91 /* Build configuration list for PBXNativeTarget "Terminal" */ = {
+		91F4EED916B8D63D00F65E91 /* Build configuration list for PBXNativeTarget "Term" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				91F4EEDA16B8D63D00F65E91 /* Debug */,
