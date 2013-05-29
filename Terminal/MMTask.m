@@ -277,6 +277,7 @@
 
 - (void)incrementRowOffset;
 {
+    self.hasUsedWholeScreen = self.hasUsedWholeScreen || (self.characterOffsetToScreen >= TERM_HEIGHT * TERM_WIDTH);
     self.characterOffsetToScreen += [self numberOfCharactersInScrollRow:1];
     if ([self isScrollRowTerminatedInNewline:1]) {
         self.characterOffsetToScreen++;
