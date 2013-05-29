@@ -57,8 +57,8 @@
 
 - (void)_executeCommand:(MMCommandGroup *)commandGroup;
 {
-    if (commandGroup.commands.count == 1 && [[commandGroup.commands[0] arguments][0] isEqualToString:@"cd"]) {
-        [self handleSpecialCommand:[commandGroup.commands[0] arguments]];
+    if (commandGroup.commands.count == 1 && [[commandGroup.commands[0] unescapedArguments][0] isEqualToString:@"cd"]) {
+        [self handleSpecialCommand:[commandGroup.commands[0] unescapedArguments]];
         NSProxy *proxy = [self.terminalConnection rootProxy];
         [proxy performSelector:@selector(processFinished)];
 
