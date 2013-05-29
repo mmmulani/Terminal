@@ -201,7 +201,7 @@
 		91E4C0791745A10000062EF5 /* ProcessMonitor-Launchd.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "ProcessMonitor-Launchd.plist"; sourceTree = "<group>"; };
 		91F1747016ED0CF0002E2594 /* TerminalTests.octest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = TerminalTests.octest; sourceTree = BUILT_PRODUCTS_DIR; };
 		91F1747116ED0CF0002E2594 /* SenTestingKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SenTestingKit.framework; path = Library/Frameworks/SenTestingKit.framework; sourceTree = DEVELOPER_DIR; };
-		91F4EEBC16B8D63D00F65E91 /* Terminal.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Terminal.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		91F4EEBC16B8D63D00F65E91 /* TermDebug.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = TermDebug.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		91F4EEBF16B8D63D00F65E91 /* Cocoa.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Cocoa.framework; path = System/Library/Frameworks/Cocoa.framework; sourceTree = SDKROOT; };
 		91F4EEC216B8D63D00F65E91 /* AppKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AppKit.framework; path = System/Library/Frameworks/AppKit.framework; sourceTree = SDKROOT; };
 		91F4EEC316B8D63D00F65E91 /* CoreData.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreData.framework; path = System/Library/Frameworks/CoreData.framework; sourceTree = SDKROOT; };
@@ -401,7 +401,7 @@
 		91F4EEBD16B8D63D00F65E91 /* Products */ = {
 			isa = PBXGroup;
 			children = (
-				91F4EEBC16B8D63D00F65E91 /* Terminal.app */,
+				91F4EEBC16B8D63D00F65E91 /* TermDebug.app */,
 				919BA9AF16C875C40091CB1B /* Shell */,
 				91F1747016ED0CF0002E2594 /* TerminalTests.octest */,
 				91E4C05F1745682800062EF5 /* mmm.ProcessMonitor */,
@@ -541,7 +541,7 @@
 			);
 			name = Term;
 			productName = Terminal;
-			productReference = 91F4EEBC16B8D63D00F65E91 /* Terminal.app */;
+			productReference = 91F4EEBC16B8D63D00F65E91 /* TermDebug.app */;
 			productType = "com.apple.product-type.application";
 		};
 /* End PBXNativeTarget section */
