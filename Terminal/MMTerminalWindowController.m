@@ -62,6 +62,11 @@
     return self;
 }
 
+- (void)awakeFromNib;
+{
+    self.tableView.selectionHighlightStyle = NSTableViewSelectionHighlightStyleNone;
+}
+
 - (void)windowDidLoad
 {
     [super windowDidLoad];

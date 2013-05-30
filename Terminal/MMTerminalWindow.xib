@@ -76,7 +76,7 @@
 											<string key="NSFrameSize">{680, 427}</string>
 											<reference key="NSSuperview" ref="916828094"/>
 											<reference key="NSWindow"/>
-											<reference key="NSNextKeyView" ref="397365095"/>
+											<reference key="NSNextKeyView" ref="367531018"/>
 											<string key="NSReuseIdentifierKey">_NS:13</string>
 											<bool key="NSEnabled">YES</bool>
 											<bool key="NSAllowsLogicalLayoutDirection">NO</bool>
@@ -215,7 +215,7 @@
 							<string key="NSFrame">{{20, 187}, {682, 429}}</string>
 							<reference key="NSSuperview" ref="1006"/>
 							<reference key="NSWindow"/>
-							<reference key="NSNextKeyView" ref="367531018"/>
+							<reference key="NSNextKeyView" ref="916828094"/>
 							<string key="NSReuseIdentifierKey">_NS:9</string>
 							<int key="NSsFlags">133682</int>
 							<reference key="NSVScroller" ref="367531018"/>
@@ -267,7 +267,7 @@
 															<string key="NSFrameSize">{680, 20}</string>
 															<reference key="NSSuperview" ref="481152315"/>
 															<reference key="NSWindow"/>
-															<reference key="NSNextKeyView" ref="127605528"/>
+															<reference key="NSNextKeyView" ref="65910574"/>
 															<string key="NSReuseIdentifierKey">_NS:13</string>
 															<object class="NSTextContainer" key="NSTextContainer" id="571734201">
 																<object class="NSLayoutManager" key="NSLayoutManager">
@@ -361,7 +361,6 @@
 													<string key="NSFrame">{{665, 1}, {16, 20}}</string>
 													<reference key="NSSuperview" ref="681166408"/>
 													<reference key="NSWindow"/>
-													<reference key="NSNextKeyView"/>
 													<string key="NSReuseIdentifierKey">_NS:83</string>
 													<bool key="NSAllowsLogicalLayoutDirection">NO</bool>
 													<reference key="NSTarget" ref="681166408"/>
@@ -388,7 +387,7 @@
 											<string key="NSFrame">{{20, 20}, {682, 22}}</string>
 											<reference key="NSSuperview" ref="534336970"/>
 											<reference key="NSWindow"/>
-											<reference key="NSNextKeyView" ref="65910574"/>
+											<reference key="NSNextKeyView" ref="481152315"/>
 											<string key="NSReuseIdentifierKey">_NS:9</string>
 											<int key="NSsFlags">133138</int>
 											<reference key="NSVScroller" ref="127605528"/>
@@ -412,7 +411,7 @@
 															<string key="NSFrameSize">{680, 79}</string>
 															<reference key="NSSuperview" ref="547051085"/>
 															<reference key="NSWindow"/>
-															<reference key="NSNextKeyView" ref="208141260"/>
+															<reference key="NSNextKeyView" ref="133786339"/>
 															<string key="NSReuseIdentifierKey">_NS:80</string>
 															<string key="NSMinGridSize">{0, 0}</string>
 															<string key="NSMaxGridSize">{0, 0}</string>
@@ -471,7 +470,7 @@
 											<string key="NSFrame">{{20, 50}, {682, 81}}</string>
 											<reference key="NSSuperview" ref="534336970"/>
 											<reference key="NSWindow"/>
-											<reference key="NSNextKeyView" ref="133786339"/>
+											<reference key="NSNextKeyView" ref="547051085"/>
 											<string key="NSReuseIdentifierKey">_NS:76</string>
 											<int key="NSsFlags">133666</int>
 											<reference key="NSVScroller" ref="133786339"/>
@@ -569,7 +568,6 @@
 						<string key="NSFrame">{{23, 1}, {149, 17}}</string>
 						<reference key="NSSuperview" ref="47470297"/>
 						<reference key="NSWindow"/>
-						<reference key="NSNextKeyView"/>
 						<string key="NSReuseIdentifierKey">_NS:1535</string>
 						<bool key="NSEnabled">YES</bool>
 						<object class="NSTextFieldCell" key="NSCell" id="605897440">
@@ -2027,6 +2025,27 @@
 					<object class="IBClassDescriptionSource" key="sourceIdentifier">
 						<string key="majorKey">IBProjectSource</string>
 						<string key="minorKey">./Classes/MMTerminalWindowController.h</string>
+					</object>
+				</object>
+				<object class="IBPartialClassDescription">
+					<string key="className">NSCollectionViewItem</string>
+					<dictionary class="NSMutableDictionary" key="outlets">
+						<string key="imageView">NSImageView</string>
+						<string key="textField">NSTextField</string>
+					</dictionary>
+					<dictionary class="NSMutableDictionary" key="toOneOutletInfosByName">
+						<object class="IBToOneOutletInfo" key="imageView">
+							<string key="name">imageView</string>
+							<string key="candidateClassName">NSImageView</string>
+						</object>
+						<object class="IBToOneOutletInfo" key="textField">
+							<string key="name">textField</string>
+							<string key="candidateClassName">NSTextField</string>
+						</object>
+					</dictionary>
+					<object class="IBClassDescriptionSource" key="sourceIdentifier">
+						<string key="majorKey">IBProjectSource</string>
+						<string key="minorKey">./Classes/NSCollectionViewItem.h</string>
 					</object>
 				</object>
 				<object class="IBPartialClassDescription">

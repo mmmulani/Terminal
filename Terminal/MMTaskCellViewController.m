@@ -115,6 +115,10 @@
 - (void)updateViewForShellCommand;
 {
     // TODO: Handle other types of shell commands.
+    if (!self.task.shellCommandAttachment) {
+        return;
+    }
+
     NSString *displayText;
     if (self.task.shellCommandSuccessful) {
         displayText = [NSString stringWithFormat:@"Changed directory to %@", self.task.shellCommandAttachment];
