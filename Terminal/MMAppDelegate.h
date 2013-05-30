@@ -11,8 +11,11 @@
 #import "MMTerminalWindowController.h"
 #import "MMDebugMessagesWindowController.h"
 
+@class MMFirstRunWindowController;
+
 @interface MMAppDelegate : NSObject <NSApplicationDelegate, NSTextFieldDelegate, NSWindowRestoration>
 
+@property MMFirstRunWindowController *firstRunWindowController;
 @property (strong) MMDebugMessagesWindowController *debugWindow;
 @property (strong) NSConnection *terminalAppConnection;
 @property (strong) NSMutableArray *terminalConnections;

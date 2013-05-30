@@ -9,6 +9,7 @@
 #import "MMAppDelegate.h"
 #import "MMShared.h"
 #import "MMTerminalConnection.h"
+#import "MMFirstRunWindowController.h"
 
 #import <ServiceManagement/ServiceManagement.h>
 #import <Security/Authorization.h>
@@ -124,6 +125,19 @@
 
 - (void)applicationDidFinishLaunching:(NSNotification *)aNotification;
 {
+    // Determine if we should show the first run window.
+    NSUserDefaults *userDefaults = [NSUserDefaults standardUserDefaults];
+    BOOL didFirstRun = [userDefaults boolForKey:@"didFirstRun"];
+    if (!didFirstRun) {
+        self.firstRunWindowController = [[MMFirstRunWindowController alloc] init];
+        [self.firstRunWindowController showWindow:nil];
+
+        [userDefaults setBool:YES forKey:@"didFirstRun"];
+        [userDefaults synchronize];
+
+        return;
+    }
+
     self.terminalAppConnection = [NSConnection serviceConnectionWithName:ConnectionTerminalName rootObject:self];
 
     if ([NSApp windows].count == 0) {

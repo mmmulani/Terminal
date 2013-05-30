@@ -11,6 +11,8 @@
 		9106520C16C574160010DC76 /* MMTextView.m in Sources */ = {isa = PBXBuildFile; fileRef = 9106520B16C574160010DC76 /* MMTextView.m */; };
 		910D0EED1757B8B100FFF569 /* MMShellCommands.m in Sources */ = {isa = PBXBuildFile; fileRef = 910D0EEC1757B8B100FFF569 /* MMShellCommands.m */; };
 		910D0EEE1757B8B100FFF569 /* MMShellCommands.m in Sources */ = {isa = PBXBuildFile; fileRef = 910D0EEC1757B8B100FFF569 /* MMShellCommands.m */; };
+		9121418C1757E5CA00A50F6E /* MMFirstRunWindowController.m in Sources */ = {isa = PBXBuildFile; fileRef = 9121418A1757E5CA00A50F6E /* MMFirstRunWindowController.m */; };
+		9121418D1757E5CA00A50F6E /* MMFirstRunWindowController.xib in Resources */ = {isa = PBXBuildFile; fileRef = 9121418B1757E5CA00A50F6E /* MMFirstRunWindowController.xib */; };
 		9126054E1739C5BC001962AE /* MMCommandLineParserTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 9126054C1739C4E0001962AE /* MMCommandLineParserTests.m */; };
 		912605511739E1EF001962AE /* MMCommandLineArgumentsParser.m in Sources */ = {isa = PBXBuildFile; fileRef = 912605501739E1EF001962AE /* MMCommandLineArgumentsParser.m */; };
 		9139E161173B2423009FFC1E /* MMTerminalConnection.m in Sources */ = {isa = PBXBuildFile; fileRef = 9139E160173B2423009FFC1E /* MMTerminalConnection.m */; };
@@ -139,6 +141,9 @@
 		910D0EEB1757B8B100FFF569 /* MMShellCommands.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MMShellCommands.h; sourceTree = "<group>"; };
 		910D0EEC1757B8B100FFF569 /* MMShellCommands.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MMShellCommands.m; sourceTree = "<group>"; };
 		910D0EEF1757B9B800FFF569 /* MMTerminalProxy.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = MMTerminalProxy.h; sourceTree = "<group>"; };
+		912141891757E5CA00A50F6E /* MMFirstRunWindowController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = MMFirstRunWindowController.h; path = Reporting/MMFirstRunWindowController.h; sourceTree = "<group>"; };
+		9121418A1757E5CA00A50F6E /* MMFirstRunWindowController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = MMFirstRunWindowController.m; path = Reporting/MMFirstRunWindowController.m; sourceTree = "<group>"; };
+		9121418B1757E5CA00A50F6E /* MMFirstRunWindowController.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; name = MMFirstRunWindowController.xib; path = Reporting/MMFirstRunWindowController.xib; sourceTree = "<group>"; };
 		9126054B1739C4E0001962AE /* MMCommandLineParserTests.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = MMCommandLineParserTests.h; path = TerminalTests/MMCommandLineParserTests.h; sourceTree = "<group>"; };
 		9126054C1739C4E0001962AE /* MMCommandLineParserTests.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = MMCommandLineParserTests.m; path = TerminalTests/MMCommandLineParserTests.m; sourceTree = "<group>"; };
 		9126054F1739E1EF001962AE /* MMCommandLineArgumentsParser.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = MMCommandLineArgumentsParser.h; path = CommandLine/MMCommandLineArgumentsParser.h; sourceTree = "<group>"; };
@@ -262,6 +267,16 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		912141881757E5A700A50F6E /* Reporting */ = {
+			isa = PBXGroup;
+			children = (
+				912141891757E5CA00A50F6E /* MMFirstRunWindowController.h */,
+				9121418A1757E5CA00A50F6E /* MMFirstRunWindowController.m */,
+				9121418B1757E5CA00A50F6E /* MMFirstRunWindowController.xib */,
+			);
+			name = Reporting;
+			sourceTree = "<group>";
+		};
 		913CC1C2174C310300E002AD /* Task and xterm simulation */ = {
 			isa = PBXGroup;
 			children = (
@@ -445,6 +460,7 @@
 		91F4EEC516B8D63D00F65E91 /* Terminal */ = {
 			isa = PBXGroup;
 			children = (
+				912141881757E5A700A50F6E /* Reporting */,
 				913CC1C2174C310300E002AD /* Task and xterm simulation */,
 				917D1C3E17385FBE00503158 /* Command line input */,
 				9186499C16D46A5E0024D9BE /* Terminal window */,
@@ -603,6 +619,7 @@
 				9186499B16D46A490024D9BE /* MMTaskCellView.xib in Resources */,
 				918649BF16D69A700024D9BE /* MMDebugMessagesPanel.xib in Resources */,
 				91E4C02C1742C65400062EF5 /* Icon.icns in Resources */,
+				9121418D1757E5CA00A50F6E /* MMFirstRunWindowController.xib in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -684,6 +701,7 @@
 				913CC1D5174DA22500E002AD /* MMIndexActions.m in Sources */,
 				91E4A26A1753F9EF00EFDDBE /* MMCommandGroup.m in Sources */,
 				910D0EED1757B8B100FFF569 /* MMShellCommands.m in Sources */,
+				9121418C1757E5CA00A50F6E /* MMFirstRunWindowController.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
