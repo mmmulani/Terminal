@@ -7,10 +7,12 @@
 //
 
 #import <Foundation/Foundation.h>
+#import "MMTerminalProxy.h"
 
 @class MMTerminalWindowController;
+@class MMTask;
 
-@interface MMTerminalConnection : NSObject
+@interface MMTerminalConnection : NSObject <MMTerminalProxy>
 
 @property int fd;
 @property BOOL running;
@@ -23,11 +25,9 @@
 - (void)createTerminalWindowWithState:(NSCoder *)state completionHandler:(void (^)(NSWindow *, NSError *))completionHandler;
 
 - (void)handleTerminalInput:(NSString *)input;
-- (void)runCommands:(NSString *)commandsText;
+- (void)runCommandsForTask:(MMTask *)task;
 
 - (void)startShell;
 - (void)handleOutput:(NSString *)output;
-- (void)directoryChangedTo:(NSString *)newPath;
-- (void)processFinished;
 
 @end

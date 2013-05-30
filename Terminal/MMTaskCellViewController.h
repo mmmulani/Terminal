@@ -22,5 +22,6 @@
 - (CGFloat)heightToFitAllOfOutput;
 - (void)updateWithANSIOutput;
 - (IBAction)saveTranscript:(id)sender;
+- (void)updateViewForShellCommand;
 
 @end

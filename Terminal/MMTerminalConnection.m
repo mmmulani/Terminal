@@ -17,6 +17,8 @@
 #import "MMShared.h"
 #import "MMCommandLineArgumentsParser.h"
 #import "MMCommandGroup.h"
+#import "MMTask.h"
+#import "MMShellCommands.h"
 
 #define CTRLKEY(c)   ((c)-'A'+1)
 
@@ -58,10 +60,10 @@
     [NSThread detachNewThreadSelector:@selector(startShell) toTarget:self withObject:nil];
 }
 
-- (void)runCommands:(NSString *)commandsText;
+- (void)runCommandsForTask:(MMTask *)task;
 {
     // TODO: Support multiple commands.
-    NSArray *commandGroups = [MMCommandLineArgumentsParser commandGroupsFromCommandLine:commandsText];
+    NSArray *commandGroups = [MMCommandLineArgumentsParser commandGroupsFromCommandLine:task.command];
 
     // TODO: Handle the case of no commands better. (Also detect it better.)
     if (commandGroups.count == 0 || [commandGroups[0] commands].count == 0) {
@@ -69,11 +71,13 @@
         return;
     }
 
-    if (commandGroups.count > 1 || [commandGroups[0] commands].count == 0) {
-        MMLog(@"Discarded all commands past the first in: %@", commandsText);
+    if (commandGroups.count > 1) {
+        MMLog(@"Discarded all commands past the first in: %@", task.command);
     }
 
     MMCommandGroup *commandGroup = commandGroups[0];
+    task.shellCommand = [MMShellCommands isShellCommand:commandGroup.commands[0]];
+
     NSProxy *proxy = [[NSConnection connectionWithRegisteredName:[ConnectionShellName stringByAppendingFormat:@".%ld", (long)self.identifier] host:nil] rootProxy];
     [proxy performSelector:@selector(executeCommand:) withObject:commandGroup];
     [self.terminalWindow setRunning:YES];
@@ -262,6 +266,8 @@ void iconvFallback(const char *inbuf, size_t inbufsize, void (*write_replacement
     [self.terminalWindow handleOutput:output];
 }
 
+# pragma mark - MMTerminalProxy
+
 - (void)processFinished;
 {
     dispatch_async(dispatch_get_main_queue(), ^{
@@ -273,6 +279,15 @@ void iconvFallback(const char *inbuf, size_t inbufsize, void (*write_replacement
 {
     self.currentDirectory = newPath;
     [self.terminalWindow directoryChangedTo:newPath];
+}
+
+- (void)shellCommand:(MMShellCommand)command succesful:(BOOL)success attachment:(id)attachment;
+{
+    MMTask *task = [self.terminalWindow lastTask];
+    task.shellCommandSuccessful = success;
+    task.shellCommandAttachment = attachment;
+
+    [self.terminalWindow shellCommandFinished];
 }
 
 @end

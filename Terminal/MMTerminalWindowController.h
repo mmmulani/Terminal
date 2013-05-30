@@ -12,6 +12,7 @@
 
 @class MMTerminalConnection;
 @class MMCommandsTextView;
+@class MMTask;
 
 @interface MMTerminalWindowController : NSWindowController <NSTextFieldDelegate, NSTableViewDataSource, NSTableViewDelegate, NSWindowDelegate>
 
@@ -33,5 +34,7 @@
 - (void)handleOutput:(NSString *)message;
 - (void)processFinished;
 - (void)directoryChangedTo:(NSString *)newPath;
+- (void)shellCommandFinished;
+- (MMTask *)lastTask;
 
 @end

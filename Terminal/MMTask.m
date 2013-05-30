@@ -605,6 +605,9 @@
     [coder encodeObject:self.command forKey:MMSelfKey(command)];
     [coder encodeInteger:self.cursorPositionByCharacters forKey:MMSelfKey(cursorPositionByCharacters)];
     [coder encodeBool:self.hasUsedWholeScreen forKey:MMSelfKey(hasUsedWholeScreen)];
+    [coder encodeBool:self.shellCommand forKey:MMSelfKey(shellCommand)];
+    [coder encodeBool:self.shellCommandSuccessful forKey:MMSelfKey(shellCommandSuccessful)];
+    [coder encodeObject:self.shellCommandAttachment forKey:MMSelfKey(shellCommandAttachment)];
 }
 
 - (id)initWithCoder:(NSCoder *)decoder;
@@ -620,6 +623,9 @@
     self.command = [decoder decodeObjectForKey:MMSelfKey(command)];
     self.characterOffsetToScreen = [decoder decodeIntegerForKey:MMSelfKey(cursorPositionByCharacters)];
     self.hasUsedWholeScreen = [decoder decodeBoolForKey:MMSelfKey(hasUsedWholeScreen)];
+    self.shellCommand = [decoder decodeBoolForKey:MMSelfKey(shellCommand)];
+    self.shellCommandSuccessful = [decoder decodeBoolForKey:MMSelfKey(shellCommandSuccessful)];
+    self.shellCommandAttachment = [decoder decodeObjectForKey:MMSelfKey(shellCommandAttachment)];
 
     return self;
 }

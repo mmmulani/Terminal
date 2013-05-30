@@ -8,9 +8,12 @@
 
 #import <Foundation/Foundation.h>
 
+#import "MMShellCommands.h"
+
 @protocol MMTerminalProxy <NSObject>
 
 - (void)processFinished;
 - (void)directoryChangedTo:(NSString *)newPath;
+- (void)shellCommand:(MMShellCommand)command succesful:(BOOL)success attachment:(id)attachment;
 
 @end

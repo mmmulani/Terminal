@@ -36,11 +36,17 @@
 {
     [super loadView];
 
-    if (self.task.displayTextStorage) {
-        [self.outputView.layoutManager replaceTextStorage:self.task.displayTextStorage];
-    }
+    if (self.task.shellCommand) {
+        [self.outputView.enclosingScrollView removeFromSuperview];
+        self.outputView = nil;
+        [self updateViewForShellCommand];
+    } else {
+        if (self.task.displayTextStorage) {
+            [self.outputView.layoutManager replaceTextStorage:self.task.displayTextStorage];
+        }
 
-    [self.label setStringValue:[NSString stringWithFormat:@"Ran %@", self.task.command]];
+        [self.label setStringValue:[NSString stringWithFormat:@"Ran %@", self.task.command]];
+    }
 
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(outputFrameChanged:) name:NSViewFrameDidChangeNotification object:self.outputView];
 }
@@ -59,6 +65,10 @@
 
 - (CGFloat)heightToFitAllOfOutput;
 {
+    if (self.task.isShellCommand) {
+        return 55.0;
+    }
+
     CGFloat textHeight = 0.0f;
     if (self.task.shouldDrawFullTerminalScreen) {
         // We let the default maximum later take over, rather than calculate a max height.
@@ -100,6 +110,21 @@
 
         [self.task.output writeToURL:savePanel.URL atomically:YES encoding:NSUTF8StringEncoding error:NULL];
     }];
+}
+
+- (void)updateViewForShellCommand;
+{
+    // TODO: Handle other types of shell commands.
+    NSString *displayText;
+    if (self.task.shellCommandSuccessful) {
+        displayText = [NSString stringWithFormat:@"Changed directory to %@", self.task.shellCommandAttachment];
+        self.label.textColor = [NSColor grayColor];
+    } else {
+        displayText = [NSString stringWithFormat:@"Unable to change directory to %@", self.task.shellCommandAttachment];
+        self.label.textColor = [NSColor redColor];
+    }
+    self.label.stringValue = displayText;
+    self.label.alignment = NSCenterTextAlignment;
 }
 
 # pragma mark - MMTextViewDelegate methods

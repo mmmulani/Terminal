@@ -49,6 +49,10 @@ typedef enum {
 
 @property (strong) MMTerminalConnection *terminalConnection;
 
+@property (getter=isShellCommand) BOOL shellCommand;
+@property BOOL shellCommandSuccessful;
+@property id shellCommandAttachment;
+
 - (void)handleUserInput:(NSString *)input;
 - (void)handleCursorKeyInput:(MMArrowKey)arrowKey;
 - (void)handleCommandOutput:(NSString *)output withVerbosity:(BOOL)verbosity;

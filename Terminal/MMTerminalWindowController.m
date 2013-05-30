@@ -118,6 +118,17 @@
     });
 }
 
+- (void)shellCommandFinished;
+{
+    [(MMTaskCellViewController *)[self.taskViewControllers lastObject] updateViewForShellCommand];
+    [self processFinished];
+}
+
+- (MMTask *)lastTask;
+{
+    return [self.tasks lastObject];
+}
+
 - (void)processFinished;
 {
     MMTask *task = [self.tasks lastObject];
@@ -345,6 +356,8 @@ static void directoryWatchingCallback(CFFileDescriptorRef kqRef, CFOptionFlags c
         [textView setString:@""];
         self.commandHistoryIndex = self.tasks.count;
 
+        [self.terminalConnection runCommandsForTask:newTask];
+
         [self.tableView insertRowsAtIndexes:[NSIndexSet indexSetWithIndex:(self.tasks.count - 1)] withAnimation:NSTableViewAnimationEffectNone];
 
         MMTaskCellViewController *lastController = self.taskViewControllers.lastObject;
@@ -362,8 +375,6 @@ static void directoryWatchingCallback(CFFileDescriptorRef kqRef, CFOptionFlags c
 
         [self.commandControlsLayoutConstraint.animator setConstant:17.0];
         [NSAnimationContext endGrouping];
-
-        [self.terminalConnection runCommands:newTask.command];
 
         return YES;
     } else if (commandSelector == @selector(scrollPageUp:)) {

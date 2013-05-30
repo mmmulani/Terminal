@@ -61,7 +61,6 @@
 {
     if (commandGroup.commands.count == 1 && [MMShellCommands isShellCommand:commandGroup.commands[0]]) {
         [self handleSpecialCommand:commandGroup.commands[0]];
-        [self.terminalProxy processFinished];
         return;
     }
 
@@ -197,7 +196,7 @@ void signalHandler(int signalNumber) {
         if (command.arguments.count == 1) {
             newDirectory = @"~";
         } else {
-            newDirectory = command.arguments[1];
+            newDirectory = command.unescapedArguments[1];
         }
 
         newDirectory = [newDirectory stringByExpandingTildeInPath];
@@ -207,9 +206,10 @@ void signalHandler(int signalNumber) {
 
         if (result) {
             [self informTerminalOfCurrentDirectory];
-        } else {
-
+            newDirectory = [[fileManager currentDirectoryPath] stringByAbbreviatingWithTildeInPath];
         }
+
+        [self.terminalProxy shellCommand:MMShellCommandCd succesful:result attachment:newDirectory];
     }
 }
 
