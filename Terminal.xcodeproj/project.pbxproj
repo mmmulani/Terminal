@@ -9,6 +9,8 @@
 /* Begin PBXBuildFile section */
 		9103CD7216F7EE0900506F8B /* QuartzCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 9103CD7116F7EE0900506F8B /* QuartzCore.framework */; };
 		9106520C16C574160010DC76 /* MMTextView.m in Sources */ = {isa = PBXBuildFile; fileRef = 9106520B16C574160010DC76 /* MMTextView.m */; };
+		910D0EED1757B8B100FFF569 /* MMShellCommands.m in Sources */ = {isa = PBXBuildFile; fileRef = 910D0EEC1757B8B100FFF569 /* MMShellCommands.m */; };
+		910D0EEE1757B8B100FFF569 /* MMShellCommands.m in Sources */ = {isa = PBXBuildFile; fileRef = 910D0EEC1757B8B100FFF569 /* MMShellCommands.m */; };
 		9126054E1739C5BC001962AE /* MMCommandLineParserTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 9126054C1739C4E0001962AE /* MMCommandLineParserTests.m */; };
 		912605511739E1EF001962AE /* MMCommandLineArgumentsParser.m in Sources */ = {isa = PBXBuildFile; fileRef = 912605501739E1EF001962AE /* MMCommandLineArgumentsParser.m */; };
 		9139E161173B2423009FFC1E /* MMTerminalConnection.m in Sources */ = {isa = PBXBuildFile; fileRef = 9139E160173B2423009FFC1E /* MMTerminalConnection.m */; };
@@ -134,6 +136,9 @@
 		9103CD7116F7EE0900506F8B /* QuartzCore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = QuartzCore.framework; path = System/Library/Frameworks/QuartzCore.framework; sourceTree = SDKROOT; };
 		9106520A16C574160010DC76 /* MMTextView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MMTextView.h; sourceTree = "<group>"; };
 		9106520B16C574160010DC76 /* MMTextView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MMTextView.m; sourceTree = "<group>"; };
+		910D0EEB1757B8B100FFF569 /* MMShellCommands.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MMShellCommands.h; sourceTree = "<group>"; };
+		910D0EEC1757B8B100FFF569 /* MMShellCommands.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MMShellCommands.m; sourceTree = "<group>"; };
+		910D0EEF1757B9B800FFF569 /* MMTerminalProxy.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = MMTerminalProxy.h; sourceTree = "<group>"; };
 		9126054B1739C4E0001962AE /* MMCommandLineParserTests.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = MMCommandLineParserTests.h; path = TerminalTests/MMCommandLineParserTests.h; sourceTree = "<group>"; };
 		9126054C1739C4E0001962AE /* MMCommandLineParserTests.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = MMCommandLineParserTests.m; path = TerminalTests/MMCommandLineParserTests.m; sourceTree = "<group>"; };
 		9126054F1739E1EF001962AE /* MMCommandLineArgumentsParser.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = MMCommandLineArgumentsParser.h; path = CommandLine/MMCommandLineArgumentsParser.h; sourceTree = "<group>"; };
@@ -313,6 +318,9 @@
 				91E4A2691753F9EF00EFDDBE /* MMCommandGroup.m */,
 				918649B016D5A6A80024D9BE /* MMShared.h */,
 				918649B116D5A6A80024D9BE /* MMShared.m */,
+				910D0EEB1757B8B100FFF569 /* MMShellCommands.h */,
+				910D0EEC1757B8B100FFF569 /* MMShellCommands.m */,
+				910D0EEF1757B9B800FFF569 /* MMTerminalProxy.h */,
 			);
 			name = Shared;
 			path = MMShared;
@@ -625,6 +633,7 @@
 				918649BA16D5D1BD0024D9BE /* MMShared.m in Sources */,
 				919BA9B416C875C40091CB1B /* main.m in Sources */,
 				919BA9C016C87E4F0091CB1B /* MMShellMain.m in Sources */,
+				910D0EEE1757B8B100FFF569 /* MMShellCommands.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -674,6 +683,7 @@
 				913CC1D1174D703D00E002AD /* MMLineManipulationActions.m in Sources */,
 				913CC1D5174DA22500E002AD /* MMIndexActions.m in Sources */,
 				91E4A26A1753F9EF00EFDDBE /* MMCommandGroup.m in Sources */,
+				910D0EED1757B8B100FFF569 /* MMShellCommands.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

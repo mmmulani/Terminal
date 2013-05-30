@@ -8,6 +8,8 @@
 
 #import <Foundation/Foundation.h>
 
+#import "MMTerminalProxy.h"
+
 @class MMCommand;
 
 @interface MMShellMain : NSObject
@@ -15,6 +17,7 @@
 @property (strong) NSConnection *shellConnection;
 @property (strong) NSConnection *terminalConnection;
 @property NSInteger identifier;
+@property NSProxy<MMTerminalProxy> *terminalProxy;
 
 + (MMShellMain *)sharedApplication;
 

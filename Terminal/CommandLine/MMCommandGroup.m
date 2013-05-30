@@ -115,11 +115,6 @@
     return self;
 }
 
-- (void)insertArgumentAtFront:(NSString *)argument;
-{
-    [self.arguments insertObject:argument atIndex:0];
-}
-
 - (NSArray *)unescapedArguments;
 {
     NSMutableArray *unescapedArguments = [NSMutableArray arrayWithCapacity:self.arguments.count];
@@ -128,6 +123,13 @@
     }
 
     return unescapedArguments;
+}
+
+# pragma mark - Methods called from yacc
+
+- (void)insertArgumentAtFront:(NSString *)argument;
+{
+    [self.arguments insertObject:argument atIndex:0];
 }
 
 - (void)treatFirstArgumentAsStandardOutput;

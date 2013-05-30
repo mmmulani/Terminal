@@ -9,6 +9,7 @@
 #import "MMShellMain.h"
 #import "MMShared.h"
 #import "MMCommandGroup.h"
+#import "MMShellCommands.h"
 
 @implementation MMShellMain
 
@@ -29,6 +30,7 @@
     self.identifier = identifier;
     self.shellConnection = [NSConnection serviceConnectionWithName:[ConnectionShellName stringByAppendingFormat:@".%ld", self.identifier] rootObject:self];
     self.terminalConnection = [NSConnection connectionWithRegisteredName:[ConnectionTerminalName stringByAppendingFormat:@".%ld", (long)self.identifier] host:nil];
+    self.terminalProxy = (NSProxy<MMTerminalProxy> *)[self.terminalConnection rootProxy];
     MMLog(@"Shell connection: %@", self.shellConnection);
 
     NSDictionary *environmentVariables =
@@ -57,11 +59,9 @@
 
 - (void)_executeCommand:(MMCommandGroup *)commandGroup;
 {
-    if (commandGroup.commands.count == 1 && [[commandGroup.commands[0] unescapedArguments][0] isEqualToString:@"cd"]) {
-        [self handleSpecialCommand:[commandGroup.commands[0] unescapedArguments]];
-        NSProxy *proxy = [self.terminalConnection rootProxy];
-        [proxy performSelector:@selector(processFinished)];
-
+    if (commandGroup.commands.count == 1 && [MMShellCommands isShellCommand:commandGroup.commands[0]]) {
+        [self handleSpecialCommand:commandGroup.commands[0]];
+        [self.terminalProxy processFinished];
         return;
     }
 
@@ -181,8 +181,7 @@
 {
     waitpid([child_pid intValue], NULL, 0);
 
-    NSProxy *proxy = [self.terminalConnection rootProxy];
-    [proxy performSelector:@selector(processFinished)];
+    [self.terminalProxy processFinished];
 }
 
 void signalHandler(int signalNumber) {
@@ -191,30 +190,33 @@ void signalHandler(int signalNumber) {
     }
 }
 
-- (void)handleSpecialCommand:(NSArray *)commandArguments;
+- (void)handleSpecialCommand:(MMCommand *)command;
 {
-    if ([commandArguments[0] isEqualToString:@"cd"]) {
+    if ([command.arguments[0] isEqualToString:@"cd"]) {
         NSString *newDirectory = nil;
-        if (commandArguments.count == 1) {
+        if (command.arguments.count == 1) {
             newDirectory = @"~";
         } else {
-            newDirectory = commandArguments[1];
+            newDirectory = command.arguments[1];
         }
 
         newDirectory = [newDirectory stringByExpandingTildeInPath];
 
         NSFileManager *fileManager = [NSFileManager defaultManager];
-        [fileManager changeCurrentDirectoryPath:newDirectory];
+        BOOL result = [fileManager changeCurrentDirectoryPath:newDirectory];
 
-        [self informTerminalOfCurrentDirectory];
+        if (result) {
+            [self informTerminalOfCurrentDirectory];
+        } else {
+
+        }
     }
 }
 
 - (void)informTerminalOfCurrentDirectory;
 {
     NSFileManager *fileManager = [NSFileManager defaultManager];
-    NSProxy *proxy = [self.terminalConnection rootProxy];
-    [proxy performSelector:@selector(directoryChangedTo:) withObject:[fileManager currentDirectoryPath]];
+    [self.terminalProxy directoryChangedTo:[fileManager currentDirectoryPath]];
 }
 
 @end
