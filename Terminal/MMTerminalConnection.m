@@ -83,6 +83,12 @@
     [self.terminalWindow setRunning:YES];
 }
 
+- (void)setPathVariable:(NSString *)pathVariable;
+{
+    NSProxy *proxy = [[NSConnection connectionWithRegisteredName:[ConnectionShellName stringByAppendingFormat:@".%ld", (long)self.identifier] host:nil] rootProxy];
+    [proxy performSelector:@selector(setPathVariable:) withObject:pathVariable];
+}
+
 - (void)startShell;
 {
     NSProxy *proxy = [self.connectionToSelf rootProxy];

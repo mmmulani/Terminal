@@ -48,6 +48,11 @@
     [[NSRunLoop mainRunLoop] run];
 }
 
+- (void)setPathVariable:(NSString *)pathVariable;
+{
+    setenv("PATH", [pathVariable cStringUsingEncoding:NSUTF8StringEncoding], YES);
+}
+
 - (void)executeCommand:(MMCommandGroup *)commandGroup;
 {
     dispatch_async(dispatch_get_main_queue(), ^{
@@ -182,6 +187,7 @@
 
     [self.terminalProxy processFinished];
 }
+
 
 void signalHandler(int signalNumber) {
     if (signalNumber == SIGINT) {

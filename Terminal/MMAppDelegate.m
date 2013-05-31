@@ -144,7 +144,17 @@
         [userDefaults setBool:YES forKey:@"didFirstRun"];
         [userDefaults synchronize];
 
+        [self createPathVariable];
+
         return;
+    }
+
+    NSString *pathVariable = [userDefaults stringForKey:@"pathVariable"];
+    if (pathVariable) {
+        setenv("PATH", [pathVariable cStringUsingEncoding:NSUTF8StringEncoding], YES);
+        for (MMTerminalConnection *terminalConnection in self.terminalConnections) {
+            [terminalConnection setPathVariable:pathVariable];
+        }
     }
 
     if ([NSApp windows].count == 0) {
@@ -166,6 +176,48 @@
 
     if (self.terminalConnections.count > 0) {
         [[(MMTerminalConnection *)self.terminalConnections[0] terminalWindow].window makeKeyWindow];
+    }
+}
+
+- (void)createPathVariable;
+{
+    NSString *pathToScript = [[NSBundle mainBundle] pathForResource:@"path-script" ofType:@"sh"];
+    NSMutableSet *pathComponentsSet = [NSMutableSet set];
+    NSMutableArray *pathComponents = [NSMutableArray array];
+
+    NSArray *shellPaths = @[@"/bin/zsh", @"/bin/bash"];
+    for (NSString *shellPath in shellPaths) {
+        NSPipe *output = [NSPipe pipe];
+        NSTask *task = [[NSTask alloc] init];
+        task.launchPath = shellPath;
+        task.standardOutput = output;
+        task.environment = @{};
+
+        task.arguments = @[@"-i", @"-l", pathToScript];
+
+        @try {
+            [task launch];
+            [task waitUntilExit];
+            NSString *pathVariable = [[NSString alloc] initWithData:[output.fileHandleForReading readDataToEndOfFile] encoding:NSUTF8StringEncoding];
+            NSArray *shellPathComponents = [pathVariable componentsSeparatedByString:@":"];
+            for (NSString *path in shellPathComponents) {
+                if (![pathComponentsSet member:path]) {
+                    [pathComponentsSet addObject:path];
+                    [pathComponents addObject:path];
+                }
+            }
+        }
+        @catch (NSException *exception) {
+            // This throws if the shell does not exist at the path we specified.
+        }
+    }
+
+    if (pathComponents.count != 0) {
+        NSString *newPathVariable = [pathComponents componentsJoinedByString:@":"];
+        NSUserDefaults *userDefaults = [NSUserDefaults standardUserDefaults];
+        [userDefaults setObject:newPathVariable forKey:@"pathVariable"];
+        [userDefaults synchronize];
+        setenv("PATH", [newPathVariable cStringUsingEncoding:NSUTF8StringEncoding], YES);
     }
 }
 

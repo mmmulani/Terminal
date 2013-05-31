@@ -26,6 +26,7 @@
 
 - (void)handleTerminalInput:(NSString *)input;
 - (void)runCommandsForTask:(MMTask *)task;
+- (void)setPathVariable:(NSString *)pathVariable;
 
 - (void)startShell;
 - (void)handleOutput:(NSString *)output;

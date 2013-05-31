@@ -23,5 +23,6 @@
 
 - (void)startWithIdentifier:(NSInteger)identifier;
 - (void)executeCommand:(MMCommand *)command;
+- (void)setPathVariable:(NSString *)pathVariable;
 
 @end

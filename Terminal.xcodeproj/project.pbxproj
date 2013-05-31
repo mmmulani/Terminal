@@ -16,6 +16,7 @@
 		912141A21757FF7900A50F6E /* Quincy.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 912141A01757FA4300A50F6E /* Quincy.framework */; };
 		912141A51758001700A50F6E /* Quincy.framework in CopyFiles */ = {isa = PBXBuildFile; fileRef = 912141A01757FA4300A50F6E /* Quincy.framework */; };
 		912141A81758F61200A50F6E /* MMUtilities.m in Sources */ = {isa = PBXBuildFile; fileRef = 912141A71758F61200A50F6E /* MMUtilities.m */; };
+		912141AA175919C000A50F6E /* path-script.sh in Resources */ = {isa = PBXBuildFile; fileRef = 912141A91759192400A50F6E /* path-script.sh */; };
 		9126054E1739C5BC001962AE /* MMCommandLineParserTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 9126054C1739C4E0001962AE /* MMCommandLineParserTests.m */; };
 		912605511739E1EF001962AE /* MMCommandLineArgumentsParser.m in Sources */ = {isa = PBXBuildFile; fileRef = 912605501739E1EF001962AE /* MMCommandLineArgumentsParser.m */; };
 		9139E161173B2423009FFC1E /* MMTerminalConnection.m in Sources */ = {isa = PBXBuildFile; fileRef = 9139E160173B2423009FFC1E /* MMTerminalConnection.m */; };
@@ -160,6 +161,7 @@
 		912141A01757FA4300A50F6E /* Quincy.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Quincy.framework; path = Frameworks/Quincy.framework; sourceTree = "<group>"; };
 		912141A61758F61200A50F6E /* MMUtilities.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MMUtilities.h; sourceTree = "<group>"; };
 		912141A71758F61200A50F6E /* MMUtilities.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MMUtilities.m; sourceTree = "<group>"; };
+		912141A91759192400A50F6E /* path-script.sh */ = {isa = PBXFileReference; lastKnownFileType = text.script.sh; path = "path-script.sh"; sourceTree = "<group>"; };
 		9126054B1739C4E0001962AE /* MMCommandLineParserTests.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = MMCommandLineParserTests.h; path = TerminalTests/MMCommandLineParserTests.h; sourceTree = "<group>"; };
 		9126054C1739C4E0001962AE /* MMCommandLineParserTests.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = MMCommandLineParserTests.m; path = TerminalTests/MMCommandLineParserTests.m; sourceTree = "<group>"; };
 		9126054F1739E1EF001962AE /* MMCommandLineArgumentsParser.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = MMCommandLineArgumentsParser.h; path = CommandLine/MMCommandLineArgumentsParser.h; sourceTree = "<group>"; };
@@ -507,6 +509,7 @@
 				91F4EECB16B8D63D00F65E91 /* main.m */,
 				91F4EECD16B8D63D00F65E91 /* Terminal-Prefix.pch */,
 				91F4EECE16B8D63D00F65E91 /* Credits.rtf */,
+				912141A91759192400A50F6E /* path-script.sh */,
 			);
 			name = "Supporting Files";
 			sourceTree = "<group>";
@@ -633,6 +636,7 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				912141AA175919C000A50F6E /* path-script.sh in Resources */,
 				91F4EECA16B8D63D00F65E91 /* InfoPlist.strings in Resources */,
 				91F4EED016B8D63D00F65E91 /* Credits.rtf in Resources */,
 				91F4EED616B8D63D00F65E91 /* MMMainMenu.xib in Resources */,
