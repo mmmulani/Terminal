@@ -7,13 +7,14 @@
 //
 
 #import <Cocoa/Cocoa.h>
+#import <Quincy/BWQuincyManager.h>
 
 #import "MMTerminalWindowController.h"
 #import "MMDebugMessagesWindowController.h"
 
 @class MMFirstRunWindowController;
 
-@interface MMAppDelegate : NSObject <NSApplicationDelegate, NSTextFieldDelegate, NSWindowRestoration>
+@interface MMAppDelegate : NSObject <BWQuincyManagerDelegate, NSApplicationDelegate, NSTextFieldDelegate, NSWindowRestoration>
 
 @property MMFirstRunWindowController *firstRunWindowController;
 @property (strong) MMDebugMessagesWindowController *debugWindow;

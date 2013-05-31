@@ -125,6 +125,15 @@
 
 - (void)applicationDidFinishLaunching:(NSNotification *)aNotification;
 {
+    self.terminalAppConnection = [NSConnection serviceConnectionWithName:ConnectionTerminalName rootObject:self];
+
+    [[BWQuincyManager sharedQuincyManager] setSubmissionURL:@"http://crashy.mehdi.is/server/crash_v200.php"];
+    [[BWQuincyManager sharedQuincyManager] setDelegate:self];
+    [[BWQuincyManager sharedQuincyManager] setAutoSubmitCrashReport:YES];
+}
+
+- (void)showMainApplicationWindow;
+{
     // Determine if we should show the first run window.
     NSUserDefaults *userDefaults = [NSUserDefaults standardUserDefaults];
     BOOL didFirstRun = [userDefaults boolForKey:@"didFirstRun"];
@@ -137,8 +146,6 @@
 
         return;
     }
-
-    self.terminalAppConnection = [NSConnection serviceConnectionWithName:ConnectionTerminalName rootObject:self];
 
     if ([NSApp windows].count == 0) {
         [self createNewTerminal:nil];
@@ -155,7 +162,7 @@
     }
 #endif
 
-//    [self startProcessMonitor];
+    //    [self startProcessMonitor];
 
     if (self.terminalConnections.count > 0) {
         [[(MMTerminalConnection *)self.terminalConnections[0] terminalWindow].window makeKeyWindow];

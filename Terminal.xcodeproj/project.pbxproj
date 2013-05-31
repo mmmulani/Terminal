@@ -13,6 +13,9 @@
 		910D0EEE1757B8B100FFF569 /* MMShellCommands.m in Sources */ = {isa = PBXBuildFile; fileRef = 910D0EEC1757B8B100FFF569 /* MMShellCommands.m */; };
 		9121418C1757E5CA00A50F6E /* MMFirstRunWindowController.m in Sources */ = {isa = PBXBuildFile; fileRef = 9121418A1757E5CA00A50F6E /* MMFirstRunWindowController.m */; };
 		9121418D1757E5CA00A50F6E /* MMFirstRunWindowController.xib in Resources */ = {isa = PBXBuildFile; fileRef = 9121418B1757E5CA00A50F6E /* MMFirstRunWindowController.xib */; };
+		912141A21757FF7900A50F6E /* Quincy.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 912141A01757FA4300A50F6E /* Quincy.framework */; };
+		912141A51758001700A50F6E /* Quincy.framework in CopyFiles */ = {isa = PBXBuildFile; fileRef = 912141A01757FA4300A50F6E /* Quincy.framework */; };
+		912141A81758F61200A50F6E /* MMUtilities.m in Sources */ = {isa = PBXBuildFile; fileRef = 912141A71758F61200A50F6E /* MMUtilities.m */; };
 		9126054E1739C5BC001962AE /* MMCommandLineParserTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 9126054C1739C4E0001962AE /* MMCommandLineParserTests.m */; };
 		912605511739E1EF001962AE /* MMCommandLineArgumentsParser.m in Sources */ = {isa = PBXBuildFile; fileRef = 912605501739E1EF001962AE /* MMCommandLineArgumentsParser.m */; };
 		9139E161173B2423009FFC1E /* MMTerminalConnection.m in Sources */ = {isa = PBXBuildFile; fileRef = 9139E160173B2423009FFC1E /* MMTerminalConnection.m */; };
@@ -92,6 +95,16 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXCopyFilesBuildPhase section */
+		912141A41757FFFF00A50F6E /* CopyFiles */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = "";
+			dstSubfolderSpec = 10;
+			files = (
+				912141A51758001700A50F6E /* Quincy.framework in CopyFiles */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		913CC1C0174A929F00E002AD /* CopyFiles */ = {
 			isa = PBXCopyFilesBuildPhase;
 			buildActionMask = 2147483647;
@@ -144,6 +157,9 @@
 		912141891757E5CA00A50F6E /* MMFirstRunWindowController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = MMFirstRunWindowController.h; path = Reporting/MMFirstRunWindowController.h; sourceTree = "<group>"; };
 		9121418A1757E5CA00A50F6E /* MMFirstRunWindowController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = MMFirstRunWindowController.m; path = Reporting/MMFirstRunWindowController.m; sourceTree = "<group>"; };
 		9121418B1757E5CA00A50F6E /* MMFirstRunWindowController.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; name = MMFirstRunWindowController.xib; path = Reporting/MMFirstRunWindowController.xib; sourceTree = "<group>"; };
+		912141A01757FA4300A50F6E /* Quincy.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Quincy.framework; path = Frameworks/Quincy.framework; sourceTree = "<group>"; };
+		912141A61758F61200A50F6E /* MMUtilities.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MMUtilities.h; sourceTree = "<group>"; };
+		912141A71758F61200A50F6E /* MMUtilities.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MMUtilities.m; sourceTree = "<group>"; };
 		9126054B1739C4E0001962AE /* MMCommandLineParserTests.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = MMCommandLineParserTests.h; path = TerminalTests/MMCommandLineParserTests.h; sourceTree = "<group>"; };
 		9126054C1739C4E0001962AE /* MMCommandLineParserTests.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = MMCommandLineParserTests.m; path = TerminalTests/MMCommandLineParserTests.m; sourceTree = "<group>"; };
 		9126054F1739E1EF001962AE /* MMCommandLineArgumentsParser.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = MMCommandLineArgumentsParser.h; path = CommandLine/MMCommandLineArgumentsParser.h; sourceTree = "<group>"; };
@@ -261,6 +277,7 @@
 				91C7D98D1740793800875974 /* libiconv.dylib in Frameworks */,
 				9103CD7216F7EE0900506F8B /* QuartzCore.framework in Frameworks */,
 				91F4EEC016B8D63D00F65E91 /* Cocoa.framework in Frameworks */,
+				912141A21757FF7900A50F6E /* Quincy.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -336,6 +353,8 @@
 				910D0EEB1757B8B100FFF569 /* MMShellCommands.h */,
 				910D0EEC1757B8B100FFF569 /* MMShellCommands.m */,
 				910D0EEF1757B9B800FFF569 /* MMTerminalProxy.h */,
+				912141A61758F61200A50F6E /* MMUtilities.h */,
+				912141A71758F61200A50F6E /* MMUtilities.m */,
 			);
 			name = Shared;
 			path = MMShared;
@@ -435,6 +454,7 @@
 		91F4EEBE16B8D63D00F65E91 /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				912141A01757FA4300A50F6E /* Quincy.framework */,
 				91C7D9881740575700875974 /* libiconv.dylib */,
 				91E4C07017456FE600062EF5 /* Security.framework */,
 				91E4C0731745712200062EF5 /* ServiceManagement.framework */,
@@ -556,6 +576,7 @@
 				91F4EEBA16B8D63D00F65E91 /* Resources */,
 				91E4C07717459E6100062EF5 /* CopyFiles */,
 				913CC1C0174A929F00E002AD /* CopyFiles */,
+				912141A41757FFFF00A50F6E /* CopyFiles */,
 			);
 			buildRules = (
 			);
@@ -702,6 +723,7 @@
 				91E4A26A1753F9EF00EFDDBE /* MMCommandGroup.m in Sources */,
 				910D0EED1757B8B100FFF569 /* MMShellCommands.m in Sources */,
 				9121418C1757E5CA00A50F6E /* MMFirstRunWindowController.m in Sources */,
+				912141A81758F61200A50F6E /* MMUtilities.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -919,6 +941,10 @@
 			buildSettings = {
 				CODE_SIGN_IDENTITY = "Developer ID Application: Mehdi Mulani (9JP5MK7SEZ)";
 				COMBINE_HIDPI_IMAGES = YES;
+				FRAMEWORK_SEARCH_PATHS = (
+					"$(inherited)",
+					"\"$(SRCROOT)/Frameworks\"",
+				);
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "Terminal/Terminal-Prefix.pch";
 				INFOPLIST_FILE = "Terminal/Terminal-Info.plist";
@@ -933,6 +959,10 @@
 			buildSettings = {
 				CODE_SIGN_IDENTITY = "Developer ID Application: Mehdi Mulani (9JP5MK7SEZ)";
 				COMBINE_HIDPI_IMAGES = YES;
+				FRAMEWORK_SEARCH_PATHS = (
+					"$(inherited)",
+					"\"$(SRCROOT)/Frameworks\"",
+				);
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "Terminal/Terminal-Prefix.pch";
 				INFOPLIST_FILE = "Terminal/Terminal-Info.plist";
