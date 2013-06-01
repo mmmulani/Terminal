@@ -580,9 +580,10 @@
 - (void)replaceCharactersAtScrollRow:(NSInteger)row scrollColumn:(NSInteger)column withString:(NSString *)replacementString;
 {
     NSAssert(column + replacementString.length - 1 <= TERM_WIDTH, @"replacementString too large or incorrect column specified");
+    NSAttributedString *attributedString = [[NSAttributedString alloc] initWithString:replacementString attributes:self.characterAttributes];
     NSInteger enlargementSize = MAX(0, (column + ((NSInteger)replacementString.length) - 1) - [self numberOfCharactersInScrollRow:row]);
     [self adjustNumberOfCharactersOnScrollRow:row byAmount:enlargementSize];
-    [self.displayTextStorage replaceCharactersInRange:NSMakeRange([self characterOffsetUpToScrollRow:row] + column - 1, replacementString.length - enlargementSize) withString:replacementString];
+    [self.displayTextStorage replaceCharactersInRange:NSMakeRange([self characterOffsetUpToScrollRow:row] + column - 1, replacementString.length - enlargementSize) withAttributedString:attributedString];
 }
 
 - (void)removeCharactersInScrollRow:(NSInteger)row range:(NSRange)range shiftCharactersAfter:(BOOL)shift;

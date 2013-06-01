@@ -64,9 +64,13 @@
             [self.delegate removeCharactersInScrollRow:i range:NSMakeRange(1, [self.delegate numberOfCharactersInScrollRow:i]) shiftCharactersAfter:NO];
             [self.delegate setScrollRow:i hasNewline:fillWithNewlines];
         }
-        [self.delegate removeCharactersInScrollRow:self.delegate.cursorPositionY range:NSMakeRange(1, MIN(self.delegate.cursorPositionX, [self.delegate numberOfCharactersInScrollRow:self.delegate.cursorPositionY])) shiftCharactersAfter:NO];
-        if (self.delegate.cursorPositionX == self.delegate.termWidth) {
+
+        // At this point, we have to determine if we are filling the line with spaces up to the cursor or just removing the line entirely.
+        if (self.delegate.cursorPositionX == self.delegate.termWidth || self.delegate.cursorPositionX >= [self.delegate numberOfCharactersInScrollRow:self.delegate.cursorPositionY]) {
+            [self.delegate removeCharactersInScrollRow:self.delegate.cursorPositionY range:NSMakeRange(1, MIN(self.delegate.cursorPositionX, [self.delegate numberOfCharactersInScrollRow:self.delegate.cursorPositionY])) shiftCharactersAfter:NO];
             [self.delegate setScrollRow:self.delegate.cursorPositionY hasNewline:fillWithNewlines];
+        } else {
+            [self.delegate replaceCharactersAtScrollRow:self.delegate.cursorPositionY scrollColumn:1 withString:[@"" stringByPaddingToLength:MIN(self.delegate.cursorPositionX, [self.delegate numberOfCharactersInScrollRow:self.delegate.cursorPositionY]) withString:@" " startingAtIndex:0]];
         }
     } else if ([[self defaultedArgumentAtIndex:0] integerValue] == 2) {
         // Erase entire screen.

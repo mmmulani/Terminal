@@ -84,6 +84,7 @@ do {\
     CheckInputAgainstExpectedOutput(@"1\n2\033[2;1H\033[1J", @"");
     CheckInputAgainstExpectedOutput(@"1\n2\n3\033[2;1H\033[1J", @"\n\n3");
     CheckInputAgainstExpectedOutput([[@"" stringByPaddingToLength:82 withString:@" " startingAtIndex:0] stringByAppendingString:@"\033[1;80H\033[1J"], @"\n  ");
+    CheckInputAgainstExpectedOutput(@"abc\033[1;2H\033[1J", @"  c");
 
     CheckInputAgainstExpectedOutputWithExpectedCursor(@"\033[2J", @"", MMPositionMake(1,1));
     CheckInputAgainstExpectedOutputWithExpectedCursor(@"_\033[2J", @"", MMPositionMake(2,1));
