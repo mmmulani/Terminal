@@ -305,6 +305,7 @@ do {\
     [task handleCommandOutput:@"\033[0J\n\n\n" withVerbosity:NO];
     STAssertEquals(task.cursorPositionByCharacters, (NSInteger)2, @"Should not crash in looking at the cursor position for a row which does not exist");
 
+    CheckInputAgainstExpectedOutput(([NSString stringWithFormat:@"\033[%@HA", [@"" stringByPaddingToLength:875 withString:@"1;" startingAtIndex:0]]), @"A");
 }
 
 - (void)testReverseIndex;

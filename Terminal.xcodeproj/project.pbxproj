@@ -852,9 +852,12 @@
 		91F1747E16ED0CF0002E2594 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				BUNDLE_LOADER = "$(BUILT_PRODUCTS_DIR)/Terminal.app/Contents/MacOS/Terminal";
+				BUNDLE_LOADER = "$(BUILT_PRODUCTS_DIR)/TermDebug.app/Contents/MacOS/TermDebug";
 				COMBINE_HIDPI_IMAGES = YES;
-				FRAMEWORK_SEARCH_PATHS = "\"$(DEVELOPER_LIBRARY_DIR)/Frameworks\"";
+				FRAMEWORK_SEARCH_PATHS = (
+					"\"$(DEVELOPER_LIBRARY_DIR)/Frameworks\"",
+					"\"$(SRCROOT)/Frameworks\"",
+				);
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "TerminalTests/TerminalTests-Prefix.pch";
 				GCC_PREPROCESSOR_DEFINITIONS = "";
@@ -868,9 +871,12 @@
 		91F1747F16ED0CF0002E2594 /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				BUNDLE_LOADER = "$(BUILT_PRODUCTS_DIR)/Terminal.app/Contents/MacOS/Terminal";
+				BUNDLE_LOADER = "$(BUILT_PRODUCTS_DIR)/Term.app/Contents/MacOS/Term";
 				COMBINE_HIDPI_IMAGES = YES;
-				FRAMEWORK_SEARCH_PATHS = "\"$(DEVELOPER_LIBRARY_DIR)/Frameworks\"";
+				FRAMEWORK_SEARCH_PATHS = (
+					"\"$(DEVELOPER_LIBRARY_DIR)/Frameworks\"",
+					"\"$(SRCROOT)/Frameworks\"",
+				);
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "TerminalTests/TerminalTests-Prefix.pch";
 				GCC_PREPROCESSOR_DEFINITIONS = "";
