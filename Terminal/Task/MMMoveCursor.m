@@ -35,8 +35,9 @@
 {
     NSInteger lines = MAX([[self defaultedArgumentAtIndex:0] integerValue], 1);
 
-    NSInteger newPositionY = MIN(self.delegate.cursorPositionY + lines, self.delegate.termHeight + 1);
-    [self.delegate setCursorToX:self.delegate.cursorPositionX Y:newPositionY];
+    NSInteger newPositionX = MIN(self.delegate.cursorPositionX, self.delegate.termWidth);
+    NSInteger newPositionY = MIN(self.delegate.cursorPositionY + lines, self.delegate.termHeight);
+    [self.delegate setCursorToX:newPositionX Y:newPositionY];
 
     [self.delegate checkIfExceededLastLineAndObeyScrollMargin:NO];
 }

@@ -184,6 +184,19 @@ do {\
     CheckInputAgainstExpectedOutputWithExpectedCursor(@"\033[10B\033[10A", @"", MMPositionMake(1, 1));
 }
 
+- (void)testCursorDown;
+{
+    CheckInputAgainstExpectedOutput(@"A\033[BB", @"A\n B");
+    CheckInputAgainstExpectedOutput(@"A\033[0BB", @"A\n B");
+    CheckInputAgainstExpectedOutput(@"A\033[1BB", @"A\n B");
+    CheckInputAgainstExpectedOutput(@"A\033[3BB", @"A\n\n\n B");
+
+    NSString *twentyThreeNewlines = [@"" stringByPaddingToLength:23 withString:@"\n" startingAtIndex:0];
+    CheckInputAgainstExpectedOutput(@"A\033[100BB", ([NSString stringWithFormat:@"A%@ B", twentyThreeNewlines]));
+    NSString *seventyNineSpaces = [@"" stringByPaddingToLength:79 withString:@" " startingAtIndex:0];
+    CheckInputAgainstExpectedOutput(@"\033[24;80HA\033[1BB", ([NSString stringWithFormat:@"%@%@B", twentyThreeNewlines, seventyNineSpaces]));
+}
+
 - (void)testCursorPosition;
 {
     // TODO: Also test ending the escape sequence with a f.
