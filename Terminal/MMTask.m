@@ -27,6 +27,7 @@
 @property NSMutableArray *scrollRowHasNewline;
 @property NSMutableDictionary *characterAttributes;
 @property NSInteger removedTrailingNewlineInScrollLine;
+@property BOOL autowrapMode;
 
 @end
 
@@ -54,6 +55,7 @@
     self.scrollMarginBottom = 24;
     self.characterAttributes = [NSMutableDictionary dictionary];
     self.characterAttributes[NSFontAttributeName] = [NSFont userFixedPitchFontOfSize:[NSFont systemFontSize]];
+    self.autowrapMode = YES;
 
     return self;
 }
@@ -232,8 +234,14 @@
 {
     [self fillCurrentScreenWithSpacesUpToCursor];
 
-    NSInteger i = 0;
+    // If we are in autowrap mode, we merely adjust the input so that it will only change characters on the current line.
+    if (!self.autowrapMode && string.length > (TERM_WIDTH - [self numberOfCharactersInScrollRow:self.cursorPosition.y])) {
+        self.cursorPosition = MMPositionMake(MIN(TERM_WIDTH, self.cursorPosition.x), self.cursorPosition.y);
+        NSString *charactersToInsertFromHead = [string substringWithRange:NSMakeRange(0, MAX(0, TERM_WIDTH - [self numberOfCharactersInScrollRow:self.cursorPosition.y] - 1))];
+        string = [charactersToInsertFromHead stringByAppendingString:[string substringFromIndex:(string.length - 1)]];
+    }
 
+    NSInteger i = 0;
     while (i < string.length) {
         if (self.cursorPosition.x == TERM_WIDTH + 1) {
             // If there is a newline present at the end of this line, we clear it as the text will now flow to the next line.
@@ -411,6 +419,10 @@
             self.cursorKeyMode = YES;
         } else if ([escapeSequence isEqualToString:@"\033[?1l"]) {
             self.cursorKeyMode = NO;
+        } else if ([escapeSequence isEqualToString:@"\033[?7h"]) {
+            self.autowrapMode = YES;
+        } else if ([escapeSequence isEqualToString:@"\033[?7l"]) {
+            self.autowrapMode = NO;
         } else if (escapeCode == 'm') {
             [self handleCharacterAttributes:items];
         } else if (escapeCode == 'r') {

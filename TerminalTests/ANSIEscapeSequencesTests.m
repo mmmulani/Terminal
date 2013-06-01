@@ -353,4 +353,22 @@ do {\
     CheckInputAgainstExpectedOutput(@"\033#8", [lines componentsJoinedByString:@"\n"]);
 }
 
+- (void)testAutowrapMode;
+{
+    // Test that autowrap is on by default.
+    NSString *longString = [@"" stringByPaddingToLength:250 withString:@"123" startingAtIndex:0];
+    CheckInputAgainstExpectedOutput(longString, longString);
+
+    // Bizarrely, it seems that xterm and Terminal.app do not overwrite characters when autowrap mode is disabled.
+    // But iTerm2, screen and mosh do overwrite characters.
+    NSString *longerThanLineString = [@"" stringByPaddingToLength:81 withString:@"1234567890" startingAtIndex:0];
+    NSString *expectedOutput = [[@"" stringByPaddingToLength:79 withString:@"1234567890" startingAtIndex:0] stringByAppendingString:@"1"];
+    CheckInputAgainstExpectedOutput([@"\033[?7l" stringByAppendingString:longerThanLineString], expectedOutput);
+
+    CheckInputAgainstExpectedOutput(@"12345678901234567890123456789012345678901234567890123456789012345678901234567890\n"
+                                    "12345678901234567890123456789012345678901234567890123456789012345678901234567890\033[?7l\033[1;80HAB",
+                                    @"1234567890123456789012345678901234567890123456789012345678901234567890123456789B\n"
+                                    "12345678901234567890123456789012345678901234567890123456789012345678901234567890");
+}
+
 @end
