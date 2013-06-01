@@ -93,9 +93,17 @@
 
 - (void)do;
 {
+    NSInteger maxDistanceY = self.delegate.originMode ? self.delegate.scrollMarginBottom - self.delegate.scrollMarginTop + 1 : self.delegate.termHeight;
+    NSInteger maxDistanceX = self.delegate.termWidth;
+
     // Sanitize the input.
-    NSInteger x = MIN(MAX([[self defaultedArgumentAtIndex:1] integerValue], 1), self.delegate.termWidth);
-    NSInteger y = MIN(MAX([[self defaultedArgumentAtIndex:0] integerValue], 1), self.delegate.termHeight);
+    NSInteger x = MIN(MAX([[self defaultedArgumentAtIndex:1] integerValue], 1), maxDistanceX);
+    NSInteger y = MIN(MAX([[self defaultedArgumentAtIndex:0] integerValue], 1), maxDistanceY);
+
+    // If we are origin mode, we have to convert the inputs to an actual position.
+    if (self.delegate.originMode) {
+        y = self.delegate.scrollMarginTop + y - 1;
+    }
 
     if (y <= self.delegate.cursorPositionY) {
         [self.delegate setCursorToX:x Y:y];

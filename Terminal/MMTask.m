@@ -420,6 +420,10 @@
             self.cursorKeyMode = YES;
         } else if ([escapeSequence isEqualToString:@"\033[?1l"]) {
             self.cursorKeyMode = NO;
+        } else if ([escapeSequence isEqualToString:@"\033[?6h"]) {
+            self.originMode = YES;
+        } else if ([escapeSequence isEqualToString:@"\033[?6l"]) {
+            self.originMode = NO;
         } else if ([escapeSequence isEqualToString:@"\033[?7h"]) {
             self.autowrapMode = YES;
         } else if ([escapeSequence isEqualToString:@"\033[?7l"]) {

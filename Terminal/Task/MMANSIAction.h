@@ -40,6 +40,7 @@
 @property (readonly) NSInteger termWidth;
 @property (readonly) NSInteger scrollMarginTop;
 @property (readonly) NSInteger scrollMarginBottom;
+@property BOOL originMode;
 
 @property BOOL hasUsedWholeScreen;
 

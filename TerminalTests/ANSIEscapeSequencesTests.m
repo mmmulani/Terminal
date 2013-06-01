@@ -389,4 +389,16 @@ do {\
                                     "12345678901234567890123456789012345678901234567890123456789012345678901234567890");
 }
 
+- (void)testOriginMode;
+{
+    // Test that origin mode is off by default.
+    CheckInputAgainstExpectedOutput(@"\033[5;6r\033[1;1HA", @"A");
+
+    CheckInputAgainstExpectedOutput(@"\033[?6h\033[5;6r\033[0;1HA", @"\n\n\n\nA");
+    CheckInputAgainstExpectedOutput(@"\033[?6h\033[5;6r\033[1;1HA", @"\n\n\n\nA");
+    CheckInputAgainstExpectedOutput(@"\033[?6h\033[5;6r\033[2;1HA", @"\n\n\n\n\nA");
+    CheckInputAgainstExpectedOutput(@"\033[?6h\033[5;6r\033[100;1HA", @"\n\n\n\n\nA");
+    CheckInputAgainstExpectedOutput(@"\033[?6h\033[5;7r\033[100;1HA", @"\n\n\n\n\n\nA");
+}
+
 @end
