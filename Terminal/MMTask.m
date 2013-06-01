@@ -13,6 +13,7 @@
 #import "MMErasingActions.h"
 #import "MMLineManipulationActions.h"
 #import "MMIndexActions.h"
+#import "MMDisplayActions.h"
 
 @interface MMTask ()
 
@@ -131,9 +132,24 @@
             }
 
             if ([outputToHandle characterAtIndex:(firstAlphabeticIndex + 1)] != '[') {
-                [self handleEscapeSequence:[outputToHandle substringWithRange:NSMakeRange(firstAlphabeticIndex, 2)]];
-                i = i + 1;
-                continue;
+                // This is where we gather the required characters for escape sequence which does not start with "\033[".
+                // The length of these escape sequences vary, so we have to determine whether we have enough output first.
+                // TODO: Handle Operating System Controls (i.e. the sequences that start with "\033]").
+                NSCharacterSet *prefixesThatRequireAnExtraCharacter = [NSCharacterSet characterSetWithCharactersInString:@" #%()*+"];
+                if ([prefixesThatRequireAnExtraCharacter characterIsMember:[outputToHandle characterAtIndex:(firstAlphabeticIndex + 1)]]) {
+                    if ([outputToHandle length] == (firstAlphabeticIndex + 2)) {
+                        self.unreadOutput = [outputToHandle substringFromIndex:i];
+                        break;
+                    }
+
+                    [self handleEscapeSequence:[outputToHandle substringWithRange:NSMakeRange(firstAlphabeticIndex, 3)]];
+                    i = i + 2;
+                    continue;
+                } else {
+                    [self handleEscapeSequence:[outputToHandle substringWithRange:NSMakeRange(firstAlphabeticIndex, 2)]];
+                    i = i + 1;
+                    continue;
+                }
             }
 
             NSCharacterSet *lowercaseChars = [NSCharacterSet lowercaseLetterCharacterSet];
@@ -359,8 +375,9 @@
 {
 
     MMANSIAction *action = nil;
-    unichar escapeCode = [escapeSequence characterAtIndex:([escapeSequence length] - 1)];
+    unichar escapeCode;
     if ([escapeSequence characterAtIndex:1] == '[') {
+        escapeCode = [escapeSequence characterAtIndex:([escapeSequence length] - 1)];
         NSArray *items = [[escapeSequence substringWithRange:NSMakeRange(2, [escapeSequence length] - 3)] componentsSeparatedByString:@";"];
         if (escapeCode == 'A') {
             action = [[MMMoveCursorUp alloc] initWithArguments:items];
@@ -404,6 +421,7 @@
             MMLog(@"Unhandled escape sequence: %@", escapeSequence);
         }
     } else {
+        escapeCode = [escapeSequence characterAtIndex:1];
         // This covers all escape sequences that do not start with '['.
         if (escapeCode == 'D') {
             action = [[MMIndex alloc] init];
@@ -411,6 +429,8 @@
             action = [MMNextLine new];
         } else if (escapeCode == 'M') {
             action = [[MMReverseIndex alloc] init];
+        } else if (escapeCode == '#' && [escapeSequence characterAtIndex:2] == '8') {
+            action = [MMDecAlignmentTest new];
         } else {
             MMLog(@"Unhandled early escape sequence: %@", escapeSequence);
         }

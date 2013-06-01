@@ -26,6 +26,7 @@
 		913CC1CD174D2D8100E002AD /* MMErasingActions.m in Sources */ = {isa = PBXBuildFile; fileRef = 913CC1CC174D2D8100E002AD /* MMErasingActions.m */; };
 		913CC1D1174D703D00E002AD /* MMLineManipulationActions.m in Sources */ = {isa = PBXBuildFile; fileRef = 913CC1D0174D703C00E002AD /* MMLineManipulationActions.m */; };
 		913CC1D5174DA22500E002AD /* MMIndexActions.m in Sources */ = {isa = PBXBuildFile; fileRef = 913CC1D4174DA22500E002AD /* MMIndexActions.m */; };
+		91557CA7175A557F00CEEFC8 /* MMDisplayActions.m in Sources */ = {isa = PBXBuildFile; fileRef = 91557CA6175A557F00CEEFC8 /* MMDisplayActions.m */; };
 		917D1C42173963C800503158 /* lexer.lm in Sources */ = {isa = PBXBuildFile; fileRef = 917D1C41173963C800503158 /* lexer.lm */; };
 		917D1C4417396C8000503158 /* parser.ym in Sources */ = {isa = PBXBuildFile; fileRef = 917D1C4317396C8000503158 /* parser.ym */; };
 		917D1C47173973D600503158 /* MMParserContext.m in Sources */ = {isa = PBXBuildFile; fileRef = 917D1C46173973D600503158 /* MMParserContext.m */; };
@@ -178,6 +179,8 @@
 		913CC1D0174D703C00E002AD /* MMLineManipulationActions.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = MMLineManipulationActions.m; path = Task/MMLineManipulationActions.m; sourceTree = "<group>"; };
 		913CC1D3174DA22400E002AD /* MMIndexActions.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = MMIndexActions.h; path = Task/MMIndexActions.h; sourceTree = "<group>"; };
 		913CC1D4174DA22500E002AD /* MMIndexActions.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = MMIndexActions.m; path = Task/MMIndexActions.m; sourceTree = "<group>"; };
+		91557CA5175A557F00CEEFC8 /* MMDisplayActions.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = MMDisplayActions.h; path = Task/MMDisplayActions.h; sourceTree = "<group>"; };
+		91557CA6175A557F00CEEFC8 /* MMDisplayActions.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = MMDisplayActions.m; path = Task/MMDisplayActions.m; sourceTree = "<group>"; };
 		917D1C41173963C800503158 /* lexer.lm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.lex; name = lexer.lm; path = CommandLine/lexer.lm; sourceTree = "<group>"; };
 		917D1C4317396C8000503158 /* parser.ym */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.yacc; name = parser.ym; path = CommandLine/parser.ym; sourceTree = "<group>"; };
 		917D1C45173973D600503158 /* MMParserContext.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = MMParserContext.h; path = CommandLine/MMParserContext.h; sourceTree = "<group>"; };
@@ -311,6 +314,8 @@
 				913CC1D0174D703C00E002AD /* MMLineManipulationActions.m */,
 				913CC1D3174DA22400E002AD /* MMIndexActions.h */,
 				913CC1D4174DA22500E002AD /* MMIndexActions.m */,
+				91557CA5175A557F00CEEFC8 /* MMDisplayActions.h */,
+				91557CA6175A557F00CEEFC8 /* MMDisplayActions.m */,
 			);
 			name = "Task and xterm simulation";
 			sourceTree = "<group>";
@@ -728,6 +733,7 @@
 				910D0EED1757B8B100FFF569 /* MMShellCommands.m in Sources */,
 				9121418C1757E5CA00A50F6E /* MMFirstRunWindowController.m in Sources */,
 				912141A81758F61200A50F6E /* MMUtilities.m in Sources */,
+				91557CA7175A557F00CEEFC8 /* MMDisplayActions.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -808,7 +814,7 @@
 		91E4C0681745682800062EF5 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				CODE_SIGN_IDENTITY = "Developer ID Application: Mehdi Mulani (9JP5MK7SEZ)";
+				CODE_SIGN_IDENTITY = "";
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "ProcessMonitor/ProcessMonitor-Prefix.pch";
 				INFOPLIST_FILE = "ProcessMonitor/ProcessMonitor-Info.plist";
@@ -823,14 +829,13 @@
 					"ProcessMonitor/ProcessMonitor-Launchd.plist",
 				);
 				PRODUCT_NAME = "mmm.$(TARGET_NAME)";
-				PROVISIONING_PROFILE = "";
 			};
 			name = Debug;
 		};
 		91E4C0691745682800062EF5 /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				CODE_SIGN_IDENTITY = "Developer ID Application: Mehdi Mulani (9JP5MK7SEZ)";
+				CODE_SIGN_IDENTITY = "";
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "ProcessMonitor/ProcessMonitor-Prefix.pch";
 				INFOPLIST_FILE = "ProcessMonitor/ProcessMonitor-Info.plist";
@@ -845,7 +850,6 @@
 					"ProcessMonitor/ProcessMonitor-Launchd.plist",
 				);
 				PRODUCT_NAME = "mmm.$(TARGET_NAME)";
-				PROVISIONING_PROFILE = "";
 			};
 			name = Release;
 		};
@@ -951,7 +955,7 @@
 		91F4EEDA16B8D63D00F65E91 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				CODE_SIGN_IDENTITY = "Developer ID Application: Mehdi Mulani (9JP5MK7SEZ)";
+				CODE_SIGN_IDENTITY = "";
 				COMBINE_HIDPI_IMAGES = YES;
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(inherited)",
@@ -961,7 +965,6 @@
 				GCC_PREFIX_HEADER = "Terminal/Terminal-Prefix.pch";
 				INFOPLIST_FILE = "Terminal/Terminal-Info.plist";
 				PRODUCT_NAME = "$(TARGET_NAME)Debug";
-				PROVISIONING_PROFILE = "";
 				WRAPPER_EXTENSION = app;
 			};
 			name = Debug;
@@ -969,7 +972,7 @@
 		91F4EEDB16B8D63D00F65E91 /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				CODE_SIGN_IDENTITY = "Developer ID Application: Mehdi Mulani (9JP5MK7SEZ)";
+				CODE_SIGN_IDENTITY = "";
 				COMBINE_HIDPI_IMAGES = YES;
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(inherited)",
@@ -979,7 +982,6 @@
 				GCC_PREFIX_HEADER = "Terminal/Terminal-Prefix.pch";
 				INFOPLIST_FILE = "Terminal/Terminal-Info.plist";
 				PRODUCT_NAME = "$(TARGET_NAME)";
-				PROVISIONING_PROFILE = "";
 				WRAPPER_EXTENSION = app;
 			};
 			name = Release;

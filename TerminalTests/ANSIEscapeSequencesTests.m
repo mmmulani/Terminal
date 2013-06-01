@@ -343,4 +343,14 @@ do {\
     CheckInputAgainstExpectedOutput([[@"" stringByPaddingToLength:23 withString:@"\n" startingAtIndex:0] stringByAppendingString:@"\033[1;10r1\033E2"], [[@"" stringByPaddingToLength:23 withString:@"\n" startingAtIndex:0] stringByAppendingString:@"2"]);
 }
 
+- (void)testScreenAlignmentTest;
+{
+    CheckInputAgainstExpectedOutput(@"\033#8\033[2Ja", @"a");
+    NSMutableArray *lines = [NSMutableArray array];
+    for (NSInteger i = 0; i < 24; i++) {
+        [lines addObject:[@"" stringByPaddingToLength:80 withString:@"E" startingAtIndex:0]];
+    }
+    CheckInputAgainstExpectedOutput(@"\033#8", [lines componentsJoinedByString:@"\n"]);
+}
+
 @end
