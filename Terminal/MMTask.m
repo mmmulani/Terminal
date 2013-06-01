@@ -236,7 +236,7 @@
 
     // If we are not in autowrap mode, we only print the characters that will fit on the current line.
     // Furthermore, as per the vt100 wrapping glitch (at http://invisible-island.net/xterm/xterm.faq.html#vt100_wrapping), we only print the "head" of the content to be outputted.
-    if (!self.autowrapMode && string.length > (TERM_WIDTH - [self numberOfCharactersInScrollRow:self.cursorPosition.y])) {
+    if (!self.autowrapMode && string.length > (TERM_WIDTH - self.cursorPosition.x + 1)) {
         self.cursorPosition = MMPositionMake(MIN(TERM_WIDTH, self.cursorPosition.x), self.cursorPosition.y);
         NSString *charactersToInsertFromHead = [string substringWithRange:NSMakeRange(0, TERM_WIDTH - self.cursorPositionX + 1)];
         string = charactersToInsertFromHead;
