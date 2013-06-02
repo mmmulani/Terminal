@@ -55,6 +55,9 @@
     self.scrollMarginBottom = 24;
     self.characterAttributes = [NSMutableDictionary dictionary];
     self.characterAttributes[NSFontAttributeName] = [NSFont userFixedPitchFontOfSize:[NSFont systemFontSize]];
+    NSMutableParagraphStyle *paragraphStyle = [[NSParagraphStyle defaultParagraphStyle] mutableCopy];
+    [paragraphStyle setLineBreakMode:NSLineBreakByCharWrapping];
+    self.characterAttributes[NSParagraphStyleAttributeName] = paragraphStyle;
     self.autowrapMode = YES;
 
     return self;
@@ -468,7 +471,10 @@
     for (NSNumber *argument in items) {
         switch ([argument integerValue]) {
             case 0:
-                [self.characterAttributes removeAllObjects];
+                [self.characterAttributes removeObjectForKey:NSUnderlineStyleAttributeName];
+                [self.characterAttributes removeObjectForKey:NSForegroundColorAttributeName];
+                [self.characterAttributes removeObjectForKey:NSBackgroundColorAttributeName];
+                
                 self.characterAttributes[NSFontAttributeName] = [NSFont userFixedPitchFontOfSize:[NSFont systemFontSize]];
                 break;
             case 1:
@@ -626,7 +632,7 @@
     }
 
     if (hasNewline) {
-        [self.displayTextStorage insertAttributedString:[[NSAttributedString alloc] initWithString:@"\n"] atIndex:[self characterOffsetUpToScrollRow:(row + 1)]];
+        [self.displayTextStorage insertAttributedString:[[NSAttributedString alloc] initWithString:@"\n" attributes:self.characterAttributes] atIndex:[self characterOffsetUpToScrollRow:(row + 1)]];
     } else {
         [self.displayTextStorage deleteCharactersInRange:NSMakeRange([self characterOffsetUpToScrollRow:(row + 1)] - 1, 1)];
     }
