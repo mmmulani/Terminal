@@ -404,4 +404,20 @@ do {\
     CheckInputAgainstExpectedOutput(@"\033[?6h\033[5;7r\033[100;1HA", @"\n\n\n\n\n\nA");
 }
 
+- (void)testBackspace;
+{
+    CheckInputAgainstExpectedOutput(@"1\b", @"1");
+    CheckInputAgainstExpectedOutput(@"1\b2", @"2");
+    CheckInputAgainstExpectedOutput(@"1\b\b2", @"2");
+    CheckInputAgainstExpectedOutput(@"1 \b2", @"12");
+    CheckInputAgainstExpectedOutput(@"\033[1;80H1\b2", [[@"" stringByPaddingToLength:78 withString:@" " startingAtIndex:0] stringByAppendingString:@"21"]);
+
+    CheckInputAgainstExpectedOutput(@"\033[1;80H12\b\b\b3", [[@"" stringByPaddingToLength:78 withString:@" " startingAtIndex:0] stringByAppendingString:@"312"]);
+    CheckInputAgainstExpectedOutput(@"\033[1;80H12\b\b3", [[@"" stringByPaddingToLength:79 withString:@" " startingAtIndex:0] stringByAppendingString:@"32"]);
+    CheckInputAgainstExpectedOutput(@"\033[1;80H12\b3", [[@"" stringByPaddingToLength:79 withString:@" " startingAtIndex:0] stringByAppendingString:@"13"]);
+
+    CheckInputAgainstExpectedOutput(@"\033[1;80H1\n\b2", [[@"" stringByPaddingToLength:79 withString:@" " startingAtIndex:0] stringByAppendingString:@"1\n2"]);
+    CheckInputAgainstExpectedOutput(@"\033[1;80H1\n\b\b2", [[@"" stringByPaddingToLength:79 withString:@" " startingAtIndex:0] stringByAppendingString:@"1\n2"]);
+}
+
 @end

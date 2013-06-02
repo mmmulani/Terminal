@@ -87,6 +87,21 @@
 
 @end
 
+@implementation MMBackspace
+
+- (void)do;
+{
+    NSInteger adjustedPositionX = MIN(self.delegate.termWidth, self.delegate.cursorPositionX);
+
+    if (self.delegate.cursorPositionY == 1 || adjustedPositionX > 1 || [self.delegate isScrollRowTerminatedInNewline:(self.delegate.cursorPositionY - 1)]) {
+        [self.delegate setCursorToX:MAX(1, adjustedPositionX - 1) Y:self.delegate.cursorPositionY];
+    } else {
+        [self.delegate setCursorToX:self.delegate.termWidth Y:(self.delegate.cursorPositionY - 1)];
+    }
+}
+
+@end
+
 @implementation MMMoveCursorPosition
 
 + (NSArray *)_defaultArguments { return @[@1, @1]; }

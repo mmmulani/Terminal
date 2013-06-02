@@ -123,7 +123,7 @@
                 MMLog(@"Handling backspace.");
             }
 
-            MMANSIAction *action = [[MMMoveCursorBackward alloc] initWithArguments:@[@1]];
+            MMANSIAction *action = [MMBackspace new];
             action.delegate = self;
             [action do];
         } else if (currentChar == '\a') { // Bell (beep).

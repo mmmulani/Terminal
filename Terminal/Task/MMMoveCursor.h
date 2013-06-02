@@ -24,6 +24,10 @@
 
 @end
 
+@interface MMBackspace : MMANSIAction
+
+@end
+
 @interface MMMoveCursorPosition : MMANSIAction
 
 @end
