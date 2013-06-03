@@ -71,7 +71,6 @@ NSMutableArray *_scannedTokens = nil;
 
 - (void)dealloc;
 {
-    [_parsers removeObjectForKey:[NSValue valueWithPointer:self.scanner]];
     [self deallocScanner];
     free(self.scanner);
     self.scanner = nil;
@@ -130,6 +129,7 @@ NSMutableArray *_scannedTokens = nil;
     self.scanner->result = nil;
     [self.stream close];
     self.stream = nil;
+    [_parsers removeObjectForKey:[NSValue valueWithPointer:self.scanner]];
 
     return result;
 }
@@ -155,6 +155,7 @@ NSMutableArray *_scannedTokens = nil;
     self.scanner->result = nil;
     [self.stream close];
     self.stream = nil;
+    [_parsers removeObjectForKey:[NSValue valueWithPointer:self.scanner]];
 
     return tokenEndings;
 }
