@@ -48,7 +48,7 @@ typedef enum {
 @property (readonly) NSInteger cursorPositionByCharacters;
 @property BOOL originMode;
 
-@property (strong) MMTerminalConnection *terminalConnection;
+@property (weak) MMTerminalConnection *terminalConnection;
 
 @property (getter=isShellCommand) BOOL shellCommand;
 @property BOOL shellCommandSuccessful;

@@ -14,7 +14,7 @@
 @interface MMCompletionEngine : NSObject
 
 @property (strong) MMCommandsTextView *commandsTextView;
-@property (strong) MMTerminalConnection *terminalConnection;
+@property (weak) MMTerminalConnection *terminalConnection;
 
 - (void)prepareCompletions;
 - (NSString *)singleCompletionOrNil;

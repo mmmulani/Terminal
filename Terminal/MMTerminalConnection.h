@@ -31,4 +31,6 @@
 - (void)startShell;
 - (void)handleOutput:(NSString *)output;
 
+- (void)end;
+
 @end

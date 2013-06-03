@@ -461,8 +461,7 @@ static void directoryWatchingCallback(CFFileDescriptorRef kqRef, CFOptionFlags c
 - (void)windowWillClose:(NSNotification *)notification;
 {
     MMAppDelegate *appDelegate = [NSApp delegate];
-    [appDelegate resignWindowShortcut:self.keyboardShortcut];
-    [appDelegate updateWindowMenu];
+    [appDelegate terminalWindowWillClose:self];
 }
 
 # pragma mark - NSWindowRestoration

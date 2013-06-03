@@ -24,7 +24,7 @@
 @property (strong) IBOutlet NSLayoutConstraint *commandControlsLayoutConstraint;
 @property (strong) NSMutableArray *tasks;
 @property (strong) NSMutableArray *taskViewControllers;
-@property (strong) MMTerminalConnection *terminalConnection;
+@property (weak) MMTerminalConnection *terminalConnection;
 @property BOOL running;
 @property BOOL logAllCharacters;
 @property (readonly) NSInteger keyboardShortcut;

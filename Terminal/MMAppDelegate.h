@@ -27,5 +27,6 @@
 - (NSInteger)uniqueWindowShortcut;
 - (void)resignWindowShortcut:(NSInteger)shortcut;
 - (void)updateWindowMenu;
+- (void)terminalWindowWillClose:(MMTerminalWindowController *)windowController;
 
 @end

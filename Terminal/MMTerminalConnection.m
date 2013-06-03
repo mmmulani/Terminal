@@ -91,8 +91,6 @@
 
 - (void)startShell;
 {
-    NSProxy *proxy = [self.connectionToSelf rootProxy];
-
     struct termios term;
     struct winsize win;
 
@@ -242,7 +240,7 @@
 
                 readData = [[NSString alloc] initWithData:cleanData encoding:NSUTF8StringEncoding];
             }
-            [proxy performSelector:@selector(handleOutput:) withObject:readData];
+            [self handleOutput:readData];
         }
         
         if (FD_ISSET(self.fd, &wfds)) {
@@ -270,6 +268,13 @@ void iconvFallback(const char *inbuf, size_t inbufsize, void (*write_replacement
 - (void)handleOutput:(NSString *)output;
 {
     [self.terminalWindow handleOutput:output];
+}
+
+- (void)end;
+{
+    close(self.fd);
+    self.connectionToSelf.rootObject = nil;
+    self.connectionToSelf = nil;
 }
 
 # pragma mark - MMTerminalProxy

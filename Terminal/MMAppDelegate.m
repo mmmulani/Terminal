@@ -69,6 +69,14 @@
     }
 }
 
+- (void)terminalWindowWillClose:(MMTerminalWindowController *)windowController;
+{
+    [self resignWindowShortcut:windowController.keyboardShortcut];
+    [self updateWindowMenu];
+    [windowController.terminalConnection end];
+    [self.terminalConnections removeObject:windowController.terminalConnection];
+}
+
 - (void)updateWindowMenu;
 {
     NSArray *menuItems = self.windowMenu.submenu.itemArray;
