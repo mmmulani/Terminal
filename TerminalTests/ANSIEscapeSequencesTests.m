@@ -420,4 +420,51 @@ do {\
     CheckInputAgainstExpectedOutput(@"\033[1;80H1\n\b\b2", [[@"" stringByPaddingToLength:79 withString:@" " startingAtIndex:0] stringByAppendingString:@"1\n2"]);
 }
 
+- (void)testTabs;
+{
+    // Test default tab positions.
+    CheckInputAgainstExpectedOutputWithExpectedCursor(@"\t", @"\t", MMPositionMake(9, 1));
+    CheckInputAgainstExpectedOutputWithExpectedCursor(@"\t\t", @"\t\t", MMPositionMake(17, 1));
+    CheckInputAgainstExpectedOutputWithExpectedCursor(@"\t\t\t", @"\t\t\t", MMPositionMake(25, 1));
+    CheckInputAgainstExpectedOutputWithExpectedCursor(@"\t\t\t\t", @"\t\t\t\t", MMPositionMake(33, 1));
+    CheckInputAgainstExpectedOutputWithExpectedCursor(@"\t\t\t\t\t", @"\t\t\t\t\t", MMPositionMake(41, 1));
+    CheckInputAgainstExpectedOutputWithExpectedCursor(@"\t\t\t\t\t\t", @"\t\t\t\t\t\t", MMPositionMake(49, 1));
+    CheckInputAgainstExpectedOutputWithExpectedCursor(@"\t\t\t\t\t\t\t", @"\t\t\t\t\t\t\t", MMPositionMake(57, 1));
+    CheckInputAgainstExpectedOutputWithExpectedCursor(@"\t\t\t\t\t\t\t\t", @"\t\t\t\t\t\t\t\t", MMPositionMake(65, 1));
+    CheckInputAgainstExpectedOutputWithExpectedCursor(@"\t\t\t\t\t\t\t\t\t", @"\t\t\t\t\t\t\t\t\t", MMPositionMake(73, 1));
+    CheckInputAgainstExpectedOutputWithExpectedCursor(@"\t\t\t\t\t\t\t\t\t\t", @"\t\t\t\t\t\t\t\t\t\t", MMPositionMake(80, 1));
+
+    // Test handling tabs at the end of the line.
+    CheckInputAgainstExpectedOutputWithExpectedCursor(@"\t\t\t\t\t\t\t\t\t\t\t", @"\t\t\t\t\t\t\t\t\t\t", MMPositionMake(80, 1));
+    CheckInputAgainstExpectedOutputWithExpectedCursor(@"\t\t\t\t\t\t\t\t\t\t\t\t", @"\t\t\t\t\t\t\t\t\t\t", MMPositionMake(80, 1));
+    CheckInputAgainstExpectedOutput(@"\t\t\t\t\t\t\t\t\t\ta", @"\t\t\t\t\t\t\t\t\t\ta");
+
+    // Test deleting tabs.
+    CheckInputAgainstExpectedOutputWithExpectedCursor(@"\t\033[g\tb", @"\ta\tb", MMPositionMake(18, 1));
+    CheckInputAgainstExpectedOutputWithExpectedCursor(@"\t\033[g\033[1;1H\tb", @"\ta       b", MMPositionMake(18, 1));
+    CheckInputAgainstExpectedOutputWithExpectedCursor(@"a\t\033[g\033[1;1H\tb", @"a\t        b", MMPositionMake(18, 1));
+    CheckInputAgainstExpectedOutputWithExpectedCursor(@"a\t\033[g\033[1;1H\t", @"a\t", MMPositionMake(17, 1));
+    CheckInputAgainstExpectedOutputWithExpectedCursor(@"\033[1;9H\033[g\033[1;1H\ta", @"\ta", MMPositionMake(18, 1));
+    CheckInputAgainstExpectedOutputWithExpectedCursor(@"\033[1;9H\033[g\033[1;17H\033[g\033[1;1H\ta", @"\ta", MMPositionMake(26, 1));
+    CheckInputAgainstExpectedOutputWithExpectedCursor(@"\t\033[g\t\033[g\033[1;1H\ta", @"\t\t        a", MMPositionMake(26, 1));
+    CheckInputAgainstExpectedOutputWithExpectedCursor(@"\t\033[g\t\033[g\033[1;1H\t\ta", @"\t\t        \ta", MMPositionMake(34, 1));
+
+    // Test expansion of the tab character into spaces.
+    CheckInputAgainstExpectedOutput(@"\ta", @"\ta");
+    CheckInputAgainstExpectedOutputWithExpectedCursor(@"abcdefg\ti", @"abcdefg\ti", MMPositionMake(10, 1));
+    CheckInputAgainstExpectedOutputWithExpectedCursor(@"a\033[1;3H\ti", @"a \ti", MMPositionMake(10, 1));
+    CheckInputAgainstExpectedOutput(@"\t\033[1;2Ha", @" a      ");
+    CheckInputAgainstExpectedOutput(@"\t\033[1;3Ha", @"  a     ");
+
+    // Test tab characters overwriting other characters.
+    CheckInputAgainstExpectedOutputWithExpectedCursor(@"abcdefgh\033[1;1H\ti", @"abcdefghi", MMPositionMake(10, 1));
+    CheckInputAgainstExpectedOutputWithExpectedCursor(@"abcdefg\033[1;1H\ti", @"abcdefg i", MMPositionMake(10, 1));
+    CheckInputAgainstExpectedOutput(@"a\033[1;1H\ti", @"a       i");
+    CheckInputAgainstExpectedOutputWithExpectedCursor(@"a\ti", @"a\ti", MMPositionMake(10, 1));
+    CheckInputAgainstExpectedOutputWithExpectedCursor(@"a\033[1;2H\ti", @"a\ti", MMPositionMake(10, 1));
+    CheckInputAgainstExpectedOutput(@"\t\033[1;2H\ta", @"\ta");
+
+    // Test relative cursor movements.
+}
+
 @end
