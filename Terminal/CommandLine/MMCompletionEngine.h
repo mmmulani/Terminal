@@ -13,7 +13,7 @@
 
 @interface MMCompletionEngine : NSObject
 
-@property (strong) MMCommandsTextView *commandsTextView;
+@property (assign) MMCommandsTextView *commandsTextView;
 @property (weak) MMTerminalConnection *terminalConnection;
 
 - (void)prepareCompletions;
