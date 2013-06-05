@@ -437,7 +437,7 @@ do {\
     // Test handling tabs at the end of the line.
     CheckInputAgainstExpectedOutputWithExpectedCursor(@"\t\t\t\t\t\t\t\t\t\t\t", @"\t\t\t\t\t\t\t\t\t\t", MMPositionMake(80, 1));
     CheckInputAgainstExpectedOutputWithExpectedCursor(@"\t\t\t\t\t\t\t\t\t\t\t\t", @"\t\t\t\t\t\t\t\t\t\t", MMPositionMake(80, 1));
-    CheckInputAgainstExpectedOutput(@"\t\t\t\t\t\t\t\t\t\ta", @"\t\t\t\t\t\t\t\t\t\ta");
+    CheckInputAgainstExpectedOutput(@"\t\t\t\t\t\t\t\t\t\ta", @"\t\t\t\t\t\t\t\t\t       a");
 
     // Test deleting tabs.
     CheckInputAgainstExpectedOutputWithExpectedCursor(@"\t\033[g\tb", @"\ta\tb", MMPositionMake(18, 1));
@@ -451,10 +451,15 @@ do {\
 
     // Test expansion of the tab character into spaces.
     CheckInputAgainstExpectedOutput(@"\ta", @"\ta");
+    CheckInputAgainstExpectedOutputWithExpectedCursor(@"\033[1;2H\ta", @" \ta", MMPositionMake(10, 1));
     CheckInputAgainstExpectedOutputWithExpectedCursor(@"abcdefg\ti", @"abcdefg\ti", MMPositionMake(10, 1));
     CheckInputAgainstExpectedOutputWithExpectedCursor(@"a\033[1;3H\ti", @"a \ti", MMPositionMake(10, 1));
     CheckInputAgainstExpectedOutput(@"\t\033[1;2Ha", @" a      ");
     CheckInputAgainstExpectedOutput(@"\t\033[1;3Ha", @"  a     ");
+    CheckInputAgainstExpectedOutput(@"ab\t\033[1;3Hc", @"abc     ");
+    CheckInputAgainstExpectedOutput(@"\033[1;9H\033[g\t\033[1;2Ha", @" a      \t");
+    CheckInputAgainstExpectedOutput(@"\t\t\033[1;1H123456789", @"123456789       ");
+    CheckInputAgainstExpectedOutput(@"\t\t\033[1;1H1234567890", @"1234567890      ");
 
     // Test tab characters overwriting other characters.
     CheckInputAgainstExpectedOutputWithExpectedCursor(@"abcdefgh\033[1;1H\ti", @"abcdefghi", MMPositionMake(10, 1));
@@ -465,6 +470,12 @@ do {\
     CheckInputAgainstExpectedOutput(@"\t\033[1;2H\ta", @"\ta");
 
     // Test relative cursor movements.
+
+    // Test that the character offset changes by the number of printable characters.
+    MMTask *task = [MMTask new];
+    task.displayTextStorage = [NSTextStorage new];
+    [task handleCommandOutput:[@"\t" stringByAppendingString:[@"" stringByPaddingToLength:30 withString:@"\n" startingAtIndex:0]] withVerbosity:NO];
+    STAssertEquals(task.cursorPositionByCharacters, (NSInteger)31, @"Cursor should be offset by number of printable characters.");
 }
 
 @end

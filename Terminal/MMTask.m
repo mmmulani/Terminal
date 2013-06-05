@@ -14,6 +14,7 @@
 #import "MMLineManipulationActions.h"
 #import "MMIndexActions.h"
 #import "MMDisplayActions.h"
+#import "MMTabAction.h"
 
 @interface MMTask ()
 
@@ -28,6 +29,7 @@
 @property NSMutableDictionary *characterAttributes;
 @property NSInteger removedTrailingNewlineInScrollLine;
 @property BOOL autowrapMode;
+@property NSMutableArray *scrollRowTabRanges;
 
 @end
 
@@ -44,9 +46,11 @@
 
     self.characterCountsOnVisibleRows = [NSMutableArray arrayWithCapacity:TERM_HEIGHT];
     self.scrollRowHasNewline = [NSMutableArray arrayWithCapacity:TERM_HEIGHT];
+    self.scrollRowTabRanges = [NSMutableArray arrayWithCapacity:TERM_HEIGHT];
     for (NSInteger i = 0; i < TERM_HEIGHT; i++) {
         [self.characterCountsOnVisibleRows addObject:@0];
         [self.scrollRowHasNewline addObject:@NO];
+        [self.scrollRowTabRanges addObject:[NSMutableArray array]];
     }
     self.removedTrailingNewlineInScrollLine = 0;
     self.currentRowOffset = 0;
@@ -57,6 +61,8 @@
     self.characterAttributes[NSFontAttributeName] = [NSFont userFixedPitchFontOfSize:[NSFont systemFontSize]];
     NSMutableParagraphStyle *paragraphStyle = [[NSParagraphStyle defaultParagraphStyle] mutableCopy];
     [paragraphStyle setLineBreakMode:NSLineBreakByCharWrapping];
+    paragraphStyle.tabStops = @[];
+    paragraphStyle.defaultTabInterval = [@" " sizeWithAttributes:self.characterAttributes].width * 8;
     self.characterAttributes[NSParagraphStyleAttributeName] = paragraphStyle;
     self.autowrapMode = YES;
 
@@ -87,7 +93,7 @@
     [self.output appendString:output];
 
     NSString *outputToHandle = self.unreadOutput ? [self.unreadOutput stringByAppendingString:output] : output;
-    NSCharacterSet *nonPrintableCharacters = [NSCharacterSet characterSetWithCharactersInString:@"\n\r\b\a\033"];
+    NSCharacterSet *nonPrintableCharacters = [NSCharacterSet characterSetWithCharactersInString:@"\n\t\r\b\a\033"];
     self.unreadOutput = nil;
     for (NSUInteger i = 0; i < [outputToHandle length]; i++) {
         if (self.cursorPosition.y > TERM_HEIGHT) {
@@ -111,6 +117,10 @@
                 MMLog(@"Handling newline.");
             }
             [self addNewline];
+        } else if (currentChar == '\t') {
+            MMANSIAction *action = [MMTabAction new];
+            action.delegate = self;
+            [action do];
         } else if (currentChar == '\r') {
             if (verbosity) {
                 MMLog(@"Handling carriage return.");
@@ -255,6 +265,8 @@
         }
 
         NSInteger lengthToPrintOnLine = MIN(string.length - i, TERM_WIDTH - self.cursorPosition.x + 1);
+        [self expandTabCharactersInColumnRange:NSMakeRange(self.cursorPosition.x, lengthToPrintOnLine) inScrollRow:self.cursorPosition.y];
+
         NSAttributedString *attributedString = [[NSAttributedString alloc] initWithString:[string substringWithRange:NSMakeRange(i, lengthToPrintOnLine)] attributes:self.characterAttributes];
         NSInteger numberOfCharactersToDelete = MIN(lengthToPrintOnLine, [self numberOfCharactersInScrollRow:self.cursorPosition.y] - self.cursorPosition.x + 1);
         if (numberOfCharactersToDelete > 0) {
@@ -306,22 +318,44 @@
 - (void)incrementRowOffset;
 {
     self.hasUsedWholeScreen = self.hasUsedWholeScreen || (self.characterOffsetToScreen >= TERM_HEIGHT * TERM_WIDTH);
-    self.characterOffsetToScreen += [self numberOfCharactersInScrollRow:1];
+    self.characterOffsetToScreen += [self numberOfDisplayableCharactersInScrollRow:1];
     if ([self isScrollRowTerminatedInNewline:1]) {
         self.characterOffsetToScreen++;
     }
 
     [self.characterCountsOnVisibleRows removeObjectAtIndex:0];
     [self.scrollRowHasNewline removeObjectAtIndex:0];
+    [self.scrollRowTabRanges removeObjectAtIndex:0];
 }
 
 - (NSInteger)characterOffsetUpToScrollRow:(NSInteger)row;
 {
     NSInteger offset = self.characterOffsetToScreen;
     for (NSInteger i = 1; i < row; i++) {
-        offset += [self numberOfCharactersInScrollRow:i];
+        offset += [self numberOfDisplayableCharactersInScrollRow:i];
         if ([self isScrollRowTerminatedInNewline:i]) {
             offset++;
+        }
+    }
+
+    return offset;
+}
+
+- (NSInteger)characterOffsetUpToScrollRow:(NSInteger)row scrollColumn:(NSInteger)column;
+{
+    NSInteger offset = [self characterOffsetUpToScrollRow:row] + [self characterOffsetFromStartOfLineToScrollColumn:column inScrollRow:row];
+    return offset;
+}
+
+
+- (NSInteger)characterOffsetFromStartOfLineToScrollColumn:(NSInteger)column inScrollRow:(NSInteger)row;
+{
+    NSInteger offset = MIN(column - 1, [self numberOfCharactersInScrollRow:row]);
+
+    for (NSValue *value in self.scrollRowTabRanges[row - 1]) {
+        NSRange tabRange = [value rangeValue];
+        if (tabRange.location <= column) {
+            offset -= MIN(tabRange.length - 1, column - tabRange.location);
         }
     }
 
@@ -367,13 +401,13 @@
 {
     NSInteger cursorPosition = self.characterOffsetToScreen;
     for (NSInteger i = 1; i < MIN(self.cursorPosition.y, self.numberOfRowsOnScreen); i++) {
-        cursorPosition += [self numberOfCharactersInScrollRow:i];
+        cursorPosition += [self numberOfDisplayableCharactersInScrollRow:i];
         if ([self isScrollRowTerminatedInNewline:i]) {
             cursorPosition++;
         }
     }
 
-    cursorPosition = cursorPosition + (self.numberOfRowsOnScreen >= self.cursorPosition.y ? MIN(self.cursorPosition.x - 1, [self numberOfCharactersInScrollRow:self.cursorPosition.y]) : 0);
+    cursorPosition = cursorPosition + (self.numberOfRowsOnScreen >= self.cursorPosition.y ? MIN([self characterOffsetFromStartOfLineToScrollColumn:self.cursorPosition.x inScrollRow:self.cursorPosition.y], [self numberOfDisplayableCharactersInScrollRow:self.cursorPosition.y]) : 0);
 
     return cursorPosition;
 }
@@ -541,6 +575,41 @@
     }
 }
 
+- (void)expandTabCharactersInColumnRange:(NSRange)printRange inScrollRow:(NSInteger)row;
+{
+    for (NSValue *value in [self.scrollRowTabRanges[row - 1] copy]) {
+        NSRange tabRange = [value rangeValue];
+        if (NSIntersectionRange(printRange, tabRange).location != 0) {
+            [self convertTabRangeToCharacters:tabRange inScrollRow:row];
+            [self.scrollRowTabRanges[row - 1] removeObject:value];
+        }
+    }
+}
+
+- (void)expandTabCharacterAtCursorIfNecessary;
+{
+    if (![self isColumnWithinTab:self.cursorPosition.x inScrollRow:self.cursorPosition.y]) {
+        return;
+    }
+
+    for (NSValue *value in self.scrollRowTabRanges[self.cursorPosition.y - 1]) {
+        NSRange tabRange = [value rangeValue];
+        if (self.cursorPosition.x >= tabRange.location && self.cursorPosition.x < (tabRange.location + tabRange.length)) {
+            [self convertTabRangeToCharacters:tabRange inScrollRow:self.cursorPosition.y];
+            [self.scrollRowTabRanges[self.cursorPosition.y - 1] removeObject:value];
+
+            break;
+        }
+    }
+}
+
+
+- (void)convertTabRangeToCharacters:(NSRange)tabRange inScrollRow:(NSInteger)row;
+{
+    NSAttributedString *attributedString = [[NSAttributedString alloc] initWithString:[@"" stringByPaddingToLength:tabRange.length withString:@" " startingAtIndex:0] attributes:self.characterAttributes];
+    [self.displayTextStorage replaceCharactersInRange:NSMakeRange([self characterOffsetUpToScrollRow:row scrollColumn:tabRange.location], 1) withAttributedString:attributedString];
+}
+
 # pragma mark - MMANSIActionDelegate methods
 
 - (NSInteger)termHeight;
@@ -573,6 +642,17 @@
     return [self.characterCountsOnVisibleRows[row - 1] integerValue];
 }
 
+- (NSInteger)numberOfDisplayableCharactersInScrollRow:(NSInteger)row;
+{
+    NSInteger count = [self numberOfCharactersInScrollRow:row];
+    for (id value in self.scrollRowTabRanges[row - 1]) {
+        NSRange tabRange = [value rangeValue];
+        count = count - tabRange.length + 1;
+    }
+
+    return count;
+}
+
 - (BOOL)isScrollRowTerminatedInNewline:(NSInteger)row;
 {
     return [self.scrollRowHasNewline[row - 1] boolValue];
@@ -583,6 +663,18 @@
     return self.cursorPosition.y >= self.scrollMarginTop && self.cursorPosition.y <= self.scrollMarginBottom;
 }
 
+- (BOOL)isColumnWithinTab:(NSInteger)column inScrollRow:(NSInteger)row;
+{
+    for (id value in self.scrollRowTabRanges[row - 1]) {
+        NSRange tabRange = [value rangeValue];
+        if (column >= tabRange.location && column < (tabRange.location + tabRange.length)) {
+            return YES;
+        }
+    }
+
+    return NO;
+}
+
 - (NSInteger)numberOfRowsOnScreen;
 {
     return self.characterCountsOnVisibleRows.count;
@@ -591,10 +683,12 @@
 - (void)replaceCharactersAtScrollRow:(NSInteger)row scrollColumn:(NSInteger)column withString:(NSString *)replacementString;
 {
     NSAssert(column + replacementString.length - 1 <= TERM_WIDTH, @"replacementString too large or incorrect column specified");
+    [self expandTabCharacterAtCursorIfNecessary];
+
     NSAttributedString *attributedString = [[NSAttributedString alloc] initWithString:replacementString attributes:self.characterAttributes];
     NSInteger enlargementSize = MAX(0, (column + ((NSInteger)replacementString.length) - 1) - [self numberOfCharactersInScrollRow:row]);
     [self adjustNumberOfCharactersOnScrollRow:row byAmount:enlargementSize];
-    [self.displayTextStorage replaceCharactersInRange:NSMakeRange([self characterOffsetUpToScrollRow:row] + column - 1, replacementString.length - enlargementSize) withAttributedString:attributedString];
+    [self.displayTextStorage replaceCharactersInRange:NSMakeRange([self characterOffsetUpToScrollRow:row scrollColumn:column], replacementString.length - enlargementSize) withAttributedString:attributedString];
 }
 
 - (void)removeCharactersInScrollRow:(NSInteger)row range:(NSRange)range shiftCharactersAfter:(BOOL)shift;
@@ -604,9 +698,11 @@
         return;
     }
 
+    [self expandTabCharacterAtCursorIfNecessary];
+
     NSInteger numberOfCharactersBeingRemoved = MIN([self numberOfCharactersInScrollRow:row], range.location + range.length - 1) - range.location + 1;
+    [self.displayTextStorage deleteCharactersInRange:NSMakeRange([self characterOffsetUpToScrollRow:row scrollColumn:range.location], numberOfCharactersBeingRemoved)];
     [self adjustNumberOfCharactersOnScrollRow:row byAmount:(-numberOfCharactersBeingRemoved)];
-    [self.displayTextStorage deleteCharactersInRange:NSMakeRange([self characterOffsetUpToScrollRow:row] + range.location - 1, numberOfCharactersBeingRemoved)];
 }
 
 - (void)insertBlankLineAtScrollRow:(NSInteger)row withNewline:(BOOL)newline;
@@ -614,15 +710,17 @@
     NSAssert(self.numberOfRowsOnScreen < TERM_HEIGHT, @"inserting a line would cause more than termHeight lines to be displayed");
     [self.characterCountsOnVisibleRows insertObject:@0 atIndex:(row - 1)];
     [self.scrollRowHasNewline insertObject:@NO atIndex:(row - 1)];
+    [self.scrollRowTabRanges insertObject:[NSMutableArray array] atIndex:(row - 1)];
     [self setScrollRow:row hasNewline:newline];
 }
 
 - (void)removeLineAtScrollRow:(NSInteger)row;
 {
-    NSInteger lengthIncludingNewline = ([self isScrollRowTerminatedInNewline:row] ? 1 : 0) + [self numberOfCharactersInScrollRow:row];
+    NSInteger lengthIncludingNewline = ([self isScrollRowTerminatedInNewline:row] ? 1 : 0) + [self numberOfDisplayableCharactersInScrollRow:row];
     [self.displayTextStorage deleteCharactersInRange:NSMakeRange([self characterOffsetUpToScrollRow:row], lengthIncludingNewline)];
     [self.characterCountsOnVisibleRows removeObjectAtIndex:(row - 1)];
     [self.scrollRowHasNewline removeObjectAtIndex:(row - 1)];
+    [self.scrollRowTabRanges removeObjectAtIndex:(row - 1)];
 }
 
 - (void)setScrollRow:(NSInteger)row hasNewline:(BOOL)hasNewline;
@@ -637,6 +735,21 @@
         [self.displayTextStorage deleteCharactersInRange:NSMakeRange([self characterOffsetUpToScrollRow:(row + 1)] - 1, 1)];
     }
     [self.scrollRowHasNewline setObject:@(hasNewline) atIndexedSubscript:(row - 1)];
+}
+
+- (void)addTab:(NSRange)tabRange onScrollRow:(NSInteger)row;
+{
+    [self fillCurrentScreenWithSpacesUpToCursor];
+
+    for (NSValue *value in self.scrollRowTabRanges[row - 1]) {
+        NSRange presentTabRange = [value rangeValue];
+        NSAssert(NSIntersectionRange(tabRange, presentTabRange).location == 0, @"Cannot insert a tab where one already exists");
+    }
+
+    NSAttributedString *attributedString = [[NSAttributedString alloc] initWithString:@"\t" attributes:self.characterAttributes];
+    [self.displayTextStorage insertAttributedString:attributedString atIndex:[self characterOffsetUpToScrollRow:row scrollColumn:tabRange.location]];
+    [self adjustNumberOfCharactersOnScrollRow:row byAmount:tabRange.length];
+    [self.scrollRowTabRanges[row - 1] addObject:[NSValue valueWithRange:tabRange]];
 }
 
 # pragma mark - NSCoding

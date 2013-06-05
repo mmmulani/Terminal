@@ -46,8 +46,10 @@
 
 - (void)setCursorToX:(NSInteger)x Y:(NSInteger)y;
 - (NSInteger)numberOfCharactersInScrollRow:(NSInteger)row;
+- (NSInteger)numberOfDisplayableCharactersInScrollRow:(NSInteger)row;
 - (BOOL)isScrollRowTerminatedInNewline:(NSInteger)row;
 - (BOOL)isCursorInScrollRegion;
+- (BOOL)isColumnWithinTab:(NSInteger)column inScrollRow:(NSInteger)row;
 - (NSInteger)numberOfRowsOnScreen;
 
 - (void)replaceCharactersAtScrollRow:(NSInteger)row scrollColumn:(NSInteger)column withString:(NSString *)replacementString;
@@ -56,6 +58,8 @@
 - (void)insertBlankLineAtScrollRow:(NSInteger)row withNewline:(BOOL)newline;
 - (void)removeLineAtScrollRow:(NSInteger)row;
 - (void)setScrollRow:(NSInteger)row hasNewline:(BOOL)hasNewline;
+
+- (void)addTab:(NSRange)tabRange onScrollRow:(NSInteger)row;
 
 // XXX: Try to remove these or change them to ensure that all calculations for ANSIActions can be done in |setUp|.
 - (void)checkIfExceededLastLineAndObeyScrollMargin:(BOOL)obeyScrollMargin;
