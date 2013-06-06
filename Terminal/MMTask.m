@@ -125,9 +125,12 @@
             if (verbosity) {
                 MMLog(@"Handling carriage return.");
             }
-            MMANSIAction *action = [[MMMoveCursorBackward alloc] initWithArguments:@[@(self.cursorPosition.x - 1)]];
-            action.delegate = self;
-            [action do];
+            // TODO: Make this its own action.
+            if (self.cursorPosition.x > 1) {
+                MMANSIAction *action = [[MMMoveCursorBackward alloc] initWithArguments:@[@(self.cursorPosition.x - 1)]];
+                action.delegate = self;
+                [action do];
+            }
         } else if (currentChar == '\b') {
             if (verbosity) {
                 MMLog(@"Handling backspace.");

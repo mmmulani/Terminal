@@ -144,6 +144,8 @@ do {\
 
     // Writing characters past the terminal limit should overwrite the newline present on that line.
     CheckInputAgainstExpectedOutput(@"\033[1;1H\n\033[1;79Habcde", @"                                                                              abcde");
+
+    CheckInputAgainstExpectedOutput([[@"" stringByPaddingToLength:160 withString:@" " startingAtIndex:0] stringByAppendingString:@"\r\r\nA"], [[@"" stringByPaddingToLength:160 withString:@" " startingAtIndex:0] stringByAppendingString:@"\nA"]);
 }
 
 - (void)testCursorBackward;
@@ -418,6 +420,7 @@ do {\
 
     CheckInputAgainstExpectedOutput(@"\033[1;80H1\n\b2", [[@"" stringByPaddingToLength:79 withString:@" " startingAtIndex:0] stringByAppendingString:@"1\n2"]);
     CheckInputAgainstExpectedOutput(@"\033[1;80H1\n\b\b2", [[@"" stringByPaddingToLength:79 withString:@" " startingAtIndex:0] stringByAppendingString:@"1\n2"]);
+    CheckInputAgainstExpectedOutputWithExpectedCursor([[@"" stringByPaddingToLength:80 withString:@" " startingAtIndex:0] stringByAppendingString:@"a\bb"], [[@"" stringByPaddingToLength:80 withString:@" " startingAtIndex:0] stringByAppendingString:@"b"], MMPositionMake(2, 2));
 }
 
 - (void)testTabs;
