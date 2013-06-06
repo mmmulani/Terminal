@@ -462,6 +462,9 @@ static void directoryWatchingCallback(CFFileDescriptorRef kqRef, CFOptionFlags c
 {
     MMAppDelegate *appDelegate = [NSApp delegate];
     [appDelegate terminalWindowWillClose:self];
+    if (self.currentDirectory) {
+        [self unregisterDirectory:self.currentDirectory];
+    }
 }
 
 # pragma mark - NSWindowRestoration
