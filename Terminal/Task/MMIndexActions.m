@@ -17,6 +17,7 @@
     NSInteger newXPosition = self.delegate.cursorPositionX == self.delegate.termWidth + 1 ? 1 : self.delegate.cursorPositionX;
     [self.delegate setCursorToX:newXPosition Y:(self.delegate.cursorPositionY + 1)];
     [self.delegate checkIfExceededLastLineAndObeyScrollMargin:YES];
+    [self.delegate createBlankLinesUpToCursor];
 }
 
 @end

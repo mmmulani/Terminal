@@ -55,6 +55,7 @@
 - (void)replaceCharactersAtScrollRow:(NSInteger)row scrollColumn:(NSInteger)column withString:(NSString *)replacementString;
 - (void)removeCharactersInScrollRow:(NSInteger)row range:(NSRange)range shiftCharactersAfter:(BOOL)shift;
 
+- (void)createBlankLinesUpToCursor;
 - (void)insertBlankLineAtScrollRow:(NSInteger)row withNewline:(BOOL)newline;
 - (void)removeLineAtScrollRow:(NSInteger)row;
 - (void)setScrollRow:(NSInteger)row hasNewline:(BOOL)hasNewline;

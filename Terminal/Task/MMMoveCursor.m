@@ -39,7 +39,7 @@
     NSInteger newPositionY = MIN(self.delegate.cursorPositionY + lines, self.delegate.termHeight);
     [self.delegate setCursorToX:newPositionX Y:newPositionY];
 
-    [self.delegate checkIfExceededLastLineAndObeyScrollMargin:NO];
+    [self.delegate createBlankLinesUpToCursor];
 }
 
 @end
@@ -54,6 +54,8 @@
     NSInteger spaces = MAX([[self defaultedArgumentAtIndex:0] integerValue], 1);
 
     [self.delegate setCursorToX:MIN(self.delegate.termWidth, self.delegate.cursorPositionX + spaces) Y:self.delegate.cursorPositionY];
+
+    [self.delegate createBlankLinesUpToCursor];
 }
 
 @end
@@ -83,6 +85,7 @@
     }
 
     [self.delegate setCursorToX:newPositionX Y:newPositionY];
+    [self.delegate createBlankLinesUpToCursor];
 }
 
 @end

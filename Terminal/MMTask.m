@@ -293,13 +293,6 @@
     [self checkIfExceededLastLineAndObeyScrollMargin:YES];
 }
 
-- (void)createBlankLinesUpToCursor;
-{
-    for (NSInteger i = self.numberOfRowsOnScreen; i < self.cursorPosition.y; i++) {
-        [self insertBlankLineAtScrollRow:(self.numberOfRowsOnScreen + 1) withNewline:NO];
-    }
-}
-
 - (void)fillCurrentScreenWithSpacesUpToCursor;
 {
     [self createBlankLinesUpToCursor];
@@ -694,6 +687,13 @@
     [self.displayTextStorage replaceCharactersInRange:NSMakeRange([self characterOffsetUpToScrollRow:row scrollColumn:column], replacementString.length - enlargementSize) withAttributedString:attributedString];
 }
 
+- (void)createBlankLinesUpToCursor;
+{
+    for (NSInteger i = self.numberOfRowsOnScreen; i < self.cursorPosition.y; i++) {
+        [self insertBlankLineAtScrollRow:(self.numberOfRowsOnScreen + 1) withNewline:NO];
+    }
+}
+
 - (void)removeCharactersInScrollRow:(NSInteger)row range:(NSRange)range shiftCharactersAfter:(BOOL)shift;
 {
     NSAssert(range.location > 0, @"Range location must be provided in ANSI column form");
@@ -701,7 +701,7 @@
         return;
     }
 
-    [self expandTabCharacterAtCursorIfNecessary];
+    [self expandTabCharactersInColumnRange:range inScrollRow:row];
 
     NSInteger numberOfCharactersBeingRemoved = MIN([self numberOfCharactersInScrollRow:row], range.location + range.length - 1) - range.location + 1;
     [self.displayTextStorage deleteCharactersInRange:NSMakeRange([self characterOffsetUpToScrollRow:row scrollColumn:range.location], numberOfCharactersBeingRemoved)];
