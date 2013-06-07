@@ -28,3 +28,21 @@
 }
 
 @end
+
+@implementation MMFullReset
+
+- (void)do;
+{
+    // This is the Full Reset (RIS) and is activated by \033c.
+    // It should reset the terminal to its starting mode, e.g. reset any terminal changes that have been made.
+
+    // TODO: Reset colour and tab settings.
+    for (NSInteger i = self.delegate.numberOfRowsOnScreen; i > 0; i--) {
+        [self.delegate removeLineAtScrollRow:1];
+    }
+
+    [self.delegate insertBlankLineAtScrollRow:1 withNewline:NO];
+    [self.delegate setCursorToX:1 Y:1];
+}
+
+@end

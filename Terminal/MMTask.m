@@ -473,7 +473,9 @@
     } else {
         escapeCode = [escapeSequence characterAtIndex:1];
         // This covers all escape sequences that do not start with '['.
-        if (escapeCode == 'D') {
+        if (escapeCode == 'c') {
+            action = [MMFullReset new];
+        } else if (escapeCode == 'D') {
             action = [[MMIndex alloc] init];
         } else if (escapeCode == 'E') {
             action = [MMNextLine new];

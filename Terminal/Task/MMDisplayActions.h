@@ -11,3 +11,7 @@
 @interface MMDecAlignmentTest : MMANSIAction
 
 @end
+
+@interface MMFullReset : MMANSIAction
+
+@end

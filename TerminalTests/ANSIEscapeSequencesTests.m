@@ -483,4 +483,11 @@ do {\
     STAssertEquals(task.cursorPositionByCharacters, (NSInteger)31, @"Cursor should be offset by number of printable characters.");
 }
 
+- (void)testFullReset;
+{
+    CheckInputAgainstExpectedOutput(@"\033c", @"");
+    CheckInputAgainstExpectedOutput(@"\033ca", @"a");
+    CheckInputAgainstExpectedOutput(@"\nA\033cB", @"B");
+}
+
 @end
