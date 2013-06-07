@@ -46,3 +46,12 @@
 }
 
 @end
+
+@implementation MMBeep
+
+- (void)do;
+{
+    NSBeep();
+}
+
+@end

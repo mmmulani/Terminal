@@ -15,3 +15,7 @@
 @interface MMDeleteLines : MMANSIAction
 
 @end
+
+@interface MMAddNewline : MMANSIAction
+
+@end

@@ -31,3 +31,7 @@
 @interface MMMoveCursorPosition : MMANSIAction
 
 @end
+
+@interface MMCarriageReturn : MMANSIAction
+
+@end

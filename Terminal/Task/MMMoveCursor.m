@@ -147,3 +147,16 @@
 }
 
 @end
+
+@implementation MMCarriageReturn
+
+-(void)do;
+{
+    if (self.delegate.cursorPositionX > 1) {
+        MMANSIAction *action = [[MMMoveCursorBackward alloc] initWithArguments:@[@(self.delegate.cursorPositionX - 1)]];
+        action.delegate = self.delegate;
+        [action do];
+    }
+}
+
+@end

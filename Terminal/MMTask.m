@@ -112,27 +112,7 @@
             continue;
         }
 
-        if (currentChar == '\n') {
-            [self addNewline];
-        } else if (currentChar == '\t') {
-            MMANSIAction *action = [MMTabAction new];
-            action.delegate = self;
-            [action do];
-        } else if (currentChar == '\r') {
-            // TODO: Make this its own action.
-            if (self.cursorPosition.x > 1) {
-                MMANSIAction *action = [[MMMoveCursorBackward alloc] initWithArguments:@[@(self.cursorPosition.x - 1)]];
-                action.delegate = self;
-                [action do];
-            }
-        } else if (currentChar == '\b') {
-            MMANSIAction *action = [MMBackspace new];
-            action.delegate = self;
-            [action do];
-        } else if (currentChar == '\a') { // Bell (beep).
-            NSBeep();
-            MMLog(@"Beeping.");
-        } else if (currentChar == '\033') { // Escape character.
+        if (currentChar == '\033') { // Escape character.
             NSUInteger firstAlphabeticIndex = i;
             if ([outputToHandle length] == (firstAlphabeticIndex + 1)) {
                 self.unreadOutput = [outputToHandle substringFromIndex:i];
@@ -177,10 +157,30 @@
             NSString *escapeSequence = [outputToHandle substringWithRange:NSMakeRange(i, firstAlphabeticIndex - i + 1)];
             [self handleEscapeSequence:escapeSequence];
             i = firstAlphabeticIndex;
+        } else {
+            [self handleNonPrintableOutput:currentChar];
         }
     }
 
     [self removeTrailingNewlineIfNecessary];
+}
+
+- (void)handleNonPrintableOutput:(unichar)currentChar;
+{
+    MMANSIAction *action = nil;
+    if (currentChar == '\n') {
+        action = [MMAddNewline new];
+    } else if (currentChar == '\t') {
+        action = [MMTabAction new];
+    } else if (currentChar == '\r') {
+        action = [MMCarriageReturn new];
+    } else if (currentChar == '\b') {
+        action = [MMBackspace new];
+    } else if (currentChar == '\a') { // Bell (beep).
+        action = [MMBeep new];
+    }
+    action.delegate = self;
+    [action do];
 }
 
 - (BOOL)shouldDrawFullTerminalScreen;
@@ -268,16 +268,6 @@
 
         i += lengthToPrintOnLine;
     }
-}
-
-- (void)addNewline;
-{
-    [self createBlankLinesUpToCursor];
-
-    [self setScrollRow:self.cursorPosition.y hasNewline:YES];
-    self.cursorPosition = MMPositionMake(1, self.cursorPosition.y + 1);
-
-    [self checkIfExceededLastLineAndObeyScrollMargin:YES];
 }
 
 - (void)fillCurrentScreenWithSpacesUpToCursor;
@@ -402,7 +392,6 @@
 
 - (void)handleEscapeSequence:(NSString *)escapeSequence;
 {
-
     MMANSIAction *action = nil;
     unichar escapeCode;
     if ([escapeSequence characterAtIndex:1] == '[') {

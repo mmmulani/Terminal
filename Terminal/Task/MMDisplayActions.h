@@ -15,3 +15,7 @@
 @interface MMFullReset : MMANSIAction
 
 @end
+
+@interface MMBeep : MMANSIAction
+
+@end
