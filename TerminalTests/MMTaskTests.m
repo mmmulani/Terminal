@@ -15,7 +15,7 @@
 do {\
     MMTask *task = [MMTask new]; \
     task.displayTextStorage = [NSTextStorage new]; \
-    [task handleCommandOutput:input withVerbosity:NO]; \
+    [task handleCommandOutput:input]; \
     (void) task.currentANSIDisplay; \
     STAssertEquals(task.cursorPositionByCharacters, (NSInteger)cursorPositionByCharacters_, @"Comparing cursor position by characters."); \
 } while (0)
@@ -42,9 +42,9 @@ do {\
 {
     MMTask *task = [MMTask new];
     task.displayTextStorage = [NSTextStorage new];
-    [task handleCommandOutput:@"\033[" withVerbosity:NO];
-    [task handleCommandOutput:@"K" withVerbosity:NO];
-    [task handleCommandOutput:@"K" withVerbosity:NO];
+    [task handleCommandOutput:@"\033["];
+    [task handleCommandOutput:@"K"];
+    [task handleCommandOutput:@"K"];
     STAssertEqualObjects(task.currentANSIDisplay.string, @"K", @"Broken escape sequence should not be handled twice");
 }
 
@@ -52,11 +52,11 @@ do {\
 {
     MMTask *task = [MMTask new];
     task.displayTextStorage = [NSTextStorage new];
-    [task handleCommandOutput:@"test\n" withVerbosity:NO];
+    [task handleCommandOutput:@"test\n"];
     STAssertEqualObjects(task.currentANSIDisplay.string, @"test\n", @"Newline should not be removed before process is finished");
     [task processFinished];
     STAssertEqualObjects(task.currentANSIDisplay.string, @"test", @"Newline should be removed after process is finished");
-    [task handleCommandOutput:@"test2\n" withVerbosity:NO];
+    [task handleCommandOutput:@"test2\n"];
     STAssertEqualObjects(task.currentANSIDisplay.string, @"test\ntest2", @"Newline should be readded if task has to handle more output");
 }
 

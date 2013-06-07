@@ -39,7 +39,7 @@
 do {\
     MMTask *task = [MMTask new]; \
     task.displayTextStorage = [NSTextStorage new]; \
-    [task handleCommandOutput:input withVerbosity:NO]; \
+    [task handleCommandOutput:input]; \
     STAssertEqualObjects([task.currentANSIDisplay string], output, @"Compared task output to provided output."); \
 } while (0)
 
@@ -47,7 +47,7 @@ do {\
 do {\
     MMTask *task = [MMTask new]; \
     task.displayTextStorage = [NSTextStorage new]; \
-    [task handleCommandOutput:input withVerbosity:NO]; \
+    [task handleCommandOutput:input]; \
     STAssertEqualObjects([task.currentANSIDisplay string], output, @"Compared task output to provided output."); \
     STAssertEquals(task.cursorPosition.x, cursorPosition_.x, @"X coord of cursor position"); \
     STAssertEquals(task.cursorPosition.y, cursorPosition_.y, @"Y coord of cursor position"); \
@@ -57,7 +57,7 @@ do {\
 do {\
     MMTask *task = [MMTask new]; \
     task.displayTextStorage = [NSTextStorage new]; \
-    [task handleCommandOutput:input withVerbosity:NO]; \
+    [task handleCommandOutput:input]; \
     STAssertNotNil([task.currentANSIDisplay string], nil); \
 } while (0)
 
@@ -318,7 +318,7 @@ do {\
 
     MMTask *task = [MMTask new];
     task.displayTextStorage = [NSTextStorage new];
-    [task handleCommandOutput:@"\033[0J\n\n\n" withVerbosity:NO];
+    [task handleCommandOutput:@"\033[0J\n\n\n"];
     STAssertEquals(task.cursorPositionByCharacters, (NSInteger)2, @"Should not crash in looking at the cursor position for a row which does not exist");
 
     CheckInputAgainstExpectedOutput(([NSString stringWithFormat:@"\033[%@HA", [@"" stringByPaddingToLength:875 withString:@"1;" startingAtIndex:0]]), @"A");
@@ -479,7 +479,7 @@ do {\
     // Test that the character offset changes by the number of printable characters.
     MMTask *task = [MMTask new];
     task.displayTextStorage = [NSTextStorage new];
-    [task handleCommandOutput:[@"\t" stringByAppendingString:[@"" stringByPaddingToLength:30 withString:@"\n" startingAtIndex:0]] withVerbosity:NO];
+    [task handleCommandOutput:[@"\t" stringByAppendingString:[@"" stringByPaddingToLength:30 withString:@"\n" startingAtIndex:0]]];
     STAssertEquals(task.cursorPositionByCharacters, (NSInteger)31, @"Cursor should be offset by number of printable characters.");
 }
 

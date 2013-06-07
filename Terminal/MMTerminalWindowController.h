@@ -26,7 +26,6 @@
 @property (strong) NSMutableArray *taskViewControllers;
 @property (weak) MMTerminalConnection *terminalConnection;
 @property BOOL running;
-@property BOOL logAllCharacters;
 @property (readonly) NSInteger keyboardShortcut;
 
 - (id)initWithTerminalConnection:(MMTerminalConnection *)terminalConnection withState:(NSCoder *)state completionHandler:(void (^)(NSWindow *, NSError *))completionHandler;

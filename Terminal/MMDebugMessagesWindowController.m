@@ -33,13 +33,6 @@
     [self.window setLevel:NSNormalWindowLevel];
 }
 
-- (IBAction)allCharactersAction:(id)sender {
-    MMAppDelegate *appDelegate = (MMAppDelegate *)[[NSApplication sharedApplication] delegate];
-    for (MMTerminalConnection *terminalConnection in appDelegate.terminalConnections) {
-        terminalConnection.terminalWindow.logAllCharacters = [sender state] == NSOnState;
-    }
-}
-
 - (void)addDebugMessage:(NSString *)message;
 {
     CGFloat distanceFromBottom = [(NSView *)self.debugScrollView.documentView frame].size.height - (self.debugScrollView.contentView.bounds.origin.y + self.debugScrollView.contentView.bounds.size.height);

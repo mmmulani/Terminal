@@ -108,7 +108,7 @@
         MMTask *lastTask = [self.tasks lastObject];
         [lastTask.displayTextStorage beginEditing];
         @try {
-            [lastTask handleCommandOutput:message withVerbosity:self.logAllCharacters];
+            [lastTask handleCommandOutput:message];
         }
         @catch (NSException *exception) {
             // Send the last 50KB of the output to our servers and then crash.

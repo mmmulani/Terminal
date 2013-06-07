@@ -86,7 +86,7 @@
     [self handleUserInput:inputToSend];
 }
 
-- (void)handleCommandOutput:(NSString *)output withVerbosity:(BOOL)verbosity;
+- (void)handleCommandOutput:(NSString *)output;
 {
     [self readdTrailingNewlineIfNecessary];
 
@@ -113,18 +113,12 @@
         }
 
         if (currentChar == '\n') {
-            if (verbosity) {
-                MMLog(@"Handling newline.");
-            }
             [self addNewline];
         } else if (currentChar == '\t') {
             MMANSIAction *action = [MMTabAction new];
             action.delegate = self;
             [action do];
         } else if (currentChar == '\r') {
-            if (verbosity) {
-                MMLog(@"Handling carriage return.");
-            }
             // TODO: Make this its own action.
             if (self.cursorPosition.x > 1) {
                 MMANSIAction *action = [[MMMoveCursorBackward alloc] initWithArguments:@[@(self.cursorPosition.x - 1)]];
@@ -132,10 +126,6 @@
                 [action do];
             }
         } else if (currentChar == '\b') {
-            if (verbosity) {
-                MMLog(@"Handling backspace.");
-            }
-
             MMANSIAction *action = [MMBackspace new];
             action.delegate = self;
             [action do];
@@ -185,9 +175,6 @@
             }
 
             NSString *escapeSequence = [outputToHandle substringWithRange:NSMakeRange(i, firstAlphabeticIndex - i + 1)];
-            if (verbosity) {
-                MMLog(@"Parsed escape sequence: %@", escapeSequence);
-            }
             [self handleEscapeSequence:escapeSequence];
             i = firstAlphabeticIndex;
         }
