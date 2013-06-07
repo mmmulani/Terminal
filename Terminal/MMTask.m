@@ -93,7 +93,7 @@
     [self.output appendString:output];
 
     NSString *outputToHandle = self.unreadOutput ? [self.unreadOutput stringByAppendingString:output] : output;
-    NSCharacterSet *nonPrintableCharacters = [NSCharacterSet characterSetWithCharactersInString:@"\n\t\r\b\a\033"];
+    NSCharacterSet *nonPrintableCharacters = [NSCharacterSet characterSetWithCharactersInString:@"\013\014\n\t\r\b\a\033"];
     self.unreadOutput = nil;
     for (NSUInteger i = 0; i < [outputToHandle length]; i++) {
         if (self.cursorPosition.y > TERM_HEIGHT) {
@@ -170,6 +170,8 @@
     MMANSIAction *action = nil;
     if (currentChar == '\n') {
         action = [MMAddNewline new];
+    } else if (currentChar == '\013' || currentChar == '\014') {
+        action = [[MMMoveCursorDown alloc] initWithArguments:@[@1]];
     } else if (currentChar == '\t') {
         action = [MMTabAction new];
     } else if (currentChar == '\r') {
@@ -392,7 +394,7 @@
 
 - (void)handleEscapeSequence:(NSString *)escapeSequence;
 {
-    NSCharacterSet *nonPrintableCharacters = [NSCharacterSet characterSetWithCharactersInString:@"\n\t\r\b\a"];
+    NSCharacterSet *nonPrintableCharacters = [NSCharacterSet characterSetWithCharactersInString:@"\013\014\n\t\r\b\a"];
     if ([escapeSequence rangeOfCharacterFromSet:nonPrintableCharacters].location != NSNotFound) {
         escapeSequence = [escapeSequence mutableCopy];
         for (NSInteger i = 0; i < escapeSequence.length; i++) {

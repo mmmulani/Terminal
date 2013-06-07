@@ -148,6 +148,12 @@ do {\
     CheckInputAgainstExpectedOutput([[@"" stringByPaddingToLength:160 withString:@" " startingAtIndex:0] stringByAppendingString:@"\r\r\nA"], [[@"" stringByPaddingToLength:160 withString:@" " startingAtIndex:0] stringByAppendingString:@"\nA"]);
 }
 
+- (void)testVerticalTabulationAndFormFeed;
+{
+    CheckInputAgainstExpectedOutput(@"A\013B", @"A\n B");
+    CheckInputAgainstExpectedOutput(@"A\014B", @"A\n B");
+}
+
 - (void)testCursorBackward;
 {
     CheckInputAgainstExpectedOutput(@"abcd\033[De", @"abce");
