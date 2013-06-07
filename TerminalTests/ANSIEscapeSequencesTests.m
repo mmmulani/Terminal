@@ -490,4 +490,22 @@ do {\
     CheckInputAgainstExpectedOutput(@"\nA\033cB", @"B");
 }
 
+- (void)testCursorControlInsideEscapeSequence;
+{
+    CheckInputAgainstExpectedOutput(@"A\033[\b1CB", @"AB");
+    CheckInputAgainstExpectedOutput(@"A\033[\b2CB", @"A B");
+    CheckInputAgainstExpectedOutput(@" A\033[\b\b1CB", @" B");
+    CheckInputAgainstExpectedOutput(@" A\033[\b\b2CB", @" AB");
+    CheckInputAgainstExpectedOutput(@" A\033[\b2\bCB", @" AB");
+    CheckInputAgainstExpectedOutput(@" A\033[\b2C\bB", @" AB");
+
+    CheckInputAgainstExpectedOutput(@"ABC\033[\r1CD", @"ADC");
+    CheckInputAgainstExpectedOutput(@"ABC\033[\b\r1CD", @"ADC");
+
+    CheckInputAgainstExpectedOutput(@"AB\033[1\nCD", @"AB\n D");
+    CheckInputAgainstExpectedOutput(@"AB\033[1\n\nCD", @"AB\n\n D");
+
+    CheckInputAgainstExpectedOutputWithExpectedCursor(@"AB\033[1\tCD", @"AB\t D", MMPositionMake(11, 1));
+}
+
 @end

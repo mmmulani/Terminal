@@ -392,6 +392,19 @@
 
 - (void)handleEscapeSequence:(NSString *)escapeSequence;
 {
+    NSCharacterSet *nonPrintableCharacters = [NSCharacterSet characterSetWithCharactersInString:@"\n\t\r\b\a"];
+    if ([escapeSequence rangeOfCharacterFromSet:nonPrintableCharacters].location != NSNotFound) {
+        escapeSequence = [escapeSequence mutableCopy];
+        for (NSInteger i = 0; i < escapeSequence.length; i++) {
+            unichar currentChar = [escapeSequence characterAtIndex:i];
+            if ([nonPrintableCharacters characterIsMember:currentChar]) {
+                [self handleNonPrintableOutput:currentChar];
+                [(NSMutableString *)escapeSequence deleteCharactersInRange:NSMakeRange(i, 1)];
+                i--;
+            }
+        }
+    }
+
     MMANSIAction *action = nil;
     unichar escapeCode;
     if ([escapeSequence characterAtIndex:1] == '[') {
