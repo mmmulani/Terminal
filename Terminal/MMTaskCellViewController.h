@@ -23,5 +23,6 @@
 - (void)updateWithANSIOutput;
 - (IBAction)saveTranscript:(id)sender;
 - (void)updateViewForShellCommand;
+- (void)resizeTerminalToColumns:(NSInteger)columns rows:(NSInteger)rows;
 
 @end

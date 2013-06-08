@@ -33,4 +33,6 @@
 
 - (void)end;
 
+- (void)changeTerminalSizeToColumns:(NSInteger)columns rows:(NSInteger)rows;
+
 @end

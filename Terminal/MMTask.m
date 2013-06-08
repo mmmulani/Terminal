@@ -18,7 +18,6 @@
 
 @interface MMTask ()
 
-@property NSInteger currentRowOffset;
 @property NSString *unreadOutput;
 @property BOOL cursorKeyMode;
 @property NSInteger scrollMarginTop;
@@ -57,10 +56,9 @@
         [self.scrollRowTabRanges addObject:[NSMutableArray array]];
     }
     self.removedTrailingNewlineInScrollLine = 0;
-    self.currentRowOffset = 0;
     self.cursorPosition = MMPositionMake(1, 1);
     self.scrollMarginTop = 1;
-    self.scrollMarginBottom = 24;
+    self.scrollMarginBottom = self.termHeight;
     self.characterAttributes = [NSMutableDictionary dictionary];
     self.characterAttributes[NSFontAttributeName] = [NSFont userFixedPitchFontOfSize:[NSFont systemFontSize]];
     NSMutableParagraphStyle *paragraphStyle = [[NSParagraphStyle defaultParagraphStyle] mutableCopy];
@@ -568,6 +566,16 @@
     }
 }
 
+- (void)expandAllTabCharacters;
+{
+    for (NSInteger i = 1; i <= self.scrollRowTabRanges.count; i++) {
+        for (NSValue *value in [self.scrollRowTabRanges[i - 1] copy]) {
+            NSRange tabRange = [value rangeValue];
+            [self convertTabRangeToCharacters:tabRange inScrollRow:i];
+        }
+    }
+}
+
 - (void)expandTabCharactersInColumnRange:(NSRange)printRange inScrollRow:(NSInteger)row;
 {
     for (NSValue *value in [self.scrollRowTabRanges[row - 1] copy]) {
@@ -601,6 +609,111 @@
 {
     NSAttributedString *attributedString = [[NSAttributedString alloc] initWithString:[@"" stringByPaddingToLength:tabRange.length withString:@" " startingAtIndex:0] attributes:self.characterAttributes];
     [self.displayTextStorage replaceCharactersInRange:NSMakeRange([self characterOffsetUpToScrollRow:row scrollColumn:tabRange.location], 1) withAttributedString:attributedString];
+}
+
+# pragma mark - Resize methods
+
+- (void)resizeTerminalToColumns:(NSInteger)columns rows:(NSInteger)rows;
+{
+    if (self.finishedAt) {
+        return;
+    }
+
+    if (columns != self.termWidth) {
+        [self changeTerminalWidthTo:columns];
+    }
+}
+
+- (void)changeTerminalWidthTo:(NSInteger)newTerminalWidth;
+{
+    // 1. Expand all tab characters to spaces.
+    // 2. Starting from the bottom, reconstruct the lines of new width.
+    // 3. Ensure that we finish with |numberOfRowsOnScreen| the same as before the resize.
+    // 4. Calculate a cursor position so that |cursorPositionByCharacters| is the same.
+    // 5. Switch out line metadata for the old line width with the newly calculated metadata.
+
+    // Step 1.
+    [self expandAllTabCharacters];
+
+    // Step 2.
+    // For each line, we need to determine its relevant metadata.
+    // That is, whether the line ends in a newline and how many characters are on the line.
+    NSMutableArray *numberOfCharactersOnLine = [NSMutableArray array];
+    NSMutableArray *isLineEndedByNewline = [NSMutableArray array];
+    NSString *outputString = self.displayTextStorage.string;
+    NSInteger currentPosition = outputString.length;
+    NSInteger numberOfRowsCreated = 0;
+    BOOL newlineFollows = NO;
+    while (numberOfRowsCreated < self.termHeight) {
+        [isLineEndedByNewline addObject:@(newlineFollows)];
+        if (newlineFollows) {
+            currentPosition--;
+        }
+        NSRange lineRange = [outputString rangeOfCharacterFromSet:[NSCharacterSet characterSetWithCharactersInString:@"\n"] options:NSBackwardsSearch range:NSMakeRange(0, currentPosition)];
+
+        NSInteger lengthOfLine = currentPosition - (lineRange.location == NSNotFound ? -1 : lineRange.location) - 1;
+        NSInteger lengthOfSingleLine = lengthOfLine % newTerminalWidth;
+        if (lengthOfLine >= newTerminalWidth && lengthOfSingleLine == 0) {
+            lengthOfSingleLine = newTerminalWidth;
+            newlineFollows = NO;
+        }
+        [numberOfCharactersOnLine addObject:@(lengthOfSingleLine)];
+        numberOfRowsCreated++;
+
+        currentPosition -= lengthOfSingleLine;
+
+        if (currentPosition - 1 == lineRange.location) {
+            newlineFollows = YES;
+        }
+        if (lineRange.location == NSNotFound && currentPosition == 0) {
+            break;
+        }
+    }
+
+    NSAssert(numberOfCharactersOnLine.count == isLineEndedByNewline.count, @"Line counts should be equal");
+    // Reverse the line metadata arrays.
+    for (NSInteger i = 0; i < numberOfCharactersOnLine.count / 2; i++) {
+        [numberOfCharactersOnLine exchangeObjectAtIndex:i withObjectAtIndex:(numberOfCharactersOnLine.count - 1 - i)];
+        [isLineEndedByNewline exchangeObjectAtIndex:i withObjectAtIndex:(isLineEndedByNewline.count - 1 - i)];
+    }
+
+    // Step 3.
+    // We may have created too many lines, so we prune them as necessary.
+    while (numberOfRowsCreated > self.termHeight) {
+        currentPosition += [numberOfCharactersOnLine[0] integerValue] + ([isLineEndedByNewline[0] boolValue] ? 1 : 0);
+        [numberOfCharactersOnLine removeObjectAtIndex:0];
+        [isLineEndedByNewline removeObjectAtIndex:0];
+    }
+
+    // Step 4.
+    NSInteger currentCursorPosition = self.cursorPositionByCharacters - currentPosition;
+    NSInteger newPositionX = 1;
+    NSInteger newPositionY = 1;
+    while (currentCursorPosition > 0 && newPositionY < self.termHeight) {
+        NSInteger totalCharsOnLine = [numberOfCharactersOnLine[newPositionY - 1] integerValue] + ([isLineEndedByNewline[newPositionY - 1] boolValue] ? 1 : 0);
+        if (totalCharsOnLine >= currentCursorPosition && ![isLineEndedByNewline[newPositionY - 1] boolValue]) {
+            break;
+        }
+        
+        newPositionY++;
+        currentCursorPosition -= totalCharsOnLine;
+    }
+    if ([isLineEndedByNewline[newPositionY - 1] boolValue]) {
+        newPositionY++;
+    }
+
+    newPositionX = MIN(currentCursorPosition + 1, newTerminalWidth);
+
+    // Step 5.
+    self.characterOffsetToScreen = currentPosition;
+    self.characterCountsOnVisibleRows = numberOfCharactersOnLine;
+    self.scrollRowHasNewline = isLineEndedByNewline;
+    self.scrollRowTabRanges = [NSMutableArray array];
+    for (NSInteger i = 0; i < numberOfCharactersOnLine.count; i++) {
+        [self.scrollRowTabRanges addObject:[NSMutableArray array]];
+    }
+    self.cursorPosition = MMPositionMake(newPositionX, newPositionY);
+    self.termWidth = newTerminalWidth;
 }
 
 # pragma mark - MMANSIActionDelegate methods

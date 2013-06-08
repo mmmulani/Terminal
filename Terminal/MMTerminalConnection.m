@@ -8,6 +8,7 @@
 
 #include <termios.h>
 #include <util.h>
+#include <sys/ioctl.h>
 #include <sys/wait.h>
 #include <syslog.h>
 #include "iconv.h"
@@ -275,6 +276,14 @@ void iconvFallback(const char *inbuf, size_t inbufsize, void (*write_replacement
     close(self.fd);
     self.connectionToSelf.rootObject = nil;
     self.connectionToSelf = nil;
+}
+
+- (void)changeTerminalSizeToColumns:(NSInteger)columns rows:(NSInteger)rows;
+{
+    struct winsize newSize;
+    newSize.ws_col = columns;
+    newSize.ws_row = rows;
+    ioctl(self.fd, TIOCSWINSZ, &newSize);
 }
 
 # pragma mark - MMTerminalProxy

@@ -131,6 +131,11 @@
     self.label.alignment = NSCenterTextAlignment;
 }
 
+- (void)resizeTerminalToColumns:(NSInteger)columns rows:(NSInteger)rows;
+{
+    [self.task resizeTerminalToColumns:columns rows:rows];
+}
+
 # pragma mark - MMTextViewDelegate methods
 
 - (void)handleKeyPress:(NSEvent *)keyEvent;
