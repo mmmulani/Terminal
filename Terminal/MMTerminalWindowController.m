@@ -18,6 +18,7 @@
 #import "MMAppDelegate.h"
 #import "MMUtilities.h"
 
+#import <tgmath.h>
 #import <QuartzCore/QuartzCore.h>
 
 @interface MMTerminalWindowController ()
@@ -460,7 +461,15 @@ static void directoryWatchingCallback(CFFileDescriptorRef kqRef, CFOptionFlags c
 
 - (NSSize)windowWillResize:(NSWindow *)sender toSize:(NSSize)frameSize;
 {
-    return frameSize;
+    // In terms of width considerations:
+    // 7.82666 is required for each column and 56 is required for the surrounding chrome.
+    // For height:
+    // 15 is required for each row and 337 is required for the chrome.
+
+    NSSize newFrame = frameSize;
+    newFrame.width = floor(56 + round((frameSize.width - 56) / 7.82666) * 7.82666);
+    newFrame.height = floor(337 + round((frameSize.height - 337) / 15) * 15);
+    return newFrame;
 }
 
 - (void)windowWillClose:(NSNotification *)notification;

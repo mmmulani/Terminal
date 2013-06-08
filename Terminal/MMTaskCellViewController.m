@@ -86,7 +86,7 @@
     }
 
     NSScrollView *textScrollView = (NSScrollView *)self.outputView.superview.superview;
-    return MIN(self.view.frame.size.height - textScrollView.frame.size.height + textHeight, 425.0f);
+    return MIN(self.view.frame.size.height - textScrollView.frame.size.height + textHeight, 424.0f);
 }
 
 - (void)updateWithANSIOutput;
