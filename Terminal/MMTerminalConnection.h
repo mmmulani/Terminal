@@ -9,6 +9,9 @@
 #import <Foundation/Foundation.h>
 #import "MMTerminalProxy.h"
 
+#define DEFAULT_TERM_WIDTH 80
+#define DEFAULT_TERM_HEIGHT 24
+
 @class MMTerminalWindowController;
 @class MMTask;
 
@@ -18,6 +21,8 @@
 @property BOOL running;
 @property (strong) MMTerminalWindowController *terminalWindow;
 @property (strong) NSString *currentDirectory;
+@property NSInteger terminalHeight;
+@property NSInteger terminalWidth;
 @property NSInteger identifier;
 
 - (id)initWithIdentifier:(NSInteger)identifier;

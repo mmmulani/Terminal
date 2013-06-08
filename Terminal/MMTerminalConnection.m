@@ -125,8 +125,8 @@
 	term.c_ispeed = B38400;
 	term.c_ospeed = B38400;
 
-	win.ws_row = 24;
-	win.ws_col = 80;
+	win.ws_row = DEFAULT_TERM_HEIGHT;
+	win.ws_col = DEFAULT_TERM_WIDTH;
 	win.ws_xpixel = 0;
 	win.ws_ypixel = 0;
 
@@ -280,6 +280,9 @@ void iconvFallback(const char *inbuf, size_t inbufsize, void (*write_replacement
 
 - (void)changeTerminalSizeToColumns:(NSInteger)columns rows:(NSInteger)rows;
 {
+    self.terminalHeight = rows;
+    self.terminalWidth = columns;
+
     struct winsize newSize;
     newSize.ws_col = columns;
     newSize.ws_row = rows;

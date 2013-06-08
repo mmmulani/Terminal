@@ -10,9 +10,6 @@
 
 #import "MMANSIAction.h"
 
-#define DEFAULT_TERM_WIDTH 80
-#define DEFAULT_TERM_HEIGHT 24
-
 typedef struct _MMPosition {
     NSInteger x;
     NSInteger y;
@@ -54,6 +51,7 @@ typedef enum {
 @property BOOL shellCommandSuccessful;
 @property id shellCommandAttachment;
 
+- (id)initWithTerminalConnection:(MMTerminalConnection *)terminalConnection;
 - (void)handleUserInput:(NSString *)input;
 - (void)handleCursorKeyInput:(MMArrowKey)arrowKey;
 - (void)handleCommandOutput:(NSString *)output;

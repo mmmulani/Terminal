@@ -366,10 +366,9 @@ static void directoryWatchingCallback(CFFileDescriptorRef kqRef, CFOptionFlags c
 - (BOOL)textView:(NSTextView *)textView doCommandBySelector:(SEL)commandSelector;
 {
     if (commandSelector == @selector(insertNewline:)) {
-        MMTask *newTask = [MMTask new];
+        MMTask *newTask = [[MMTask alloc] initWithTerminalConnection:self.terminalConnection];
         newTask.command = [textView.string copy];
         newTask.startedAt = [NSDate date];
-        newTask.terminalConnection = self.terminalConnection;
         [self.tasks addObject:newTask];
 
         [textView setString:@""];

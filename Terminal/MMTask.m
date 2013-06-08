@@ -38,14 +38,21 @@
 
 - (id)init;
 {
+    self = [self initWithTerminalConnection:nil];
+    return self;
+}
+
+- (id)initWithTerminalConnection:(MMTerminalConnection *)terminalConnection;
+{
     self = [super init];
     if (!self) {
         return nil;
     }
 
     self.output = [NSMutableString string];
-    self.termHeight = DEFAULT_TERM_HEIGHT;
-    self.termWidth = DEFAULT_TERM_WIDTH;
+    self.terminalConnection = terminalConnection;
+    self.termHeight = self.terminalConnection ? self.terminalConnection.terminalHeight : DEFAULT_TERM_HEIGHT;
+    self.termWidth = self.terminalConnection ? self.terminalConnection.terminalWidth : DEFAULT_TERM_WIDTH;
 
     self.characterCountsOnVisibleRows = [NSMutableArray arrayWithCapacity:self.termHeight];
     self.scrollRowHasNewline = [NSMutableArray arrayWithCapacity:self.termHeight];
