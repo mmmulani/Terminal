@@ -316,6 +316,8 @@ do {\
 
     CheckInputAgainstExpectedOutput(@"\033[2;3ra\nb\nc\nd\ne\nf\n", @"a\nf\n");
     CheckInputAgainstExpectedOutput(@"\033[2;5ra\nb\nc\nd\ne\nf\n", @"a\nd\ne\nf\n");
+
+    CheckInputAgainstExpectedOutput(@"\033[2;5r\033[6;1H\n", @"\n\n\n\n\n\n");
 }
 
 - (void)testPossibleCrashers;

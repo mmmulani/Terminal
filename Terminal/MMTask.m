@@ -348,9 +348,7 @@
 
 - (void)checkIfExceededLastLineAndObeyScrollMargin:(BOOL)obeyScrollMargin;
 {
-    if (obeyScrollMargin && (self.cursorPosition.y > self.scrollMarginBottom)) {
-        NSAssert(self.cursorPosition.y == (self.scrollMarginBottom + 1), @"Cursor should only be one line below the bottom margin");
-
+    if (obeyScrollMargin && (self.cursorPosition.y == self.scrollMarginBottom + 1)) {
         if (self.scrollMarginTop > 1) {
             [self removeLineAtScrollRow:self.scrollMarginTop];
             [self insertBlankLineAtScrollRow:self.scrollMarginBottom withNewline:NO];
