@@ -30,6 +30,8 @@
 @property NSInteger removedTrailingNewlineInScrollLine;
 @property BOOL autowrapMode;
 @property NSMutableArray *scrollRowTabRanges;
+@property NSInteger termHeight;
+@property NSInteger termWidth;
 
 @end
 
@@ -43,11 +45,13 @@
     }
 
     self.output = [NSMutableString string];
+    self.termHeight = DEFAULT_TERM_HEIGHT;
+    self.termWidth = DEFAULT_TERM_WIDTH;
 
-    self.characterCountsOnVisibleRows = [NSMutableArray arrayWithCapacity:TERM_HEIGHT];
-    self.scrollRowHasNewline = [NSMutableArray arrayWithCapacity:TERM_HEIGHT];
-    self.scrollRowTabRanges = [NSMutableArray arrayWithCapacity:TERM_HEIGHT];
-    for (NSInteger i = 0; i < TERM_HEIGHT; i++) {
+    self.characterCountsOnVisibleRows = [NSMutableArray arrayWithCapacity:self.termHeight];
+    self.scrollRowHasNewline = [NSMutableArray arrayWithCapacity:self.termHeight];
+    self.scrollRowTabRanges = [NSMutableArray arrayWithCapacity:self.termHeight];
+    for (NSInteger i = 0; i < self.termHeight; i++) {
         [self.characterCountsOnVisibleRows addObject:@0];
         [self.scrollRowHasNewline addObject:@NO];
         [self.scrollRowTabRanges addObject:[NSMutableArray array]];
@@ -96,7 +100,7 @@
     NSCharacterSet *nonPrintableCharacters = [NSCharacterSet characterSetWithCharactersInString:@"\013\014\n\t\r\b\a\033"];
     self.unreadOutput = nil;
     for (NSUInteger i = 0; i < [outputToHandle length]; i++) {
-        if (self.cursorPosition.y > TERM_HEIGHT) {
+        if (self.cursorPosition.y > self.termHeight) {
             MMLog(@"Cursor position too low");
             break;
         }
@@ -187,10 +191,10 @@
 
 - (BOOL)shouldDrawFullTerminalScreen;
 {
-    return self.hasUsedWholeScreen || self.numberOfRowsOnScreen > TERM_HEIGHT ||
-        (self.numberOfRowsOnScreen == TERM_HEIGHT &&
-         ([self numberOfCharactersInScrollRow:TERM_HEIGHT] > 0 ||
-          [self isScrollRowTerminatedInNewline:TERM_HEIGHT]));
+    return self.hasUsedWholeScreen || self.numberOfRowsOnScreen > self.termHeight ||
+        (self.numberOfRowsOnScreen == self.termHeight &&
+         ([self numberOfCharactersInScrollRow:self.termHeight] > 0 ||
+          [self isScrollRowTerminatedInNewline:self.termHeight]));
 }
 
 - (void)readdTrailingNewlineIfNecessary;
@@ -241,22 +245,22 @@
 
     // If we are not in autowrap mode, we only print the characters that will fit on the current line.
     // Furthermore, as per the vt100 wrapping glitch (at http://invisible-island.net/xterm/xterm.faq.html#vt100_wrapping), we only print the "head" of the content to be outputted.
-    if (!self.autowrapMode && string.length > (TERM_WIDTH - self.cursorPosition.x + 1)) {
-        self.cursorPosition = MMPositionMake(MIN(TERM_WIDTH, self.cursorPosition.x), self.cursorPosition.y);
-        NSString *charactersToInsertFromHead = [string substringWithRange:NSMakeRange(0, TERM_WIDTH - self.cursorPositionX + 1)];
+    if (!self.autowrapMode && string.length > (self.termWidth - self.cursorPosition.x + 1)) {
+        self.cursorPosition = MMPositionMake(MIN(self.termWidth, self.cursorPosition.x), self.cursorPosition.y);
+        NSString *charactersToInsertFromHead = [string substringWithRange:NSMakeRange(0, self.termWidth - self.cursorPositionX + 1)];
         string = charactersToInsertFromHead;
     }
 
     NSInteger i = 0;
     while (i < string.length) {
-        if (self.cursorPosition.x == TERM_WIDTH + 1) {
+        if (self.cursorPosition.x == self.termWidth + 1) {
             // If there is a newline present at the end of this line, we clear it as the text will now flow to the next line.
             [self setScrollRow:self.cursorPosition.y hasNewline:NO];
             self.cursorPosition = MMPositionMake(1, self.cursorPosition.y + 1);
             [self checkIfExceededLastLineAndObeyScrollMargin:YES];
         }
 
-        NSInteger lengthToPrintOnLine = MIN(string.length - i, TERM_WIDTH - self.cursorPosition.x + 1);
+        NSInteger lengthToPrintOnLine = MIN(string.length - i, self.termWidth - self.cursorPosition.x + 1);
         [self expandTabCharactersInColumnRange:NSMakeRange(self.cursorPosition.x, lengthToPrintOnLine) inScrollRow:self.cursorPosition.y];
 
         NSAttributedString *attributedString = [[NSAttributedString alloc] initWithString:[string substringWithRange:NSMakeRange(i, lengthToPrintOnLine)] attributes:self.characterAttributes];
@@ -277,7 +281,7 @@
     [self createBlankLinesUpToCursor];
 
     for (NSInteger i = self.cursorPosition.y - 1; i > 0; i--) {
-        if ([self numberOfCharactersInScrollRow:i] == TERM_WIDTH || [self isScrollRowTerminatedInNewline:i]) {
+        if ([self numberOfCharactersInScrollRow:i] == self.termWidth || [self isScrollRowTerminatedInNewline:i]) {
             break;
         }
 
@@ -292,7 +296,7 @@
 
 - (void)incrementRowOffset;
 {
-    self.hasUsedWholeScreen = self.hasUsedWholeScreen || (self.characterOffsetToScreen >= TERM_HEIGHT * TERM_WIDTH);
+    self.hasUsedWholeScreen = self.hasUsedWholeScreen || (self.characterOffsetToScreen >= self.termHeight * self.termWidth);
     self.characterOffsetToScreen += [self numberOfDisplayableCharactersInScrollRow:1];
     if ([self isScrollRowTerminatedInNewline:1]) {
         self.characterOffsetToScreen++;
@@ -351,11 +355,11 @@
         }
 
         self.cursorPosition = MMPositionMake(self.cursorPosition.x, self.cursorPosition.y - 1);
-    } else if (self.cursorPosition.y > TERM_HEIGHT) {
-        NSAssert(self.cursorPosition.y == (TERM_HEIGHT + 1), @"Cursor should only be one line from the bottom");
+    } else if (self.cursorPosition.y > self.termHeight) {
+        NSAssert(self.cursorPosition.y == (self.termHeight + 1), @"Cursor should only be one line from the bottom");
 
         [self incrementRowOffset];
-        [self insertBlankLineAtScrollRow:TERM_HEIGHT withNewline:NO];
+        [self insertBlankLineAtScrollRow:self.termHeight withNewline:NO];
 
         self.cursorPosition = MMPositionMake(self.cursorPosition.x, self.cursorPosition.y - 1);
     }
@@ -365,8 +369,8 @@
 {
     // TODO: Handle [1;1r -> [1;2r and test.
 
-    top = MIN(MAX(top, 1), TERM_HEIGHT - 1);
-    bottom = MAX(MIN(bottom, TERM_HEIGHT), top + 1);
+    top = MIN(MAX(top, 1), self.termHeight - 1);
+    bottom = MAX(MIN(bottom, self.termHeight), top + 1);
 
     self.scrollMarginBottom = bottom;
     self.scrollMarginTop = top;
@@ -455,7 +459,7 @@
         } else if (escapeCode == 'm') {
             [self handleCharacterAttributes:items];
         } else if (escapeCode == 'r') {
-            NSUInteger bottom = [items count] >= 2 ? [items[1] intValue] : TERM_HEIGHT;
+            NSUInteger bottom = [items count] >= 2 ? [items[1] intValue] : self.termHeight;
             NSUInteger top = [items count] >= 1 ? [items[0] intValue] : 1;
             [self setScrollMarginTop:top ScrollMarginBottom:bottom];
         } else {
@@ -601,16 +605,6 @@
 
 # pragma mark - MMANSIActionDelegate methods
 
-- (NSInteger)termHeight;
-{
-    return TERM_HEIGHT;
-}
-
-- (NSInteger)termWidth;
-{
-    return TERM_WIDTH;
-}
-
 - (NSInteger)cursorPositionX;
 {
     return self.cursorPosition.x;
@@ -671,7 +665,7 @@
 
 - (void)replaceCharactersAtScrollRow:(NSInteger)row scrollColumn:(NSInteger)column withString:(NSString *)replacementString;
 {
-    NSAssert(column + replacementString.length - 1 <= TERM_WIDTH, @"replacementString too large or incorrect column specified");
+    NSAssert(column + replacementString.length - 1 <= self.termWidth, @"replacementString too large or incorrect column specified");
     [self expandTabCharacterAtCursorIfNecessary];
 
     NSAttributedString *attributedString = [[NSAttributedString alloc] initWithString:replacementString attributes:self.characterAttributes];
@@ -703,7 +697,7 @@
 
 - (void)insertBlankLineAtScrollRow:(NSInteger)row withNewline:(BOOL)newline;
 {
-    NSAssert(self.numberOfRowsOnScreen < TERM_HEIGHT, @"inserting a line would cause more than termHeight lines to be displayed");
+    NSAssert(self.numberOfRowsOnScreen < self.termHeight, @"inserting a line would cause more than termHeight lines to be displayed");
     [self.characterCountsOnVisibleRows insertObject:@0 atIndex:(row - 1)];
     [self.scrollRowHasNewline insertObject:@NO atIndex:(row - 1)];
     [self.scrollRowTabRanges insertObject:[NSMutableArray array] atIndex:(row - 1)];

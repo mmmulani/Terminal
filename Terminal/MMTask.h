@@ -10,8 +10,8 @@
 
 #import "MMANSIAction.h"
 
-#define TERM_WIDTH 80
-#define TERM_HEIGHT 24
+#define DEFAULT_TERM_WIDTH 80
+#define DEFAULT_TERM_HEIGHT 24
 
 typedef struct _MMPosition {
     NSInteger x;

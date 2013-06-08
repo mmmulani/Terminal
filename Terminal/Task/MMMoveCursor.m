@@ -15,7 +15,7 @@
 - (void)do;
 {
     NSInteger lines = MAX([[self defaultedArgumentAtIndex:0] integerValue], 1);
-    // Comparing it to TERM_WIDTH handles the case where the cursor is pas`t the right margin (which occurs when we right a character at the right margin).
+    // Comparing it to the terminal width handles the case where the cursor is past the right margin (which occurs when we right a character at the right margin).
     NSInteger newPositionX = MIN(self.delegate.cursorPositionX, self.delegate.termWidth);
     if (lines >= self.delegate.cursorPositionY) {
         newPositionX = 1;

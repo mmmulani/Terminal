@@ -22,8 +22,8 @@
     [super setUp];
 
     NSMutableArray *numberedLines = [NSMutableArray array];
-    for (NSInteger i = 1; i <= TERM_HEIGHT; i++) {
-        [numberedLines addObject:[[NSString stringWithFormat:@"%ld", i] stringByPaddingToLength:TERM_WIDTH withString:@"-" startingAtIndex:0]];
+    for (NSInteger i = 1; i <= 24; i++) {
+        [numberedLines addObject:[[NSString stringWithFormat:@"%ld", i] stringByPaddingToLength:80 withString:@"-" startingAtIndex:0]];
     }
     self.twentyFourNumberedLines = numberedLines;
 }
