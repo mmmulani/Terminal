@@ -391,7 +391,7 @@ static void directoryWatchingCallback(CFFileDescriptorRef kqRef, CFOptionFlags c
             [self.window.contentView layout];
         }];
 
-        [self.commandControlsLayoutConstraint.animator setConstant:17.0];
+        [self.commandControlsLayoutConstraint.animator setConstant:0.0];
         [NSAnimationContext endGrouping];
 
         return YES;
@@ -457,6 +457,11 @@ static void directoryWatchingCallback(CFFileDescriptorRef kqRef, CFOptionFlags c
 }
 
 # pragma mark - NSWindowDelegate
+
+- (NSSize)windowWillResize:(NSWindow *)sender toSize:(NSSize)frameSize;
+{
+    return frameSize;
+}
 
 - (void)windowWillClose:(NSNotification *)notification;
 {
