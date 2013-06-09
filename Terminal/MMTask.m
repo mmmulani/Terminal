@@ -739,7 +739,7 @@
             linesToRemove--;
         }
 
-        for (NSInteger i = 0; i < linesToRemove; i++) {
+        for (NSInteger i = 0; i < linesToRemove && self.numberOfRowsOnScreen > 1; i++) {
             [self incrementRowOffset];
         }
 

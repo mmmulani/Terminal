@@ -248,6 +248,12 @@ do {\
     STAssertEqualObjects(task.characterCountsOnVisibleRows, (@[@1, @1, @1, @1, @1, @1, @1, @1, @1, @2, @2, @2, @2, @2, @2, @2, @2, @2, @2, @2, @2, @2, @2, @2, @2, @2, @2]), @"");
     STAssertEqualObjects(task.scrollRowHasNewline, (@[@YES, @YES, @YES, @YES, @YES, @YES, @YES, @YES, @YES, @YES, @YES, @YES, @YES, @YES, @YES, @YES, @YES, @YES, @YES, @YES, @YES, @YES, @YES, @YES, @YES, @YES, @NO]), @"");
     STAssertEquals(task.termHeight, (NSInteger)28, @"");
+
+    // Test the top scrolling away too much (possible crash).
+    task = [MMTask new];
+    task.displayTextStorage = [NSTextStorage new];
+    [task handleCommandOutput:@"\033[0Ja\nb\nc"];
+    [task changeTerminalHeightTo:1];
 }
 
 @end
