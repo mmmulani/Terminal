@@ -18,11 +18,13 @@
 
 @property MMFirstRunWindowController *firstRunWindowController;
 @property (strong) MMDebugMessagesWindowController *debugWindow;
+@property (strong) NSTextStorage *debugMessages;
 @property (strong) NSConnection *terminalAppConnection;
 @property (strong) NSMutableArray *terminalConnections;
 @property (strong) IBOutlet NSMenuItem *windowMenu;
 
 - (IBAction)createNewTerminal:(id)sender;
+- (IBAction)openDebugWindow:(id)sender;
 
 - (NSInteger)uniqueWindowShortcut;
 - (void)resignWindowShortcut:(NSInteger)shortcut;

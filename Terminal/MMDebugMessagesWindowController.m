@@ -30,25 +30,14 @@
 {
     [super windowDidLoad];
 
+    [self.debugOutput.layoutManager replaceTextStorage:[[NSApp delegate] debugMessages]];
+
     [self.window setLevel:NSNormalWindowLevel];
 }
 
-- (void)addDebugMessage:(NSString *)message;
+- (void)updateOutput;
 {
     CGFloat distanceFromBottom = [(NSView *)self.debugScrollView.documentView frame].size.height - (self.debugScrollView.contentView.bounds.origin.y + self.debugScrollView.contentView.bounds.size.height);
-
-    NSString *messageWithNewline = [message stringByAppendingString:@"\n"];
-
-    static NSDictionary *attributes = nil;
-    if (!attributes) {
-        NSFont *font = [NSFont userFixedPitchFontOfSize:[NSFont systemFontSize]];
-        attributes =
-        @{
-          NSFontAttributeName: font,
-          };
-    }
-
-    [self.debugOutput.textStorage appendAttributedString:[[NSAttributedString alloc] initWithString:messageWithNewline attributes:attributes]];
 
     if (distanceFromBottom < 0.5) {
         [self.debugOutput scrollToEndOfDocument:self];

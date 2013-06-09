@@ -31,6 +31,7 @@
 
     self.unassignedWindowShortcuts = [NSMutableArray arrayWithArray:@[@1, @2, @3, @4, @5, @6, @7, @8, @9, @0]];
     self.terminalConnections = [NSMutableArray array];
+    self.debugMessages = [NSTextStorage new];
 
     return self;
 }
@@ -38,6 +39,15 @@
 - (IBAction)createNewTerminal:(id)sender;
 {
     [self createNewTerminalWithState:nil completionHandler:nil];
+}
+
+- (IBAction)openDebugWindow:(id)sender;
+{
+    if (!self.debugWindow) {
+        self.debugWindow = [[MMDebugMessagesWindowController alloc] init];
+    }
+
+    [self.debugWindow showWindow:nil];
 }
 
 - (void)createNewTerminalWithState:(NSCoder *)state completionHandler:(void (^)(NSWindow *, NSError *))completionHandler;
@@ -169,9 +179,6 @@
         [self createNewTerminal:nil];
     }
 
-    self.debugWindow = [[MMDebugMessagesWindowController alloc] init];
-    [self.debugWindow showWindow:nil];
-
 #ifdef DEBUG
     // F-Script can be found here: http://www.fscript.org/download/download.htm
     int loadedFscript = [[NSBundle bundleWithPath:@"/Library/Frameworks/FScript.framework"] load];
@@ -231,7 +238,20 @@
 
 - (void)_logMessage:(NSString *)message;
 {
-    [self.debugWindow addDebugMessage:message];
+    NSString *messageWithNewline = [message stringByAppendingString:@"\n"];
+
+    static NSDictionary *attributes = nil;
+    if (!attributes) {
+        NSFont *font = [NSFont userFixedPitchFontOfSize:[NSFont systemFontSize]];
+        attributes =
+        @{
+          NSFontAttributeName: font,
+          };
+    }
+
+    [self.debugMessages appendAttributedString:[[NSAttributedString alloc] initWithString:messageWithNewline attributes:attributes]];
+
+    [self.debugWindow updateOutput];
 }
 
 # pragma mark - NSWindowRestoration
