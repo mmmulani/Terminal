@@ -59,8 +59,23 @@
 - (void)outputFrameChanged:(NSNotification *)notification;
 {
     // TODO: Add a check to see if we are already scrolled to the bottom, and only scroll down then.
+    // XXX: This is a hack to scroll the text by farther than it should go, to give the appearance of a full terminal screen.
+    // In the future, we should move it to the scroll view, so that the scroll bar still works.
+    CGFloat extraScroll = 0;
+    if (self.task.shouldDrawFullTerminalScreen && self.outputView.superview.frame.size.height < self.outputView.frame.size.height) {
+        NSInteger numberOfRowsWithText;
+        for (numberOfRowsWithText = 1; numberOfRowsWithText <= self.task.numberOfRowsOnScreen; numberOfRowsWithText++) {
+            if ([self.task numberOfCharactersInScrollRow:numberOfRowsWithText] == 0 && ![self.task isScrollRowTerminatedInNewline:numberOfRowsWithText]) {
+                numberOfRowsWithText--;
+                break;
+            }
+        }
+        numberOfRowsWithText = MIN(self.task.numberOfRowsOnScreen, numberOfRowsWithText);
+        extraScroll = (self.task.termHeight - numberOfRowsWithText) * 15;
+    }
+
     NSRect clipViewFrame = self.outputView.superview.frame;
-    [((NSClipView *)self.outputView.superview) scrollToPoint:NSMakePoint(0, self.outputView.frame.size.height - clipViewFrame.size.height)];
+    [((NSClipView *)self.outputView.superview) scrollToPoint:NSMakePoint(0, self.outputView.frame.size.height - clipViewFrame.size.height + extraScroll)];
 }
 
 - (CGFloat)heightToFitAllOfOutput;
