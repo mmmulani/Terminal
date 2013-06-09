@@ -8,7 +8,7 @@
 
 #import "MMDisplayActions.h"
 
-@implementation MMDecAlignmentTest
+@implementation MMDECAlignmentTest
 
 - (void)do;
 {
@@ -52,6 +52,50 @@
 - (void)do;
 {
     NSBeep();
+}
+
+@end
+
+@implementation MMDECPrivateModeReset
+
+- (void)do;
+{
+    for (NSString *argument in self.arguments) {
+        [self.delegate setDECPrivateMode:(MMDECMode)[argument integerValue] on:NO];
+    }
+}
+
+@end
+
+@implementation MMDECPrivateModeSet
+
+- (void)do;
+{
+    for (NSString *argument in self.arguments) {
+        [self.delegate setDECPrivateMode:(MMDECMode)[argument integerValue] on:YES];
+    }
+}
+
+@end
+
+@implementation MMANSIModeReset
+
+- (void)do;
+{
+    for (NSString *argument in self.arguments) {
+        [self.delegate setANSIMode:(MMANSIMode)[argument integerValue] on:NO];
+    }
+}
+
+@end
+
+@implementation MMANSIModeSet
+
+- (void)do;
+{
+    for (NSString *argument in self.arguments) {
+        [self.delegate setANSIMode:(MMANSIMode)[argument integerValue] on:YES];
+    }
 }
 
 @end

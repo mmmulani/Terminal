@@ -411,6 +411,10 @@ do {\
 {
     // Test that origin mode is off by default.
     CheckInputAgainstExpectedOutput(@"\033[5;6r\033[1;1HA", @"A");
+    CheckInputAgainstExpectedOutput(@"\033[?6h\033[?6l\033[5;6r\033[1;1HA", @"A");
+
+    // Test double enabling and then removing once still turns it off.
+    CheckInputAgainstExpectedOutput(@"\033[?6h\033[?6h\033[?6l\033[5;6r\033[1;1HA", @"A");
 
     CheckInputAgainstExpectedOutput(@"\033[?6h\033[5;6r\033[0;1HA", @"\n\n\n\nA");
     CheckInputAgainstExpectedOutput(@"\033[?6h\033[5;6r\033[1;1HA", @"\n\n\n\nA");

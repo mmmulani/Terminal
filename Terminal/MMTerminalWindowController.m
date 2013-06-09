@@ -478,6 +478,17 @@ static void directoryWatchingCallback(CFFileDescriptorRef kqRef, CFOptionFlags c
     return newFrame;
 }
 
+- (void)resizeWindowForTerminalScreenSizeOfColumns:(NSInteger)columns rows:(NSInteger)rows;
+{
+    CGSize newSize = self.window.frame.size;
+    newSize.width = round(7.82666 * columns) + 56;
+    newSize.height = 15 * rows + 337;
+    NSRect newFrame = self.window.frame;
+    newFrame.size = newSize;
+
+    [self.window setFrame:newFrame display:YES];
+}
+
 - (void)windowDidResize:(NSNotification *)notification;
 {
     NSInteger newWidth = lround((self.window.frame.size.width - 56) / 7.82666);

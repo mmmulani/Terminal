@@ -8,6 +8,28 @@
 
 #import <Foundation/Foundation.h>
 
+typedef enum {
+    MMDECModeError = 0,
+    MMDECModeCursorKey = 1, // DECCKM
+    MMDECModeVT52 = 2, // DECANM
+    MMDECModeWideColumn = 3, // DECCOLM
+    MMDECModeScroll = 4, // DECSCLM
+    MMDECModeScreen = 5, // DECSCNM
+    MMDECModeOrigin = 6, // DECOM
+    MMDECModeAutoWrap = 7, // DECAWM
+    MMDECModeAutoRepeat = 8, // DECARM
+    MMDECModeCursorVisible = 25, // DECTCEM
+    MMDECModeAllowColumnChange = 40,
+} MMDECMode;
+
+typedef enum {
+    MMANSIModeError = 0,
+    MMANSIModeKeyboardAction = 2, // KAM
+    MMANSIModeInsert = 4, // IRM
+    MMANSIModeEcho = 12, // SRM
+    MMANSIModeNewline = 20, // LNM
+} MMANSIMode;
+
 @protocol MMANSIActionDelegate;
 
 @interface MMANSIAction : NSObject
@@ -40,7 +62,6 @@
 @property (readonly) NSInteger termWidth;
 @property (readonly) NSInteger scrollMarginTop;
 @property (readonly) NSInteger scrollMarginBottom;
-@property BOOL originMode;
 
 @property BOOL hasUsedWholeScreen;
 
@@ -61,6 +82,11 @@
 - (void)setScrollRow:(NSInteger)row hasNewline:(BOOL)hasNewline;
 
 - (void)addTab:(NSRange)tabRange onScrollRow:(NSInteger)row;
+
+- (void)setANSIMode:(MMANSIMode)ansiMode on:(BOOL)on;
+- (BOOL)isANSIModeSet:(MMANSIMode)ansiMode;
+- (void)setDECPrivateMode:(MMDECMode)decPrivateMode on:(BOOL)on;
+- (BOOL)isDECPrivateModeSet:(MMDECMode)decPrivateMode;
 
 // XXX: Try to remove these or change them to ensure that all calculations for ANSIActions can be done in |setUp|.
 - (void)checkIfExceededLastLineAndObeyScrollMargin:(BOOL)obeyScrollMargin;

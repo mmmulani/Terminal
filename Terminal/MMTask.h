@@ -43,7 +43,6 @@ typedef enum {
 @property (readonly) NSMutableAttributedString *currentANSIDisplay;
 @property MMPosition cursorPosition;
 @property (readonly) NSInteger cursorPositionByCharacters;
-@property BOOL originMode;
 
 @property (weak) MMTerminalConnection *terminalConnection;
 

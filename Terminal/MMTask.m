@@ -15,11 +15,11 @@
 #import "MMIndexActions.h"
 #import "MMDisplayActions.h"
 #import "MMTabAction.h"
+#import "MMTerminalWindowController.h"
 
 @interface MMTask ()
 
 @property NSString *unreadOutput;
-@property BOOL cursorKeyMode;
 @property NSInteger scrollMarginTop;
 @property NSInteger scrollMarginBottom;
 @property NSInteger characterOffsetToScreen;
@@ -27,10 +27,11 @@
 @property NSMutableArray *scrollRowHasNewline;
 @property NSMutableDictionary *characterAttributes;
 @property NSInteger removedTrailingNewlineInScrollLine;
-@property BOOL autowrapMode;
 @property NSMutableArray *scrollRowTabRanges;
 @property NSInteger termHeight;
 @property NSInteger termWidth;
+@property NSMutableSet *ansiModes;
+@property NSMutableSet *decModes;
 
 @end
 
@@ -73,7 +74,10 @@
     paragraphStyle.tabStops = @[];
     paragraphStyle.defaultTabInterval = [@" " sizeWithAttributes:self.characterAttributes].width * 8;
     self.characterAttributes[NSParagraphStyleAttributeName] = paragraphStyle;
-    self.autowrapMode = YES;
+    self.ansiModes = [NSMutableSet set];
+    self.decModes = [NSMutableSet set];
+
+    [self setDECPrivateMode:MMDECModeAutoWrap on:YES];
 
     return self;
 }
@@ -87,7 +91,7 @@
 {
     NSString *arrowKeyString = @[@"A", @"B", @"C", @"D"][arrowKey];
     NSString *inputToSend = nil;
-    if (self.cursorKeyMode) {
+    if ([self isDECPrivateModeSet:MMDECModeCursorKey]) {
         inputToSend = [@"\033O" stringByAppendingString:arrowKeyString];
     } else {
         inputToSend = [@"\033[" stringByAppendingString:arrowKeyString];
@@ -250,7 +254,7 @@
 
     // If we are not in autowrap mode, we only print the characters that will fit on the current line.
     // Furthermore, as per the vt100 wrapping glitch (at http://invisible-island.net/xterm/xterm.faq.html#vt100_wrapping), we only print the "head" of the content to be outputted.
-    if (!self.autowrapMode && string.length > (self.termWidth - self.cursorPosition.x + 1)) {
+    if (![self isDECPrivateModeSet:MMDECModeAutoWrap] && string.length > (self.termWidth - self.cursorPosition.x + 1)) {
         self.cursorPosition = MMPositionMake(MIN(self.termWidth, self.cursorPosition.x), self.cursorPosition.y);
         NSString *charactersToInsertFromHead = [string substringWithRange:NSMakeRange(0, self.termWidth - self.cursorPositionX + 1)];
         string = charactersToInsertFromHead;
@@ -447,18 +451,16 @@
             // TODO: Make this determine the second argument at evaluation-time.
             id firstArg = items.count >= 1 ? items[0] : MMMoveCursorPosition.defaultArguments[0];
             action = [[MMMoveCursorPosition alloc] initWithArguments:@[firstArg, @(self.cursorPosition.x)]];
-        } else if ([escapeSequence isEqualToString:@"\033[?1h"]) {
-            self.cursorKeyMode = YES;
-        } else if ([escapeSequence isEqualToString:@"\033[?1l"]) {
-            self.cursorKeyMode = NO;
-        } else if ([escapeSequence isEqualToString:@"\033[?6h"]) {
-            self.originMode = YES;
-        } else if ([escapeSequence isEqualToString:@"\033[?6l"]) {
-            self.originMode = NO;
-        } else if ([escapeSequence isEqualToString:@"\033[?7h"]) {
-            self.autowrapMode = YES;
-        } else if ([escapeSequence isEqualToString:@"\033[?7l"]) {
-            self.autowrapMode = NO;
+        } else if (escapeCode == 'h' && [escapeSequence characterAtIndex:2] == '?') {
+            items = [[escapeSequence substringWithRange:NSMakeRange(3, [escapeSequence length] - 4)] componentsSeparatedByString:@";"];
+            action = [[MMDECPrivateModeSet alloc] initWithArguments:items];
+        } else if (escapeCode == 'l' && [escapeSequence characterAtIndex:2] == '?') {
+            items = [[escapeSequence substringWithRange:NSMakeRange(3, [escapeSequence length] - 4)] componentsSeparatedByString:@";"];
+            action = [[MMDECPrivateModeReset alloc] initWithArguments:items];
+        } else if (escapeCode == 'h') {
+            action = [[MMANSIModeSet alloc] initWithArguments:items];
+        } else if (escapeCode == 'l') {
+            action = [[MMANSIModeReset alloc] initWithArguments:items];
         } else if (escapeCode == 'm') {
             [self handleCharacterAttributes:items];
         } else if (escapeCode == 'r') {
@@ -480,7 +482,7 @@
         } else if (escapeCode == 'M') {
             action = [[MMReverseIndex alloc] init];
         } else if (escapeCode == '#' && [escapeSequence characterAtIndex:2] == '8') {
-            action = [MMDecAlignmentTest new];
+            action = [MMDECAlignmentTest new];
         } else {
             MMLog(@"Unhandled early escape sequence: %@", escapeSequence);
         }
@@ -920,6 +922,34 @@
     [self.displayTextStorage insertAttributedString:attributedString atIndex:[self characterOffsetUpToScrollRow:row scrollColumn:tabRange.location]];
     [self adjustNumberOfCharactersOnScrollRow:row byAmount:tabRange.length];
     [self.scrollRowTabRanges[row - 1] addObject:[NSValue valueWithRange:tabRange]];
+}
+
+- (void)setANSIMode:(MMANSIMode)ansiMode on:(BOOL)on;
+{
+    if (on) {
+        [self.ansiModes addObject:@(ansiMode)];
+    } else {
+        [self.ansiModes removeObject:@(ansiMode)];
+    }
+}
+
+- (BOOL)isANSIModeSet:(MMANSIMode)ansiMode;
+{
+    return [self.ansiModes containsObject:@(ansiMode)];
+}
+
+- (void)setDECPrivateMode:(MMDECMode)decPrivateMode on:(BOOL)on;
+{
+    if (on) {
+        [self.decModes addObject:@(decPrivateMode)];
+    } else {
+        [self.decModes removeObject:@(decPrivateMode)];
+    }
+}
+
+- (BOOL)isDECPrivateModeSet:(MMDECMode)decPrivateMode;
+{
+    return [self.decModes containsObject:@(decPrivateMode)];
 }
 
 # pragma mark - NSCoding

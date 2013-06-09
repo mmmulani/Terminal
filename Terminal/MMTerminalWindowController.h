@@ -36,4 +36,6 @@
 - (void)shellCommandFinished;
 - (MMTask *)lastTask;
 
+- (void)resizeWindowForTerminalScreenSizeOfColumns:(NSInteger)columns rows:(NSInteger)rows;
+
 @end

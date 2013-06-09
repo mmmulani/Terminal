@@ -8,7 +8,7 @@
 
 #import "MMANSIAction.h"
 
-@interface MMDecAlignmentTest : MMANSIAction
+@interface MMDECAlignmentTest : MMANSIAction
 
 @end
 
@@ -17,5 +17,21 @@
 @end
 
 @interface MMBeep : MMANSIAction
+
+@end
+
+@interface MMDECPrivateModeReset : MMANSIAction
+
+@end
+
+@interface MMDECPrivateModeSet : MMANSIAction
+
+@end
+
+@interface MMANSIModeReset : MMANSIAction
+
+@end
+
+@interface MMANSIModeSet : MMANSIAction
 
 @end
