@@ -13,6 +13,7 @@
 @class MMTerminalConnection;
 @class MMCommandsTextView;
 @class MMTask;
+@class MMInfoOverlayView;
 
 @interface MMTerminalWindowController : NSWindowController <NSTextFieldDelegate, NSTableViewDataSource, NSTableViewDelegate, NSWindowDelegate>
 
@@ -22,6 +23,7 @@
 @property (strong) IBOutlet NSTextField *currentDirectoryLabel;
 @property (strong) IBOutlet NSView *commandControlsView;
 @property (strong) IBOutlet NSLayoutConstraint *commandControlsLayoutConstraint;
+@property (strong) IBOutlet MMInfoOverlayView *infoOverlayView;
 @property (strong) NSMutableArray *tasks;
 @property (strong) NSMutableArray *taskViewControllers;
 @property (weak) MMTerminalConnection *terminalConnection;

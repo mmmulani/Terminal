@@ -9,6 +9,7 @@
 /* Begin PBXBuildFile section */
 		9101DC231764D24B00F05A43 /* OCMock.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 9101DC201764CEAF00F05A43 /* OCMock.framework */; };
 		9101DC251764D2A200F05A43 /* OCMock.framework in CopyFiles */ = {isa = PBXBuildFile; fileRef = 9101DC201764CEAF00F05A43 /* OCMock.framework */; };
+		9101DC281764E7CF00F05A43 /* MMInfoOverlayView.m in Sources */ = {isa = PBXBuildFile; fileRef = 9101DC271764E7CF00F05A43 /* MMInfoOverlayView.m */; };
 		9103CD7216F7EE0900506F8B /* QuartzCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 9103CD7116F7EE0900506F8B /* QuartzCore.framework */; };
 		9106520C16C574160010DC76 /* MMTextView.m in Sources */ = {isa = PBXBuildFile; fileRef = 9106520B16C574160010DC76 /* MMTextView.m */; };
 		910D0EED1757B8B100FFF569 /* MMShellCommands.m in Sources */ = {isa = PBXBuildFile; fileRef = 910D0EEC1757B8B100FFF569 /* MMShellCommands.m */; };
@@ -164,6 +165,8 @@
 
 /* Begin PBXFileReference section */
 		9101DC201764CEAF00F05A43 /* OCMock.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = OCMock.framework; path = Frameworks/OCMock.framework; sourceTree = "<group>"; };
+		9101DC261764E7CE00F05A43 /* MMInfoOverlayView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MMInfoOverlayView.h; sourceTree = "<group>"; };
+		9101DC271764E7CF00F05A43 /* MMInfoOverlayView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MMInfoOverlayView.m; sourceTree = "<group>"; };
 		9103CD7116F7EE0900506F8B /* QuartzCore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = QuartzCore.framework; path = System/Library/Frameworks/QuartzCore.framework; sourceTree = SDKROOT; };
 		9106520A16C574160010DC76 /* MMTextView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MMTextView.h; sourceTree = "<group>"; };
 		9106520B16C574160010DC76 /* MMTextView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MMTextView.m; sourceTree = "<group>"; };
@@ -365,6 +368,8 @@
 				9186498F16D2A6190024D9BE /* MMTerminalWindow.xib */,
 				91C7D982173ECE0900875974 /* MMCommandsTextView.h */,
 				91C7D983173ECE0900875974 /* MMCommandsTextView.m */,
+				9101DC261764E7CE00F05A43 /* MMInfoOverlayView.h */,
+				9101DC271764E7CF00F05A43 /* MMInfoOverlayView.m */,
 			);
 			name = "Terminal window";
 			sourceTree = "<group>";
@@ -756,6 +761,7 @@
 				912141A81758F61200A50F6E /* MMUtilities.m in Sources */,
 				91557CA7175A557F00CEEFC8 /* MMDisplayActions.m in Sources */,
 				91557406175E9BFB004C2ED1 /* MMTabAction.m in Sources */,
+				9101DC281764E7CF00F05A43 /* MMInfoOverlayView.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

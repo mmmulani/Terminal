@@ -17,6 +17,7 @@
 #import "MMCommandsTextView.h"
 #import "MMAppDelegate.h"
 #import "MMUtilities.h"
+#import "MMInfoOverlayView.h"
 
 #import <tgmath.h>
 #import <QuartzCore/QuartzCore.h>
@@ -465,6 +466,19 @@ static void directoryWatchingCallback(CFFileDescriptorRef kqRef, CFOptionFlags c
 
 # pragma mark - NSWindowDelegate
 
+- (void)windowWillStartLiveResize:(NSNotification *)notification;
+{
+    self.infoOverlayView.alphaValue = 1.0;
+}
+
+- (void)windowDidEndLiveResize:(NSNotification *)notification;
+{
+    [NSAnimationContext beginGrouping];
+    [[NSAnimationContext currentContext] setDuration:0.75];
+    [self.infoOverlayView.animator setAlphaValue:0.0];
+    [NSAnimationContext endGrouping];
+}
+
 - (NSSize)windowWillResize:(NSWindow *)sender toSize:(NSSize)frameSize;
 {
     // In terms of width considerations:
@@ -473,8 +487,13 @@ static void directoryWatchingCallback(CFFileDescriptorRef kqRef, CFOptionFlags c
     // 15 is required for each row and 337 is required for the chrome.
 
     NSSize newFrame = frameSize;
-    newFrame.width = floor(56 + round((frameSize.width - 56) / 7.82666) * 7.82666);
-    newFrame.height = floor(337 + round((frameSize.height - 337) / 15) * 15);
+    NSInteger columns = MAX(20, round((frameSize.width - 56) / 7.82666));
+    NSInteger rows = MAX(10, round((frameSize.height - 337) / 15));
+
+    self.infoOverlayView.displayText = [NSString stringWithFormat:@"%ldx%ld", columns, rows];
+
+    newFrame.width = floor(56 + columns * 7.82666);
+    newFrame.height = floor(337 + rows * 15);
     return newFrame;
 }
 
