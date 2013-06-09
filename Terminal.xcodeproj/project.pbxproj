@@ -7,6 +7,8 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		9101DC231764D24B00F05A43 /* OCMock.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 9101DC201764CEAF00F05A43 /* OCMock.framework */; };
+		9101DC251764D2A200F05A43 /* OCMock.framework in CopyFiles */ = {isa = PBXBuildFile; fileRef = 9101DC201764CEAF00F05A43 /* OCMock.framework */; };
 		9103CD7216F7EE0900506F8B /* QuartzCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 9103CD7116F7EE0900506F8B /* QuartzCore.framework */; };
 		9106520C16C574160010DC76 /* MMTextView.m in Sources */ = {isa = PBXBuildFile; fileRef = 9106520B16C574160010DC76 /* MMTextView.m */; };
 		910D0EED1757B8B100FFF569 /* MMShellCommands.m in Sources */ = {isa = PBXBuildFile; fileRef = 910D0EEC1757B8B100FFF569 /* MMShellCommands.m */; };
@@ -98,6 +100,16 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXCopyFilesBuildPhase section */
+		9101DC241764D29500F05A43 /* CopyFiles */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = "";
+			dstSubfolderSpec = 16;
+			files = (
+				9101DC251764D2A200F05A43 /* OCMock.framework in CopyFiles */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		912141A41757FFFF00A50F6E /* CopyFiles */ = {
 			isa = PBXCopyFilesBuildPhase;
 			buildActionMask = 2147483647;
@@ -151,6 +163,7 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
+		9101DC201764CEAF00F05A43 /* OCMock.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = OCMock.framework; path = Frameworks/OCMock.framework; sourceTree = "<group>"; };
 		9103CD7116F7EE0900506F8B /* QuartzCore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = QuartzCore.framework; path = System/Library/Frameworks/QuartzCore.framework; sourceTree = SDKROOT; };
 		9106520A16C574160010DC76 /* MMTextView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MMTextView.h; sourceTree = "<group>"; };
 		9106520B16C574160010DC76 /* MMTextView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MMTextView.m; sourceTree = "<group>"; };
@@ -273,6 +286,7 @@
 			files = (
 				91F1747216ED0CF0002E2594 /* SenTestingKit.framework in Frameworks */,
 				91F1747316ED0CF0002E2594 /* Cocoa.framework in Frameworks */,
+				9101DC231764D24B00F05A43 /* OCMock.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -466,6 +480,7 @@
 		91F4EEBE16B8D63D00F65E91 /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				9101DC201764CEAF00F05A43 /* OCMock.framework */,
 				912141A01757FA4300A50F6E /* Quincy.framework */,
 				91C7D9881740575700875974 /* libiconv.dylib */,
 				91E4C07017456FE600062EF5 /* Security.framework */,
@@ -568,6 +583,7 @@
 				91F1746B16ED0CF0002E2594 /* Sources */,
 				91F1746C16ED0CF0002E2594 /* Frameworks */,
 				91F1746D16ED0CF0002E2594 /* Resources */,
+				9101DC241764D29500F05A43 /* CopyFiles */,
 				91F1746E16ED0CF0002E2594 /* ShellScript */,
 			);
 			buildRules = (
