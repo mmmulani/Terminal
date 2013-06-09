@@ -80,6 +80,7 @@ typedef enum {
 - (void)insertBlankLineAtScrollRow:(NSInteger)row withNewline:(BOOL)newline;
 - (void)removeLineAtScrollRow:(NSInteger)row;
 - (void)setScrollRow:(NSInteger)row hasNewline:(BOOL)hasNewline;
+- (void)setScrollMarginTop:(NSUInteger)top ScrollMarginBottom:(NSUInteger)bottom;
 
 - (void)addTab:(NSRange)tabRange onScrollRow:(NSInteger)row;
 

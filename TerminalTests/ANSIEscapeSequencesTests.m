@@ -321,6 +321,8 @@ do {\
     CheckInputAgainstExpectedOutput(@"\033[2;5ra\nb\nc\nd\ne\nf\n", @"a\nd\ne\nf\n");
 
     CheckInputAgainstExpectedOutput(@"\033[2;5r\033[6;1H\n", @"\n\n\n\n\n\n");
+
+    CheckInputAgainstExpectedOutput(@"123\n456\033[3;10r789", @"789\n456");
 }
 
 - (void)testPossibleCrashers;
@@ -353,6 +355,10 @@ do {\
 
     // Test that the last newline is removed from the last line.
     CheckInputAgainstExpectedOutput([[@"1" stringByPaddingToLength:24 withString:@"\n" startingAtIndex:0] stringByAppendingString:@"!\033[1;1H\033M"], [@"\n1" stringByPaddingToLength:24 withString:@"\n" startingAtIndex:0]);
+
+    CheckInputAgainstExpectedOutput(@"A\033MB\033MC", @"  C\n B\nA");
+    CheckInputAgainstExpectedOutput(@"\033[3;10rA\033MB", @"AB");
+    CheckInputAgainstExpectedOutput(@"\033[3;10rA\033MB\033MC", @"ABC");
 }
 
 - (void)testIndex;
@@ -369,7 +375,7 @@ do {\
     CheckInputAgainstExpectedOutput([[@"" stringByPaddingToLength:79 withString:@" " startingAtIndex:0] stringByAppendingString:@"\033E_"], [[@"" stringByPaddingToLength:79 withString:@" " startingAtIndex:0] stringByAppendingString:@"\n_"]);
     CheckInputAgainstExpectedOutput([[@"" stringByPaddingToLength:80 withString:@" " startingAtIndex:0] stringByAppendingString:@"\033E_"], [[@"" stringByPaddingToLength:80 withString:@" " startingAtIndex:0] stringByAppendingString:@"_"]);
     CheckInputAgainstExpectedOutput([[self.twentyFourNumberedLines componentsJoinedByString:@""] stringByAppendingString:@"\033E!"], [[self.twentyFourNumberedLines componentsJoinedByString:@""] stringByAppendingString:@"!"]);
-    CheckInputAgainstExpectedOutput([[@"" stringByPaddingToLength:23 withString:@"\n" startingAtIndex:0] stringByAppendingString:@"\033[1;10r1\033E2"], [[@"" stringByPaddingToLength:23 withString:@"\n" startingAtIndex:0] stringByAppendingString:@"2"]);
+    CheckInputAgainstExpectedOutput([[@"" stringByPaddingToLength:23 withString:@"\n" startingAtIndex:0] stringByAppendingString:@"\033[1;10r\033[24;1H1\033E2"], [[@"" stringByPaddingToLength:23 withString:@"\n" startingAtIndex:0] stringByAppendingString:@"2"]);
 }
 
 - (void)testScreenAlignmentTest;

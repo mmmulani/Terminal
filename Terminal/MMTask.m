@@ -464,9 +464,7 @@
         } else if (escapeCode == 'm') {
             [self handleCharacterAttributes:items];
         } else if (escapeCode == 'r') {
-            NSUInteger bottom = [items count] >= 2 ? [items[1] intValue] : self.termHeight;
-            NSUInteger top = [items count] >= 1 ? [items[0] intValue] : 1;
-            [self setScrollMarginTop:top ScrollMarginBottom:bottom];
+            action = [[MMSetScrollMargins alloc] initWithArguments:items];
         } else {
             MMLog(@"Unhandled escape sequence: %@", escapeSequence);
         }
@@ -799,6 +797,8 @@
 
 - (void)setCursorToX:(NSInteger)x Y:(NSInteger)y;
 {
+    NSAssert(x > 0 && x <= self.termWidth, @"X coord should be within bounds");
+    NSAssert(y > 0 && y <= self.termWidth, @"Y coord should be within bounds");
     self.cursorPosition = MMPositionMake(x, y);
 }
 

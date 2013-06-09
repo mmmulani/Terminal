@@ -19,3 +19,7 @@
 @interface MMAddNewline : MMANSIAction
 
 @end
+
+@interface MMSetScrollMargins : MMANSIAction
+
+@end

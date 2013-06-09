@@ -36,7 +36,7 @@
         }
         [self.delegate insertBlankLineAtScrollRow:self.delegate.scrollMarginTop withNewline:YES];
     } else {
-        [self.delegate setCursorToX:self.delegate.cursorPositionX Y:(self.delegate.cursorPositionY - 1)];
+        [self.delegate setCursorToX:self.delegate.cursorPositionX Y:MAX(1, self.delegate.cursorPositionY - 1)];
     }
 }
 

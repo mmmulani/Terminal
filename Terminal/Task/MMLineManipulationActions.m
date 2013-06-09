@@ -99,3 +99,16 @@
 }
 
 @end
+
+@implementation MMSetScrollMargins
+
+- (void)do;
+{
+    NSUInteger bottom = self.arguments.count >= 2 ? [self.arguments[1] integerValue] : self.delegate.termHeight;
+    NSUInteger top = self.arguments.count >= 1 ? [self.arguments[0] integerValue] : 1;
+    [self.delegate setScrollMarginTop:top ScrollMarginBottom:bottom];
+
+    [self.delegate setCursorToX:1 Y:1];
+}
+
+@end
