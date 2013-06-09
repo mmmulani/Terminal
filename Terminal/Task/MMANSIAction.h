@@ -88,6 +88,8 @@ typedef enum {
 - (void)setDECPrivateMode:(MMDECMode)decPrivateMode on:(BOOL)on;
 - (BOOL)isDECPrivateModeSet:(MMDECMode)decPrivateMode;
 
+- (void)tryToResizeTerminalForColumns:(NSInteger)columns rows:(NSInteger)rows;
+
 // XXX: Try to remove these or change them to ensure that all calculations for ANSIActions can be done in |setUp|.
 - (void)checkIfExceededLastLineAndObeyScrollMargin:(BOOL)obeyScrollMargin;
 

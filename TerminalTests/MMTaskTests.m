@@ -8,6 +8,10 @@
 
 #import "MMTaskTests.h"
 #import "MMTask.h"
+#import "MMTerminalConnection.h"
+#import "MMTerminalWindowController.h"
+
+#import <OCMock/OCMock.h>
 
 @interface MMTask ()
 
@@ -254,6 +258,42 @@ do {\
     task.displayTextStorage = [NSTextStorage new];
     [task handleCommandOutput:@"\033[0Ja\nb\nc"];
     [task changeTerminalHeightTo:1];
+}
+
+- (void)testResizingFromOutput;
+{
+    MMTask *task = [MMTask new];
+    id mockTerminalConnection = [OCMockObject mockForClass:[MMTerminalConnection class]];
+    id mockWindowController = [OCMockObject mockForClass:[MMTerminalWindowController class]];
+    task.terminalConnection = mockTerminalConnection;
+    task.displayTextStorage = [NSTextStorage new];
+    [task handleCommandOutput:@"a\nb"];
+    STAssertEquals(task.termWidth, (NSInteger)80, @"");
+    STAssertEquals(task.termHeight, (NSInteger)24, @"");
+
+    [task handleCommandOutput:@"\033[?3h"];
+    STAssertEquals(task.termWidth, (NSInteger)80, @"");
+    STAssertEquals(task.termHeight, (NSInteger)24, @"");
+
+    [[[mockTerminalConnection expect] andReturn:mockWindowController] terminalWindow];
+    [[[mockWindowController expect] andDo:^(NSInvocation *invocation) {
+        [task resizeTerminalToColumns:132 rows:24];
+    }] resizeWindowForTerminalScreenSizeOfColumns:132 rows:24];
+
+    [task handleCommandOutput:@"\033[?40h\033[?3h"];
+    STAssertEquals(task.termWidth, (NSInteger)132, @"");
+    STAssertEquals(task.termHeight, (NSInteger)24, @"");
+    STAssertEqualObjects(task.currentANSIDisplay.string, @"", @"");
+
+    [[[mockTerminalConnection expect] andReturn:mockWindowController] terminalWindow];
+    [[[mockWindowController expect] andDo:^(NSInvocation *invocation) {
+        [task resizeTerminalToColumns:80 rows:24];
+    }] resizeWindowForTerminalScreenSizeOfColumns:80 rows:24];
+
+    [task handleCommandOutput:@"C\033[?3l"];
+    STAssertEquals(task.termWidth, (NSInteger)80, @"");
+    STAssertEquals(task.termHeight, (NSInteger)24, @"");
+    STAssertEqualObjects(task.currentANSIDisplay.string, @"", @"");
 }
 
 @end

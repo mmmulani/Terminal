@@ -952,6 +952,18 @@
     return [self.decModes containsObject:@(decPrivateMode)];
 }
 
+- (void)tryToResizeTerminalForColumns:(NSInteger)columns rows:(NSInteger)rows;
+{
+    // When we receive this instruction, we are handling output and so we have called |beginEditing| on our text storage.
+    // Resizing the window will cause the window to layout and for this, we cannot be editting the text storage.
+    // Thus, we have to manually end and resume editting.
+    [self.displayTextStorage endEditing];
+
+    [self.terminalConnection.terminalWindow resizeWindowForTerminalScreenSizeOfColumns:columns rows:rows];
+
+    [self.displayTextStorage beginEditing];
+}
+
 # pragma mark - NSCoding
 
 - (void)encodeWithCoder:(NSCoder *)coder;

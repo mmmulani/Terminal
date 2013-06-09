@@ -61,7 +61,17 @@
 - (void)do;
 {
     for (NSString *argument in self.arguments) {
-        [self.delegate setDECPrivateMode:(MMDECMode)[argument integerValue] on:NO];
+        MMDECMode mode = (MMDECMode)[argument integerValue];
+        [self.delegate setDECPrivateMode:mode on:NO];
+
+        if (mode == MMDECModeWideColumn) {
+            if ([self.delegate isDECPrivateModeSet:MMDECModeAllowColumnChange]) {
+                [self.delegate tryToResizeTerminalForColumns:80 rows:self.delegate.termHeight];
+                MMANSIAction *action = [MMFullReset new];
+                action.delegate = self.delegate;
+                [action do];
+            }
+        }
     }
 }
 
@@ -72,7 +82,18 @@
 - (void)do;
 {
     for (NSString *argument in self.arguments) {
-        [self.delegate setDECPrivateMode:(MMDECMode)[argument integerValue] on:YES];
+        MMDECMode mode = (MMDECMode)[argument integerValue];
+        [self.delegate setDECPrivateMode:mode on:YES];
+
+        if (mode == MMDECModeWideColumn) {
+            if ([self.delegate isDECPrivateModeSet:MMDECModeAllowColumnChange]) {
+                [self.delegate tryToResizeTerminalForColumns:132 rows:self.delegate.termHeight];
+                MMANSIAction *action = [MMFullReset new];
+                action.delegate = self.delegate;
+                [action do];
+
+            }
+        }
     }
 }
 
