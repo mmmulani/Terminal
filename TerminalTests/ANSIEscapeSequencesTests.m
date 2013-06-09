@@ -332,11 +332,12 @@ do {\
     MMTask *task = [MMTask new];
     task.displayTextStorage = [NSTextStorage new];
     [task handleCommandOutput:@"\033[0J\n\n\n"];
-    STAssertEquals(task.cursorPositionByCharacters, (NSInteger)2, @"Should not crash in looking at the cursor position for a row which does not exist");
+    STAssertEquals(task.cursorPositionByCharacters, (NSInteger)3, @"Should not crash in looking at the cursor position for a row which does not exist");
 
     CheckInputAgainstExpectedOutput(([NSString stringWithFormat:@"\033[%@HA", [@"" stringByPaddingToLength:875 withString:@"1;" startingAtIndex:0]]), @"A");
 
     CheckInputAgainstExpectedOutput(@"\033[0J\033D\033[0J", @"");
+    CheckInputAgainstExpectedOutput([@"\033[0J" stringByPaddingToLength:300 withString:@"A" startingAtIndex:0], [@"" stringByPaddingToLength:296 withString:@"A" startingAtIndex:0]);
 }
 
 - (void)testReverseIndex;

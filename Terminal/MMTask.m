@@ -369,6 +369,8 @@
         [self insertBlankLineAtScrollRow:self.termHeight withNewline:NO];
 
         self.cursorPosition = MMPositionMake(self.cursorPosition.x, self.cursorPosition.y - 1);
+    } else if (self.cursorPosition.y == self.numberOfRowsOnScreen + 1) {
+        [self insertBlankLineAtScrollRow:(self.numberOfRowsOnScreen + 1) withNewline:NO];
     }
 }
 
