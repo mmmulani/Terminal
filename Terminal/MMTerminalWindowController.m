@@ -476,7 +476,7 @@ static void directoryWatchingCallback(CFFileDescriptorRef kqRef, CFOptionFlags c
     NSInteger newWidth = lround((self.window.frame.size.width - 56) / 7.82666);
     NSInteger newHeight = lround((self.window.frame.size.height - 337) / 15);
 
-    [self.terminalConnection changeTerminalSizeToColumns:newWidth rows:24];
+    [self.terminalConnection changeTerminalSizeToColumns:newWidth rows:newHeight];
     [[self.taskViewControllers lastObject] resizeTerminalToColumns:newWidth rows:newHeight];
 }
 

@@ -627,6 +627,10 @@
     if (columns != self.termWidth) {
         [self changeTerminalWidthTo:columns];
     }
+
+    if (rows != self.termHeight) {
+        [self changeTerminalHeightTo:rows];
+    }
 }
 
 - (void)changeTerminalWidthTo:(NSInteger)newTerminalWidth;
@@ -719,6 +723,64 @@
     }
     self.cursorPosition = MMPositionMake(newPositionX, newPositionY);
     self.termWidth = newTerminalWidth;
+}
+
+- (void)changeTerminalHeightTo:(NSInteger)newHeight;
+{
+    if (newHeight < self.termHeight) {
+        NSInteger linesToRemove = self.termHeight - newHeight;
+
+        for (NSInteger i = self.numberOfRowsOnScreen; i > 1 && linesToRemove > 0; i--) {
+            if ([self numberOfCharactersInScrollRow:i] > 0 || [self isScrollRowTerminatedInNewline:(i - 1)]) {
+                break;
+            }
+
+            [self removeLineAtScrollRow:i];
+            linesToRemove--;
+        }
+
+        for (NSInteger i = 0; i < linesToRemove; i++) {
+            [self incrementRowOffset];
+        }
+
+        self.termHeight = newHeight;
+        self.cursorPosition = MMPositionMake(self.cursorPosition.x, MIN(self.termHeight, self.cursorPosition.y));
+    } else {
+        NSString *outputString = self.displayTextStorage.string;
+        NSInteger currentPosition = self.characterOffsetToScreen;
+        BOOL newlineFollows = currentPosition > 0 && [outputString characterAtIndex:(currentPosition - 1)] == '\n';
+        for (NSInteger i = 0; i < newHeight - self.termHeight && currentPosition > 0; i++) {
+            [self.scrollRowHasNewline insertObject:@(newlineFollows) atIndex:0];
+            if (newlineFollows) {
+                currentPosition--;
+            }
+            NSRange lineRange = [outputString rangeOfCharacterFromSet:[NSCharacterSet characterSetWithCharactersInString:@"\n"] options:NSBackwardsSearch range:NSMakeRange(0, currentPosition)];
+
+            NSInteger lengthOfLine = currentPosition - (lineRange.location == NSNotFound ? -1 : lineRange.location) - 1;
+            NSInteger lengthOfSingleLine = lengthOfLine % self.termWidth;
+            if (lengthOfLine >= self.termWidth && lengthOfSingleLine == 0) {
+                lengthOfSingleLine = self.termWidth;
+                newlineFollows = NO;
+            }
+            [self.characterCountsOnVisibleRows insertObject:@(lengthOfSingleLine) atIndex:0];
+            // TODO: Determine what tab ranges are in this row.
+            [self.scrollRowTabRanges insertObject:[NSMutableArray array] atIndex:0];
+
+            self.cursorPosition = MMPositionMake(self.cursorPosition.x, self.cursorPosition.y + 1);
+
+            currentPosition -= lengthOfSingleLine;
+
+            if (currentPosition - 1 == lineRange.location) {
+                newlineFollows = YES;
+            }
+            if (lineRange.location == NSNotFound && currentPosition == 0) {
+                break;
+            }
+        }
+        NSAssert(self.characterCountsOnVisibleRows.count == self.scrollRowHasNewline.count, @"Number of rows on screen should be the same");
+        self.characterOffsetToScreen = currentPosition;
+        self.termHeight = newHeight;
+    }
 }
 
 # pragma mark - MMANSIActionDelegate methods

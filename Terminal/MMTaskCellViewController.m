@@ -72,7 +72,7 @@
     CGFloat textHeight = 0.0f;
     if (self.task.shouldDrawFullTerminalScreen) {
         // We let the default maximum later take over, rather than calculate a max height.
-        textHeight = 999.0f;
+        textHeight = 9999.0f;
     } else {
         NSAttributedString *output = [self.outputView.textStorage attributedSubstringFromRange:NSMakeRange(0, self.outputView.textStorage.length)];
 
@@ -85,8 +85,11 @@
         textHeight = [layoutManager usedRectForTextContainer:textContainer].size.height + 2.0; // + 2.0 for padding.
     }
 
+    // When drawing the whole screen, we use 64 points for the chrome and 15 points for each line of text.
+    CGFloat heightForWholeScreen = 64.0 + 15.0 * self.task.termHeight;
+
     NSScrollView *textScrollView = (NSScrollView *)self.outputView.superview.superview;
-    return MIN(self.view.frame.size.height - textScrollView.frame.size.height + textHeight, 424.0f);
+    return MIN(self.view.frame.size.height - textScrollView.frame.size.height + textHeight, heightForWholeScreen);
 }
 
 - (void)updateWithANSIOutput;
