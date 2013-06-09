@@ -40,7 +40,9 @@
     }
 
     self.identifier = identifier;
-    
+    self.terminalHeight = DEFAULT_TERM_HEIGHT;
+    self.terminalWidth = DEFAULT_TERM_WIDTH;
+
     return self;
 }
 
@@ -125,8 +127,8 @@
 	term.c_ispeed = B38400;
 	term.c_ospeed = B38400;
 
-	win.ws_row = DEFAULT_TERM_HEIGHT;
-	win.ws_col = DEFAULT_TERM_WIDTH;
+	win.ws_row = self.terminalHeight;
+	win.ws_col = self.terminalWidth;
 	win.ws_xpixel = 0;
 	win.ws_ypixel = 0;
 

@@ -60,6 +60,13 @@
         [self.tableView insertRowsAtIndexes:[NSIndexSet indexSetWithIndexesInRange:NSMakeRange(0, self.tasks.count)] withAnimation:NSTableViewAnimationEffectNone];
         [self.tableView noteHeightOfRowsWithIndexesChanged:[NSIndexSet indexSetWithIndexesInRange:NSMakeRange(0, self.tasks.count)]];
         [NSAnimationContext endGrouping];
+
+        NSInteger terminalWidth = [state decodeIntegerForKey:@"terminalWidth"];
+        NSInteger terminalHeight = [state decodeIntegerForKey:@"terminalHeight"];
+        if (terminalWidth > 0) {
+            self.terminalConnection.terminalWidth = terminalWidth;
+            self.terminalConnection.terminalHeight = terminalHeight;
+        }
     }
 
     return self;
@@ -495,6 +502,8 @@ static void directoryWatchingCallback(CFFileDescriptorRef kqRef, CFOptionFlags c
 {
     [coder encodeObject:self.tasks forKey:MMSelfKey(tasks)];
     [coder encodeObject:self.currentDirectory forKey:MMSelfKey(currentDirectory)];
+    [coder encodeInteger:self.terminalConnection.terminalHeight forKey:@"terminalHeight"];
+    [coder encodeInteger:self.terminalConnection.terminalWidth forKey:@"terminalWidth"];
 }
 
 @end
