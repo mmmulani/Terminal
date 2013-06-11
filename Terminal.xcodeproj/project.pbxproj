@@ -173,6 +173,7 @@
 		910D0EEB1757B8B100FFF569 /* MMShellCommands.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MMShellCommands.h; sourceTree = "<group>"; };
 		910D0EEC1757B8B100FFF569 /* MMShellCommands.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MMShellCommands.m; sourceTree = "<group>"; };
 		910D0EEF1757B9B800FFF569 /* MMTerminalProxy.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = MMTerminalProxy.h; sourceTree = "<group>"; };
+		911A9BB21766979E002E8531 /* MMTestHelpers.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = MMTestHelpers.h; path = TerminalTests/MMTestHelpers.h; sourceTree = "<group>"; };
 		912141891757E5CA00A50F6E /* MMFirstRunWindowController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = MMFirstRunWindowController.h; path = Reporting/MMFirstRunWindowController.h; sourceTree = "<group>"; };
 		9121418A1757E5CA00A50F6E /* MMFirstRunWindowController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = MMFirstRunWindowController.m; path = Reporting/MMFirstRunWindowController.m; sourceTree = "<group>"; };
 		9121418B1757E5CA00A50F6E /* MMFirstRunWindowController.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; name = MMFirstRunWindowController.xib; path = Reporting/MMFirstRunWindowController.xib; sourceTree = "<group>"; };
@@ -443,6 +444,7 @@
 				919ABB4F16FFA22900BB7108 /* MMTaskTests.m */,
 				9126054B1739C4E0001962AE /* MMCommandLineParserTests.h */,
 				9126054C1739C4E0001962AE /* MMCommandLineParserTests.m */,
+				911A9BB21766979E002E8531 /* MMTestHelpers.h */,
 			);
 			name = TerminalTests;
 			sourceTree = "<group>";

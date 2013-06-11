@@ -8,6 +8,7 @@
 
 #import "ANSIEscapeSequencesTests.h"
 #import "MMTask.h"
+#import "MMTestHelpers.h"
 
 @interface ANSIEscapeSequencesTests ()
 
@@ -33,33 +34,8 @@
     // Tear-down code here.
     
     [super tearDown];
+    [@"" stringByReplacingOccurrencesOfString:@"\n" withString:@"\r\n"];
 }
-
-#define CheckInputAgainstExpectedOutput(input, output) \
-do {\
-    MMTask *task = [MMTask new]; \
-    task.displayTextStorage = [NSTextStorage new]; \
-    [task handleCommandOutput:input]; \
-    STAssertEqualObjects([task.currentANSIDisplay string], output, @"Compared task output to provided output."); \
-} while (0)
-
-#define CheckInputAgainstExpectedOutputWithExpectedCursor(input, output, cursorPosition_) \
-do {\
-    MMTask *task = [MMTask new]; \
-    task.displayTextStorage = [NSTextStorage new]; \
-    [task handleCommandOutput:input]; \
-    STAssertEqualObjects([task.currentANSIDisplay string], output, @"Compared task output to provided output."); \
-    STAssertEquals(task.cursorPosition.x, cursorPosition_.x, @"X coord of cursor position"); \
-    STAssertEquals(task.cursorPosition.y, cursorPosition_.y, @"Y coord of cursor position"); \
-} while (0)
-
-#define CheckThatInputDoesNotCauseACrash(input) \
-do {\
-    MMTask *task = [MMTask new]; \
-    task.displayTextStorage = [NSTextStorage new]; \
-    [task handleCommandOutput:input]; \
-    STAssertNotNil([task.currentANSIDisplay string], nil); \
-} while (0)
 
 - (void)testNonANSIPrograms;
 {
