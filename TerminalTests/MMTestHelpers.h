@@ -11,11 +11,22 @@
 #define SendInputToTask(task, input) \
 [task handleCommandOutput:[input stringByReplacingOccurrencesOfString:@"\n" withString:@"\r\n"]]
 
+#define SendRawInputToTask(task, input) \
+[task handleCommandOutput:input]
+
 #define CheckInputAgainstExpectedOutput(input, output) \
 do {\
     MMTask *task = [MMTask new]; \
     task.displayTextStorage = [NSTextStorage new]; \
     SendInputToTask(task, input); \
+    STAssertEqualObjects([task.currentANSIDisplay string], output, @"Compared task output to provided output."); \
+} while (0)
+
+#define CheckRawInputAgainstExpectedOutput(input, output) \
+do {\
+    MMTask *task = [MMTask new]; \
+    task.displayTextStorage = [NSTextStorage new]; \
+    SendRawInputToTask(task, input); \
     STAssertEqualObjects([task.currentANSIDisplay string], output, @"Compared task output to provided output."); \
 } while (0)
 

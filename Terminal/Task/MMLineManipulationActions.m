@@ -93,7 +93,7 @@
     [self.delegate createBlankLinesUpToCursor];
 
     [self.delegate setScrollRow:self.delegate.cursorPositionY hasNewline:YES];
-    [self.delegate setCursorToX:1 Y:(self.delegate.cursorPositionY + 1)];
+    [self.delegate setCursorToX:self.delegate.cursorPositionX Y:(self.delegate.cursorPositionY + 1)];
 
     [self.delegate checkIfExceededLastLineAndObeyScrollMargin:YES];
 }

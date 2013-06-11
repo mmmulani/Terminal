@@ -799,7 +799,7 @@
 
 - (void)setCursorToX:(NSInteger)x Y:(NSInteger)y;
 {
-    NSAssert(x > 0 && x <= self.termWidth, @"X coord should be within bounds");
+    NSAssert(x > 0 && x <= self.termWidth + 1, @"X coord should be within bounds");
     NSAssert(y > 0 && y <= self.termWidth, @"Y coord should be within bounds");
     self.cursorPosition = MMPositionMake(x, y);
 }

@@ -34,7 +34,6 @@
     // Tear-down code here.
     
     [super tearDown];
-    [@"" stringByReplacingOccurrencesOfString:@"\n" withString:@"\r\n"];
 }
 
 - (void)testNonANSIPrograms;
@@ -122,6 +121,11 @@
     CheckInputAgainstExpectedOutput(@"\033[1;1H\n\033[1;79Habcde", @"                                                                              abcde");
 
     CheckInputAgainstExpectedOutput([[@"" stringByPaddingToLength:160 withString:@" " startingAtIndex:0] stringByAppendingString:@"\r\r\nA"], [[@"" stringByPaddingToLength:160 withString:@" " startingAtIndex:0] stringByAppendingString:@"\nA"]);
+
+    // Test that a raw newline does not change the cursor position.
+    CheckRawInputAgainstExpectedOutput(@"A\nB", @"A\n B");
+    CheckRawInputAgainstExpectedOutput(@"A\n\nB", @"A\n\n B");
+    CheckRawInputAgainstExpectedOutput(@"A\n\r\nB", @"A\n\nB");
 }
 
 - (void)testVerticalTabulationAndFormFeed;
