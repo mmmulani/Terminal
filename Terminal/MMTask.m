@@ -126,50 +126,48 @@
         }
 
         if (currentChar == '\033') { // Escape character.
-            NSUInteger firstAlphabeticIndex = i;
-            if ([outputToHandle length] == (firstAlphabeticIndex + 1)) {
+            NSUInteger firstIndexAfterSequence = i;
+            if ([outputToHandle length] == (firstIndexAfterSequence + 1)) {
                 self.unreadOutput = [outputToHandle substringFromIndex:i];
                 break;
             }
 
-            if ([outputToHandle characterAtIndex:(firstAlphabeticIndex + 1)] != '[') {
+            if ([outputToHandle characterAtIndex:(firstIndexAfterSequence + 1)] != '[') {
                 // This is where we gather the required characters for escape sequence which does not start with "\033[".
                 // The length of these escape sequences vary, so we have to determine whether we have enough output first.
                 // TODO: Handle Operating System Controls (i.e. the sequences that start with "\033]").
                 NSCharacterSet *prefixesThatRequireAnExtraCharacter = [NSCharacterSet characterSetWithCharactersInString:@" #%()*+"];
-                if ([prefixesThatRequireAnExtraCharacter characterIsMember:[outputToHandle characterAtIndex:(firstAlphabeticIndex + 1)]]) {
-                    if ([outputToHandle length] == (firstAlphabeticIndex + 2)) {
+                if ([prefixesThatRequireAnExtraCharacter characterIsMember:[outputToHandle characterAtIndex:(firstIndexAfterSequence + 1)]]) {
+                    if ([outputToHandle length] == (firstIndexAfterSequence + 2)) {
                         self.unreadOutput = [outputToHandle substringFromIndex:i];
                         break;
                     }
 
-                    [self handleEscapeSequence:[outputToHandle substringWithRange:NSMakeRange(firstAlphabeticIndex, 3)]];
+                    [self handleEscapeSequence:[outputToHandle substringWithRange:NSMakeRange(firstIndexAfterSequence, 3)]];
                     i = i + 2;
                     continue;
                 } else {
-                    [self handleEscapeSequence:[outputToHandle substringWithRange:NSMakeRange(firstAlphabeticIndex, 2)]];
+                    [self handleEscapeSequence:[outputToHandle substringWithRange:NSMakeRange(firstIndexAfterSequence, 2)]];
                     i = i + 1;
                     continue;
                 }
             }
 
-            NSCharacterSet *lowercaseChars = [NSCharacterSet lowercaseLetterCharacterSet];
-            NSCharacterSet *uppercaseChars = [NSCharacterSet uppercaseLetterCharacterSet];
-            while (firstAlphabeticIndex < [outputToHandle length] &&
-                   ![lowercaseChars characterIsMember:[outputToHandle characterAtIndex:firstAlphabeticIndex]] &&
-                   ![uppercaseChars characterIsMember:[outputToHandle characterAtIndex:firstAlphabeticIndex]]) {
-                firstAlphabeticIndex++;
+            NSCharacterSet *terminatingChars = [NSCharacterSet characterSetWithCharactersInString:@"abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ@`"];
+            while (firstIndexAfterSequence < [outputToHandle length] &&
+                   ![terminatingChars characterIsMember:[outputToHandle characterAtIndex:firstIndexAfterSequence]]) {
+                firstIndexAfterSequence++;
             }
 
             // The escape sequence could be split over multiple reads.
-            if (firstAlphabeticIndex == [outputToHandle length]) {
+            if (firstIndexAfterSequence == [outputToHandle length]) {
                 self.unreadOutput = [outputToHandle substringFromIndex:i];
                 break;
             }
 
-            NSString *escapeSequence = [outputToHandle substringWithRange:NSMakeRange(i, firstAlphabeticIndex - i + 1)];
+            NSString *escapeSequence = [outputToHandle substringWithRange:NSMakeRange(i, firstIndexAfterSequence - i + 1)];
             [self handleEscapeSequence:escapeSequence];
-            i = firstAlphabeticIndex;
+            i = firstIndexAfterSequence;
         } else {
             [self handleNonPrintableOutput:currentChar];
         }
