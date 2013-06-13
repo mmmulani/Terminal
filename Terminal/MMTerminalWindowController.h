@@ -9,6 +9,7 @@
 #import <Cocoa/Cocoa.h>
 
 #import "MMTextView.h"
+#import "MMTerminalProxy.h"
 
 @class MMTerminalConnection;
 @class MMCommandsTextView;
@@ -33,7 +34,7 @@
 - (id)initWithTerminalConnection:(MMTerminalConnection *)terminalConnection withState:(NSCoder *)state completionHandler:(void (^)(NSWindow *, NSError *))completionHandler;
 
 - (void)handleOutput:(NSString *)message;
-- (void)processFinished;
+- (void)processFinished:(MMProcessStatus)status data:(id)data;
 - (void)directoryChangedTo:(NSString *)newPath;
 - (void)shellCommandFinished;
 - (MMTask *)lastTask;

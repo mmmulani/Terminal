@@ -10,9 +10,16 @@
 
 #import "MMShellCommands.h"
 
+typedef enum {
+    MMProcessStatusError,
+    MMProcessStatusExit,
+    MMProcessStatusSignal,
+    MMProcessStatusStopped,
+} MMProcessStatus;
+
 @protocol MMTerminalProxy <NSObject>
 
-- (void)processFinished;
+- (void)processFinished:(MMProcessStatus)status data:(id)data;
 - (void)directoryChangedTo:(NSString *)newPath;
 - (void)shellCommand:(MMShellCommand)command succesful:(BOOL)success attachment:(id)attachment;
 

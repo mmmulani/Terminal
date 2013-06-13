@@ -62,7 +62,7 @@
     task.displayTextStorage = [NSTextStorage new];
     SendInputToTask(task, @"test\n");
     STAssertEqualObjects(task.currentANSIDisplay.string, @"test\n", @"Newline should not be removed before process is finished");
-    [task processFinished];
+    [task processFinished:MMProcessStatusExit data:nil];
     STAssertEqualObjects(task.currentANSIDisplay.string, @"test", @"Newline should be removed after process is finished");
     SendInputToTask(task, @"test2\n");
     STAssertEqualObjects(task.currentANSIDisplay.string, @"test\ntest2", @"Newline should be readded if task has to handle more output");

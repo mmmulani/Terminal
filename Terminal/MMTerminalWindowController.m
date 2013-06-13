@@ -148,7 +148,7 @@
 - (void)shellCommandFinished;
 {
     [(MMTaskCellViewController *)[self.taskViewControllers lastObject] updateViewForShellCommand];
-    [self processFinished];
+    [self processFinished:MMProcessStatusExit data:nil];
 }
 
 - (MMTask *)lastTask;
@@ -156,10 +156,10 @@
     return [self.tasks lastObject];
 }
 
-- (void)processFinished;
+- (void)processFinished:(MMProcessStatus)status data:(id)data;
 {
     MMTask *task = [self.tasks lastObject];
-    [task processFinished];
+    [task processFinished:status data:data];
     self.running = NO;
 
     MMTaskCellViewController *controller = [self.taskViewControllers lastObject];

@@ -68,7 +68,7 @@
 
     // TODO: Handle the case of no commands better. (Also detect it better.)
     if (commandGroups.count == 0 || [commandGroups[0] commands].count == 0) {
-        [self processFinished];
+        [self processFinished:MMProcessStatusError data:nil];
         return;
     }
 
@@ -299,10 +299,10 @@ void iconvFallback(const char *inbuf, size_t inbufsize, void (*write_replacement
 
 # pragma mark - MMTerminalProxy
 
-- (void)processFinished;
+- (void)processFinished:(MMProcessStatus)status data:(id)data;
 {
     dispatch_async(dispatch_get_main_queue(), ^{
-        [self.terminalWindow processFinished];
+        [self.terminalWindow processFinished:status data:data];
     });
 }
 

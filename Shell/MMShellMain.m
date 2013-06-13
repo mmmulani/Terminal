@@ -183,9 +183,15 @@
 
 - (void)waitForChildToFinish:(NSNumber *)child_pid;
 {
-    waitpid([child_pid intValue], NULL, 0);
+    int status;
+    waitpid([child_pid intValue], &status, 0);
 
-    [self.terminalProxy processFinished];
+    if (WIFEXITED(status)) {
+        [self.terminalProxy processFinished:MMProcessStatusExit data:@(WEXITSTATUS(status))];
+    } else {
+        NSAssert(WIFSIGNALED(status), @"Process should only terminate by exiting or by a signal");
+        [self.terminalProxy processFinished:MMProcessStatusSignal data:@(WTERMSIG(status))];
+    }
 }
 
 

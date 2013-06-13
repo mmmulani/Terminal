@@ -15,6 +15,7 @@
 
 @property (strong) IBOutlet NSTextField *label;
 @property (strong) IBOutlet MMTextView *outputView;
+@property (strong) IBOutlet NSImageView *imageView;
 
 @property (strong) MMTask *task;
 

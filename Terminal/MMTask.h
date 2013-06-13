@@ -9,6 +9,7 @@
 #import <Foundation/Foundation.h>
 
 #import "MMANSIAction.h"
+#import "MMTerminalProxy.h"
 
 typedef struct _MMPosition {
     NSInteger x;
@@ -50,11 +51,16 @@ typedef enum {
 @property BOOL shellCommandSuccessful;
 @property id shellCommandAttachment;
 
+@property MMProcessStatus finishStatus;
+@property NSInteger finishCode;
+
+- (BOOL)isFinished;
+
 - (id)initWithTerminalConnection:(MMTerminalConnection *)terminalConnection;
 - (void)handleUserInput:(NSString *)input;
 - (void)handleCursorKeyInput:(MMArrowKey)arrowKey;
 - (void)handleCommandOutput:(NSString *)output;
-- (void)processFinished;
+- (void)processFinished:(MMProcessStatus)status data:(id)data;
 
 - (void)resizeTerminalToColumns:(NSInteger)columns rows:(NSInteger)rows;
 

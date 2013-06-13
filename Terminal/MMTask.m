@@ -231,11 +231,19 @@
     }
 }
 
-- (void)processFinished;
+- (void)processFinished:(MMProcessStatus)status data:(id)data;
 {
     self.finishedAt = [NSDate date];
+    
+    self.finishStatus = status;
+    self.finishCode = [data integerValue];
 
     [self removeTrailingNewlineIfNecessary];
+}
+
+- (BOOL)isFinished;
+{
+    return self.finishedAt != nil;
 }
 
 # pragma mark - ANSI display methods

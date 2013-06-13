@@ -45,15 +45,22 @@
             [self.outputView.layoutManager replaceTextStorage:self.task.displayTextStorage];
         }
 
+        [self.view addSubview:self.imageView];
         [self.label setStringValue:[NSString stringWithFormat:@"Ran %@", self.task.command]];
     }
 
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(outputFrameChanged:) name:NSViewFrameDidChangeNotification object:self.outputView];
+    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(labelFrameChanged:) name:NSViewFrameDidChangeNotification object:self.label];
 }
 
 - (void)dealloc;
 {
     [[NSNotificationCenter defaultCenter] removeObserver:self];
+}
+
+- (void)labelFrameChanged:(NSNotification *)notification;
+{
+    [self.imageView setFrameOrigin:NSMakePoint(self.label.frame.origin.x + self.label.intrinsicContentSize.width + 10, self.label.frame.origin.y)];
 }
 
 - (void)outputFrameChanged:(NSNotification *)notification;
@@ -115,6 +122,24 @@
 
     // Sometimes the NSViewFrameDidChangeNotification does not get issued, so we call it here to make sure that it gets sent.
     [self outputFrameChanged:nil];
+    
+    if (self.task.isFinished) {
+        NSImage *imageToDisplay;
+        NSString *toolTip;
+        if (self.task.finishStatus == MMProcessStatusExit) {
+            if (self.task.finishCode == 0) {
+                imageToDisplay = [[NSBundle mainBundle] imageForResource:@"glyphiconsOK.png"];
+            } else {
+                imageToDisplay = [[NSBundle mainBundle] imageForResource:@"glyphiconsWarning.png"];
+                toolTip = [NSString stringWithFormat:@"Exited with code %ld", self.task.finishCode];
+            }
+        } else if (self.task.finishStatus == MMProcessStatusSignal) {
+            imageToDisplay = [[NSBundle mainBundle] imageForResource:@"glyphiconsX.png"];
+            toolTip = [NSString stringWithFormat:@"Stopped by signal %ld", self.task.finishCode];
+        }
+        self.imageView.image = imageToDisplay;
+        self.imageView.toolTip = toolTip;
+    }
 }
 
 - (IBAction)saveTranscript:(id)sender;

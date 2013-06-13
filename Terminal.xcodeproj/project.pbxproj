@@ -29,11 +29,18 @@
 		913CC1CD174D2D8100E002AD /* MMErasingActions.m in Sources */ = {isa = PBXBuildFile; fileRef = 913CC1CC174D2D8100E002AD /* MMErasingActions.m */; };
 		913CC1D1174D703D00E002AD /* MMLineManipulationActions.m in Sources */ = {isa = PBXBuildFile; fileRef = 913CC1D0174D703C00E002AD /* MMLineManipulationActions.m */; };
 		913CC1D5174DA22500E002AD /* MMIndexActions.m in Sources */ = {isa = PBXBuildFile; fileRef = 913CC1D4174DA22500E002AD /* MMIndexActions.m */; };
+		913DE70B176A5CE80068ED2F /* glyphiconsOK.png in Resources */ = {isa = PBXBuildFile; fileRef = 913DE705176A5CE80068ED2F /* glyphiconsOK.png */; };
+		913DE70C176A5CE80068ED2F /* glyphiconsPause.png in Resources */ = {isa = PBXBuildFile; fileRef = 913DE706176A5CE80068ED2F /* glyphiconsPause.png */; };
+		913DE70D176A5CE80068ED2F /* glyphiconsPlay.png in Resources */ = {isa = PBXBuildFile; fileRef = 913DE707176A5CE80068ED2F /* glyphiconsPlay.png */; };
+		913DE70E176A5CE80068ED2F /* glyphiconsRemoveInCircle.png in Resources */ = {isa = PBXBuildFile; fileRef = 913DE708176A5CE80068ED2F /* glyphiconsRemoveInCircle.png */; };
+		913DE70F176A5CE80068ED2F /* glyphiconsStop.png in Resources */ = {isa = PBXBuildFile; fileRef = 913DE709176A5CE80068ED2F /* glyphiconsStop.png */; };
+		913DE710176A5CE80068ED2F /* glyphiconsWarning.png in Resources */ = {isa = PBXBuildFile; fileRef = 913DE70A176A5CE80068ED2F /* glyphiconsWarning.png */; };
 		91557406175E9BFB004C2ED1 /* MMTabAction.m in Sources */ = {isa = PBXBuildFile; fileRef = 91557405175E9BFB004C2ED1 /* MMTabAction.m */; };
 		91557CA7175A557F00CEEFC8 /* MMDisplayActions.m in Sources */ = {isa = PBXBuildFile; fileRef = 91557CA6175A557F00CEEFC8 /* MMDisplayActions.m */; };
 		917D1C42173963C800503158 /* lexer.lm in Sources */ = {isa = PBXBuildFile; fileRef = 917D1C41173963C800503158 /* lexer.lm */; };
 		917D1C4417396C8000503158 /* parser.ym in Sources */ = {isa = PBXBuildFile; fileRef = 917D1C4317396C8000503158 /* parser.ym */; };
 		917D1C47173973D600503158 /* MMParserContext.m in Sources */ = {isa = PBXBuildFile; fileRef = 917D1C46173973D600503158 /* MMParserContext.m */; };
+		917DE9E2176A7FC200591874 /* glyphiconsX.png in Resources */ = {isa = PBXBuildFile; fileRef = 917DE9E1176A7FC200591874 /* glyphiconsX.png */; };
 		9186499016D2A6190024D9BE /* MMTerminalWindowController.m in Sources */ = {isa = PBXBuildFile; fileRef = 9186498E16D2A6190024D9BE /* MMTerminalWindowController.m */; };
 		9186499116D2A6190024D9BE /* MMTerminalWindow.xib in Resources */ = {isa = PBXBuildFile; fileRef = 9186498F16D2A6190024D9BE /* MMTerminalWindow.xib */; };
 		9186499416D408700024D9BE /* MMTask.m in Sources */ = {isa = PBXBuildFile; fileRef = 9186499316D408700024D9BE /* MMTask.m */; };
@@ -197,6 +204,12 @@
 		913CC1D0174D703C00E002AD /* MMLineManipulationActions.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = MMLineManipulationActions.m; path = Task/MMLineManipulationActions.m; sourceTree = "<group>"; };
 		913CC1D3174DA22400E002AD /* MMIndexActions.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = MMIndexActions.h; path = Task/MMIndexActions.h; sourceTree = "<group>"; };
 		913CC1D4174DA22500E002AD /* MMIndexActions.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = MMIndexActions.m; path = Task/MMIndexActions.m; sourceTree = "<group>"; };
+		913DE705176A5CE80068ED2F /* glyphiconsOK.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = glyphiconsOK.png; path = Resources/glyphiconsOK.png; sourceTree = "<group>"; };
+		913DE706176A5CE80068ED2F /* glyphiconsPause.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = glyphiconsPause.png; path = Resources/glyphiconsPause.png; sourceTree = "<group>"; };
+		913DE707176A5CE80068ED2F /* glyphiconsPlay.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = glyphiconsPlay.png; path = Resources/glyphiconsPlay.png; sourceTree = "<group>"; };
+		913DE708176A5CE80068ED2F /* glyphiconsRemoveInCircle.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = glyphiconsRemoveInCircle.png; path = Resources/glyphiconsRemoveInCircle.png; sourceTree = "<group>"; };
+		913DE709176A5CE80068ED2F /* glyphiconsStop.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = glyphiconsStop.png; path = Resources/glyphiconsStop.png; sourceTree = "<group>"; };
+		913DE70A176A5CE80068ED2F /* glyphiconsWarning.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = glyphiconsWarning.png; path = Resources/glyphiconsWarning.png; sourceTree = "<group>"; };
 		91557404175E9BFB004C2ED1 /* MMTabAction.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = MMTabAction.h; path = Task/MMTabAction.h; sourceTree = "<group>"; };
 		91557405175E9BFB004C2ED1 /* MMTabAction.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = MMTabAction.m; path = Task/MMTabAction.m; sourceTree = "<group>"; };
 		91557CA5175A557F00CEEFC8 /* MMDisplayActions.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = MMDisplayActions.h; path = Task/MMDisplayActions.h; sourceTree = "<group>"; };
@@ -205,6 +218,7 @@
 		917D1C4317396C8000503158 /* parser.ym */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.yacc; name = parser.ym; path = CommandLine/parser.ym; sourceTree = "<group>"; };
 		917D1C45173973D600503158 /* MMParserContext.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = MMParserContext.h; path = CommandLine/MMParserContext.h; sourceTree = "<group>"; };
 		917D1C46173973D600503158 /* MMParserContext.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = MMParserContext.m; path = CommandLine/MMParserContext.m; sourceTree = "<group>"; };
+		917DE9E1176A7FC200591874 /* glyphiconsX.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = glyphiconsX.png; path = Resources/glyphiconsX.png; sourceTree = "<group>"; };
 		9186498D16D2A6190024D9BE /* MMTerminalWindowController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MMTerminalWindowController.h; sourceTree = "<group>"; };
 		9186498E16D2A6190024D9BE /* MMTerminalWindowController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MMTerminalWindowController.m; sourceTree = "<group>"; };
 		9186498F16D2A6190024D9BE /* MMTerminalWindow.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = MMTerminalWindow.xib; sourceTree = "<group>"; };
@@ -239,7 +253,7 @@
 		91C7D9881740575700875974 /* libiconv.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libiconv.dylib; path = usr/lib/libiconv.dylib; sourceTree = SDKROOT; };
 		91E4A2681753F9EF00EFDDBE /* MMCommandGroup.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = MMCommandGroup.h; path = ../Terminal/CommandLine/MMCommandGroup.h; sourceTree = "<group>"; };
 		91E4A2691753F9EF00EFDDBE /* MMCommandGroup.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = MMCommandGroup.m; path = ../Terminal/CommandLine/MMCommandGroup.m; sourceTree = "<group>"; };
-		91E4C02B1742C65400062EF5 /* Icon.icns */ = {isa = PBXFileReference; lastKnownFileType = image.icns; path = Icon.icns; sourceTree = "<group>"; };
+		91E4C02B1742C65400062EF5 /* Icon.icns */ = {isa = PBXFileReference; lastKnownFileType = image.icns; name = Icon.icns; path = ../Icon.icns; sourceTree = "<group>"; };
 		91E4C05F1745682800062EF5 /* mmm.ProcessMonitor */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = mmm.ProcessMonitor; sourceTree = BUILT_PRODUCTS_DIR; };
 		91E4C0621745682800062EF5 /* main.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
 		91E4C0651745682800062EF5 /* ProcessMonitor-Prefix.pch */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "ProcessMonitor-Prefix.pch"; sourceTree = "<group>"; };
@@ -341,6 +355,21 @@
 				91557405175E9BFB004C2ED1 /* MMTabAction.m */,
 			);
 			name = "Task and xterm simulation";
+			sourceTree = "<group>";
+		};
+		913DE704176A5C430068ED2F /* Resources */ = {
+			isa = PBXGroup;
+			children = (
+				913DE705176A5CE80068ED2F /* glyphiconsOK.png */,
+				913DE706176A5CE80068ED2F /* glyphiconsPause.png */,
+				913DE707176A5CE80068ED2F /* glyphiconsPlay.png */,
+				917DE9E1176A7FC200591874 /* glyphiconsX.png */,
+				913DE708176A5CE80068ED2F /* glyphiconsRemoveInCircle.png */,
+				913DE709176A5CE80068ED2F /* glyphiconsStop.png */,
+				913DE70A176A5CE80068ED2F /* glyphiconsWarning.png */,
+				91E4C02B1742C65400062EF5 /* Icon.icns */,
+			);
+			name = Resources;
 			sourceTree = "<group>";
 		};
 		917D1C3E17385FBE00503158 /* Command line input */ = {
@@ -462,7 +491,6 @@
 		91F4EEB316B8D63C00F65E91 = {
 			isa = PBXGroup;
 			children = (
-				91E4C02B1742C65400062EF5 /* Icon.icns */,
 				91F4EEC516B8D63D00F65E91 /* Terminal */,
 				919BA9B216C875C40091CB1B /* Shell */,
 				91F1747416ED0CF0002E2594 /* TerminalTests */,
@@ -514,6 +542,7 @@
 		91F4EEC516B8D63D00F65E91 /* Terminal */ = {
 			isa = PBXGroup;
 			children = (
+				913DE704176A5C430068ED2F /* Resources */,
 				912141881757E5A700A50F6E /* Reporting */,
 				913CC1C2174C310300E002AD /* Task and xterm simulation */,
 				917D1C3E17385FBE00503158 /* Command line input */,
@@ -678,6 +707,13 @@
 				918649BF16D69A700024D9BE /* MMDebugMessagesPanel.xib in Resources */,
 				91E4C02C1742C65400062EF5 /* Icon.icns in Resources */,
 				9121418D1757E5CA00A50F6E /* MMFirstRunWindowController.xib in Resources */,
+				913DE70B176A5CE80068ED2F /* glyphiconsOK.png in Resources */,
+				913DE70C176A5CE80068ED2F /* glyphiconsPause.png in Resources */,
+				913DE70D176A5CE80068ED2F /* glyphiconsPlay.png in Resources */,
+				913DE70E176A5CE80068ED2F /* glyphiconsRemoveInCircle.png in Resources */,
+				913DE70F176A5CE80068ED2F /* glyphiconsStop.png in Resources */,
+				913DE710176A5CE80068ED2F /* glyphiconsWarning.png in Resources */,
+				917DE9E2176A7FC200591874 /* glyphiconsX.png in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
