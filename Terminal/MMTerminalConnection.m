@@ -21,8 +21,6 @@
 #import "MMTask.h"
 #import "MMShellCommands.h"
 
-#define CTRLKEY(c)   ((c)-'A'+1)
-
 @interface MMTerminalConnection ()
 
 @property NSConnection *connectionToSelf;
@@ -94,43 +92,15 @@
 
 - (void)startShell;
 {
-    struct termios term;
     struct winsize win;
-
-    memset(&term, 0, sizeof(struct termios));
     memset(&win, 0, sizeof(struct winsize));
-
-	term.c_iflag = ICRNL | IXON | IXANY | IMAXBEL | BRKINT;
-	term.c_oflag = OPOST | ONLCR;
-	term.c_cflag = CREAD | CS8 | HUPCL;
-	term.c_lflag = ICANON | ISIG | IEXTEN | ECHO | ECHOE | ECHOK | ECHOKE | ECHOCTL;
-
-	term.c_cc[VEOF]	  = CTRLKEY('D');
-	term.c_cc[VEOL]	  = -1;
-	term.c_cc[VEOL2]	  = -1;
-	term.c_cc[VERASE]	  = 0x7f;	// DEL
-	term.c_cc[VWERASE]   = CTRLKEY('W');
-	term.c_cc[VKILL]	  = CTRLKEY('U');
-	term.c_cc[VREPRINT]  = CTRLKEY('R');
-	term.c_cc[VINTR]	  = CTRLKEY('C');
-	term.c_cc[VQUIT]	  = 0x1c;	// Control+backslash
-	term.c_cc[VSUSP]	  = CTRLKEY('Z');
-	term.c_cc[VDSUSP]	  = CTRLKEY('Y');
-	term.c_cc[VSTART]	  = CTRLKEY('Q');
-	term.c_cc[VSTOP]	  = CTRLKEY('S');
-	term.c_cc[VLNEXT]	  = -1;
-	term.c_cc[VDISCARD]  = -1;
-	term.c_cc[VMIN]	  = 1;
-	term.c_cc[VTIME]	  = 0;
-	term.c_cc[VSTATUS]   = -1;
-
-	term.c_ispeed = B38400;
-	term.c_ospeed = B38400;
-
 	win.ws_row = self.terminalHeight;
 	win.ws_col = self.terminalWidth;
 	win.ws_xpixel = 0;
 	win.ws_ypixel = 0;
+
+    struct termios terminalSettings;
+    [self setUpTermIOSettings:&terminalSettings];
 
     const char *args[3];
     args[0] = [[[NSBundle mainBundle] pathForAuxiliaryExecutable:@"Shell"] cStringUsingEncoding:NSUTF8StringEncoding];
@@ -144,7 +114,7 @@
     if (self.directoryToStartIn) {
         directory = [self.directoryToStartIn cStringUsingEncoding:NSUTF8StringEncoding];
     }
-    pid = forkpty(&fd, ttyname, &term, &win);
+    pid = forkpty(&fd, ttyname, &terminalSettings, &win);
 
     // From here until we start the Shell, we must make sure to not get the child process in deadlock.
     // One way to do this is to use objc_msgSend on an uncached method. Therefore, we do all object calls before the fork.
@@ -258,6 +228,42 @@
 void iconvFallback(const char *inbuf, size_t inbufsize, void (*write_replacement)(const unsigned int *buf, size_t buflen, void *callback_arg), void *callback_arg, void *data) {
     unsigned int replacementChar = '?';
     write_replacement(&replacementChar, 1, callback_arg);
+}
+
+- (void)setUpTermIOSettings:(struct termios *)termSettings;
+{
+    memset(termSettings, 0, sizeof(struct termios));
+
+    termSettings->c_iflag = BRKINT | ICRNL | IUTF8;
+	termSettings->c_oflag = OPOST | ONLCR;
+	termSettings->c_cflag = CS8 | CREAD | HUPCL;
+	termSettings->c_lflag = ECHOKE | ECHOE | ECHOK | ECHO | ECHOCTL | ISIG | ICANON | IEXTEN | PENDIN;
+
+#define CONTROLPLUS(chr) ((chr - 'A') + 1)
+
+	termSettings->c_cc[VEOF] = CONTROLPLUS('D');
+	termSettings->c_cc[VEOL] = 0xff; // unused
+	termSettings->c_cc[VEOL2] = 0xff; // unused
+	termSettings->c_cc[VERASE] = 0x7f; // delete
+	termSettings->c_cc[VWERASE] = CONTROLPLUS('W');
+	termSettings->c_cc[VKILL] = CONTROLPLUS('U');
+	termSettings->c_cc[VREPRINT] = CONTROLPLUS('R');
+	termSettings->c_cc[VINTR] = CONTROLPLUS('C');
+	termSettings->c_cc[VQUIT] = 0x1c; // control + backslash
+	termSettings->c_cc[VSUSP] = CONTROLPLUS('Z');
+	termSettings->c_cc[VDSUSP] = CONTROLPLUS('Y');
+	termSettings->c_cc[VSTART] = CONTROLPLUS('Q');
+	termSettings->c_cc[VSTOP] = CONTROLPLUS('S');
+	termSettings->c_cc[VLNEXT] = CONTROLPLUS('V');
+	termSettings->c_cc[VDISCARD] = CONTROLPLUS('O');
+	termSettings->c_cc[VMIN] = 0xff; // unused
+	termSettings->c_cc[VTIME] = 0xff; // unused
+	termSettings->c_cc[VSTATUS] = CONTROLPLUS('N');
+
+#undef CONTROLPLUS
+
+	termSettings->c_ispeed = B230400;
+	termSettings->c_ospeed = B230400;
 }
 
 - (void)handleTerminalInput:(NSString *)input;
