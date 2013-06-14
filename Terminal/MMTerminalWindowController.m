@@ -16,7 +16,6 @@
 #import "MMCompletionEngine.h"
 #import "MMCommandsTextView.h"
 #import "MMAppDelegate.h"
-#import "MMUtilities.h"
 #import "MMInfoOverlayView.h"
 
 #import <tgmath.h>
@@ -111,38 +110,16 @@
     [((NSClipView *)self.tableView.superview) scrollToPoint:NSMakePoint(0, MAX(self.tableView.frame.size.height - clipViewFrame.size.height, 0))];
 }
 
-- (void)handleOutput:(NSString *)message;
+- (void)noteHeightChangeForTask:(MMTaskCellViewController *)taskViewController;
 {
-    dispatch_async(dispatch_get_main_queue(), ^{
-        MMTask *lastTask = [self.tasks lastObject];
-        [lastTask.displayTextStorage beginEditing];
-        @try {
-            [lastTask handleCommandOutput:message];
-        }
-        @catch (NSException *exception) {
-            // Send the last 50KB of the output to our servers and then crash.
-            NSData *dataToSend = [[lastTask.output substringFromIndex:MAX(0, (NSInteger)lastTask.output.length - (50 * 1024))] dataUsingEncoding:NSUTF8StringEncoding];
-            NSURL *url = [NSURL URLWithString:@"http://crashy.mehdi.is/blobs/post.php"];
-            NSDictionary *infoDictionary = [[NSBundle mainBundle] infoDictionary];
-            NSString *filename = [NSString stringWithFormat:@"%@_%@", infoDictionary[(NSString *)kCFBundleIdentifierKey], infoDictionary[(NSString *)kCFBundleVersionKey]];
-            [MMUtilities postData:dataToSend toURL:url description:filename];
-            @throw exception;
-        }
-        [lastTask.displayTextStorage endEditing];
+    NSInteger i;
+    for (i = self.taskViewControllers.count - 1; i >= 0 && ![self.taskViewControllers[i] isEqual:taskViewController]; i--);
+    NSAssert(i >= 0, @"Must be able to find index for view controller");
 
-        if ([self.taskViewControllers count] == [self.tasks count]) {
-            // Force the outputView to re-layout its text and then resize it accordingly.
-            MMTaskCellViewController *lastController = self.taskViewControllers.lastObject;
-            [lastController updateWithANSIOutput];
-
-            [lastController.outputView.layoutManager ensureLayoutForCharacterRange:NSMakeRange(0, lastController.outputView.string.length)];
-
-            [NSAnimationContext beginGrouping];
-            [[NSAnimationContext currentContext] setDuration:0.0];
-            [self.tableView noteHeightOfRowsWithIndexesChanged:[NSIndexSet indexSetWithIndex:([self.taskViewControllers count] - 1)]];
-            [NSAnimationContext endGrouping];
-        }
-    });
+    [NSAnimationContext beginGrouping];
+    [[NSAnimationContext currentContext] setDuration:0.0];
+    [self.tableView noteHeightOfRowsWithIndexesChanged:[NSIndexSet indexSetWithIndex:i]];
+    [NSAnimationContext endGrouping];
 }
 
 - (void)shellCommandFinished;

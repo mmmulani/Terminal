@@ -15,6 +15,7 @@
 @class MMCommandsTextView;
 @class MMTask;
 @class MMInfoOverlayView;
+@class MMTaskCellViewController;
 
 @interface MMTerminalWindowController : NSWindowController <NSTextFieldDelegate, NSTableViewDataSource, NSTableViewDelegate, NSWindowDelegate>
 
@@ -33,11 +34,12 @@
 
 - (id)initWithTerminalConnection:(MMTerminalConnection *)terminalConnection withState:(NSCoder *)state completionHandler:(void (^)(NSWindow *, NSError *))completionHandler;
 
-- (void)handleOutput:(NSString *)message;
 - (void)processFinished:(MMProcessStatus)status data:(id)data;
 - (void)directoryChangedTo:(NSString *)newPath;
 - (void)shellCommandFinished;
 - (MMTask *)lastTask;
+
+- (void)noteHeightChangeForTask:(MMTaskCellViewController *)taskViewController;
 
 - (void)resizeWindowForTerminalScreenSizeOfColumns:(NSInteger)columns rows:(NSInteger)rows;
 

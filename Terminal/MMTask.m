@@ -35,6 +35,8 @@
 
 @end
 
+NSString *MMTaskDoneHandlingOutputNotification =  @"MMTaskDoneHandlingOutput";
+
 @implementation MMTask
 
 + (MMTaskIdentifier)uniqueTaskIdentifier;

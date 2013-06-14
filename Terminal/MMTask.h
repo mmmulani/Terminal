@@ -31,6 +31,8 @@ typedef enum {
 
 @class MMTerminalConnection;
 
+extern NSString *MMTaskDoneHandlingOutputNotification;
+
 @interface MMTask : NSObject <MMANSIActionDelegate, NSCoding>
 
 + (MMTaskIdentifier)uniqueTaskIdentifier;

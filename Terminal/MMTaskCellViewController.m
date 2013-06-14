@@ -7,6 +7,7 @@
 //
 
 #import "MMTaskCellViewController.h"
+#import "MMTerminalWindowController.h"
 
 @interface MMTaskCellViewController ()
 
@@ -51,6 +52,7 @@
 
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(outputFrameChanged:) name:NSViewFrameDidChangeNotification object:self.outputView];
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(labelFrameChanged:) name:NSViewFrameDidChangeNotification object:self.label];
+    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(updateWithANSIOutput) name:MMTaskDoneHandlingOutputNotification object:self.task];
 }
 
 - (void)dealloc;
@@ -140,6 +142,8 @@
         self.imageView.image = imageToDisplay;
         self.imageView.toolTip = toolTip;
     }
+
+    [(MMTerminalWindowController *)self.view.window.windowController noteHeightChangeForTask:self];
 }
 
 - (IBAction)saveTranscript:(id)sender;

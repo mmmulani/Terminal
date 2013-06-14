@@ -20,6 +20,7 @@
 #import "MMCommandGroup.h"
 #import "MMTask.h"
 #import "MMShellCommands.h"
+#import "MMUtilities.h"
 
 @interface MMTerminalConnection ()
 
@@ -86,6 +87,8 @@
 
     MMCommandGroup *commandGroup = commandGroups[0];
     task.shellCommand = [MMShellCommands isShellCommand:commandGroup.commands[0]];
+
+    self.tasksByFD[@(self.fd)] = task;
 
     NSProxy *proxy = [[NSConnection connectionWithRegisteredName:[ConnectionShellName stringByAppendingFormat:@".%ld", (long)self.identifier] host:nil] rootProxy];
     [proxy performSelector:@selector(executeCommand:) withObject:commandGroup];
@@ -286,7 +289,25 @@ void iconvFallback(const char *inbuf, size_t inbufsize, void (*write_replacement
 
 - (void)handleOutput:(NSString *)output forFD:(int)fd;
 {
-    [self.terminalWindow handleOutput:output];
+    MMTask *task = self.tasksByFD[@(fd)];
+
+    dispatch_async(dispatch_get_main_queue(), ^{
+        [task.displayTextStorage beginEditing];
+        @try {
+            [task handleCommandOutput:output];
+        }
+        @catch (NSException *exception) {
+            // Send the last 50KB of the output to our servers and then crash.
+            NSData *dataToSend = [[task.output substringFromIndex:MAX(0, (NSInteger)task.output.length - (50 * 1024))] dataUsingEncoding:NSUTF8StringEncoding];
+            NSURL *url = [NSURL URLWithString:@"http://crashy.mehdi.is/blobs/post.php"];
+            NSDictionary *infoDictionary = [[NSBundle mainBundle] infoDictionary];
+            NSString *filename = [NSString stringWithFormat:@"%@_%@", infoDictionary[(NSString *)kCFBundleIdentifierKey], infoDictionary[(NSString *)kCFBundleVersionKey]];
+            [MMUtilities postData:dataToSend toURL:url description:filename];
+            @throw exception;
+        }
+        [task.displayTextStorage endEditing];
+        [[NSNotificationCenter defaultCenter] postNotificationName:MMTaskDoneHandlingOutputNotification object:task];
+    });
 }
 
 - (void)end;
