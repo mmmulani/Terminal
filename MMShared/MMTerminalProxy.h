@@ -17,6 +17,8 @@ typedef enum {
     MMProcessStatusStopped,
 } MMProcessStatus;
 
+typedef NSInteger MMTaskIdentifier;
+
 @protocol MMTerminalProxy <NSObject>
 
 - (void)processFinished:(MMProcessStatus)status data:(id)data;

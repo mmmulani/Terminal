@@ -17,7 +17,6 @@
 #define CheckInputAgainstExpectedOutput(input, output) \
 do {\
     MMTask *task = [MMTask new]; \
-    task.displayTextStorage = [NSTextStorage new]; \
     SendInputToTask(task, input); \
     STAssertEqualObjects([task.currentANSIDisplay string], output, @"Compared task output to provided output."); \
 } while (0)
@@ -25,7 +24,6 @@ do {\
 #define CheckRawInputAgainstExpectedOutput(input, output) \
 do {\
     MMTask *task = [MMTask new]; \
-    task.displayTextStorage = [NSTextStorage new]; \
     SendRawInputToTask(task, input); \
     STAssertEqualObjects([task.currentANSIDisplay string], output, @"Compared task output to provided output."); \
 } while (0)
@@ -33,7 +31,6 @@ do {\
 #define CheckInputAgainstExpectedOutputWithExpectedCursor(input, output, cursorPosition_) \
 do {\
     MMTask *task = [MMTask new]; \
-    task.displayTextStorage = [NSTextStorage new]; \
     SendInputToTask(task, input); \
     STAssertEqualObjects([task.currentANSIDisplay string], output, @"Compared task output to provided output."); \
     STAssertEquals(task.cursorPosition.x, cursorPosition_.x, @"X coord of cursor position"); \
@@ -43,7 +40,6 @@ do {\
 #define CheckThatInputDoesNotCauseACrash(input) \
 do {\
     MMTask *task = [MMTask new]; \
-    task.displayTextStorage = [NSTextStorage new]; \
     SendInputToTask(task, input); \
     STAssertNotNil([task.currentANSIDisplay string], nil); \
 } while (0)
@@ -51,7 +47,6 @@ do {\
 #define CheckInputAgainstExpectedCursorPositionByCharacters(input, cursorPositionByCharacters_) \
 do {\
     MMTask *task = [MMTask new]; \
-    task.displayTextStorage = [NSTextStorage new]; \
     SendInputToTask(task, input); \
     (void) task.currentANSIDisplay; \
     STAssertEquals(task.cursorPositionByCharacters, (NSInteger)cursorPositionByCharacters_, @"Comparing cursor position by characters."); \

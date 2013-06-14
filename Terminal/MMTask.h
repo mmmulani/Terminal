@@ -33,6 +33,8 @@ typedef enum {
 
 @interface MMTask : NSObject <MMANSIActionDelegate, NSCoding>
 
++ (MMTaskIdentifier)uniqueTaskIdentifier;
+
 @property (strong) NSMutableString *output;
 @property NSTextStorage *displayTextStorage;
 @property pid_t processId;

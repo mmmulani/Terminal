@@ -374,20 +374,14 @@ static void directoryWatchingCallback(CFFileDescriptorRef kqRef, CFOptionFlags c
 - (BOOL)textView:(NSTextView *)textView doCommandBySelector:(SEL)commandSelector;
 {
     if (commandSelector == @selector(insertNewline:)) {
-        MMTask *newTask = [[MMTask alloc] initWithTerminalConnection:self.terminalConnection];
-        newTask.command = [textView.string copy];
-        newTask.startedAt = [NSDate date];
-        [self.tasks addObject:newTask];
+        [self.tasks addObject:[self.terminalConnection createAndRunTaskWithCommand:textView.string]];
 
         [textView setString:@""];
         self.commandHistoryIndex = self.tasks.count;
 
-        [self.terminalConnection runCommandsForTask:newTask];
-
         [self.tableView insertRowsAtIndexes:[NSIndexSet indexSetWithIndex:(self.tasks.count - 1)] withAnimation:NSTableViewAnimationEffectNone];
 
         MMTaskCellViewController *lastController = self.taskViewControllers.lastObject;
-        newTask.displayTextStorage = lastController.outputView.textStorage;
         [self.window makeFirstResponder:lastController.outputView];
 
         [NSAnimationContext beginGrouping];

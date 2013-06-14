@@ -30,11 +30,10 @@
 - (void)createTerminalWindowWithState:(NSCoder *)state completionHandler:(void (^)(NSWindow *, NSError *))completionHandler;
 
 - (void)handleTerminalInput:(NSString *)input;
-- (void)runCommandsForTask:(MMTask *)task;
+- (MMTask *)createAndRunTaskWithCommand:(NSString *)command;
 - (void)setPathVariable:(NSString *)pathVariable;
 
 - (void)startShell;
-- (void)handleOutput:(NSString *)output;
 
 - (void)end;
 

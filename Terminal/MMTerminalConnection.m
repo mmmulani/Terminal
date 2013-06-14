@@ -25,6 +25,7 @@
 
 @property NSConnection *connectionToSelf;
 @property NSString *directoryToStartIn;
+@property NSMutableDictionary *tasksByFD;
 
 @end
 
@@ -40,6 +41,7 @@
     self.identifier = identifier;
     self.terminalHeight = DEFAULT_TERM_HEIGHT;
     self.terminalWidth = DEFAULT_TERM_WIDTH;
+    self.tasksByFD = [NSMutableDictionary dictionary];
 
     return self;
 }
@@ -61,15 +63,21 @@
     [NSThread detachNewThreadSelector:@selector(startShell) toTarget:self withObject:nil];
 }
 
-- (void)runCommandsForTask:(MMTask *)task;
+- (MMTask *)createAndRunTaskWithCommand:(NSString *)command;
 {
+    MMTask *task = [[MMTask alloc] initWithTerminalConnection:self];
+    task.command = [NSString stringWithString:command];
+    task.startedAt = [NSDate date];
+
     // TODO: Support multiple commands.
     NSArray *commandGroups = [MMCommandLineArgumentsParser commandGroupsFromCommandLine:task.command];
 
     // TODO: Handle the case of no commands better. (Also detect it better.)
     if (commandGroups.count == 0 || [commandGroups[0] commands].count == 0) {
-        [self processFinished:MMProcessStatusError data:nil];
-        return;
+        dispatch_async(dispatch_get_main_queue(), ^{
+          [self processFinished:MMProcessStatusError data:nil];
+        });
+        return task;
     }
 
     if (commandGroups.count > 1) {
@@ -82,6 +90,8 @@
     NSProxy *proxy = [[NSConnection connectionWithRegisteredName:[ConnectionShellName stringByAppendingFormat:@".%ld", (long)self.identifier] host:nil] rootProxy];
     [proxy performSelector:@selector(executeCommand:) withObject:commandGroup];
     [self.terminalWindow setRunning:YES];
+
+    return task;
 }
 
 - (void)setPathVariable:(NSString *)pathVariable;
@@ -213,7 +223,7 @@
 
                 readData = [[NSString alloc] initWithData:cleanData encoding:NSUTF8StringEncoding];
             }
-            [self handleOutput:readData];
+            [self handleOutput:readData forFD:self.fd];
         }
         
         if (FD_ISSET(self.fd, &wfds)) {
@@ -274,7 +284,7 @@ void iconvFallback(const char *inbuf, size_t inbufsize, void (*write_replacement
     }
 }
 
-- (void)handleOutput:(NSString *)output;
+- (void)handleOutput:(NSString *)output forFD:(int)fd;
 {
     [self.terminalWindow handleOutput:output];
 }

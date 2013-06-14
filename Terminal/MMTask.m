@@ -37,6 +37,14 @@
 
 @implementation MMTask
 
++ (MMTaskIdentifier)uniqueTaskIdentifier;
+{
+    static MMTaskIdentifier identifier = 0;
+    identifier++;
+
+    return identifier;
+}
+
 - (id)init;
 {
     self = [self initWithTerminalConnection:nil];
@@ -50,6 +58,7 @@
         return nil;
     }
 
+    self.displayTextStorage = [NSTextStorage new];
     self.output = [NSMutableString string];
     self.terminalConnection = terminalConnection;
     self.termHeight = self.terminalConnection ? self.terminalConnection.terminalHeight : DEFAULT_TERM_HEIGHT;

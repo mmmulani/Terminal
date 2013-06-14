@@ -310,7 +310,6 @@
     CheckThatInputDoesNotCauseACrash(@"\033[M\033[24;1Ha");
 
     MMTask *task = [MMTask new];
-    task.displayTextStorage = [NSTextStorage new];
     [task handleCommandOutput:@"\033[0J\n\n\n"];
     STAssertEquals(task.cursorPositionByCharacters, (NSInteger)3, @"Should not crash in looking at the cursor position for a row which does not exist");
 
@@ -480,7 +479,6 @@
 
     // Test that the character offset changes by the number of printable characters.
     MMTask *task = [MMTask new];
-    task.displayTextStorage = [NSTextStorage new];
     [task handleCommandOutput:[@"\t" stringByAppendingString:[@"" stringByPaddingToLength:30 withString:@"\n" startingAtIndex:0]]];
     STAssertEquals(task.cursorPositionByCharacters, (NSInteger)31, @"Cursor should be offset by number of printable characters.");
 }

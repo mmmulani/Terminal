@@ -49,7 +49,6 @@
 - (void)testOutputHandling;
 {
     MMTask *task = [MMTask new];
-    task.displayTextStorage = [NSTextStorage new];
     SendInputToTask(task, @"\033[");
     SendInputToTask(task, @"K");
     SendInputToTask(task, @"K");
@@ -59,7 +58,6 @@
 - (void)testProcessFinished;
 {
     MMTask *task = [MMTask new];
-    task.displayTextStorage = [NSTextStorage new];
     SendInputToTask(task, @"test\n");
     STAssertEqualObjects(task.currentANSIDisplay.string, @"test\n", @"Newline should not be removed before process is finished");
     [task processFinished:MMProcessStatusExit data:nil];
@@ -72,7 +70,6 @@
 {
     // Test some short lines along with a line that extends across multiple rows.
     MMTask *task = [MMTask new];
-    task.displayTextStorage = [NSTextStorage new];
     SendInputToTask(task, @"abcde\nfghij\n123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890");
     STAssertEquals(task.cursorPositionX, (NSInteger)41, @"");
     STAssertEquals(task.cursorPositionY, (NSInteger)4, @"");
@@ -104,7 +101,6 @@
 
     // Test a single newline.
     task = [MMTask new];
-    task.displayTextStorage = [NSTextStorage new];
     SendInputToTask(task, @"\n");
     STAssertEquals(task.cursorPositionX, (NSInteger)1, @"");
     STAssertEquals(task.cursorPositionY, (NSInteger)2, @"");
@@ -127,7 +123,6 @@
 
     // Test a couple newlines.
     task = [MMTask new];
-    task.displayTextStorage = [NSTextStorage new];
     SendInputToTask(task, @"\n\n");
     STAssertEquals(task.cursorPositionX, (NSInteger)1, @"");
     STAssertEquals(task.cursorPositionY, (NSInteger)3, @"");
@@ -142,7 +137,6 @@
 
     // Test enough newlines to go beyond a single screen.
     task = [MMTask new];
-    task.displayTextStorage = [NSTextStorage new];
     SendInputToTask(task, [@"" stringByPaddingToLength:25 withString:@"\n" startingAtIndex:0]);
     STAssertEquals(task.characterOffsetToScreen, (NSInteger)2, @"");
     STAssertEquals(task.cursorPositionX, (NSInteger)1, @"");
@@ -158,7 +152,6 @@
 
     // Test a line long enough to fill the screen when resized.
     task = [MMTask new];
-    task.displayTextStorage = [NSTextStorage new];
     SendInputToTask(task, [@"\n" stringByAppendingString:[@"" stringByPaddingToLength:500 withString:@"1234567890" startingAtIndex:0]]);
     STAssertEquals(task.cursorPositionX, (NSInteger)21, @"");
     STAssertEquals(task.cursorPositionY, (NSInteger)8, @"");
@@ -182,7 +175,6 @@
 {
     // Test the bottom being removed.
     MMTask *task = [MMTask new];
-    task.displayTextStorage = [NSTextStorage new];
     SendInputToTask(task, @"a\nb\nc");
     STAssertEquals(task.characterOffsetToScreen, (NSInteger)0, @"");
     STAssertEquals(task.cursorPositionX, (NSInteger)2, @"");
@@ -198,7 +190,6 @@
 
     // Test the top being scrolled away.
     task = [MMTask new];
-    task.displayTextStorage = [NSTextStorage new];
     SendInputToTask(task, @"1\n2\n3\n4\n5\n6\n7\n8\n9\n10\n11\n12\n13\n14\n15\n16\n17\n18\n19\n20\n21\n22\n23\n24");
     STAssertEquals(task.characterOffsetToScreen, (NSInteger)0, @"");
     STAssertEquals(task.cursorPositionX, (NSInteger)3, @"");
@@ -214,7 +205,6 @@
 
     // Test both bottom being removed and top scrolling away.
     task = [MMTask new];
-    task.displayTextStorage = [NSTextStorage new];
     SendInputToTask(task, @"1\n2\n3\n4\n5\n6\n7\n8\n9\n10\n11\n12");
     STAssertEquals(task.characterOffsetToScreen, (NSInteger)0, @"");
     STAssertEquals(task.cursorPositionX, (NSInteger)3, @"");
@@ -231,7 +221,6 @@
 
     // Test the bottom expanding.
     task = [MMTask new];
-    task.displayTextStorage = [NSTextStorage new];
     SendInputToTask(task, @"1\n2\n3\n4\n5\n6\n7\n8\n9\n10\n11\n12\n13\n14\n15\n16\n17\n18\n19\n20\n21\n22\n23\n24\n25\n26\n27");
     STAssertEquals(task.characterOffsetToScreen, (NSInteger)6, @"");
     STAssertEquals(task.cursorPositionX, (NSInteger)3, @"");
@@ -247,7 +236,6 @@
 
     // Test the top scrolling away too much (possible crash).
     task = [MMTask new];
-    task.displayTextStorage = [NSTextStorage new];
     SendInputToTask(task, @"\033[0Ja\nb\nc");
     [task changeTerminalHeightTo:1];
 }
@@ -258,7 +246,6 @@
     id mockTerminalConnection = [OCMockObject mockForClass:[MMTerminalConnection class]];
     id mockWindowController = [OCMockObject mockForClass:[MMTerminalWindowController class]];
     task.terminalConnection = mockTerminalConnection;
-    task.displayTextStorage = [NSTextStorage new];
     SendInputToTask(task, @"a\nb");
     STAssertEquals(task.termWidth, (NSInteger)80, @"");
     STAssertEquals(task.termHeight, (NSInteger)24, @"");
