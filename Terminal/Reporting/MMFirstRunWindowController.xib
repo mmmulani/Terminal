@@ -2,9 +2,9 @@
 <archive type="com.apple.InterfaceBuilder3.Cocoa.XIB" version="8.00">
 	<data>
 		<int key="IBDocument.SystemTarget">1080</int>
-		<string key="IBDocument.SystemVersion">12D78</string>
+		<string key="IBDocument.SystemVersion">12E55</string>
 		<string key="IBDocument.InterfaceBuilderVersion">3084</string>
-		<string key="IBDocument.AppKitVersion">1187.37</string>
+		<string key="IBDocument.AppKitVersion">1187.39</string>
 		<string key="IBDocument.HIToolboxVersion">626.00</string>
 		<object class="NSMutableDictionary" key="IBDocument.PluginVersions">
 			<string key="NS.key.0">com.apple.InterfaceBuilder.CocoaPlugin</string>
@@ -81,7 +81,7 @@ cm0gYnV0IGlmIHlvdSBoYXZlIGFueSBmZWVkYmFjaywgZGlyZWN0IGl0IHRvIE1laGRpLg</bytes>
 								</object>
 								<string key="NSCellIdentifier">_NS:9</string>
 								<reference key="NSControlView" ref="310874570"/>
-								<object class="NSColor" key="NSBackgroundColor">
+								<object class="NSColor" key="NSBackgroundColor" id="246373203">
 									<int key="NSColorSpace">6</int>
 									<string key="NSCatalogName">System</string>
 									<string key="NSColorName">controlColor</string>
@@ -90,7 +90,7 @@ cm0gYnV0IGlmIHlvdSBoYXZlIGFueSBmZWVkYmFjaywgZGlyZWN0IGl0IHRvIE1laGRpLg</bytes>
 										<bytes key="NSWhite">MC42NjY2NjY2NjY3AA</bytes>
 									</object>
 								</object>
-								<object class="NSColor" key="NSTextColor">
+								<object class="NSColor" key="NSTextColor" id="140321508">
 									<int key="NSColorSpace">6</int>
 									<string key="NSCatalogName">System</string>
 									<string key="NSColorName">controlTextColor</string>
@@ -139,9 +139,36 @@ cm0gYnV0IGlmIHlvdSBoYXZlIGFueSBmZWVkYmFjaywgZGlyZWN0IGl0IHRvIE1laGRpLg</bytes>
 					<reference key="NSWindow"/>
 					<reference key="NSNextKeyView" ref="310874570"/>
 				</object>
-				<string key="NSScreenRect">{{0, 0}, {1680, 1028}}</string>
+				<string key="NSScreenRect">{{0, 0}, {1920, 1058}}</string>
 				<string key="NSMaxSize">{10000000000000, 10000000000000}</string>
 				<bool key="NSWindowIsRestorable">NO</bool>
+			</object>
+			<object class="NSTextField" id="1026648913">
+				<reference key="NSNextResponder"/>
+				<int key="NSvFlags">268</int>
+				<string key="NSFrameSize">{446, 58}</string>
+				<reference key="NSSuperview"/>
+				<reference key="NSWindow"/>
+				<reference key="NSNextKeyView"/>
+				<string key="NSReuseIdentifierKey">_NS:9</string>
+				<string key="NSAntiCompressionPriority">{250, 750}</string>
+				<bool key="NSEnabled">YES</bool>
+				<object class="NSTextFieldCell" key="NSCell" id="699381164">
+					<int key="NSCellFlags">67108864</int>
+					<int key="NSCellFlags2">272891904</int>
+					<string key="NSContents">P.S. it looks like you've disabled the Restore feature on your Mac. Without it, Term will not restore windows upon reopening. You can re-enable the feature in System Preferences.</string>
+					<object class="NSFont" key="NSSupport">
+						<string key="NSName">LucidaGrande-Bold</string>
+						<double key="NSSize">13</double>
+						<int key="NSfFlags">2072</int>
+					</object>
+					<string key="NSCellIdentifier">_NS:9</string>
+					<reference key="NSControlView" ref="1026648913"/>
+					<reference key="NSBackgroundColor" ref="246373203"/>
+					<reference key="NSTextColor" ref="140321508"/>
+				</object>
+				<bool key="NSAllowsLogicalLayoutDirection">NO</bool>
+				<bool key="NSControlAutosetMaxLayoutWidth">YES</bool>
 			</object>
 		</array>
 		<object class="IBObjectContainer" key="IBDocument.Objects">
@@ -161,6 +188,14 @@ cm0gYnV0IGlmIHlvdSBoYXZlIGFueSBmZWVkYmFjaywgZGlyZWN0IGl0IHRvIE1laGRpLg</bytes>
 						<reference key="destination" ref="914261584"/>
 					</object>
 					<int key="connectionID">60</int>
+				</object>
+				<object class="IBConnectionRecord">
+					<object class="IBOutletConnection" key="connection">
+						<string key="label">restoreWindowsWarning</string>
+						<reference key="source" ref="1001"/>
+						<reference key="destination" ref="1026648913"/>
+					</object>
+					<int key="connectionID">65</int>
 				</object>
 				<object class="IBConnectionRecord">
 					<object class="IBOutletConnection" key="connection">
@@ -387,6 +422,19 @@ cm0gYnV0IGlmIHlvdSBoYXZlIGFueSBmZWVkYmFjaywgZGlyZWN0IGl0IHRvIE1laGRpLg</bytes>
 						<reference key="object" ref="111268889"/>
 						<reference key="parent" ref="914261584"/>
 					</object>
+					<object class="IBObjectRecord">
+						<int key="objectID">63</int>
+						<reference key="object" ref="1026648913"/>
+						<array class="NSMutableArray" key="children">
+							<reference ref="699381164"/>
+						</array>
+						<reference key="parent" ref="0"/>
+					</object>
+					<object class="IBObjectRecord">
+						<int key="objectID">64</int>
+						<reference key="object" ref="699381164"/>
+						<reference key="parent" ref="1026648913"/>
+					</object>
 				</array>
 			</object>
 			<dictionary class="NSMutableDictionary" key="flattenedProperties">
@@ -424,13 +472,15 @@ cm0gYnV0IGlmIHlvdSBoYXZlIGFueSBmZWVkYmFjaywgZGlyZWN0IGl0IHRvIE1laGRpLg</bytes>
 				<string key="59.IBPluginDependency">com.apple.InterfaceBuilder.CocoaPlugin</string>
 				<string key="6.IBPluginDependency">com.apple.InterfaceBuilder.CocoaPlugin</string>
 				<string key="62.IBPluginDependency">com.apple.InterfaceBuilder.CocoaPlugin</string>
+				<string key="63.IBPluginDependency">com.apple.InterfaceBuilder.CocoaPlugin</string>
+				<string key="64.IBPluginDependency">com.apple.InterfaceBuilder.CocoaPlugin</string>
 				<string key="9.IBPluginDependency">com.apple.InterfaceBuilder.CocoaPlugin</string>
 			</dictionary>
 			<dictionary class="NSMutableDictionary" key="unlocalizedProperties"/>
 			<nil key="activeLocalization"/>
 			<dictionary class="NSMutableDictionary" key="localizations"/>
 			<nil key="sourceID"/>
-			<int key="maxID">62</int>
+			<int key="maxID">65</int>
 		</object>
 		<object class="IBClassDescriber" key="IBDocument.Classes">
 			<array class="NSMutableArray" key="referencedPartialClassDescriptions">
@@ -446,6 +496,17 @@ cm0gYnV0IGlmIHlvdSBoYXZlIGFueSBmZWVkYmFjaywgZGlyZWN0IGl0IHRvIE1laGRpLg</bytes>
 						<object class="IBActionInfo" key="NS.object.0">
 							<string key="name">donePressed:</string>
 							<string key="candidateClassName">id</string>
+						</object>
+					</object>
+					<object class="NSMutableDictionary" key="outlets">
+						<string key="NS.key.0">restoreWindowsWarning</string>
+						<string key="NS.object.0">NSTextField</string>
+					</object>
+					<object class="NSMutableDictionary" key="toOneOutletInfosByName">
+						<string key="NS.key.0">restoreWindowsWarning</string>
+						<object class="IBToOneOutletInfo" key="NS.object.0">
+							<string key="name">restoreWindowsWarning</string>
+							<string key="candidateClassName">NSTextField</string>
 						</object>
 					</object>
 					<object class="IBClassDescriptionSource" key="sourceIdentifier">

@@ -7,6 +7,7 @@
 //
 
 #import "MMFirstRunWindowController.h"
+#import "MMAppDelegate.h"
 
 @implementation MMFirstRunWindowController
 
@@ -20,11 +21,28 @@
     return self;
 }
 
+- (void)windowDidLoad;
+{
+    [super windowDidLoad];
+
+    NSUserDefaults *userDefaults = [NSUserDefaults standardUserDefaults];
+    BOOL restoresWindowsUponReopening = [userDefaults boolForKey:@"NSQuitAlwaysKeepsWindows"];
+    if (!restoresWindowsUponReopening) {
+        [self.window.contentView addSubview:self.restoreWindowsWarning];
+        NSRect newFrame = self.restoreWindowsWarning.frame;
+        newFrame.origin = NSMakePoint(20, -20);
+        self.restoreWindowsWarning.frame = newFrame;
+
+        CGFloat warningHeight = self.restoreWindowsWarning.frame.size.height;
+        [self.window setFrame:NSMakeRect(self.window.frame.origin.x, self.window.frame.origin.y, self.window.frame.size.width, self.window.frame.size.height + warningHeight + 20) display:YES];
+    }
+}
+
 - (IBAction)donePressed:(id)sender;
 {
     [self close];
 
-    [[NSApp delegate] applicationDidFinishLaunching:nil];
+    [(MMAppDelegate *)[NSApp delegate] showMainApplicationWindow];
 }
 
 @end

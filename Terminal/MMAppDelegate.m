@@ -143,6 +143,10 @@
 
 - (void)applicationDidFinishLaunching:(NSNotification *)aNotification;
 {
+    if ([NSProcessInfo processInfo].environment[@"TERM_CLEAR_DEFAULTS"]) {
+        [[NSUserDefaults standardUserDefaults] removePersistentDomainForName:[[NSBundle mainBundle] bundleIdentifier]];
+    }
+
     self.terminalAppConnection = [NSConnection serviceConnectionWithName:ConnectionTerminalName rootObject:self];
 
     [[BWQuincyManager sharedQuincyManager] setSubmissionURL:@"http://crashy.mehdi.is/server/crash_v200.php"];
@@ -175,7 +179,7 @@
         }
     }
 
-    if ([NSApp windows].count == 0) {
+    if (self.terminalConnections.count == 0) {
         [self createNewTerminal:nil];
     }
 

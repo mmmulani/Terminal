@@ -10,6 +10,8 @@
 
 @interface MMFirstRunWindowController : NSWindowController
 
+@property (strong) IBOutlet NSTextField *restoreWindowsWarning;
+
 - (IBAction)donePressed:(id)sender;
 
 @end
