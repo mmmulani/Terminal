@@ -20,7 +20,7 @@
 
     NSURLResponse *response;
     NSError *error;
-    NSData *returnData = [NSURLConnection sendSynchronousRequest:request returningResponse:&response error:&error];
+    [NSURLConnection sendSynchronousRequest:request returningResponse:&response error:&error];
     if (error) {
         NSLog(@"Error in sending request: %@", error);
     }

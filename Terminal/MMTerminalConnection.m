@@ -139,7 +139,7 @@
         }
 
         syslog(LOG_NOTICE, "Starting %s", args[0]);
-        execv(args[0], args);
+        execv(args[0], (char * const *)args);
 
         syslog(LOG_NOTICE, "Reached bad part. %s", args[0]);
 
@@ -163,6 +163,10 @@
 
         FD_SET(self.fd, &rfds);
         int result = select(self.fd + 1, &rfds, &wfds, &efds, nil);
+
+        if (result == -1) {
+            MMLog(@"select failed with errno: %d", errno);
+        }
 
         if (FD_ISSET(self.fd, &rfds)) {
             // Mac OS X caps read() to 1024 bytes (for some reason), we expect that 4KiB is the most that will be sent in one read.
@@ -206,7 +210,6 @@
             NSString *readData = [[NSString alloc] initWithData:data encoding:NSUTF8StringEncoding];
             if (!readData) {
                 iconv_t cd = iconv_open("UTF-8", "UTF-8");
-                int discardIlseq = 1;
                 struct iconv_fallbacks fallbacks;
                 fallbacks.mb_to_uc_fallback = iconvFallback;
                 size_t iconvResult = iconvctl(cd, ICONV_SET_FALLBACKS, &fallbacks);

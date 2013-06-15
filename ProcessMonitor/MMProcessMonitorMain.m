@@ -65,7 +65,7 @@
     kinfos = malloc(len);
 
     res = sysctl(mib, miblen, kinfos, &len, NULL, 0);
-    syslog(LOG_NOTICE, "sysctl result: %d and len: %d", res, len / sizeof(struct kinfo_proc));
+    syslog(LOG_NOTICE, "sysctl result: %d and len: %ld", res, len / sizeof(struct kinfo_proc));
 
     for (NSInteger i = 0; i < 3; i++) {
         struct kinfo_proc kinfo = kinfos[i];

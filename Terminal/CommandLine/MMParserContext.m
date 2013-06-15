@@ -136,7 +136,6 @@ NSMutableArray *_scannedTokens = nil;
 
 - (id)parseStringForTokenEndings:(NSString *)commandLineInput;
 {
-    NSMutableArray *result;
     NSData *data = [commandLineInput dataUsingEncoding:NSUTF8StringEncoding];
     self.stream = [NSInputStream inputStreamWithData:data];
     [self.stream open];

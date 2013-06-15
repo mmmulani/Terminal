@@ -60,7 +60,6 @@
 		919BA9C016C87E4F0091CB1B /* MMShellMain.m in Sources */ = {isa = PBXBuildFile; fileRef = 919BA9BF16C87E4F0091CB1B /* MMShellMain.m */; };
 		91B8050B16FBC70B00E6D9DF /* MMShellMain.m in Sources */ = {isa = PBXBuildFile; fileRef = 919BA9BF16C87E4F0091CB1B /* MMShellMain.m */; };
 		91B8050F16FF9BCD00E6D9DF /* ANSIEscapeSequencesTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 91B8050E16FF9BCD00E6D9DF /* ANSIEscapeSequencesTests.m */; };
-		91B8051216FF9BDA00E6D9DF /* TerminalTests-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = 91B8051016FF9BD900E6D9DF /* TerminalTests-Info.plist */; };
 		91C7D984173ECE0900875974 /* MMCommandsTextView.m in Sources */ = {isa = PBXBuildFile; fileRef = 91C7D983173ECE0900875974 /* MMCommandsTextView.m */; };
 		91C7D987173F250300875974 /* MMCompletionEngine.m in Sources */ = {isa = PBXBuildFile; fileRef = 91C7D986173F250300875974 /* MMCompletionEngine.m */; };
 		91C7D98D1740793800875974 /* libiconv.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 91C7D9881740575700875974 /* libiconv.dylib */; };
@@ -697,7 +696,6 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				91B8051216FF9BDA00E6D9DF /* TerminalTests-Info.plist in Resources */,
 				919ABB4D16FF9D7200BB7108 /* InfoPlist.strings in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
