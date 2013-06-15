@@ -10,6 +10,13 @@
 #import "MMShared.h"
 #import "MMCommandGroup.h"
 #import "MMShellCommands.h"
+#import "MMTaskInfo.h"
+
+@interface MMShellMain ()
+
+@property NSMutableDictionary *childPidToTaskId;
+
+@end
 
 @implementation MMShellMain
 
@@ -25,12 +32,26 @@
     return application;
 }
 
+- (id)init;
+{
+    self = [super init];
+    if (!self) {
+        return nil;
+    }
+
+    self.childPidToTaskId = [NSMutableDictionary dictionary];
+
+    return self;
+}
+
 - (void)startWithIdentifier:(NSInteger)identifier;
 {
     self.identifier = identifier;
     self.shellConnection = [NSConnection serviceConnectionWithName:[ConnectionShellName stringByAppendingFormat:@".%ld", self.identifier] rootObject:self];
     self.terminalConnection = [NSConnection connectionWithRegisteredName:[ConnectionTerminalName stringByAppendingFormat:@".%ld", (long)self.identifier] host:nil];
     self.terminalProxy = (NSProxy<MMTerminalProxy> *)[self.terminalConnection rootProxy];
+    [self.terminalProxy shellStarted];
+
     MMLog(@"Shell connection: %@", self.shellConnection);
 
     NSDictionary *environmentVariables =
@@ -53,17 +74,18 @@
     setenv("PATH", [pathVariable cStringUsingEncoding:NSUTF8StringEncoding], YES);
 }
 
-- (void)executeCommand:(MMCommandGroup *)commandGroup;
+- (void)executeTask:(MMTaskInfo *)taskInfo;
 {
     dispatch_async(dispatch_get_main_queue(), ^{
-        [self _executeCommand:commandGroup];
+        [self _executeTask:taskInfo];
     });
 
     return;
 }
 
-- (void)_executeCommand:(MMCommandGroup *)commandGroup;
+- (void)_executeTask:(MMTaskInfo *)taskInfo;
 {
+    MMCommandGroup *commandGroup = taskInfo.commandGroups[0];
     if (commandGroup.commands.count == 1 && [MMShellCommands isShellCommand:commandGroup.commands[0]]) {
         [self handleSpecialCommand:commandGroup.commands[0]];
         return;
@@ -163,6 +185,8 @@
             MMLog(@"Unable to attach signal handler. :(");
         }
 
+        self.childPidToTaskId[@(child_pid)] = @(taskInfo.identifier);
+
         [NSThread detachNewThreadSelector:@selector(waitForChildToFinish:) toTarget:self withObject:@((int)child_pid)];
 
         return;
@@ -185,12 +209,13 @@
 {
     int status;
     waitpid([child_pid intValue], &status, 0);
+    MMTaskIdentifier taskIdentifier = [self.childPidToTaskId[child_pid] integerValue];
 
     if (WIFEXITED(status)) {
-        [self.terminalProxy processFinished:MMProcessStatusExit data:@(WEXITSTATUS(status))];
+        [self.terminalProxy taskFinished:taskIdentifier status:MMProcessStatusExit data:@(WEXITSTATUS(status))];
     } else {
         NSAssert(WIFSIGNALED(status), @"Process should only terminate by exiting or by a signal");
-        [self.terminalProxy processFinished:MMProcessStatusSignal data:@(WTERMSIG(status))];
+        [self.terminalProxy taskFinished:taskIdentifier status:MMProcessStatusSignal data:@(WTERMSIG(status))];
     }
 }
 

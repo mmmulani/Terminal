@@ -8,6 +8,7 @@
 
 #import "MMCommandGroup.h"
 #import "MMCommandLineArgumentsParser.h"
+#import "MMShared.h"
 
 @implementation MMCommand
 
@@ -240,6 +241,34 @@
 - (NSArray *)textOnlyForm;
 {
     return [self.commands valueForKey:@"arguments"];
+}
+
+# pragma mark - NSCoding and NSPortCoder
+
+- (id)replacementObjectForPortCoder:(NSPortCoder *)encoder;
+{
+    if ([encoder isByref]) {
+        return [super replacementObjectForPortCoder:encoder];
+    } else {
+        return self;
+    }
+}
+
+- (id)initWithCoder:(NSCoder *)decoder;
+{
+    self = [super init];
+    if (!self) {
+        return nil;
+    }
+
+    self.commands = [decoder decodeObjectForKey:MMSelfKey(commands)];
+    
+    return self;
+}
+
+- (void)encodeWithCoder:(NSCoder *)coder;
+{
+    [coder encodeObject:self.commands forKey:MMSelfKey(commands)];
 }
 
 @end

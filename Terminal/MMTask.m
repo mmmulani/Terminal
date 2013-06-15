@@ -16,6 +16,10 @@
 #import "MMDisplayActions.h"
 #import "MMTabAction.h"
 #import "MMTerminalWindowController.h"
+#import "MMCommandLineArgumentsParser.h"
+#import "MMShellCommands.h"
+#import "MMCommandGroup.h"
+#import "MMTaskInfo.h"
 
 @interface MMTask ()
 
@@ -32,6 +36,8 @@
 @property NSInteger termWidth;
 @property NSMutableSet *ansiModes;
 @property NSMutableSet *decModes;
+
+@property MMTaskIdentifier identifier;
 
 @end
 
@@ -59,6 +65,8 @@ NSString *MMTaskDoneHandlingOutputNotification =  @"MMTaskDoneHandlingOutput";
     if (!self) {
         return nil;
     }
+
+    self.identifier = [[self class] uniqueTaskIdentifier];
 
     self.displayTextStorage = [NSTextStorage new];
     self.output = [NSMutableString string];
@@ -255,6 +263,27 @@ NSString *MMTaskDoneHandlingOutputNotification =  @"MMTaskDoneHandlingOutput";
 - (BOOL)isFinished;
 {
     return self.finishedAt != nil;
+}
+
+# pragma mark - Setting up Task for execution
+
+- (void)setCommand:(NSString *)command;
+{
+    _command = command;
+
+    self.commandGroups = [MMCommandLineArgumentsParser commandGroupsFromCommandLine:self.command];
+    self.shellCommand = self.commandGroups.count >= 1 && [MMShellCommands isShellCommand:[(MMCommandGroup *)self.commandGroups[0] commands][0]];
+}
+
+- (MMTaskInfo *)taskInfo;
+{
+    MMTaskInfo *taskInfo = [MMTaskInfo new];
+    taskInfo.command = self.command;
+    taskInfo.commandGroups = self.commandGroups;
+    taskInfo.shellCommand = self.shellCommand;
+    taskInfo.identifier = self.identifier;
+
+    return taskInfo;
 }
 
 # pragma mark - ANSI display methods

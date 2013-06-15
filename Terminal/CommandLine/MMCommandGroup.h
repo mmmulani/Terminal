@@ -42,7 +42,7 @@ typedef enum {
 
 @end
 
-@interface MMCommandGroup : NSObject
+@interface MMCommandGroup : NSObject <NSCoding>
 
 @property NSMutableArray *commands;
 

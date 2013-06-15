@@ -21,7 +21,8 @@ typedef NSInteger MMTaskIdentifier;
 
 @protocol MMTerminalProxy <NSObject>
 
-- (void)processFinished:(MMProcessStatus)status data:(id)data;
+- (void)shellStarted;
+- (void)taskFinished:(MMTaskIdentifier)taskIdentifier status:(MMProcessStatus)status data:(id)data;
 - (void)directoryChangedTo:(NSString *)newPath;
 - (void)shellCommand:(MMShellCommand)command succesful:(BOOL)success attachment:(id)attachment;
 

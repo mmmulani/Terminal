@@ -41,6 +41,8 @@
 		917D1C4417396C8000503158 /* parser.ym in Sources */ = {isa = PBXBuildFile; fileRef = 917D1C4317396C8000503158 /* parser.ym */; };
 		917D1C47173973D600503158 /* MMParserContext.m in Sources */ = {isa = PBXBuildFile; fileRef = 917D1C46173973D600503158 /* MMParserContext.m */; };
 		917DE9E2176A7FC200591874 /* glyphiconsX.png in Resources */ = {isa = PBXBuildFile; fileRef = 917DE9E1176A7FC200591874 /* glyphiconsX.png */; };
+		91814925176CACDC0020AB9D /* MMTaskInfo.m in Sources */ = {isa = PBXBuildFile; fileRef = 91814924176CACDC0020AB9D /* MMTaskInfo.m */; };
+		91814926176CACDC0020AB9D /* MMTaskInfo.m in Sources */ = {isa = PBXBuildFile; fileRef = 91814924176CACDC0020AB9D /* MMTaskInfo.m */; };
 		9186499016D2A6190024D9BE /* MMTerminalWindowController.m in Sources */ = {isa = PBXBuildFile; fileRef = 9186498E16D2A6190024D9BE /* MMTerminalWindowController.m */; };
 		9186499116D2A6190024D9BE /* MMTerminalWindow.xib in Resources */ = {isa = PBXBuildFile; fileRef = 9186498F16D2A6190024D9BE /* MMTerminalWindow.xib */; };
 		9186499416D408700024D9BE /* MMTask.m in Sources */ = {isa = PBXBuildFile; fileRef = 9186499316D408700024D9BE /* MMTask.m */; };
@@ -219,6 +221,9 @@
 		917D1C45173973D600503158 /* MMParserContext.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = MMParserContext.h; path = CommandLine/MMParserContext.h; sourceTree = "<group>"; };
 		917D1C46173973D600503158 /* MMParserContext.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = MMParserContext.m; path = CommandLine/MMParserContext.m; sourceTree = "<group>"; };
 		917DE9E1176A7FC200591874 /* glyphiconsX.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = glyphiconsX.png; path = Resources/glyphiconsX.png; sourceTree = "<group>"; };
+		91814923176CACDC0020AB9D /* MMTaskInfo.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MMTaskInfo.h; sourceTree = "<group>"; };
+		91814924176CACDC0020AB9D /* MMTaskInfo.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MMTaskInfo.m; sourceTree = "<group>"; };
+		91814927176CB1270020AB9D /* MMShellProxy.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = MMShellProxy.h; sourceTree = "<group>"; };
 		9186498D16D2A6190024D9BE /* MMTerminalWindowController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MMTerminalWindowController.h; sourceTree = "<group>"; };
 		9186498E16D2A6190024D9BE /* MMTerminalWindowController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MMTerminalWindowController.m; sourceTree = "<group>"; };
 		9186498F16D2A6190024D9BE /* MMTerminalWindow.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = MMTerminalWindow.xib; sourceTree = "<group>"; };
@@ -416,6 +421,9 @@
 				910D0EEF1757B9B800FFF569 /* MMTerminalProxy.h */,
 				912141A61758F61200A50F6E /* MMUtilities.h */,
 				912141A71758F61200A50F6E /* MMUtilities.m */,
+				91814923176CACDC0020AB9D /* MMTaskInfo.h */,
+				91814924176CACDC0020AB9D /* MMTaskInfo.m */,
+				91814927176CB1270020AB9D /* MMShellProxy.h */,
 			);
 			name = Shared;
 			path = MMShared;
@@ -745,6 +753,7 @@
 				919BA9B416C875C40091CB1B /* main.m in Sources */,
 				919BA9C016C87E4F0091CB1B /* MMShellMain.m in Sources */,
 				910D0EEE1757B8B100FFF569 /* MMShellCommands.m in Sources */,
+				91814926176CACDC0020AB9D /* MMTaskInfo.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -800,6 +809,7 @@
 				91557CA7175A557F00CEEFC8 /* MMDisplayActions.m in Sources */,
 				91557406175E9BFB004C2ED1 /* MMTabAction.m in Sources */,
 				9101DC281764E7CF00F05A43 /* MMInfoOverlayView.m in Sources */,
+				91814925176CACDC0020AB9D /* MMTaskInfo.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

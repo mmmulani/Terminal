@@ -29,6 +29,7 @@ typedef enum {
     MMArrowKeyLeft,
 } MMArrowKey;
 
+@class MMTaskInfo;
 @class MMTerminalConnection;
 
 extern NSString *MMTaskDoneHandlingOutputNotification;
@@ -42,7 +43,6 @@ extern NSString *MMTaskDoneHandlingOutputNotification;
 @property pid_t processId;
 @property (strong) NSDate *startedAt;
 @property (strong) NSDate *finishedAt;
-@property (strong) NSString *command;
 @property BOOL hasUsedWholeScreen;
 
 @property (readonly) NSMutableAttributedString *currentANSIDisplay;
@@ -51,14 +51,19 @@ extern NSString *MMTaskDoneHandlingOutputNotification;
 
 @property (weak) MMTerminalConnection *terminalConnection;
 
+@property (nonatomic, strong) NSString *command;
+@property NSArray *commandGroups;
 @property (getter=isShellCommand) BOOL shellCommand;
 @property BOOL shellCommandSuccessful;
 @property id shellCommandAttachment;
 
+@property (readonly) MMTaskIdentifier identifier;
 @property MMProcessStatus finishStatus;
 @property NSInteger finishCode;
 
 - (BOOL)isFinished;
+
+- (MMTaskInfo *)taskInfo;
 
 - (id)initWithTerminalConnection:(MMTerminalConnection *)terminalConnection;
 - (void)handleUserInput:(NSString *)input;

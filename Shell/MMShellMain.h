@@ -9,10 +9,11 @@
 #import <Foundation/Foundation.h>
 
 #import "MMTerminalProxy.h"
+#import "MMShellProxy.h"
 
 @class MMCommand;
 
-@interface MMShellMain : NSObject
+@interface MMShellMain : NSObject <MMShellProxy>
 
 @property (strong) NSConnection *shellConnection;
 @property (strong) NSConnection *terminalConnection;
@@ -22,7 +23,5 @@
 + (MMShellMain *)sharedApplication;
 
 - (void)startWithIdentifier:(NSInteger)identifier;
-- (void)executeCommand:(MMCommand *)command;
-- (void)setPathVariable:(NSString *)pathVariable;
 
 @end

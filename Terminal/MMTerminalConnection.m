@@ -21,12 +21,14 @@
 #import "MMTask.h"
 #import "MMShellCommands.h"
 #import "MMUtilities.h"
+#import "MMShellProxy.h"
 
 @interface MMTerminalConnection ()
 
 @property NSConnection *connectionToSelf;
 @property NSString *directoryToStartIn;
 @property NSMutableDictionary *tasksByFD;
+@property NSProxy<MMShellProxy> *shellProxy;
 
 @end
 
@@ -70,13 +72,13 @@
     task.command = [NSString stringWithString:command];
     task.startedAt = [NSDate date];
 
-    // TODO: Support multiple commands.
-    NSArray *commandGroups = [MMCommandLineArgumentsParser commandGroupsFromCommandLine:task.command];
+    NSArray *commandGroups = task.commandGroups;
 
+    // TODO: Support multiple commands.
     // TODO: Handle the case of no commands better. (Also detect it better.)
     if (commandGroups.count == 0 || [commandGroups[0] commands].count == 0) {
         dispatch_async(dispatch_get_main_queue(), ^{
-          [self processFinished:MMProcessStatusError data:nil];
+            [self.terminalWindow processFinished:MMProcessStatusError data:nil];
         });
         return task;
     }
@@ -85,13 +87,9 @@
         MMLog(@"Discarded all commands past the first in: %@", task.command);
     }
 
-    MMCommandGroup *commandGroup = commandGroups[0];
-    task.shellCommand = [MMShellCommands isShellCommand:commandGroup.commands[0]];
-
     self.tasksByFD[@(self.fd)] = task;
 
-    NSProxy *proxy = [[NSConnection connectionWithRegisteredName:[ConnectionShellName stringByAppendingFormat:@".%ld", (long)self.identifier] host:nil] rootProxy];
-    [proxy performSelector:@selector(executeCommand:) withObject:commandGroup];
+    [self.shellProxy executeTask:task.taskInfo];
     [self.terminalWindow setRunning:YES];
 
     return task;
@@ -99,8 +97,7 @@
 
 - (void)setPathVariable:(NSString *)pathVariable;
 {
-    NSProxy *proxy = [[NSConnection connectionWithRegisteredName:[ConnectionShellName stringByAppendingFormat:@".%ld", (long)self.identifier] host:nil] rootProxy];
-    [proxy performSelector:@selector(setPathVariable:) withObject:pathVariable];
+    [self.shellProxy setPathVariable:pathVariable];
 }
 
 - (void)startShell;
@@ -330,8 +327,28 @@ void iconvFallback(const char *inbuf, size_t inbufsize, void (*write_replacement
 
 # pragma mark - MMTerminalProxy
 
-- (void)processFinished:(MMProcessStatus)status data:(id)data;
+- (void)shellStarted;
 {
+    self.shellProxy = (NSProxy<MMShellProxy> *)[[NSConnection connectionWithRegisteredName:[ConnectionShellName stringByAppendingFormat:@".%ld", (long)self.identifier] host:nil] rootProxy];
+}
+
+- (void)taskFinished:(MMTaskIdentifier)taskIdentifier status:(MMProcessStatus)status data:(id)data;
+{
+    int fd;
+    NSSet *tasksForFD = [self.tasksByFD keysOfEntriesPassingTest:^BOOL(NSNumber *fd, MMTask *task, BOOL *stop) {
+        if (task.identifier == taskIdentifier) {
+            *stop = YES;
+            return YES;
+        }
+
+        return NO;
+    }];
+    fd = [[tasksForFD allObjects][0] intValue];
+
+    struct termios terminalSettings;
+    [self setUpTermIOSettings:&terminalSettings];
+    ioctl(fd, TIOCSETA, &terminalSettings);
+
     dispatch_async(dispatch_get_main_queue(), ^{
         [self.terminalWindow processFinished:status data:data];
     });
