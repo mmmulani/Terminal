@@ -82,6 +82,7 @@
 		91F4EED016B8D63D00F65E91 /* Credits.rtf in Resources */ = {isa = PBXBuildFile; fileRef = 91F4EECE16B8D63D00F65E91 /* Credits.rtf */; };
 		91F4EED316B8D63D00F65E91 /* MMAppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 91F4EED216B8D63D00F65E91 /* MMAppDelegate.m */; };
 		91F4EED616B8D63D00F65E91 /* MMMainMenu.xib in Resources */ = {isa = PBXBuildFile; fileRef = 91F4EED416B8D63D00F65E91 /* MMMainMenu.xib */; };
+		91FF662D176CF2A500768B5E /* SourceCodePro-Regular.otf in CopyFiles */ = {isa = PBXBuildFile; fileRef = 91FF662A176CF28300768B5E /* SourceCodePro-Regular.otf */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -166,6 +167,16 @@
 			dstSubfolderSpec = 1;
 			files = (
 				91E4C07817459E7400062EF5 /* mmm.ProcessMonitor in CopyFiles */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		91FF662C176CF29C00768B5E /* CopyFiles */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = Fonts;
+			dstSubfolderSpec = 7;
+			files = (
+				91FF662D176CF2A500768B5E /* SourceCodePro-Regular.otf in CopyFiles */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -283,6 +294,7 @@
 		91F4EED116B8D63D00F65E91 /* MMAppDelegate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = MMAppDelegate.h; sourceTree = "<group>"; };
 		91F4EED216B8D63D00F65E91 /* MMAppDelegate.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = MMAppDelegate.m; sourceTree = "<group>"; };
 		91F4EED516B8D63D00F65E91 /* en */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = en; path = en.lproj/MMMainMenu.xib; sourceTree = "<group>"; };
+		91FF662A176CF28300768B5E /* SourceCodePro-Regular.otf */ = {isa = PBXFileReference; lastKnownFileType = file; name = "SourceCodePro-Regular.otf"; path = "Resources/SourceCodePro-Regular.otf"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -372,6 +384,7 @@
 				913DE709176A5CE80068ED2F /* glyphiconsStop.png */,
 				913DE70A176A5CE80068ED2F /* glyphiconsWarning.png */,
 				91E4C02B1742C65400062EF5 /* Icon.icns */,
+				91FF662A176CF28300768B5E /* SourceCodePro-Regular.otf */,
 			);
 			name = Resources;
 			sourceTree = "<group>";
@@ -649,6 +662,7 @@
 				91E4C07717459E6100062EF5 /* CopyFiles */,
 				913CC1C0174A929F00E002AD /* CopyFiles */,
 				912141A41757FFFF00A50F6E /* CopyFiles */,
+				91FF662C176CF29C00768B5E /* CopyFiles */,
 			);
 			buildRules = (
 			);

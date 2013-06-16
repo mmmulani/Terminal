@@ -87,7 +87,7 @@ NSString *MMTaskDoneHandlingOutputNotification =  @"MMTaskDoneHandlingOutput";
     self.scrollMarginTop = 1;
     self.scrollMarginBottom = self.termHeight;
     self.characterAttributes = [NSMutableDictionary dictionary];
-    self.characterAttributes[NSFontAttributeName] = [NSFont userFixedPitchFontOfSize:[NSFont systemFontSize]];
+    self.characterAttributes[NSFontAttributeName] = [NSFont fontWithName:@"SourceCodePro-Regular" size:[NSFont systemFontSize]];
     NSMutableParagraphStyle *paragraphStyle = [[NSParagraphStyle defaultParagraphStyle] mutableCopy];
     [paragraphStyle setLineBreakMode:NSLineBreakByCharWrapping];
     paragraphStyle.tabStops = @[];
@@ -552,8 +552,8 @@ NSString *MMTaskDoneHandlingOutputNotification =  @"MMTaskDoneHandlingOutput";
                 [self.characterAttributes removeObjectForKey:NSUnderlineStyleAttributeName];
                 [self.characterAttributes removeObjectForKey:NSForegroundColorAttributeName];
                 [self.characterAttributes removeObjectForKey:NSBackgroundColorAttributeName];
-                
-                self.characterAttributes[NSFontAttributeName] = [NSFont userFixedPitchFontOfSize:[NSFont systemFontSize]];
+
+                self.characterAttributes[NSFontAttributeName] = [NSFont fontWithName:@"SourceCodePro-Regular" size:[NSFont systemFontSize]];
                 break;
             case 1:
                 self.characterAttributes[NSFontAttributeName] = [[NSFontManager sharedFontManager] convertFont:self.characterAttributes[NSFontAttributeName] toHaveTrait:NSBoldFontMask];
