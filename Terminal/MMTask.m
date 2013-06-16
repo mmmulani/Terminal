@@ -1019,12 +1019,15 @@ NSString *MMTaskDoneHandlingOutputNotification =  @"MMTaskDoneHandlingOutput";
     [coder encodeObject:self.startedAt forKey:MMSelfKey(startedAt)];
     [coder encodeObject:self.finishedAt forKey:MMSelfKey(finishedAt)];
     [coder encodeObject:self.displayTextStorage forKey:MMSelfKey(displayTextStorage)];
+    [coder encodeInteger:self.removedTrailingNewlineInScrollLine forKey:MMSelfKey(removedTrailingNewlineInScrollLine)];
     [coder encodeObject:self.command forKey:MMSelfKey(command)];
     [coder encodeInteger:self.cursorPositionByCharacters forKey:MMSelfKey(cursorPositionByCharacters)];
     [coder encodeBool:self.hasUsedWholeScreen forKey:MMSelfKey(hasUsedWholeScreen)];
     [coder encodeBool:self.shellCommand forKey:MMSelfKey(shellCommand)];
     [coder encodeBool:self.shellCommandSuccessful forKey:MMSelfKey(shellCommandSuccessful)];
     [coder encodeObject:self.shellCommandAttachment forKey:MMSelfKey(shellCommandAttachment)];
+    [coder encodeInteger:self.finishStatus forKey:MMSelfKey(finishStatus)];
+    [coder encodeInteger:self.finishCode forKey:MMSelfKey(finishCode)];
 }
 
 - (id)initWithCoder:(NSCoder *)decoder;
@@ -1037,12 +1040,15 @@ NSString *MMTaskDoneHandlingOutputNotification =  @"MMTaskDoneHandlingOutput";
     self.startedAt = [decoder decodeObjectForKey:MMSelfKey(startedAt)];
     self.finishedAt = [decoder decodeObjectForKey:MMSelfKey(finishedAt)];
     self.displayTextStorage = [decoder decodeObjectForKey:MMSelfKey(displayTextStorage)];
+    self.removedTrailingNewlineInScrollLine = [decoder decodeIntegerForKey:MMSelfKey(removedTrailingNewlineInScrollLine)];
     self.command = [decoder decodeObjectForKey:MMSelfKey(command)];
     self.characterOffsetToScreen = [decoder decodeIntegerForKey:MMSelfKey(cursorPositionByCharacters)];
     self.hasUsedWholeScreen = [decoder decodeBoolForKey:MMSelfKey(hasUsedWholeScreen)];
     self.shellCommand = [decoder decodeBoolForKey:MMSelfKey(shellCommand)];
     self.shellCommandSuccessful = [decoder decodeBoolForKey:MMSelfKey(shellCommandSuccessful)];
     self.shellCommandAttachment = [decoder decodeObjectForKey:MMSelfKey(shellCommandAttachment)];
+    self.finishStatus = [decoder decodeIntegerForKey:MMSelfKey(finishStatus)];
+    self.finishCode = [decoder decodeIntegerForKey:MMSelfKey(finishCode)];
 
     return self;
 }

@@ -48,6 +48,10 @@
 
         [self.view addSubview:self.imageView];
         [self.label setStringValue:[NSString stringWithFormat:@"Ran %@", self.task.command]];
+
+        if (self.task.isFinished) {
+            [self updateWithANSIOutput];
+        }
     }
 
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(outputFrameChanged:) name:NSViewFrameDidChangeNotification object:self.outputView];
