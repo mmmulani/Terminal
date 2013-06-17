@@ -41,8 +41,6 @@
 
 @end
 
-NSString *MMTaskDoneHandlingOutputNotification =  @"MMTaskDoneHandlingOutput";
-
 @implementation MMTask
 
 + (MMTaskIdentifier)uniqueTaskIdentifier;
@@ -120,6 +118,8 @@ NSString *MMTaskDoneHandlingOutputNotification =  @"MMTaskDoneHandlingOutput";
 
 - (void)handleCommandOutput:(NSString *)output;
 {
+    [self.displayTextStorage beginEditing];
+
     [self readdTrailingNewlineIfNecessary];
 
     [self.output appendString:output];
@@ -193,6 +193,10 @@ NSString *MMTaskDoneHandlingOutputNotification =  @"MMTaskDoneHandlingOutput";
     }
 
     [self removeTrailingNewlineIfNecessary];
+
+    [self.displayTextStorage endEditing];
+
+    [self.delegate taskReceivedOutput:self];
 }
 
 - (void)handleNonPrintableOutput:(unichar)currentChar;
@@ -253,11 +257,18 @@ NSString *MMTaskDoneHandlingOutputNotification =  @"MMTaskDoneHandlingOutput";
 - (void)processFinished:(MMProcessStatus)status data:(id)data;
 {
     self.finishedAt = [NSDate date];
-    
-    self.finishStatus = status;
-    self.finishCode = [data integerValue];
 
-    [self removeTrailingNewlineIfNecessary];
+    if (self.isShellCommand) {
+        self.shellCommandSuccessful = status;
+        self.shellCommandAttachment = data;
+    } else {
+        self.finishStatus = status;
+        self.finishCode = [data integerValue];
+
+        [self removeTrailingNewlineIfNecessary];
+    }
+
+    [self.delegate taskFinished:self];
 }
 
 - (BOOL)isFinished;

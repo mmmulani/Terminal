@@ -29,6 +29,7 @@
     }
 
     self.task = task;
+    self.task.delegate = self;
 
     return self;
 }
@@ -56,7 +57,6 @@
 
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(outputFrameChanged:) name:NSViewFrameDidChangeNotification object:self.outputView];
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(labelFrameChanged:) name:NSViewFrameDidChangeNotification object:self.label];
-    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(updateWithANSIOutput) name:MMTaskDoneHandlingOutputNotification object:self.task];
 }
 
 - (void)dealloc;
@@ -127,7 +127,7 @@
     [self.outputView setSelectedRange:NSMakeRange(cursorPositionByCharacters, 0)];
 
     // Sometimes the NSViewFrameDidChangeNotification does not get issued, so we call it here to make sure that it gets sent.
-    [self outputFrameChanged:nil];
+    // [self outputFrameChanged:nil];
     
     if (self.task.isFinished) {
         NSImage *imageToDisplay;
@@ -146,8 +146,6 @@
         self.imageView.image = imageToDisplay;
         self.imageView.toolTip = toolTip;
     }
-
-    [(MMTerminalWindowController *)self.view.window.windowController noteHeightChangeForTask:self];
 }
 
 - (IBAction)saveTranscript:(id)sender;
@@ -203,6 +201,35 @@
 - (void)handleInput:(NSString *)input;
 {
     [self.task handleUserInput:input];
+}
+
+# pragma mark - MMTaskDelegate
+
+- (void)taskFinished:(MMTask *)task;
+{
+    if (self.task.isShellCommand) {
+        [self updateViewForShellCommand];
+    } else {
+        [self updateWithANSIOutput];
+    }
+
+    MMTerminalWindowController *windowController = self.view.window.windowController;
+    [windowController noteHeightChangeForTask:self];
+
+    [windowController taskFinished:self];
+}
+
+- (void)taskMovedToBackground:(MMTask *)task;
+{
+
+}
+
+- (void)taskReceivedOutput:(MMTask *)task;
+{
+    [self updateWithANSIOutput];
+
+    MMTerminalWindowController *windowController = self.view.window.windowController;
+    [windowController noteHeightChangeForTask:self];
 }
 
 @end

@@ -23,8 +23,9 @@ typedef NSInteger MMShellIdentifier;
 @protocol MMTerminalProxy <NSObject>
 
 - (void)shellStartedWithIdentifier:(MMShellIdentifier)identifier;
-- (void)taskFinished:(MMTaskIdentifier)taskIdentifier status:(MMProcessStatus)status data:(id)data;
 - (void)directoryChangedTo:(NSString *)newPath;
-- (void)shellCommand:(MMShellCommand)command succesful:(BOOL)success attachment:(id)attachment;
+
+- (void)taskFinished:(MMTaskIdentifier)taskIdentifier status:(MMProcessStatus)status data:(id)data;
+- (void)taskFinished:(MMTaskIdentifier)taskIdentifier shellCommand:(MMShellCommand)command succesful:(BOOL)success attachment:(id)attachment;
 
 @end

@@ -86,7 +86,7 @@
 {
     MMCommandGroup *commandGroup = taskInfo.commandGroups[0];
     if (commandGroup.commands.count == 1 && [MMShellCommands isShellCommand:commandGroup.commands[0]]) {
-        [self handleSpecialCommand:commandGroup.commands[0]];
+        [self handleSpecialCommand:taskInfo];
         return;
     }
 
@@ -225,8 +225,9 @@ void signalHandler(int signalNumber) {
     }
 }
 
-- (void)handleSpecialCommand:(MMCommand *)command;
+- (void)handleSpecialCommand:(MMTaskInfo *)taskInfo;
 {
+    MMCommand *command = [taskInfo.commandGroups[0] commands][0];
     if ([command.arguments[0] isEqualToString:@"cd"]) {
         NSString *newDirectory = nil;
         if (command.arguments.count == 1) {
@@ -245,7 +246,7 @@ void signalHandler(int signalNumber) {
             newDirectory = [[fileManager currentDirectoryPath] stringByAbbreviatingWithTildeInPath];
         }
 
-        [self.terminalProxy shellCommand:MMShellCommandCd succesful:result attachment:newDirectory];
+        [self.terminalProxy taskFinished:taskInfo.identifier shellCommand:MMShellCommandCd succesful:result attachment:newDirectory];
     }
 }
 

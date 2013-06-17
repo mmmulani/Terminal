@@ -34,13 +34,12 @@
 
 - (id)initWithTerminalConnection:(MMTerminalConnection *)terminalConnection withState:(NSCoder *)state completionHandler:(void (^)(NSWindow *, NSError *))completionHandler;
 
-- (void)processFinished:(MMProcessStatus)status data:(id)data;
 - (void)directoryChangedTo:(NSString *)newPath;
-- (void)shellCommandFinished;
-- (MMTask *)lastTask;
 
 - (void)noteHeightChangeForTask:(MMTaskCellViewController *)taskViewController;
 
 - (void)resizeWindowForTerminalScreenSizeOfColumns:(NSInteger)columns rows:(NSInteger)rows;
+
+- (void)taskFinished:(MMTaskCellViewController *)taskController;
 
 @end

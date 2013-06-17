@@ -11,7 +11,7 @@
 #import "MMTask.h"
 #import "MMTextView.h"
 
-@interface MMTaskCellViewController : NSViewController <MMTextViewDelegate>
+@interface MMTaskCellViewController : NSViewController <MMTextViewDelegate, MMTaskDelegate>
 
 @property (strong) IBOutlet NSTextField *label;
 @property (strong) IBOutlet MMTextView *outputView;

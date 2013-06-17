@@ -110,42 +110,25 @@
     [((NSClipView *)self.tableView.superview) scrollToPoint:NSMakePoint(0, MAX(self.tableView.frame.size.height - clipViewFrame.size.height, 0))];
 }
 
-- (void)noteHeightChangeForTask:(MMTaskCellViewController *)taskViewController;
+- (NSInteger)indexOfTask:(MMTaskCellViewController *)taskViewController;
 {
     NSInteger i;
     for (i = self.taskViewControllers.count - 1; i >= 0 && ![self.taskViewControllers[i] isEqual:taskViewController]; i--);
     NSAssert(i >= 0, @"Must be able to find index for view controller");
+    return i;
+}
 
+- (void)noteHeightChangeForTask:(MMTaskCellViewController *)taskViewController;
+{
     [NSAnimationContext beginGrouping];
     [[NSAnimationContext currentContext] setDuration:0.0];
-    [self.tableView noteHeightOfRowsWithIndexesChanged:[NSIndexSet indexSetWithIndex:i]];
+    [self.tableView noteHeightOfRowsWithIndexesChanged:[NSIndexSet indexSetWithIndex:[self indexOfTask:taskViewController]]];
     [NSAnimationContext endGrouping];
 }
 
-- (void)shellCommandFinished;
+- (void)taskFinished:(MMTaskCellViewController *)taskController;
 {
-    [(MMTaskCellViewController *)[self.taskViewControllers lastObject] updateViewForShellCommand];
-    [self processFinished:MMProcessStatusExit data:nil];
-}
-
-- (MMTask *)lastTask;
-{
-    return [self.tasks lastObject];
-}
-
-- (void)processFinished:(MMProcessStatus)status data:(id)data;
-{
-    MMTask *task = [self.tasks lastObject];
-    [task processFinished:status data:data];
     self.running = NO;
-
-    MMTaskCellViewController *controller = [self.taskViewControllers lastObject];
-    [controller updateWithANSIOutput];
-
-    [NSAnimationContext beginGrouping];
-    [[NSAnimationContext currentContext] setDuration:0.0];
-    [self.tableView noteHeightOfRowsWithIndexesChanged:[NSIndexSet indexSetWithIndex:([self.taskViewControllers count] - 1)]];
-    [NSAnimationContext endGrouping];
 
     [self.window makeFirstResponder:self.commandInput];
 
@@ -351,15 +334,19 @@ static void directoryWatchingCallback(CFFileDescriptorRef kqRef, CFOptionFlags c
 - (BOOL)textView:(NSTextView *)textView doCommandBySelector:(SEL)commandSelector;
 {
     if (commandSelector == @selector(insertNewline:)) {
-        [self.tasks addObject:[self.terminalConnection createAndRunTaskWithCommand:textView.string]];
+        MMTask *task = [self.terminalConnection createAndRunTaskWithCommand:textView.string];
+        MMTaskCellViewController *taskViewController = [[MMTaskCellViewController alloc] initWithTask:task];
+
+        NSInteger taskIndex = self.tasks.count;
+        [self.tasks addObject:task];
+        [self.taskViewControllers addObject:taskViewController];
 
         [textView setString:@""];
-        self.commandHistoryIndex = self.tasks.count;
+        self.commandHistoryIndex = taskIndex + 1;
 
-        [self.tableView insertRowsAtIndexes:[NSIndexSet indexSetWithIndex:(self.tasks.count - 1)] withAnimation:NSTableViewAnimationEffectNone];
+        [self.tableView insertRowsAtIndexes:[NSIndexSet indexSetWithIndex:taskIndex] withAnimation:NSTableViewAnimationEffectNone];
 
-        MMTaskCellViewController *lastController = self.taskViewControllers.lastObject;
-        [self.window makeFirstResponder:lastController.outputView];
+        [self.window makeFirstResponder:taskViewController.outputView];
 
         [NSAnimationContext beginGrouping];
         CABasicAnimation *animation = [CABasicAnimation animation];
@@ -418,13 +405,11 @@ static void directoryWatchingCallback(CFFileDescriptorRef kqRef, CFOptionFlags c
 
 - (CGFloat)tableView:(NSTableView *)tableView heightOfRow:(NSInteger)row;
 {
-    [self _prepareViewControllersUntilRow:row];
     return [(MMTaskCellViewController *)self.taskViewControllers[row] heightToFitAllOfOutput];
 }
 
 - (NSView *)tableView:(NSTableView *)tableView viewForTableColumn:(NSTableColumn *)tableColumn row:(NSInteger)row;
 {
-    [self _prepareViewControllersUntilRow:row];
     return [self.taskViewControllers[row] view];
 }
 

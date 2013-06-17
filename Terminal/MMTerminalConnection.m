@@ -34,6 +34,7 @@
 @property NSMutableArray *busyShells;
 @property NSMutableDictionary *shellIdentifierToFD;
 @property NSMutableDictionary *shellIdentifierToProxy;
+@property NSMutableArray *shellCommandTasks;
 
 - (MMShellIdentifier)unusedShell;
 - (NSProxy<MMShellProxy> *)proxyForShellIdentifier:(MMShellIdentifier)identifier;
@@ -66,6 +67,7 @@
     self.busyShells = [NSMutableArray array];
     self.shellIdentifierToFD = [NSMutableDictionary dictionary];
     self.shellIdentifierToProxy = [NSMutableDictionary dictionary];
+    self.shellCommandTasks = [NSMutableArray array];
 
     return self;
 }
@@ -99,7 +101,7 @@
     // TODO: Handle the case of no commands better. (Also detect it better.)
     if (commandGroups.count == 0 || [commandGroups[0] commands].count == 0) {
         dispatch_async(dispatch_get_main_queue(), ^{
-            [self.terminalWindow processFinished:MMProcessStatusError data:nil];
+            [task processFinished:MMProcessStatusError data:nil];
         });
         return task;
     }
@@ -112,6 +114,8 @@
         for (NSProxy<MMShellProxy > *proxy in self.shellIdentifierToProxy.allValues) {
             [proxy executeTask:task.taskInfo];
         }
+
+        [self.shellCommandTasks addObject:task];
 
         return task;
     }
@@ -330,7 +334,6 @@ void iconvFallback(const char *inbuf, size_t inbufsize, void (*write_replacement
     MMTask *task = self.tasksByFD[@(fd)];
 
     dispatch_async(dispatch_get_main_queue(), ^{
-        [task.displayTextStorage beginEditing];
         @try {
             [task handleCommandOutput:output];
         }
@@ -343,8 +346,6 @@ void iconvFallback(const char *inbuf, size_t inbufsize, void (*write_replacement
             [MMUtilities postData:dataToSend toURL:url description:filename];
             @throw exception;
         }
-        [task.displayTextStorage endEditing];
-        [[NSNotificationCenter defaultCenter] postNotificationName:MMTaskDoneHandlingOutputNotification object:task];
     });
 }
 
@@ -383,6 +384,7 @@ void iconvFallback(const char *inbuf, size_t inbufsize, void (*write_replacement
 - (void)taskFinished:(MMTaskIdentifier)taskIdentifier status:(MMProcessStatus)status data:(id)data;
 {
     int fd = [self fdForTaskIdentifier:taskIdentifier];
+    MMTask *task = self.tasksByFD[@(fd)];
 
     MMShellIdentifier shell = [self shellIdentifierForFD:fd];
     [self.unusedShells addObject:@(shell)];
@@ -392,9 +394,7 @@ void iconvFallback(const char *inbuf, size_t inbufsize, void (*write_replacement
     [self setUpTermIOSettings:&terminalSettings];
     ioctl(fd, TIOCSETA, &terminalSettings);
 
-    dispatch_async(dispatch_get_main_queue(), ^{
-        [self.terminalWindow processFinished:status data:data];
-    });
+    [task processFinished:status data:data];
 }
 
 - (void)directoryChangedTo:(NSString *)newPath;
@@ -403,13 +403,17 @@ void iconvFallback(const char *inbuf, size_t inbufsize, void (*write_replacement
     [self.terminalWindow directoryChangedTo:newPath];
 }
 
-- (void)shellCommand:(MMShellCommand)command succesful:(BOOL)success attachment:(id)attachment;
+- (void)taskFinished:(MMTaskIdentifier)taskIdentifier shellCommand:(MMShellCommand)command succesful:(BOOL)success attachment:(id)attachment;
 {
-    MMTask *task = [self.terminalWindow lastTask];
-    task.shellCommandSuccessful = success;
-    task.shellCommandAttachment = attachment;
+    MMTask *task;
+    for (MMTask *possibleTask in self.shellCommandTasks) {
+        if (possibleTask.identifier == taskIdentifier) {
+            task = possibleTask;
+            break;
+        }
+    }
 
-    [self.terminalWindow shellCommandFinished];
+    [task processFinished:success data:attachment];
 }
 
 # pragma mark - Shell identifier organization

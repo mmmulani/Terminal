@@ -31,8 +31,7 @@ typedef enum {
 
 @class MMTaskInfo;
 @class MMTerminalConnection;
-
-extern NSString *MMTaskDoneHandlingOutputNotification;
+@protocol MMTaskDelegate;
 
 @interface MMTask : NSObject <MMANSIActionDelegate, NSCoding>
 
@@ -50,6 +49,7 @@ extern NSString *MMTaskDoneHandlingOutputNotification;
 @property (readonly) NSInteger cursorPositionByCharacters;
 
 @property (weak) MMTerminalConnection *terminalConnection;
+@property (weak) id<MMTaskDelegate> delegate;
 
 @property (nonatomic, strong) NSString *command;
 @property NSArray *commandGroups;
@@ -76,5 +76,13 @@ extern NSString *MMTaskDoneHandlingOutputNotification;
 // In some cases, the task does not have enough output to fill a terminal screen but we should still render the full screen.
 // (e.g. after we receive a clear escape sequence.)
 - (BOOL)shouldDrawFullTerminalScreen;
+
+@end
+
+@protocol MMTaskDelegate <NSObject>
+
+- (void)taskFinished:(MMTask *)task;
+- (void)taskMovedToBackground:(MMTask *)task;
+- (void)taskReceivedOutput:(MMTask *)task;
 
 @end
