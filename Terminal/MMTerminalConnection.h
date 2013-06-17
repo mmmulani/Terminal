@@ -15,6 +15,8 @@
 @class MMTerminalWindowController;
 @class MMTask;
 
+@protocol MMTaskDelegate;
+
 @interface MMTerminalConnection : NSObject <MMTerminalProxy>
 
 @property BOOL running;
@@ -29,7 +31,7 @@
 - (void)createTerminalWindowWithState:(NSCoder *)state completionHandler:(void (^)(NSWindow *, NSError *))completionHandler;
 
 - (void)handleTerminalInput:(NSString *)input task:(MMTask *)task;
-- (MMTask *)createAndRunTaskWithCommand:(NSString *)command;
+- (MMTask *)createAndRunTaskWithCommand:(NSString *)command taskDelegate:(id <MMTaskDelegate>)delegate;
 - (void)setPathVariable:(NSString *)pathVariable;
 
 - (void)startShell;

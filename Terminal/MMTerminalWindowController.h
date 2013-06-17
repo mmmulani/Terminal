@@ -29,7 +29,6 @@
 @property (strong) NSMutableArray *tasks;
 @property (strong) NSMutableArray *taskViewControllers;
 @property (weak) MMTerminalConnection *terminalConnection;
-@property BOOL running;
 @property (readonly) NSInteger keyboardShortcut;
 
 - (id)initWithTerminalConnection:(MMTerminalConnection *)terminalConnection withState:(NSCoder *)state completionHandler:(void (^)(NSWindow *, NSError *))completionHandler;
@@ -40,6 +39,7 @@
 
 - (void)resizeWindowForTerminalScreenSizeOfColumns:(NSInteger)columns rows:(NSInteger)rows;
 
+- (void)taskStarted:(MMTaskCellViewController *)taskController;
 - (void)taskFinished:(MMTaskCellViewController *)taskController;
 
 @end

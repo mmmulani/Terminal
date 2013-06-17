@@ -21,19 +21,6 @@
     return self;
 }
 
-- (id)initWithTask:(MMTask *)task;
-{
-    self = [self init];
-    if (!self) {
-        return nil;
-    }
-
-    self.task = task;
-    self.task.delegate = self;
-
-    return self;
-}
-
 - (void)loadView;
 {
     [super loadView];
@@ -48,10 +35,12 @@
         }
 
         [self.view addSubview:self.imageView];
-        [self.label setStringValue:[NSString stringWithFormat:@"Ran %@", self.task.command]];
 
         if (self.task.isFinished) {
             [self updateWithANSIOutput];
+            [self.label setStringValue:[NSString stringWithFormat:@"Ran %@", self.task.command]];
+        } else {
+            [self.label setStringValue:[NSString stringWithFormat:@"Running %@", self.task.command]];
         }
     }
 
@@ -205,18 +194,25 @@
 
 # pragma mark - MMTaskDelegate
 
+- (void)taskStarted:(MMTask *)task;
+{
+    [self.windowController taskStarted:self];
+}
+
 - (void)taskFinished:(MMTask *)task;
 {
     if (self.task.isShellCommand) {
         [self updateViewForShellCommand];
     } else {
+        [self.label setStringValue:[NSString stringWithFormat:@"Ran %@", self.task.command]];
+        [self labelFrameChanged:nil];
+
         [self updateWithANSIOutput];
     }
 
-    MMTerminalWindowController *windowController = self.view.window.windowController;
-    [windowController noteHeightChangeForTask:self];
+    [self.windowController noteHeightChangeForTask:self];
 
-    [windowController taskFinished:self];
+    [self.windowController taskFinished:self];
 }
 
 - (void)taskMovedToBackground:(MMTask *)task;
@@ -228,8 +224,7 @@
 {
     [self updateWithANSIOutput];
 
-    MMTerminalWindowController *windowController = self.view.window.windowController;
-    [windowController noteHeightChangeForTask:self];
+    [self.windowController noteHeightChangeForTask:self];
 }
 
 @end

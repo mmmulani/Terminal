@@ -22,6 +22,7 @@
 #import "MMShellCommands.h"
 #import "MMUtilities.h"
 #import "MMShellProxy.h"
+#import "MMTaskCellViewController.h"
 
 @interface MMTerminalConnection ()
 
@@ -89,11 +90,14 @@
     [NSThread detachNewThreadSelector:@selector(startShell) toTarget:self withObject:nil];
 }
 
-- (MMTask *)createAndRunTaskWithCommand:(NSString *)command;
+- (MMTask *)createAndRunTaskWithCommand:(NSString *)command taskDelegate:(id <MMTaskDelegate>)delegate;
 {
     MMTask *task = [[MMTask alloc] initWithTerminalConnection:self];
     task.command = [NSString stringWithString:command];
     task.startedAt = [NSDate date];
+    task.delegate = delegate;
+    [delegate setTask:task];
+    ((MMTaskCellViewController *)delegate).windowController = self.terminalWindow;
 
     NSArray *commandGroups = task.commandGroups;
 
@@ -127,7 +131,7 @@
     NSNumber *fd = self.shellIdentifierToFD[@(shellIdentifier)];
     self.tasksByFD[fd] = task;
 
-    [self.terminalWindow setRunning:YES];
+    [task processStarted];
     [[self proxyForShellIdentifier:shellIdentifier] executeTask:task.taskInfo];
 
     return task;

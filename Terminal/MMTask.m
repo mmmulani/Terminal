@@ -254,6 +254,11 @@
     }
 }
 
+- (void)processStarted;
+{
+    [self.delegate taskStarted:self];
+}
+
 - (void)processFinished:(MMProcessStatus)status data:(id)data;
 {
     self.finishedAt = [NSDate date];

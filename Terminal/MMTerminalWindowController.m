@@ -34,6 +34,9 @@
 
 @property NSInteger keyboardShortcut;
 
+@property NSInteger numberOfTasksRunning;
+@property BOOL hidingCommandInputControls;
+
 @end
 
 @implementation MMTerminalWindowController
@@ -129,9 +132,47 @@
     [NSAnimationContext endGrouping];
 }
 
+- (void)taskStarted:(MMTaskCellViewController *)taskController;
+{
+    self.numberOfTasksRunning++;
+
+    [self hideCommandControlsIfNecessary];
+}
+
 - (void)taskFinished:(MMTaskCellViewController *)taskController;
 {
-    self.running = NO;
+    self.numberOfTasksRunning--;
+    [self invalidateRestorableState];
+
+    [self showCommandControlsIfNecessary];
+}
+
+- (void)hideCommandControlsIfNecessary;
+{
+    if (self.hidingCommandInputControls) {
+        return;
+    }
+
+    [NSAnimationContext beginGrouping];
+    CABasicAnimation *animation = [CABasicAnimation animation];
+    animation.timingFunction = [CAMediaTimingFunction functionWithName:kCAMediaTimingFunctionDefault];
+    animation.duration = 0.25;
+    self.commandControlsLayoutConstraint.animations = @{@"constant": animation};
+    [[NSAnimationContext currentContext] setCompletionHandler:^{
+        [self.window.contentView layout];
+    }];
+
+    [self.commandControlsLayoutConstraint.animator setConstant:0.0];
+    [NSAnimationContext endGrouping];
+
+    self.hidingCommandInputControls = YES;
+}
+
+- (void)showCommandControlsIfNecessary;
+{
+    if (!self.hidingCommandInputControls) {
+        return;
+    }
 
     [self.window makeFirstResponder:self.commandInput];
 
@@ -147,7 +188,7 @@
     [self.commandControlsLayoutConstraint.animator setConstant:self.originalCommandControlsLayoutConstraintConstant];
     [NSAnimationContext endGrouping];
 
-    [self invalidateRestorableState];
+    self.hidingCommandInputControls = NO;
 }
 
 - (void)directoryChangedTo:(NSString *)newPath;
@@ -327,18 +368,18 @@ static void directoryWatchingCallback(CFFileDescriptorRef kqRef, CFOptionFlags c
 
 - (BOOL)textShouldBeginEditing:(NSText *)fieldEditor;
 {
-    if (self.running) {
+    if (self.hidingCommandInputControls) {
         MMTaskCellViewController *lastController = self.taskViewControllers.lastObject;
         [self.window makeFirstResponder:lastController.outputView];
     }
-    return !self.running;
+    return !self.hidingCommandInputControls;
 }
 
 - (BOOL)textView:(NSTextView *)textView doCommandBySelector:(SEL)commandSelector;
 {
     if (commandSelector == @selector(insertNewline:)) {
-        MMTask *task = [self.terminalConnection createAndRunTaskWithCommand:textView.string];
-        MMTaskCellViewController *taskViewController = [[MMTaskCellViewController alloc] initWithTask:task];
+        MMTaskCellViewController *taskViewController = [[MMTaskCellViewController alloc] init];
+        MMTask *task = [self.terminalConnection createAndRunTaskWithCommand:textView.string taskDelegate:taskViewController];
 
         NSInteger taskIndex = self.tasks.count;
         [self.tasks addObject:task];
@@ -350,18 +391,6 @@ static void directoryWatchingCallback(CFFileDescriptorRef kqRef, CFOptionFlags c
         [self.tableView insertRowsAtIndexes:[NSIndexSet indexSetWithIndex:taskIndex] withAnimation:NSTableViewAnimationEffectNone];
 
         [self.window makeFirstResponder:taskViewController.outputView];
-
-        [NSAnimationContext beginGrouping];
-        CABasicAnimation *animation = [CABasicAnimation animation];
-        animation.timingFunction = [CAMediaTimingFunction functionWithName:kCAMediaTimingFunctionDefault];
-        animation.duration = 0.25;
-        self.commandControlsLayoutConstraint.animations = @{@"constant": animation};
-        [[NSAnimationContext currentContext] setCompletionHandler:^{
-            [self.window.contentView layout];
-        }];
-
-        [self.commandControlsLayoutConstraint.animator setConstant:0.0];
-        [NSAnimationContext endGrouping];
 
         return YES;
     } else if (commandSelector == @selector(scrollPageUp:)) {
@@ -419,7 +448,9 @@ static void directoryWatchingCallback(CFFileDescriptorRef kqRef, CFOptionFlags c
 - (void)_prepareViewControllersUntilRow:(NSInteger)row;
 {
     for (NSInteger i = [self.taskViewControllers count]; i <= row; i++) {
-        [self.taskViewControllers addObject:[[MMTaskCellViewController alloc] initWithTask:self.tasks[i]]];
+        MMTaskCellViewController *taskViewController = [[MMTaskCellViewController alloc] init];
+        taskViewController.task = self.tasks[i];
+        [self.taskViewControllers addObject:taskViewController];
     }
 }
 

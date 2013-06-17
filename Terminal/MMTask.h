@@ -69,6 +69,7 @@ typedef enum {
 - (void)handleUserInput:(NSString *)input;
 - (void)handleCursorKeyInput:(MMArrowKey)arrowKey;
 - (void)handleCommandOutput:(NSString *)output;
+- (void)processStarted;
 - (void)processFinished:(MMProcessStatus)status data:(id)data;
 
 - (void)resizeTerminalToColumns:(NSInteger)columns rows:(NSInteger)rows;
@@ -81,6 +82,9 @@ typedef enum {
 
 @protocol MMTaskDelegate <NSObject>
 
+@property (weak) MMTask *task;
+
+- (void)taskStarted:(MMTask *)task;
 - (void)taskFinished:(MMTask *)task;
 - (void)taskMovedToBackground:(MMTask *)task;
 - (void)taskReceivedOutput:(MMTask *)task;

@@ -11,15 +11,17 @@
 #import "MMTask.h"
 #import "MMTextView.h"
 
+@class MMTerminalWindowController;
+
 @interface MMTaskCellViewController : NSViewController <MMTextViewDelegate, MMTaskDelegate>
 
 @property (strong) IBOutlet NSTextField *label;
 @property (strong) IBOutlet MMTextView *outputView;
 @property (strong) IBOutlet NSImageView *imageView;
 
-@property (strong) MMTask *task;
+@property (weak) MMTerminalWindowController *windowController;
+@property (weak) MMTask *task;
 
-- (id)initWithTask:(MMTask *)task;
 - (CGFloat)heightToFitAllOfOutput;
 - (void)updateWithANSIOutput;
 - (IBAction)saveTranscript:(id)sender;
