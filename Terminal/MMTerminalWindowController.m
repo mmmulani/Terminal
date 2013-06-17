@@ -142,6 +142,7 @@
 - (void)taskFinished:(MMTaskCellViewController *)taskController;
 {
     self.numberOfTasksRunning--;
+    NSAssert(self.numberOfTasksRunning >= 0, @"Number of tasks cannot be negative");
     [self invalidateRestorableState];
 
     // If there are still tasks running, we make sure the running tasks stay at the bottom.
@@ -416,6 +417,10 @@ static void directoryWatchingCallback(CFFileDescriptorRef kqRef, CFOptionFlags c
     if (commandSelector == @selector(insertNewline:)) {
         MMTaskCellViewController *taskViewController = [[MMTaskCellViewController alloc] init];
         MMTask *task = [self.terminalConnection createAndRunTaskWithCommand:textView.string taskDelegate:taskViewController];
+
+        if (!task) {
+            return YES;
+        }
 
         NSInteger taskIndex = self.tasks.count;
         [self.tasks addObject:task];

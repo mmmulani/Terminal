@@ -128,6 +128,10 @@
     [self.unusedShells removeObject:@(shellIdentifier)];
     [self.busyShells addObject:@(shellIdentifier)];
 
+    if (shellIdentifier == 0) {
+        return nil;
+    }
+
     NSNumber *fd = self.shellIdentifierToFD[@(shellIdentifier)];
     self.tasksByFD[fd] = task;
 
