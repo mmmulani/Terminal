@@ -41,5 +41,6 @@
 
 - (void)taskStarted:(MMTaskCellViewController *)taskController;
 - (void)taskFinished:(MMTaskCellViewController *)taskController;
+- (void)taskRunsInBackground:(MMTaskCellViewController *)taskController;
 
 @end

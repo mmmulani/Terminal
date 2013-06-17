@@ -87,7 +87,7 @@
 
     self.connectionToSelf = [NSConnection serviceConnectionWithName:[ConnectionTerminalName stringByAppendingFormat:@".%ld", (long)self.terminalIdentifier] rootObject:self];
 
-    [NSThread detachNewThreadSelector:@selector(startShell) toTarget:self withObject:nil];
+    [self startShellsToRunCommands:1];
 }
 
 - (MMTask *)createAndRunTaskWithCommand:(NSString *)command taskDelegate:(id <MMTaskDelegate>)delegate;
@@ -141,6 +141,18 @@
 {
     for (NSProxy<MMShellProxy> *proxy in self.shellIdentifierToProxy.allValues) {
         [proxy setPathVariable:pathVariable];
+    }
+}
+
+- (void)startShellsToRunCommands:(NSInteger)numberOfCommands;
+{
+    if (numberOfCommands <= self.shellIdentifierToFD.count) {
+        return;
+    }
+
+    NSInteger numberOfShellsToStart = numberOfCommands - self.shellIdentifierToFD.count;
+    for (NSInteger i = 0; i < numberOfShellsToStart; i++) {
+        [NSThread detachNewThreadSelector:@selector(startShell) toTarget:self withObject:nil];
     }
 }
 
@@ -357,6 +369,9 @@ void iconvFallback(const char *inbuf, size_t inbufsize, void (*write_replacement
 {
     for (NSNumber *fd in self.shellIdentifierToFD.allValues) {
         close([fd intValue]);
+    }
+    for (NSProxy<MMShellProxy> *proxy in self.shellIdentifierToProxy.allValues) {
+        [proxy endShell];
     }
     self.connectionToSelf.rootObject = nil;
     self.connectionToSelf = nil;

@@ -18,6 +18,7 @@
 @property (strong) IBOutlet NSTextField *label;
 @property (strong) IBOutlet MMTextView *outputView;
 @property (strong) IBOutlet NSImageView *imageView;
+@property (getter=isBackgrounded) BOOL backgrounded;
 
 @property (weak) MMTerminalWindowController *windowController;
 @property (weak) MMTask *task;

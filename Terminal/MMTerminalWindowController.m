@@ -147,6 +147,13 @@
     [self showCommandControlsIfNecessary];
 }
 
+- (void)taskRunsInBackground:(MMTaskCellViewController *)taskController;
+{
+    [self.terminalConnection startShellsToRunCommands:(self.numberOfTasksRunning + 1)];
+
+    [self showCommandControlsIfNecessary];
+}
+
 - (void)hideCommandControlsIfNecessary;
 {
     if (self.hidingCommandInputControls) {
@@ -170,11 +177,11 @@
 
 - (void)showCommandControlsIfNecessary;
 {
+    [self.window makeFirstResponder:self.commandInput];
+
     if (!self.hidingCommandInputControls) {
         return;
     }
-
-    [self.window makeFirstResponder:self.commandInput];
 
     [NSAnimationContext beginGrouping];
     CABasicAnimation *animation = [CABasicAnimation animation];

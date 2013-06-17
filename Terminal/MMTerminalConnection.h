@@ -33,6 +33,7 @@
 - (void)handleTerminalInput:(NSString *)input task:(MMTask *)task;
 - (MMTask *)createAndRunTaskWithCommand:(NSString *)command taskDelegate:(id <MMTaskDelegate>)delegate;
 - (void)setPathVariable:(NSString *)pathVariable;
+- (void)startShellsToRunCommands:(NSInteger)numberOfCommands;
 
 - (void)startShell;
 

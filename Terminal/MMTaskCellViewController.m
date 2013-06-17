@@ -182,6 +182,11 @@
     if ([keyEvent keyCode] >= 123 && [keyEvent keyCode] <= 126) {
         static MMArrowKey map[] = { MMArrowKeyLeft, MMArrowKeyRight, MMArrowKeyDown, MMArrowKeyUp };
         [self.task handleCursorKeyInput:map[[keyEvent keyCode] - 123]];
+    } else if ([[keyEvent charactersIgnoringModifiers].uppercaseString isEqualToString:@"Z"] &&
+               ([keyEvent modifierFlags] & NSDeviceIndependentModifierFlagsMask & ~NSShiftKeyMask) == NSControlKeyMask) { // CTRL + Z
+        if (!self.isBackgrounded) {
+            [self taskMovedToBackground:self.task];
+        }
     } else {
         [self.task handleUserInput:[keyEvent characters]];
     }
@@ -217,7 +222,8 @@
 
 - (void)taskMovedToBackground:(MMTask *)task;
 {
-
+    self.backgrounded = YES;
+    [self.windowController taskRunsInBackground:self];
 }
 
 - (void)taskReceivedOutput:(MMTask *)task;
