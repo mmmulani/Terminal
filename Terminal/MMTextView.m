@@ -26,4 +26,11 @@
     return NO;
 }
 
+- (void)drawRect:(NSRect)rect;
+{
+    [super drawRect:rect];
+
+
+}
+
 @end

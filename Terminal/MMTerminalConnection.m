@@ -25,14 +25,31 @@
 
 @interface MMTerminalConnection ()
 
++ (NSInteger)uniqueShellIdentifier;
+
 @property NSConnection *connectionToSelf;
 @property NSString *directoryToStartIn;
 @property NSMutableDictionary *tasksByFD;
-@property NSProxy<MMShellProxy> *shellProxy;
+@property NSMutableArray *unusedShells;
+@property NSMutableArray *busyShells;
+@property NSMutableDictionary *shellIdentifierToFD;
+@property NSMutableDictionary *shellIdentifierToProxy;
+
+- (MMShellIdentifier)unusedShell;
+- (NSProxy<MMShellProxy> *)proxyForShellIdentifier:(MMShellIdentifier)identifier;
+- (int)fdForTask:(MMTask *)task;
 
 @end
 
 @implementation MMTerminalConnection
+
++ (MMShellIdentifier)uniqueShellIdentifier;
+{
+    static NSInteger uniqueIdentifier = 0;
+    uniqueIdentifier++;
+
+    return uniqueIdentifier;
+}
 
 - (id)initWithIdentifier:(NSInteger)identifier;
 {
@@ -41,10 +58,14 @@
         return nil;
     }
 
-    self.identifier = identifier;
+    self.terminalIdentifier = identifier;
     self.terminalHeight = DEFAULT_TERM_HEIGHT;
     self.terminalWidth = DEFAULT_TERM_WIDTH;
     self.tasksByFD = [NSMutableDictionary dictionary];
+    self.unusedShells = [NSMutableArray array];
+    self.busyShells = [NSMutableArray array];
+    self.shellIdentifierToFD = [NSMutableDictionary dictionary];
+    self.shellIdentifierToProxy = [NSMutableDictionary dictionary];
 
     return self;
 }
@@ -61,7 +82,7 @@
         self.directoryToStartIn = NSHomeDirectory();
     }
 
-    self.connectionToSelf = [NSConnection serviceConnectionWithName:[ConnectionTerminalName stringByAppendingFormat:@".%ld", (long)self.identifier] rootObject:self];
+    self.connectionToSelf = [NSConnection serviceConnectionWithName:[ConnectionTerminalName stringByAppendingFormat:@".%ld", (long)self.terminalIdentifier] rootObject:self];
 
     [NSThread detachNewThreadSelector:@selector(startShell) toTarget:self withObject:nil];
 }
@@ -87,17 +108,32 @@
         MMLog(@"Discarded all commands past the first in: %@", task.command);
     }
 
-    self.tasksByFD[@(self.fd)] = task;
+    if ([MMShellCommands isShellCommand:[commandGroups[0] commands][0]]) {
+        for (NSProxy<MMShellProxy > *proxy in self.shellIdentifierToProxy.allValues) {
+            [proxy executeTask:task.taskInfo];
+        }
 
-    [self.shellProxy executeTask:task.taskInfo];
+        return task;
+    }
+
+    MMShellIdentifier shellIdentifier = self.unusedShell;
+    [self.unusedShells removeObject:@(shellIdentifier)];
+    [self.busyShells addObject:@(shellIdentifier)];
+
+    NSNumber *fd = self.shellIdentifierToFD[@(shellIdentifier)];
+    self.tasksByFD[fd] = task;
+
     [self.terminalWindow setRunning:YES];
+    [[self proxyForShellIdentifier:shellIdentifier] executeTask:task.taskInfo];
 
     return task;
 }
 
 - (void)setPathVariable:(NSString *)pathVariable;
 {
-    [self.shellProxy setPathVariable:pathVariable];
+    for (NSProxy<MMShellProxy> *proxy in self.shellIdentifierToProxy.allValues) {
+        [proxy setPathVariable:pathVariable];
+    }
 }
 
 - (void)startShell;
@@ -109,13 +145,16 @@
 	win.ws_xpixel = 0;
 	win.ws_ypixel = 0;
 
+    NSInteger shellIdentifier = [[self class] uniqueShellIdentifier];
+
     struct termios terminalSettings;
     [self setUpTermIOSettings:&terminalSettings];
 
-    const char *args[3];
+    const char *args[4];
     args[0] = [[[NSBundle mainBundle] pathForAuxiliaryExecutable:@"Shell"] cStringUsingEncoding:NSUTF8StringEncoding];
-    args[1] = ((NSString *)[NSString stringWithFormat:@"%ld", (long)self.identifier]).UTF8String;
-    args[2] = NULL;
+    args[1] = ((NSString *)[NSString stringWithFormat:@"%ld", self.terminalIdentifier]).UTF8String;
+    args[2] = ((NSString *)[NSString stringWithFormat:@"%ld", shellIdentifier]).UTF8String;
+    args[3] = NULL;
 
     char ttyname[PATH_MAX];
     pid_t pid;
@@ -146,11 +185,11 @@
         exit(1);
     }
 
-    self.fd = fd;
+    self.shellIdentifierToFD[@(shellIdentifier)] = @(fd);
 
     NSLog(@"Started with pid %d", pid);
 
-    NSLog(@"TTY started: %@ with fd %d", [NSString stringWithCString:ttyname encoding:NSUTF8StringEncoding], self.fd);
+    NSLog(@"TTY started: %@ with fd %d", [NSString stringWithCString:ttyname encoding:NSUTF8StringEncoding], fd);
 
     fd_set rfds;
     fd_set wfds;
@@ -161,20 +200,20 @@
         FD_ZERO(&wfds);
         FD_ZERO(&efds);
 
-        FD_SET(self.fd, &rfds);
-        int result = select(self.fd + 1, &rfds, &wfds, &efds, nil);
+        FD_SET(fd, &rfds);
+        int result = select(fd + 1, &rfds, &wfds, &efds, nil);
 
         if (result == -1) {
             MMLog(@"select failed with errno: %d", errno);
         }
 
-        if (FD_ISSET(self.fd, &rfds)) {
+        if (FD_ISSET(fd, &rfds)) {
             // Mac OS X caps read() to 1024 bytes (for some reason), we expect that 4KiB is the most that will be sent in one read.
             // TODO: Handle the case where a UTF-8 character is split by the 4KiB partitioning.
             NSMutableData *data = [NSMutableData dataWithLength:1024 * 4];
             ssize_t totalBytesRead = 0;
             for (NSUInteger i = 0; i < 4; i++) {
-                ssize_t bytesRead = read(self.fd, [data mutableBytes] + totalBytesRead, 1024);
+                ssize_t bytesRead = read(fd, [data mutableBytes] + totalBytesRead, 1024);
 
                 if (bytesRead < 0) {
                     if (errno != EAGAIN && errno != EINTR) {
@@ -226,16 +265,15 @@
 
                 readData = [[NSString alloc] initWithData:cleanData encoding:NSUTF8StringEncoding];
             }
-            [self handleOutput:readData forFD:self.fd];
+            [self handleOutput:readData forFD:fd];
         }
         
-        if (FD_ISSET(self.fd, &wfds)) {
+        if (FD_ISSET(fd, &wfds)) {
             NSLog(@"Gotta write");
         }
     }
     
-    close(self.fd);
-    self.fd = -1;
+    close(fd);
 }
 
 void iconvFallback(const char *inbuf, size_t inbufsize, void (*write_replacement)(const unsigned int *buf, size_t buflen, void *callback_arg), void *callback_arg, void *data) {
@@ -279,11 +317,11 @@ void iconvFallback(const char *inbuf, size_t inbufsize, void (*write_replacement
 	termSettings->c_ospeed = B230400;
 }
 
-- (void)handleTerminalInput:(NSString *)input;
+- (void)handleTerminalInput:(NSString *)input task:(MMTask *)task;
 {
-    if (self.terminalWindow.running && [input length]) {
+    if ([input length]) {
         const char *typed = [input cStringUsingEncoding:NSUTF8StringEncoding];
-        write(self.fd, typed, [input length]);
+        write([self fdForTask:task], typed, [input length]);
     }
 }
 
@@ -312,7 +350,9 @@ void iconvFallback(const char *inbuf, size_t inbufsize, void (*write_replacement
 
 - (void)end;
 {
-    close(self.fd);
+    for (NSNumber *fd in self.shellIdentifierToFD.allValues) {
+        close([fd intValue]);
+    }
     self.connectionToSelf.rootObject = nil;
     self.connectionToSelf = nil;
 }
@@ -325,28 +365,28 @@ void iconvFallback(const char *inbuf, size_t inbufsize, void (*write_replacement
     struct winsize newSize;
     newSize.ws_col = columns;
     newSize.ws_row = rows;
-    ioctl(self.fd, TIOCSWINSZ, &newSize);
+
+    for (NSNumber *fd in self.shellIdentifierToFD.allValues) {
+        ioctl([fd intValue], TIOCSWINSZ, &newSize);
+    }
 }
 
 # pragma mark - MMTerminalProxy
 
-- (void)shellStarted;
+- (void)shellStartedWithIdentifier:(MMShellIdentifier)identifier;
 {
-    self.shellProxy = (NSProxy<MMShellProxy> *)[[NSConnection connectionWithRegisteredName:[ConnectionShellName stringByAppendingFormat:@".%ld", (long)self.identifier] host:nil] rootProxy];
+    NSProxy *shellProxy = [[NSConnection connectionWithRegisteredName:[ConnectionShellName stringByAppendingFormat:@".%ld.%ld", self.terminalIdentifier, identifier] host:nil] rootProxy];
+    self.shellIdentifierToProxy[@(identifier)] = shellProxy;
+    [self.unusedShells addObject:@(identifier)];
 }
 
 - (void)taskFinished:(MMTaskIdentifier)taskIdentifier status:(MMProcessStatus)status data:(id)data;
 {
-    int fd;
-    NSSet *tasksForFD = [self.tasksByFD keysOfEntriesPassingTest:^BOOL(NSNumber *fd, MMTask *task, BOOL *stop) {
-        if (task.identifier == taskIdentifier) {
-            *stop = YES;
-            return YES;
-        }
+    int fd = [self fdForTaskIdentifier:taskIdentifier];
 
-        return NO;
-    }];
-    fd = [[tasksForFD allObjects][0] intValue];
+    MMShellIdentifier shell = [self shellIdentifierForFD:fd];
+    [self.unusedShells addObject:@(shell)];
+    [self.busyShells removeObject:@(shell)];
 
     struct termios terminalSettings;
     [self setUpTermIOSettings:&terminalSettings];
@@ -370,6 +410,50 @@ void iconvFallback(const char *inbuf, size_t inbufsize, void (*write_replacement
     task.shellCommandAttachment = attachment;
 
     [self.terminalWindow shellCommandFinished];
+}
+
+# pragma mark - Shell identifier organization
+
+- (int)fdForTask:(MMTask *)task;
+{
+    return [[self.tasksByFD allKeysForObject:task][0] intValue];
+}
+
+- (int)fdForTaskIdentifier:(MMTaskIdentifier)taskIdentifier;
+{
+    NSSet *tasksForFD = [self.tasksByFD keysOfEntriesPassingTest:^BOOL(NSNumber *fd, MMTask *task, BOOL *stop) {
+        if (task.identifier == taskIdentifier) {
+            *stop = YES;
+            return YES;
+        }
+
+        return NO;
+    }];
+
+    if (tasksForFD.count == 0) {
+        return 0;
+    }
+
+    return [tasksForFD.allObjects[0] intValue];
+}
+
+- (MMShellIdentifier)shellIdentifierForFD:(int)fd;
+{
+    return [[self.shellIdentifierToFD allKeysForObject:@(fd)][0] integerValue];
+}
+
+- (NSProxy<MMShellProxy> *)proxyForShellIdentifier:(MMShellIdentifier)identifier;
+{
+    return self.shellIdentifierToProxy[@(identifier)];
+}
+
+- (MMShellIdentifier)unusedShell;
+{
+    if (self.unusedShells.count == 0) {
+        return 0;
+    }
+
+    return [self.unusedShells[0] integerValue];
 }
 
 @end

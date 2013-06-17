@@ -15,9 +15,10 @@ int main(int argc, const char * argv[])
 
     @autoreleasepool {
 
-        NSInteger identifier = [[NSString stringWithCString:argv[1] encoding:NSUTF8StringEncoding] intValue];
-        MMLog(@"Starting Shell with identifier: %ld", (long)identifier);
-        [[MMShellMain sharedApplication] startWithIdentifier:identifier];
+        NSInteger terminalIdentifier = [[NSString stringWithCString:argv[1] encoding:NSUTF8StringEncoding] integerValue];
+        NSInteger shellIdentifier = [[NSString stringWithCString:argv[2] encoding:NSUTF8StringEncoding] integerValue];
+        MMLog(@"Starting Shell with terminal identifier: %ld, shell identifier: %ld", terminalIdentifier, shellIdentifier);
+        [[MMShellMain sharedApplication] startWithTerminalIdentifier:terminalIdentifier shellIdentifer:shellIdentifier];
 
     }
     return 0;

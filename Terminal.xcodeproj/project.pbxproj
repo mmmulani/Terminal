@@ -37,6 +37,7 @@
 		913DE710176A5CE80068ED2F /* glyphiconsWarning.png in Resources */ = {isa = PBXBuildFile; fileRef = 913DE70A176A5CE80068ED2F /* glyphiconsWarning.png */; };
 		91557406175E9BFB004C2ED1 /* MMTabAction.m in Sources */ = {isa = PBXBuildFile; fileRef = 91557405175E9BFB004C2ED1 /* MMTabAction.m */; };
 		91557CA7175A557F00CEEFC8 /* MMDisplayActions.m in Sources */ = {isa = PBXBuildFile; fileRef = 91557CA6175A557F00CEEFC8 /* MMDisplayActions.m */; };
+		91563C45176E575C009FF46A /* MMOutputScrollView.m in Sources */ = {isa = PBXBuildFile; fileRef = 91563C44176E575C009FF46A /* MMOutputScrollView.m */; };
 		917D1C42173963C800503158 /* lexer.lm in Sources */ = {isa = PBXBuildFile; fileRef = 917D1C41173963C800503158 /* lexer.lm */; };
 		917D1C4417396C8000503158 /* parser.ym in Sources */ = {isa = PBXBuildFile; fileRef = 917D1C4317396C8000503158 /* parser.ym */; };
 		917D1C47173973D600503158 /* MMParserContext.m in Sources */ = {isa = PBXBuildFile; fileRef = 917D1C46173973D600503158 /* MMParserContext.m */; };
@@ -215,6 +216,8 @@
 		91557405175E9BFB004C2ED1 /* MMTabAction.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = MMTabAction.m; path = Task/MMTabAction.m; sourceTree = "<group>"; };
 		91557CA5175A557F00CEEFC8 /* MMDisplayActions.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = MMDisplayActions.h; path = Task/MMDisplayActions.h; sourceTree = "<group>"; };
 		91557CA6175A557F00CEEFC8 /* MMDisplayActions.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = MMDisplayActions.m; path = Task/MMDisplayActions.m; sourceTree = "<group>"; };
+		91563C43176E575C009FF46A /* MMOutputScrollView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MMOutputScrollView.h; sourceTree = "<group>"; };
+		91563C44176E575C009FF46A /* MMOutputScrollView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MMOutputScrollView.m; sourceTree = "<group>"; };
 		917D1C41173963C800503158 /* lexer.lm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.lex; name = lexer.lm; path = CommandLine/lexer.lm; sourceTree = "<group>"; };
 		917D1C4317396C8000503158 /* parser.ym */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.yacc; name = parser.ym; path = CommandLine/parser.ym; sourceTree = "<group>"; };
 		917D1C45173973D600503158 /* MMParserContext.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = MMParserContext.h; path = CommandLine/MMParserContext.h; sourceTree = "<group>"; };
@@ -404,6 +407,8 @@
 				91C7D983173ECE0900875974 /* MMCommandsTextView.m */,
 				9101DC261764E7CE00F05A43 /* MMInfoOverlayView.h */,
 				9101DC271764E7CF00F05A43 /* MMInfoOverlayView.m */,
+				91563C43176E575C009FF46A /* MMOutputScrollView.h */,
+				91563C44176E575C009FF46A /* MMOutputScrollView.m */,
 			);
 			name = "Terminal window";
 			sourceTree = "<group>";
@@ -808,6 +813,7 @@
 				91557406175E9BFB004C2ED1 /* MMTabAction.m in Sources */,
 				9101DC281764E7CF00F05A43 /* MMInfoOverlayView.m in Sources */,
 				91814925176CACDC0020AB9D /* MMTaskInfo.m in Sources */,
+				91563C45176E575C009FF46A /* MMOutputScrollView.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

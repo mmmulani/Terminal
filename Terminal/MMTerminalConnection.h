@@ -17,19 +17,18 @@
 
 @interface MMTerminalConnection : NSObject <MMTerminalProxy>
 
-@property int fd;
 @property BOOL running;
 @property (strong) MMTerminalWindowController *terminalWindow;
 @property (strong) NSString *currentDirectory;
 @property NSInteger terminalHeight;
 @property NSInteger terminalWidth;
-@property NSInteger identifier;
+@property NSInteger terminalIdentifier;
 
 - (id)initWithIdentifier:(NSInteger)identifier;
 
 - (void)createTerminalWindowWithState:(NSCoder *)state completionHandler:(void (^)(NSWindow *, NSError *))completionHandler;
 
-- (void)handleTerminalInput:(NSString *)input;
+- (void)handleTerminalInput:(NSString *)input task:(MMTask *)task;
 - (MMTask *)createAndRunTaskWithCommand:(NSString *)command;
 - (void)setPathVariable:(NSString *)pathVariable;
 

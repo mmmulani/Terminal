@@ -44,13 +44,12 @@
     return self;
 }
 
-- (void)startWithIdentifier:(NSInteger)identifier;
+- (void)startWithTerminalIdentifier:(NSInteger)terminalIdentifier shellIdentifer:(MMShellIdentifier)shellIdentifier;
 {
-    self.identifier = identifier;
-    self.shellConnection = [NSConnection serviceConnectionWithName:[ConnectionShellName stringByAppendingFormat:@".%ld", self.identifier] rootObject:self];
-    self.terminalConnection = [NSConnection connectionWithRegisteredName:[ConnectionTerminalName stringByAppendingFormat:@".%ld", (long)self.identifier] host:nil];
+    self.shellConnection = [NSConnection serviceConnectionWithName:[ConnectionShellName stringByAppendingFormat:@".%ld.%ld", terminalIdentifier, shellIdentifier] rootObject:self];
+    self.terminalConnection = [NSConnection connectionWithRegisteredName:[ConnectionTerminalName stringByAppendingFormat:@".%ld", terminalIdentifier] host:nil];
     self.terminalProxy = (NSProxy<MMTerminalProxy> *)[self.terminalConnection rootProxy];
-    [self.terminalProxy shellStarted];
+    [self.terminalProxy shellStartedWithIdentifier:shellIdentifier];
 
     MMLog(@"Shell connection: %@", self.shellConnection);
 

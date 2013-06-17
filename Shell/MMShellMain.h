@@ -17,11 +17,10 @@
 
 @property (strong) NSConnection *shellConnection;
 @property (strong) NSConnection *terminalConnection;
-@property NSInteger identifier;
 @property NSProxy<MMTerminalProxy> *terminalProxy;
 
 + (MMShellMain *)sharedApplication;
 
-- (void)startWithIdentifier:(NSInteger)identifier;
+- (void)startWithTerminalIdentifier:(NSInteger)terminalIdentifier shellIdentifer:(MMShellIdentifier)shellIdentifier;
 
 @end

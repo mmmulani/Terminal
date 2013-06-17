@@ -103,7 +103,7 @@ NSString *MMTaskDoneHandlingOutputNotification =  @"MMTaskDoneHandlingOutput";
 
 - (void)handleUserInput:(NSString *)input;
 {
-    [self.terminalConnection handleTerminalInput:input];
+    [self.terminalConnection handleTerminalInput:input task:self];
 }
 
 - (void)handleCursorKeyInput:(MMArrowKey)arrowKey;
