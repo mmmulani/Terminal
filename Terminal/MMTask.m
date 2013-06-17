@@ -101,7 +101,9 @@
 
 - (void)handleUserInput:(NSString *)input;
 {
-    [self.terminalConnection handleTerminalInput:input task:self];
+    if (!self.isFinished) {
+        [self.terminalConnection handleTerminalInput:input task:self];
+    }
 }
 
 - (void)handleCursorKeyInput:(MMArrowKey)arrowKey;
