@@ -370,9 +370,6 @@ void iconvFallback(const char *inbuf, size_t inbufsize, void (*write_replacement
     for (NSNumber *fd in self.shellIdentifierToFD.allValues) {
         close([fd intValue]);
     }
-    for (NSProxy<MMShellProxy> *proxy in self.shellIdentifierToProxy.allValues) {
-        [proxy endShell];
-    }
     self.connectionToSelf.rootObject = nil;
     self.connectionToSelf = nil;
 }

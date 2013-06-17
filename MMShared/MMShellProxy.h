@@ -14,6 +14,5 @@
 
 - (void)setPathVariable:(NSString *)pathVariable;
 - (void)executeTask:(MMTaskInfo *)taskInfo;
-- (void)endShell;
 
 @end

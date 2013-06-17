@@ -204,13 +204,6 @@
     _exit(-1);
 }
 
-- (void)endShell;
-{
-    dispatch_async(dispatch_get_main_queue(), ^{
-        exit(0);
-    });
-}
-
 - (void)waitForChildToFinish:(NSNumber *)child_pid;
 {
     int status;
