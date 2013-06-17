@@ -413,6 +413,7 @@ void iconvFallback(const char *inbuf, size_t inbufsize, void (*write_replacement
         }
     }
 
+    [self.shellCommandTasks removeObject:task];
     [task processFinished:success data:attachment];
 }
 
