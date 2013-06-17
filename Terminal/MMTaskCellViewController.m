@@ -94,7 +94,7 @@
         NSAttributedString *output = [self.outputView.textStorage attributedSubstringFromRange:NSMakeRange(0, self.outputView.textStorage.length)];
 
         NSTextStorage *textStorage = [[NSTextStorage alloc] initWithAttributedString:output];
-        NSTextContainer *textContainer = [[NSTextContainer alloc] initWithContainerSize:NSMakeSize(self.outputView.textContainer.containerSize.width, FLT_MAX)];
+        NSTextContainer *textContainer = [[NSTextContainer alloc] initWithContainerSize:NSMakeSize(self.view.frame.size.width - 40, FLT_MAX)];
         NSLayoutManager *layoutManager = [[NSLayoutManager alloc] init];
         [layoutManager addTextContainer:textContainer];
         [textStorage addLayoutManager:layoutManager];
@@ -105,8 +105,8 @@
     // When drawing the whole screen, we use 64 points for the chrome and 15 points for each line of text.
     CGFloat heightForWholeScreen = 64.0 + 15.0 * self.task.termHeight;
 
-    NSScrollView *textScrollView = (NSScrollView *)self.outputView.superview.superview;
-    return MIN(self.view.frame.size.height - textScrollView.frame.size.height + textHeight, heightForWholeScreen);
+    CGFloat height = MIN(64 + textHeight, heightForWholeScreen);
+    return height;
 }
 
 - (void)updateWithANSIOutput;
@@ -215,9 +215,9 @@
         [self updateWithANSIOutput];
     }
 
-    [self.windowController noteHeightChangeForTask:self];
-
     [self.windowController taskFinished:self];
+
+    [self.windowController noteHeightChangeForTask:self];
 }
 
 - (void)taskMovedToBackground:(MMTask *)task;

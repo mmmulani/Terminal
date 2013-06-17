@@ -144,6 +144,35 @@
     self.numberOfTasksRunning--;
     [self invalidateRestorableState];
 
+    // If there are still tasks running, we make sure the running tasks stay at the bottom.
+    if (self.numberOfTasksRunning > 0) {
+        NSInteger oldIndex = [self indexOfTask:taskController];
+        MMTask *task = self.tasks[oldIndex];
+        [self.tasks removeObjectAtIndex:oldIndex];
+        [self.taskViewControllers removeObjectAtIndex:oldIndex];
+
+        NSInteger indexToMoveTask;
+        NSInteger runningTasksSeen = 0;
+        for (indexToMoveTask = self.taskViewControllers.count - 1; indexToMoveTask >= 0; indexToMoveTask--) {
+            if (!((MMTask *)self.tasks[indexToMoveTask]).isFinished) {
+                runningTasksSeen++;
+            }
+
+            if (runningTasksSeen == self.numberOfTasksRunning) {
+                break;
+            }
+        }
+
+        [self.tasks insertObject:task atIndex:indexToMoveTask];
+        [self.taskViewControllers insertObject:taskController atIndex:indexToMoveTask];
+
+        [NSAnimationContext beginGrouping];
+        [[NSAnimationContext currentContext] setDuration:0.0];
+        [self.tableView reloadData];
+        [self.tableView noteHeightOfRowsWithIndexesChanged:[NSIndexSet indexSetWithIndexesInRange:NSMakeRange(indexToMoveTask, self.tasks.count - indexToMoveTask)]];
+        [NSAnimationContext endGrouping];
+    }
+
     [self showCommandControlsIfNecessary];
 }
 
