@@ -196,9 +196,7 @@
         [self.task handleCursorKeyInput:map[[keyEvent keyCode] - 123]];
     } else if ([[keyEvent charactersIgnoringModifiers].uppercaseString isEqualToString:@"Z"] &&
                ([keyEvent modifierFlags] & NSDeviceIndependentModifierFlagsMask & ~NSShiftKeyMask) == NSControlKeyMask) { // CTRL + Z
-        if (!self.isBackgrounded) {
-            [self taskMovedToBackground:self.task];
-        }
+        [self taskMovedToBackground:self.task];
     } else {
         [self.task handleUserInput:[keyEvent characters]];
     }

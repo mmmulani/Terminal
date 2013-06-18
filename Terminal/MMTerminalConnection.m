@@ -120,6 +120,7 @@
         }
 
         [self.shellCommandTasks addObject:task];
+        [task processStarted];
 
         return task;
     }
@@ -152,6 +153,10 @@
 {
     if (numberOfCommands <= self.shellIdentifierToFD.count) {
         return;
+    }
+
+    if (self.currentDirectory) {
+        self.directoryToStartIn = self.currentDirectory;
     }
 
     NSInteger numberOfShellsToStart = numberOfCommands - self.shellIdentifierToFD.count;

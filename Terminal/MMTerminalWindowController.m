@@ -298,6 +298,51 @@
     [appDelegate updateWindowMenu];
 }
 
+- (NSInteger)indexOfSelectedRow;
+{
+    if (![self.window.firstResponder isKindOfClass:[MMTextView class]]) {
+        return -1;
+    }
+    NSView *view = (NSView *)self.window.firstResponder;
+    while (![view isKindOfClass:[NSTableRowView class]]) {
+        view = view.superview;
+    }
+    view = view.subviews[0];
+
+    NSInteger i;
+    for (i = self.taskViewControllers.count - 1; i >= 0; i--) {
+        if ([[self.taskViewControllers[i] view] isEqual:view]) {
+            break;
+        }
+    }
+
+    return i;
+}
+
+- (IBAction)selectPreviousCommand:(id)sender;
+{
+    NSInteger currentCommand = [self indexOfSelectedRow];
+    if (currentCommand != -1 &&
+        currentCommand > 0 &&
+        ![self.taskViewControllers[currentCommand - 1] task].isFinished) {
+        [self.window makeFirstResponder:((MMTaskCellViewController *)self.taskViewControllers[currentCommand - 1]).outputView];
+    } else if (![self.taskViewControllers.lastObject task].isFinished) {
+        [self.window makeFirstResponder:((MMTaskCellViewController *)self.taskViewControllers.lastObject).outputView];
+    }
+}
+
+- (IBAction)selectNextCommand:(id)sender;
+{
+    NSInteger currentCommand = [self indexOfSelectedRow];
+    if (currentCommand != -1 &&
+        currentCommand < self.taskViewControllers.count - 1 &&
+        ![self.taskViewControllers[currentCommand + 1] task].isFinished) {
+        [self.window makeFirstResponder:((MMTaskCellViewController *)self.taskViewControllers[currentCommand + 1]).outputView];
+    } else if (![self.taskViewControllers.lastObject task].isFinished) {
+        [self.window makeFirstResponder:((MMTaskCellViewController *)self.taskViewControllers.lastObject).outputView];
+    }
+}
+
 # pragma mark - Directory watching
 
 - (void)directoryModified:(NSString *)path;

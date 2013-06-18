@@ -39,6 +39,9 @@
 
 - (void)resizeWindowForTerminalScreenSizeOfColumns:(NSInteger)columns rows:(NSInteger)rows;
 
+- (IBAction)selectPreviousCommand:(id)sender;
+- (IBAction)selectNextCommand:(id)sender;
+
 - (void)taskStarted:(MMTaskCellViewController *)taskController;
 - (void)taskFinished:(MMTaskCellViewController *)taskController;
 - (void)taskRunsInBackground:(MMTaskCellViewController *)taskController;
