@@ -33,4 +33,18 @@
 
 }
 
+- (BOOL)resignFirstResponder;
+{
+    self.enclosingScrollView.needsDisplay = YES;
+
+    return [super resignFirstResponder];
+}
+
+- (BOOL)becomeFirstResponder;
+{
+    self.enclosingScrollView.needsDisplay = YES;
+
+    return [super becomeFirstResponder];
+}
+
 @end

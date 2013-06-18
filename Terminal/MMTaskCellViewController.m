@@ -35,6 +35,7 @@
         }
 
         [self.view addSubview:self.imageView];
+        [self.view addSubview:self.spinningIndicator];
 
         if (self.task.isFinished) {
             [self updateWithANSIOutput];
@@ -53,9 +54,23 @@
     [[NSNotificationCenter defaultCenter] removeObserver:self];
 }
 
+- (void)observeValueForKeyPath:(NSString *)keyPath ofObject:(id)object change:(NSDictionary *)change context:(void *)context;
+{
+    if ([keyPath isEqualToString:@"firstResponder"]) {
+        if ([self.windowController.window.firstResponder isEqual:self.outputView]) {
+            [self.spinningIndicator stopAnimation:nil];
+            [self.spinningIndicator setHidden:YES];
+        } else {
+            [self.spinningIndicator startAnimation:nil];
+            [self.spinningIndicator setHidden:NO];
+        }
+    }
+}
+
 - (void)labelFrameChanged:(NSNotification *)notification;
 {
     [self.imageView setFrameOrigin:NSMakePoint(self.label.frame.origin.x + self.label.intrinsicContentSize.width + 10, self.label.frame.origin.y)];
+    [self.spinningIndicator setFrameOrigin:self.imageView.frame.origin];
 }
 
 - (void)outputFrameChanged:(NSNotification *)notification;
@@ -114,9 +129,6 @@
     NSUInteger cursorPositionByCharacters = self.task.cursorPositionByCharacters;
 
     [self.outputView setSelectedRange:NSMakeRange(cursorPositionByCharacters, 0)];
-
-    // Sometimes the NSViewFrameDidChangeNotification does not get issued, so we call it here to make sure that it gets sent.
-    // [self outputFrameChanged:nil];
     
     if (self.task.isFinished) {
         NSImage *imageToDisplay;
@@ -202,6 +214,9 @@
 - (void)taskStarted:(MMTask *)task;
 {
     [self.windowController taskStarted:self];
+
+    [self.spinningIndicator startAnimation:nil];
+    [self.windowController.window addObserver:self forKeyPath:@"firstResponder" options:NSKeyValueObservingOptionInitial context:NULL];
 }
 
 - (void)taskFinished:(MMTask *)task;
@@ -218,6 +233,9 @@
     [self.windowController taskFinished:self];
 
     [self.windowController noteHeightChangeForTask:self];
+
+    [self.windowController.window removeObserver:self forKeyPath:@"firstResponder"];
+    [self.spinningIndicator removeFromSuperview];
 }
 
 - (void)taskMovedToBackground:(MMTask *)task;

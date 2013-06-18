@@ -18,6 +18,7 @@
 			<string>NSImageView</string>
 			<string>NSMenu</string>
 			<string>NSMenuItem</string>
+			<string>NSProgressIndicator</string>
 			<string>NSScrollView</string>
 			<string>NSScroller</string>
 			<string>NSTextField</string>
@@ -216,7 +217,7 @@
 								<string key="NSFrame">{{626, 1}, {16, 14}}</string>
 								<reference key="NSSuperview" ref="920814991"/>
 								<reference key="NSWindow"/>
-								<reference key="NSNextKeyView"/>
+								<reference key="NSNextKeyView" ref="688451220"/>
 								<string key="NSReuseIdentifierKey">_NS:83</string>
 								<bool key="NSAllowsLogicalLayoutDirection">NO</bool>
 								<reference key="NSTarget" ref="920814991"/>
@@ -293,7 +294,6 @@
 				<string key="NSFrameSize">{16, 16}</string>
 				<reference key="NSSuperview"/>
 				<reference key="NSWindow"/>
-				<reference key="NSNextKeyView"/>
 				<string key="NSReuseIdentifierKey">_NS:9</string>
 				<bool key="NSEnabled">YES</bool>
 				<object class="NSImageCell" key="NSCell" id="242606845">
@@ -307,6 +307,14 @@
 				</object>
 				<bool key="NSAllowsLogicalLayoutDirection">NO</bool>
 				<bool key="NSEditable">YES</bool>
+			</object>
+			<object class="NSProgressIndicator" id="688451220">
+				<nil key="NSNextResponder"/>
+				<int key="NSvFlags">-2147483380</int>
+				<string key="NSFrameSize">{16, 16}</string>
+				<string key="NSReuseIdentifierKey">_NS:945</string>
+				<int key="NSpiFlags">20746</int>
+				<double key="NSMaxValue">100</double>
 			</object>
 		</array>
 		<object class="IBObjectContainer" key="IBDocument.Objects">
@@ -350,6 +358,14 @@
 						<reference key="destination" ref="839795112"/>
 					</object>
 					<int key="connectionID">52</int>
+				</object>
+				<object class="IBConnectionRecord">
+					<object class="IBOutletConnection" key="connection">
+						<string key="label">spinningIndicator</string>
+						<reference key="source" ref="1001"/>
+						<reference key="destination" ref="688451220"/>
+					</object>
+					<int key="connectionID">68</int>
 				</object>
 				<object class="IBConnectionRecord">
 					<object class="IBOutletConnection" key="connection">
@@ -614,6 +630,11 @@
 						<reference key="object" ref="242606845"/>
 						<reference key="parent" ref="839795112"/>
 					</object>
+					<object class="IBObjectRecord">
+						<int key="objectID">67</int>
+						<reference key="object" ref="688451220"/>
+						<reference key="parent" ref="0"/>
+					</object>
 				</array>
 			</object>
 			<dictionary class="NSMutableDictionary" key="flattenedProperties">
@@ -649,6 +670,7 @@
 				<string key="49.IBPluginDependency">com.apple.InterfaceBuilder.CocoaPlugin</string>
 				<string key="5.IBPluginDependency">com.apple.InterfaceBuilder.CocoaPlugin</string>
 				<string key="6.IBPluginDependency">com.apple.InterfaceBuilder.CocoaPlugin</string>
+				<string key="67.IBPluginDependency">com.apple.InterfaceBuilder.CocoaPlugin</string>
 				<string key="7.IBPluginDependency">com.apple.InterfaceBuilder.CocoaPlugin</string>
 				<string key="9.IBPluginDependency">com.apple.InterfaceBuilder.CocoaPlugin</string>
 			</dictionary>
@@ -656,7 +678,7 @@
 			<nil key="activeLocalization"/>
 			<dictionary class="NSMutableDictionary" key="localizations"/>
 			<nil key="sourceID"/>
-			<int key="maxID">66</int>
+			<int key="maxID">70</int>
 		</object>
 		<object class="IBClassDescriber" key="IBDocument.Classes">
 			<array class="NSMutableArray" key="referencedPartialClassDescriptions">
@@ -686,6 +708,7 @@
 						<string key="imageView">NSImageView</string>
 						<string key="label">NSTextField</string>
 						<string key="outputView">MMTextView</string>
+						<string key="spinningIndicator">NSProgressIndicator</string>
 					</dictionary>
 					<dictionary class="NSMutableDictionary" key="toOneOutletInfosByName">
 						<object class="IBToOneOutletInfo" key="imageView">
@@ -699,6 +722,10 @@
 						<object class="IBToOneOutletInfo" key="outputView">
 							<string key="name">outputView</string>
 							<string key="candidateClassName">MMTextView</string>
+						</object>
+						<object class="IBToOneOutletInfo" key="spinningIndicator">
+							<string key="name">spinningIndicator</string>
+							<string key="candidateClassName">NSProgressIndicator</string>
 						</object>
 					</dictionary>
 					<object class="IBClassDescriptionSource" key="sourceIdentifier">
