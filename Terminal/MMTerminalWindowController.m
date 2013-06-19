@@ -37,6 +37,9 @@
 @property NSInteger numberOfTasksRunning;
 @property BOOL hidingCommandInputControls;
 
+@property CGFloat extraWidthMargin;
+@property CGFloat extraHeightMargin;
+
 @end
 
 @implementation MMTerminalWindowController
@@ -51,6 +54,9 @@
     self.directoriesBeingWatched = [NSMutableDictionary dictionary];
     self.terminalConnection = terminalConnection;
     self.window.restorationClass = [[NSApp delegate] class];
+
+    self.extraWidthMargin = 56.0;
+    self.extraHeightMargin = 335.0;
 
     if (state) {
         self.tasks = [state decodeObjectForKey:MMSelfKey(tasks)];
@@ -69,6 +75,11 @@
         if (terminalWidth > 0) {
             self.terminalConnection.terminalWidth = terminalWidth;
             self.terminalConnection.terminalHeight = terminalHeight;
+        }
+
+        if ([state containsValueForKey:MMSelfKey(extraWidthMargin)]) {
+            self.extraWidthMargin = [state decodeFloatForKey:MMSelfKey(extraWidthMargin)];
+            self.extraHeightMargin = [state decodeFloatForKey:MMSelfKey(extraHeightMargin)];
         }
     }
 
@@ -558,26 +569,31 @@ static void directoryWatchingCallback(CFFileDescriptorRef kqRef, CFOptionFlags c
 - (NSSize)windowWillResize:(NSWindow *)sender toSize:(NSSize)frameSize;
 {
     // In terms of width considerations:
-    // 7.82666 is required for each column and 56 is required for the surrounding chrome.
+    // 7.82666 is required for each column and (by default) we add 56 for the surrounding chrome.
     // For height:
-    // 15 is required for each row and 337 is required for the chrome.
+    // 15 is added for each row of text and (by default) we add 335 for the surrounding chrome/context.
+    // The 335 value is a margin that is modifiable by the user, by resizing and holding down Command.
+
+    if ([NSEvent modifierFlags] & NSCommandKeyMask) {
+        self.extraHeightMargin = frameSize.height - (15 * self.terminalConnection.terminalHeight);
+    }
 
     NSSize newFrame = frameSize;
-    NSInteger columns = MAX(20, round((frameSize.width - 56) / 7.82666));
-    NSInteger rows = MAX(10, round((frameSize.height - 337) / 15));
+    NSInteger columns = MAX(20, round((frameSize.width - self.extraWidthMargin) / 7.82666));
+    NSInteger rows = MAX(10, round((frameSize.height - self.extraHeightMargin) / 15));
 
     self.infoOverlayView.displayText = [NSString stringWithFormat:@"%ldx%ld", columns, rows];
 
-    newFrame.width = floor(56 + columns * 7.82666);
-    newFrame.height = floor(337 + rows * 15);
+    newFrame.width = floor(self.extraWidthMargin + columns * 7.82666);
+    newFrame.height = floor(self.extraHeightMargin + rows * 15);
     return newFrame;
 }
 
 - (void)resizeWindowForTerminalScreenSizeOfColumns:(NSInteger)columns rows:(NSInteger)rows;
 {
     CGSize newSize = self.window.frame.size;
-    newSize.width = round(7.82666 * columns) + 56;
-    newSize.height = 15 * rows + 337;
+    newSize.width = round(7.82666 * columns) + self.extraWidthMargin;
+    newSize.height = 15 * rows + self.extraHeightMargin;
     NSRect newFrame = self.window.frame;
     newFrame.size = newSize;
 
@@ -586,10 +602,11 @@ static void directoryWatchingCallback(CFFileDescriptorRef kqRef, CFOptionFlags c
 
 - (void)windowDidResize:(NSNotification *)notification;
 {
-    NSInteger newWidth = lround((self.window.frame.size.width - 56) / 7.82666);
-    NSInteger newHeight = lround((self.window.frame.size.height - 337) / 15);
+    NSInteger newWidth = lround((self.window.frame.size.width - self.extraWidthMargin) / 7.82666);
+    NSInteger newHeight = lround((self.window.frame.size.height - self.extraHeightMargin) / 15);
 
     [self.terminalConnection changeTerminalSizeToColumns:newWidth rows:newHeight];
+    // TODO: Affect all active tasks.
     [[self.taskViewControllers lastObject] resizeTerminalToColumns:newWidth rows:newHeight];
 }
 
@@ -610,6 +627,8 @@ static void directoryWatchingCallback(CFFileDescriptorRef kqRef, CFOptionFlags c
     [coder encodeObject:self.currentDirectory forKey:MMSelfKey(currentDirectory)];
     [coder encodeInteger:self.terminalConnection.terminalHeight forKey:@"terminalHeight"];
     [coder encodeInteger:self.terminalConnection.terminalWidth forKey:@"terminalWidth"];
+    [coder encodeFloat:self.extraWidthMargin forKey:MMSelfKey(extraWidthMargin)];
+    [coder encodeFloat:self.extraHeightMargin forKey:MMSelfKey(extraHeightMargin)];
 }
 
 @end
