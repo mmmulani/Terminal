@@ -24,11 +24,14 @@ void MMLog(NSString *format, ...)
         processName = [[NSProcessInfo processInfo] processName];
     }
     static NSDateFormatter *dateFormatter;
-    if (!dateFormatter) {
-        dateFormatter = [[NSDateFormatter alloc] init];
-        [dateFormatter setDateFormat:@"yyyy-MM-dd HH:mm:ss.SSS"];
+    NSString *now;
+    @synchronized(dateFormatter) {
+        if (!dateFormatter) {
+            dateFormatter = [[NSDateFormatter alloc] init];
+            [dateFormatter setDateFormat:@"yyyy-MM-dd HH:mm:ss.SSS"];
+        }
+        now = [dateFormatter stringFromDate:[NSDate date]];
     }
-    NSString *now = [dateFormatter stringFromDate:[NSDate date]];
     va_list args;
     va_start(args, format);
     NSString *formattedString = [[NSString alloc] initWithFormat:format arguments:args];
