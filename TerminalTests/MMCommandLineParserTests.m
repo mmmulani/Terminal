@@ -11,6 +11,15 @@
 #import "MMCommandLineArgumentsParser.h"
 #import "MMCommandGroup.h"
 
+#import <OCMock/OCMock.h>
+
+@interface MMCommand (mock)
+
++ (NSString *)homeDirectoryForUser:(NSString *)user;
++ (NSString *)homeDirectoryForCurrentUser;
+
+@end
+
 @implementation MMCommandLineParserTests
 
 #define CompareInputAgainstExpectedParsedOutput(input, output) \
@@ -60,6 +69,21 @@ do {\
 {
     NSArray *commands = [MMCommandLineArgumentsParser tokensFromCommandLineWithoutEscaping:@"test 123 ; echo 456"];
     STAssertEqualObjects(commands, (@[@"test", @"123", @"echo", @"456"]), @"");
+
+    MMCommand *command = [MMCommand new];
+    command.arguments = [@[@"ls", @"~/Documents"] mutableCopy];
+    id commandMock = [OCMockObject partialMockForObject:command];
+    [[[commandMock stub] andReturn:@"/Users/test"] homeDirectoryForCurrentUser];
+    STAssertEqualObjects([commandMock unescapedArguments], (@[@"ls", @"/Users/test/Documents"]), @"");
+    [commandMock stopMocking];
+
+    command = [MMCommand new];
+    command.arguments = [@[@"echo", @"~test", @"~root/lol"] mutableCopy];
+    commandMock = [OCMockObject partialMockForObject:command];
+    [[[commandMock stub] andReturn:@"/Users/test"] homeDirectoryForUser:@"test"];
+    [[[commandMock stub] andReturn:@"/Users/root"] homeDirectoryForUser:@"root"];
+    STAssertEqualObjects([commandMock unescapedArguments], (@[@"echo", @"/Users/test", @"/Users/root/lol"]), @"");
+    [commandMock stopMocking];
 }
 
 - (void)testTokenEndings;

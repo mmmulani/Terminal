@@ -96,7 +96,35 @@
         }
     }
 
+    // Apply tilde expansion.
+    if ([argument characterAtIndex:0] == '~') {
+        NSRange slashRange = [newArgument rangeOfString:@"/"];
+        NSString *user = @"";
+        if (slashRange.location != NSNotFound) {
+            user = [newArgument substringWithRange:NSMakeRange(1, slashRange.location - 1)];
+        } else {
+            user = [newArgument substringFromIndex:1];
+        }
+
+        NSString *homeDirectory = user.length == 0 ? [self homeDirectoryForCurrentUser] : [self homeDirectoryForUser:user];
+        if (homeDirectory) {
+            [newArgument replaceCharactersInRange:NSMakeRange(0, 1 + user.length) withString:homeDirectory];
+        }
+    }
+
     return newArgument;
+}
+
++ (NSString *)homeDirectoryForUser:(NSString *)user;
+{
+    // We write this as a method so that it can be mocked for tests.
+    return NSHomeDirectoryForUser(user);
+}
+
++ (NSString *)homeDirectoryForCurrentUser;
+{
+    // We write this as a method so that it can be mocked for tests.
+    return NSHomeDirectory();
 }
 
 + (NSString *)escapeArgument:(NSString *)argument;
