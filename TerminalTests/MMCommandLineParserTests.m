@@ -35,6 +35,12 @@ do {\
     STAssertEqualObjects(result, output, @"Compared parser output to provided output."); \
 } while (0)
 
+#define CompareArgumentAgainstExpectedEscaped(argument, expected) \
+do {\
+    STAssertEqualObjects([MMCommand unescapeArgument:[MMCommand escapeArgument:argument]], argument, @"Unescaping and escaping should be idempotent"); \
+    STAssertEqualObjects([MMCommand escapeArgument:argument], expected, @"Compared escaped argument to expected."); \
+} while (0)
+
 - (void)testCommandSplitting;
 {
     CompareInputAgainstExpectedParsedOutput(@"echo", @[@[@[@"echo"]]]);
@@ -84,6 +90,16 @@ do {\
     [[[commandMock stub] andReturn:@"/Users/root"] homeDirectoryForUser:@"root"];
     STAssertEqualObjects([commandMock unescapedArguments], (@[@"echo", @"/Users/test", @"/Users/root/lol"]), @"");
     [commandMock stopMocking];
+}
+
+- (void)testEscaping;
+{
+    CompareArgumentAgainstExpectedEscaped(@"test", @"test");
+    CompareArgumentAgainstExpectedEscaped(@"test abc", @"test\\ abc");
+    CompareArgumentAgainstExpectedEscaped(@"abc*def", @"abc\\*def");
+    CompareArgumentAgainstExpectedEscaped(@"~notpath", @"\\~notpath");
+    CompareArgumentAgainstExpectedEscaped(@"what?", @"what\\?");
+    CompareArgumentAgainstExpectedEscaped(@"test\"abc", @"test\\\"abc");
 }
 
 - (void)testTokenEndings;

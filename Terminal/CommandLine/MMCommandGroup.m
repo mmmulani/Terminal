@@ -97,7 +97,7 @@
     }
 
     // Apply tilde expansion.
-    if ([argument characterAtIndex:0] == '~') {
+    if (argument.length > 0 && [argument characterAtIndex:0] == '~') {
         NSRange slashRange = [newArgument rangeOfString:@"/"];
         NSString *user = @"";
         if (slashRange.location != NSNotFound) {
@@ -129,7 +129,15 @@
 
 + (NSString *)escapeArgument:(NSString *)argument;
 {
-    return [[argument stringByReplacingOccurrencesOfString:@"\\" withString:@"\\\\"] stringByReplacingOccurrencesOfString:@" " withString:@"\\ "];
+    NSString *charactersToEscape = @"\\ ~*?\"";
+    NSMutableString *mutableArgument = [argument mutableCopy];
+    for (NSInteger i = 0; i < charactersToEscape.length; i++) {
+        unichar currentChar = [charactersToEscape characterAtIndex:i];
+        NSString *search = [NSString stringWithCharacters:&currentChar length:1];
+        NSString *replace = [@"\\" stringByAppendingString:search];
+        [mutableArgument replaceOccurrencesOfString:search withString:replace options:0 range:NSMakeRange(0, mutableArgument.length)];
+    }
+    return mutableArgument;
 }
 
 - (id)init;
