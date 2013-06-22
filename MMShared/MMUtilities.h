@@ -11,5 +11,6 @@
 @interface MMUtilities : NSObject
 
 + (void)postData:(NSData *)data toURL:(NSURL *)url description:(NSString *)description;
++ (NSMutableArray *)filesAndFoldersInDirectory:(NSString *)path includeHiddenFiles:(BOOL)hiddenFiles;
 
 @end

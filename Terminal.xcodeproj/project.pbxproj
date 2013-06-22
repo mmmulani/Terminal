@@ -64,6 +64,7 @@
 		91C7D984173ECE0900875974 /* MMCommandsTextView.m in Sources */ = {isa = PBXBuildFile; fileRef = 91C7D983173ECE0900875974 /* MMCommandsTextView.m */; };
 		91C7D987173F250300875974 /* MMCompletionEngine.m in Sources */ = {isa = PBXBuildFile; fileRef = 91C7D986173F250300875974 /* MMCompletionEngine.m */; };
 		91C7D98D1740793800875974 /* libiconv.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 91C7D9881740575700875974 /* libiconv.dylib */; };
+		91DF63DB1774ECDB0053CB4F /* MMUtilities.m in Sources */ = {isa = PBXBuildFile; fileRef = 912141A71758F61200A50F6E /* MMUtilities.m */; };
 		91E4A26A1753F9EF00EFDDBE /* MMCommandGroup.m in Sources */ = {isa = PBXBuildFile; fileRef = 91E4A2691753F9EF00EFDDBE /* MMCommandGroup.m */; };
 		91E4A26B1754371400EFDDBE /* MMCommandGroup.m in Sources */ = {isa = PBXBuildFile; fileRef = 91E4A2691753F9EF00EFDDBE /* MMCommandGroup.m */; };
 		91E4C02C1742C65400062EF5 /* Icon.icns in Resources */ = {isa = PBXBuildFile; fileRef = 91E4C02B1742C65400062EF5 /* Icon.icns */; };
@@ -751,6 +752,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				91DF63DB1774ECDB0053CB4F /* MMUtilities.m in Sources */,
 				91E4A26B1754371400EFDDBE /* MMCommandGroup.m in Sources */,
 				918649BA16D5D1BD0024D9BE /* MMShared.m in Sources */,
 				919BA9B416C875C40091CB1B /* main.m in Sources */,

@@ -31,9 +31,10 @@ typedef enum {
 @property id standardError;
 
 + (NSString *)escapeArgument:(NSString *)argument;
-+ (NSString *)unescapeArgument:(NSString *)argument;
++ (NSArray *)unescapeArgument:(NSString *)argument;
++ (NSArray *)unescapeArgument:(NSString *)argument inDirectory:(NSString *)directory;
 
-- (NSArray *)unescapedArguments;
+- (NSArray *)unescapedArgumentsInDirectory:(NSString *)currentDirectory;
 
 // These methods should only be called from the yacc-generated parser.
 - (void)insertArgumentAtFront:(NSString *)argument;

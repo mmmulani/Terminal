@@ -92,7 +92,7 @@
 
     NSInteger maxArguments = 0;
     for (MMCommand *command in commandGroup.commands) {
-        maxArguments = MAX(maxArguments, command.arguments.count);
+        maxArguments = MAX(maxArguments, [command unescapedArgumentsInDirectory:[[NSFileManager defaultManager] currentDirectoryPath]].count);
     }
 
     const char *argv[commandGroup.commands.count][maxArguments + 1];
@@ -102,7 +102,7 @@
     const char *outputSource[commandGroup.commands.count];
     for (NSInteger i = 0; i < commandGroup.commands.count; i++) {
         MMCommand *command = commandGroup.commands[i];
-        NSArray *commandArguments = command.unescapedArguments;
+        NSArray *commandArguments = [command unescapedArgumentsInDirectory:[[NSFileManager defaultManager] currentDirectoryPath]];
         for (NSUInteger j = 0; j < commandArguments.count; j++) {
             argv[i][j] = [commandArguments[j] cStringUsingEncoding:NSUTF8StringEncoding];
         }
@@ -233,7 +233,7 @@ void signalHandler(int signalNumber) {
         if (command.arguments.count == 1) {
             newDirectory = @"~";
         } else {
-            newDirectory = command.unescapedArguments[1];
+            newDirectory = [command unescapedArgumentsInDirectory:[[NSFileManager defaultManager] currentDirectoryPath]][1];
         }
 
         newDirectory = [newDirectory stringByExpandingTildeInPath];

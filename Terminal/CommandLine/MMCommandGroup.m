@@ -9,17 +9,40 @@
 #import "MMCommandGroup.h"
 #import "MMCommandLineArgumentsParser.h"
 #import "MMShared.h"
+#import "MMUtilities.h"
 
 @implementation MMCommand
 
-+ (NSString *)unescapeArgument:(NSString *)argument;
++ (NSArray *)unescapeArgument:(NSString *)argument;
+{
+    return [self unescapeArgument:argument inDirectory:nil];
+}
+
++ (NSArray *)unescapeArgument:(NSString *)argument inDirectory:(NSString *)directory;
 {
     NSMutableString *newArgument = [NSMutableString stringWithCapacity:argument.length];
     NSCharacterSet *charSet = [NSCharacterSet characterSetWithCharactersInString:@"\"\\"];
     NSInteger i = 0;
+    // |starGlobLocations| and |questionGlobLocations| are indices into |newArgument| where *s and ?s can be found.
+    // The locations are adjusted for escaped characters being simplified but not for tilde expansion.
+    NSMutableArray *starGlobLocations = [NSMutableArray array];
+    NSMutableArray *questionGlobLocations = [NSMutableArray array];
     BOOL insideQuoted = NO;
     while (i < argument.length) {
-        NSRange range = [argument rangeOfCharacterFromSet:charSet options:0 range:NSMakeRange(i, argument.length - i)];
+        NSRange searchRange = NSMakeRange(i, argument.length - i);
+        NSRange range = [argument rangeOfCharacterFromSet:charSet options:0 range:searchRange];
+        NSRange questionRange = [argument rangeOfString:@"?" options:0 range:searchRange];
+        NSRange starRange = [argument rangeOfString:@"*" options:0 range:searchRange];
+
+        while (!insideQuoted && questionRange.location < range.location) {
+            [questionGlobLocations addObject:@(newArgument.length + questionRange.location - i)];
+            questionRange = [argument rangeOfString:@"?" options:0 range:NSMakeRange(questionRange.location + 1, argument.length - questionRange.location - 1)];
+        }
+        while (!insideQuoted && starRange.location < range.location) {
+            [starGlobLocations addObject:@(newArgument.length + starRange.location - i)];
+            starRange = [argument rangeOfString:@"*" options:0 range:NSMakeRange(starRange.location + 1, argument.length - starRange.location - 1)];
+        }
+
         if (range.location == NSNotFound) {
             [newArgument appendString:[argument substringFromIndex:i]];
             i = argument.length;
@@ -97,6 +120,7 @@
     }
 
     // Apply tilde expansion.
+    NSInteger tildeExpandingAmount = 0;
     if (argument.length > 0 && [argument characterAtIndex:0] == '~') {
         NSRange slashRange = [newArgument rangeOfString:@"/"];
         NSString *user = @"";
@@ -110,9 +134,78 @@
         if (homeDirectory) {
             [newArgument replaceCharactersInRange:NSMakeRange(0, 1 + user.length) withString:homeDirectory];
         }
+
+        tildeExpandingAmount = homeDirectory.length - (1 + user.length);
     }
 
-    return newArgument;
+    // Apply globbing patterns. (Only ? and * so far.)
+    // We accomplish this by converting the argument to a regex, and matching it against the appropriate files.
+    if (starGlobLocations.count + questionGlobLocations.count > 0) {
+        // TODO: Support globbing patterns into multiple directories. (e.g. "a*/b*")
+        // TODO: Support globbing hidden files. (e.g. ".*")
+
+        // First, we have to find out which directory to search for matches in.
+        NSString *directoryForGlobbing = [directory characterAtIndex:(directory.length - 1)] == '/' ? directory : [directory stringByAppendingString:@"/"];
+        NSInteger directoryOffset = 0;
+        NSRange directoryRange = [newArgument rangeOfString:@"/" options:NSBackwardsSearch range:NSMakeRange(0, newArgument.length - 1)];
+        if (directoryRange.location != NSNotFound) {
+            directoryForGlobbing = [newArgument substringToIndex:(directoryRange.location + 1)];
+            directoryOffset = directoryForGlobbing.length;
+            newArgument = [[newArgument substringFromIndex:directoryOffset] mutableCopy];
+        }
+
+        // Construct the regular expression pattern.
+        NSMutableString *regexPattern = [NSMutableString stringWithString:@"^"];
+        NSInteger i = 0;
+        NSInteger j = 0;
+        NSInteger previousIndex = -1;
+        while (i < starGlobLocations.count || j < questionGlobLocations.count) {
+            BOOL starGlob = NO;
+            if (j >= questionGlobLocations.count ||
+                (i < starGlobLocations.count && [starGlobLocations[i] integerValue] < [questionGlobLocations[j] integerValue])) {
+                starGlob = YES;
+            }
+
+            NSInteger currentIndex = starGlob ? [starGlobLocations[i] integerValue] : [questionGlobLocations[j] integerValue];
+            [regexPattern appendString:[NSRegularExpression escapedPatternForString:[newArgument substringWithRange:NSMakeRange(previousIndex + 1, currentIndex - (previousIndex + 1))]]];
+            previousIndex = currentIndex;
+
+            if (starGlob) {
+                [regexPattern appendString:@"(.*)"];
+                i++;
+            } else {
+                [regexPattern appendString:@"(.)"];
+                j++;
+            }
+        }
+
+        // Allow a trailing slash, to account for directories where we add a slash.
+        [regexPattern appendString:@"\\/?$"];
+
+        NSRegularExpression *regularExpression = [NSRegularExpression regularExpressionWithPattern:regexPattern options:NSRegularExpressionAnchorsMatchLines error:NULL];
+        NSArray *files = [self filesAndFoldersInDirectory:directoryForGlobbing];
+        NSMutableArray *matches = [NSMutableArray array];
+        for (NSString *file in files) {
+            if ([regularExpression numberOfMatchesInString:file options:NSMatchingAnchored range:NSMakeRange(0, file.length)]) {
+                NSString *expandedResult;
+                if (directoryRange.location != NSNotFound) {
+                    expandedResult = [directoryForGlobbing stringByAppendingString:file];
+                } else {
+                    expandedResult = file;
+                }
+                [matches addObject:expandedResult];
+            }
+        }
+
+        return matches;
+    }
+
+    return @[newArgument];
+}
+
++ (NSArray *)filesAndFoldersInDirectory:(NSString *)directory;
+{
+    return [MMUtilities filesAndFoldersInDirectory:directory includeHiddenFiles:NO];
 }
 
 + (NSString *)homeDirectoryForUser:(NSString *)user;
@@ -152,11 +245,11 @@
     return self;
 }
 
-- (NSArray *)unescapedArguments;
+- (NSArray *)unescapedArgumentsInDirectory:(NSString *)currentDirectory;
 {
     NSMutableArray *unescapedArguments = [NSMutableArray arrayWithCapacity:self.arguments.count];
     for (NSString *argument in self.arguments) {
-        [unescapedArguments addObject:[MMCommand unescapeArgument:argument]];
+        [unescapedArguments addObjectsFromArray:[MMCommand unescapeArgument:argument inDirectory:currentDirectory]];
     }
 
     return unescapedArguments;
@@ -176,7 +269,7 @@
         return;
     }
 
-    self.standardOutput = [MMCommand unescapeArgument:self.arguments[0]];
+    self.standardOutput = [MMCommand unescapeArgument:self.arguments[0]][0];
     [self.arguments removeObjectAtIndex:0];
     self.standardOutputSourceType = MMSourceTypeFile;
 }
@@ -188,7 +281,7 @@
         return;
     }
 
-    self.standardInput = [MMCommand unescapeArgument:self.arguments[0]];
+    self.standardInput = [MMCommand unescapeArgument:self.arguments[0]][0];
     [self.arguments removeObjectAtIndex:0];
     self.standardInputSourceType = MMSourceTypeFile;
 }

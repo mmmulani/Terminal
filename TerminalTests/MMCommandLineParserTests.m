@@ -10,6 +10,7 @@
 #import "MMParserContext.h"
 #import "MMCommandLineArgumentsParser.h"
 #import "MMCommandGroup.h"
+#import "MMUtilities.h"
 
 #import <OCMock/OCMock.h>
 
@@ -17,6 +18,7 @@
 
 + (NSString *)homeDirectoryForUser:(NSString *)user;
 + (NSString *)homeDirectoryForCurrentUser;
++ (NSArray *)filesAndFoldersInDirectory:(NSString *)directory;
 
 @end
 
@@ -31,13 +33,17 @@ do {\
 
 #define CompareInputAgainstEscapedArgument(input, output) \
 do {\
-    NSString *result = [MMCommand unescapeArgument:input]; \
+    NSArray *arguments = [MMCommand unescapeArgument:input]; \
+    STAssertEquals(arguments.count, (NSUInteger)1, @"Should only find one argument."); \
+    NSString *result = arguments[0];\
     STAssertEqualObjects(result, output, @"Compared parser output to provided output."); \
 } while (0)
 
 #define CompareArgumentAgainstExpectedEscaped(argument, expected) \
 do {\
-    STAssertEqualObjects([MMCommand unescapeArgument:[MMCommand escapeArgument:argument]], argument, @"Unescaping and escaping should be idempotent"); \
+    NSArray *arguments = [MMCommand unescapeArgument:[MMCommand escapeArgument:argument]]; \
+    STAssertEquals(arguments.count, (NSUInteger)1, @"Should only expand to one argument."); \
+    STAssertEqualObjects(arguments[0], argument, @"Unescaping and escaping should be idempotent"); \
     STAssertEqualObjects([MMCommand escapeArgument:argument], expected, @"Compared escaped argument to expected."); \
 } while (0)
 
@@ -80,7 +86,7 @@ do {\
     command.arguments = [@[@"ls", @"~/Documents"] mutableCopy];
     id commandMock = [OCMockObject partialMockForObject:command];
     [[[commandMock stub] andReturn:@"/Users/test"] homeDirectoryForCurrentUser];
-    STAssertEqualObjects([commandMock unescapedArguments], (@[@"ls", @"/Users/test/Documents"]), @"");
+    STAssertEqualObjects([commandMock unescapedArgumentsInDirectory:nil], (@[@"ls", @"/Users/test/Documents"]), @"");
     [commandMock stopMocking];
 
     command = [MMCommand new];
@@ -88,7 +94,58 @@ do {\
     commandMock = [OCMockObject partialMockForObject:command];
     [[[commandMock stub] andReturn:@"/Users/test"] homeDirectoryForUser:@"test"];
     [[[commandMock stub] andReturn:@"/Users/root"] homeDirectoryForUser:@"root"];
-    STAssertEqualObjects([commandMock unescapedArguments], (@[@"echo", @"/Users/test", @"/Users/root/lol"]), @"");
+    STAssertEqualObjects([commandMock unescapedArgumentsInDirectory:nil], (@[@"echo", @"/Users/test", @"/Users/root/lol"]), @"");
+    [commandMock stopMocking];
+
+    // Test various globbing patterns.
+
+    command = [MMCommand new];
+    command.arguments = [@[@"echo", @"*"] mutableCopy];
+    commandMock = [OCMockObject partialMockForObject:command];
+    [[[commandMock stub] andReturn:@[@"a", @"bc"]] filesAndFoldersInDirectory:@"/Users/test/"];
+    STAssertEqualObjects([commandMock unescapedArgumentsInDirectory:@"/Users/test"], (@[@"echo", @"a", @"bc"]), @"");
+    [commandMock stopMocking];
+
+    command = [MMCommand new];
+    command.arguments = [@[@"echo", @"**"] mutableCopy];
+    commandMock = [OCMockObject partialMockForObject:command];
+    [[[commandMock stub] andReturn:@[@"a", @"bc"]] filesAndFoldersInDirectory:@"/Users/test/"];
+    STAssertEqualObjects([commandMock unescapedArgumentsInDirectory:@"/Users/test"], (@[@"echo", @"a", @"bc"]), @"");
+    [commandMock stopMocking];
+
+    command = [MMCommand new];
+    command.arguments = [@[@"echo", @"?"] mutableCopy];
+    commandMock = [OCMockObject partialMockForObject:command];
+    [[[commandMock stub] andReturn:@[@"a", @"bc"]] filesAndFoldersInDirectory:@"/Users/test/"];
+    STAssertEqualObjects([commandMock unescapedArgumentsInDirectory:@"/Users/test"], (@[@"echo", @"a"]), @"");
+    [commandMock stopMocking];
+
+    command = [MMCommand new];
+    command.arguments = [@[@"echo", @"??"] mutableCopy];
+    commandMock = [OCMockObject partialMockForObject:command];
+    [[[commandMock stub] andReturn:@[@"123", @"456", @"789"]] filesAndFoldersInDirectory:@"/Users/test/"];
+    STAssertEqualObjects([commandMock unescapedArgumentsInDirectory:@"/Users/test"], (@[@"echo"]), @"");
+    [commandMock stopMocking];
+
+    command = [MMCommand new];
+    command.arguments = [@[@"echo", @"???"] mutableCopy];
+    commandMock = [OCMockObject partialMockForObject:command];
+    [[[commandMock stub] andReturn:@[@"123", @"456", @"789"]] filesAndFoldersInDirectory:@"/Users/test/"];
+    STAssertEqualObjects([commandMock unescapedArgumentsInDirectory:@"/Users/test"], (@[@"echo", @"123", @"456", @"789"]), @"");
+    [commandMock stopMocking];
+
+    command = [MMCommand new];
+    command.arguments = [@[@"echo", @"?5?"] mutableCopy];
+    commandMock = [OCMockObject partialMockForObject:command];
+    [[[commandMock stub] andReturn:@[@"123", @"456", @"789"]] filesAndFoldersInDirectory:@"/Users/test/"];
+    STAssertEqualObjects([commandMock unescapedArgumentsInDirectory:@"/Users/test"], (@[@"echo", @"456"]), @"");
+    [commandMock stopMocking];
+
+    command = [MMCommand new];
+    command.arguments = [@[@"echo", @"4??"] mutableCopy];
+    commandMock = [OCMockObject partialMockForObject:command];
+    [[[commandMock stub] andReturn:@[@"123", @"456", @"789"]] filesAndFoldersInDirectory:@"/Users/test/"];
+    STAssertEqualObjects([commandMock unescapedArgumentsInDirectory:@"/Users/test"], (@[@"echo", @"456"]), @"");
     [commandMock stopMocking];
 }
 
