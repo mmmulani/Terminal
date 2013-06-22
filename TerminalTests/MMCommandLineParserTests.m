@@ -147,6 +147,13 @@ do {\
     [[[commandMock stub] andReturn:@[@"123", @"456", @"789"]] filesAndFoldersInDirectory:@"/Users/test/"];
     STAssertEqualObjects([commandMock unescapedArgumentsInDirectory:@"/Users/test"], (@[@"echo", @"456"]), @"");
     [commandMock stopMocking];
+
+    command = [MMCommand new];
+    command.arguments = [@[@"cat", @"*.png"] mutableCopy];
+    commandMock = [OCMockObject partialMockForObject:command];
+    [[[commandMock stub] andReturn:@[@"abc.png", @"abc.txt", @"abcdpng", @"mmm.png", @"z.png"]] filesAndFoldersInDirectory:@"/Users/test/"];
+    STAssertEqualObjects([commandMock unescapedArgumentsInDirectory:@"/Users/test"], (@[@"cat", @"abc.png", @"mmm.png", @"z.png"]), @"");
+    [commandMock stopMocking];
 }
 
 - (void)testEscaping;

@@ -179,6 +179,9 @@
             }
         }
 
+        // Add the part of the argument following the last pattern.
+        [regexPattern appendString:[NSRegularExpression escapedPatternForString:[newArgument substringWithRange:NSMakeRange(previousIndex + 1, newArgument.length - (previousIndex + 1))]]];
+
         // Allow a trailing slash, to account for directories where we add a slash.
         [regexPattern appendString:@"\\/?$"];
 
