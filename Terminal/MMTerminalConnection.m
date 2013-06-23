@@ -105,6 +105,7 @@
     // TODO: Handle the case of no commands better. (Also detect it better.)
     if (commandGroups.count == 0 || [commandGroups[0] commands].count == 0) {
         dispatch_async(dispatch_get_main_queue(), ^{
+            [task processStarted];
             [task processFinished:MMProcessStatusError data:nil];
         });
         return task;
