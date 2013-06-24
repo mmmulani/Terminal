@@ -50,4 +50,10 @@
     return [self.completionEngine completionsForPartialWordRange:charRange indexOfSelectedItem:index];
 }
 
+- (BOOL)isContinuousSpellCheckingEnabled;
+{
+    // Disable spell checking.
+    return NO;
+}
+
 @end
