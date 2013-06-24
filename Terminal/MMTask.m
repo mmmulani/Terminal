@@ -36,6 +36,7 @@
 @property NSInteger termWidth;
 @property NSMutableSet *ansiModes;
 @property NSMutableSet *decModes;
+@property NSInteger currentCharacterSetSlot;
 
 @property MMTaskIdentifier identifier;
 
@@ -216,6 +217,10 @@
         action = [MMBackspace new];
     } else if (currentChar == '\a') { // Bell (beep).
         action = [MMBeep new];
+    } else if (currentChar == '\016') { // Shift Out.
+        action = [[MMCharacterSetInvocation alloc] initWithArguments:@[@1]];
+    } else if (currentChar == '\017') { // Shift In.
+        action = [[MMCharacterSetInvocation alloc] initWithArguments:@[@0]];
     }
     action.delegate = self;
     [action do];
@@ -311,10 +316,71 @@
     self.characterCountsOnVisibleRows[row - 1] = @([self.characterCountsOnVisibleRows[row - 1] integerValue] + change);
 }
 
+- (NSString *)convertStringForCurrentKeyboard:(NSString *)string;
+{
+    MMCharacterSet currentCharacterSet = (MMCharacterSet)[@[@(self.G0CharacterSet), @(self.G1CharacterSet), @(self.G2CharacterSet), @(self.G3CharacterSet)][self.currentCharacterSetSlot] integerValue];
+    if (currentCharacterSet == MMCharacterSetUSASCII) {
+        return string;
+    }
+
+    NSString *original;
+    NSString *replacement;
+    if (currentCharacterSet == MMCharacterSetDECLineDrawing) {
+        original = @"`abcdefghijklmnopqrstuvwxyz{|}~";
+        replacement = @"◆▒␉␌␍␊°±␤␋┘┐┌└┼⎺⎻─⎼⎽├┤┴┬│≤≥π≠£·";
+    } else if (currentCharacterSet == MMCharacterSetUnitedKingdom) {
+        original = @"#";
+        replacement = @"£";
+    } else if (currentCharacterSet == MMCharacterSetDutch) {
+        original = @"#@[\\{|}~]";
+        replacement = @"£¾ÿ½¨f¼´|";
+    } else if (currentCharacterSet == MMCharacterSetFinnish) {
+        original = @"[\\]^`{|}~";
+        replacement = @"ÄÖÅÜéäöåü";
+    } else if (currentCharacterSet == MMCharacterSetFrench) {
+        original = @"#@[\\]{|}~";
+        replacement = @"£à°ç§éùè¨";
+    } else if (currentCharacterSet == MMCharacterSetFrenchCanadian) {
+        original = @"@[\\]^`{|}~";
+        replacement = @"àâçêîôéùèû";
+    } else if (currentCharacterSet == MMCharacterSetGerman) {
+        original = @"@[\\]{|}~";
+        replacement = @"§ÄÖÜäöüß";
+    } else if (currentCharacterSet == MMCharacterSetItalian) {
+        original = @"#@[\\]`{|}~";
+        replacement = @"£§°çéùàòèì";
+    } else if (currentCharacterSet == MMCharacterSetNorwegian) {
+        original = @"@[\\]^`{|}~";
+        replacement = @"ÄÆØÅÜäæøåü";
+    } else if (currentCharacterSet == MMCharacterSetSpanish) {
+        original = @"#@[\\]{|}";
+        replacement = @"£§¡Ñ¿°ñç";
+    } else if (currentCharacterSet == MMCharacterSetSwedish) {
+        original = @"@[\\]^`{|}~";
+        replacement = @"ÉÄÖÅÜéäöåü";
+    } else if (currentCharacterSet == MMCharacterSetSwiss) {
+        original = @"#@[\\]^_`{|}~";
+        replacement = @"ùàéçêîèôäöüû";
+    }
+
+    NSAssert(original.length == replacement.length, @"Character set original and replacement text size should be the same for %d", currentCharacterSet);
+
+    NSMutableString *convertedString = [NSMutableString stringWithString:string];
+    for (NSInteger i = 0; i < original.length; i++) {
+        unichar originalChar = [original characterAtIndex:i];
+        unichar replacementChar = [replacement characterAtIndex:i];
+
+        [convertedString replaceOccurrencesOfString:[NSString stringWithCharacters:&originalChar length:1] withString:[NSString stringWithCharacters:&replacementChar length:1] options:0 range:NSMakeRange(0, convertedString.length)];
+    }
+
+    return convertedString;
+}
 
 - (void)ansiPrint:(NSString *)string;
 {
     [self fillCurrentScreenWithSpacesUpToCursor];
+
+    string = [self convertStringForCurrentKeyboard:string];
 
     // If we are not in autowrap mode, we only print the characters that will fit on the current line.
     // Furthermore, as per the vt100 wrapping glitch (at http://invisible-island.net/xterm/xterm.faq.html#vt100_wrapping), we only print the "head" of the content to be outputted.
@@ -547,6 +613,12 @@
             action = [[MMReverseIndex alloc] init];
         } else if (escapeCode == '#' && [escapeSequence characterAtIndex:2] == '8') {
             action = [MMDECAlignmentTest new];
+        } else if (escapeCode == '(' || escapeCode == ')' || escapeCode == '*' || escapeCode == '+') {
+            action = [[MMCharacterSetDesignation alloc] initWithArguments:@[@(escapeCode), @([escapeSequence characterAtIndex:2])]];
+        } else if (escapeCode == 'n') {
+            action = [[MMCharacterSetInvocation alloc] initWithArguments:@[@2]];
+        } else if (escapeCode == 'o') {
+            action = [[MMCharacterSetInvocation alloc] initWithArguments:@[@3]];
         } else {
             MMLog(@"Unhandled early escape sequence: %@", escapeSequence);
         }
@@ -1028,6 +1100,11 @@
     [self.terminalConnection.terminalWindow resizeWindowForTerminalScreenSizeOfColumns:columns rows:rows];
 
     [self.displayTextStorage beginEditing];
+}
+
+- (void)setCharacterSetSlot:(NSInteger)slot;
+{
+    self.currentCharacterSetSlot = slot;
 }
 
 # pragma mark - NSCoding

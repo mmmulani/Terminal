@@ -43,6 +43,12 @@
 
     [self.delegate insertBlankLineAtScrollRow:1 withNewline:NO];
     [self.delegate setCursorToX:1 Y:1];
+
+    self.delegate.G0CharacterSet = MMCharacterSetUSASCII;
+    self.delegate.G1CharacterSet = MMCharacterSetUSASCII;
+    self.delegate.G2CharacterSet = MMCharacterSetUSASCII;
+    self.delegate.G3CharacterSet = MMCharacterSetUSASCII;
+    [self.delegate setCharacterSetSlot:0];
 }
 
 @end
@@ -117,6 +123,84 @@
     for (NSString *argument in self.arguments) {
         [self.delegate setANSIMode:(MMANSIMode)[argument integerValue] on:YES];
     }
+}
+
+@end
+
+@implementation MMCharacterSetDesignation
+
+- (void)do;
+{
+    NSAssert(self.arguments.count == 2, @"Must be provided a slot and a character set");
+    unichar escapeCode = [self.arguments[0] charValue];
+    unichar characterSetChar = [self.arguments[1] charValue];
+    MMCharacterSet characterSet;
+
+    switch (characterSetChar) {
+        case 'B':
+            characterSet = MMCharacterSetUSASCII;
+            break;
+        case '0':
+            characterSet = MMCharacterSetDECLineDrawing;
+            break;
+        case 'A':
+            characterSet = MMCharacterSetUnitedKingdom;
+            break;
+        case 'E':
+        case '6':
+            characterSet = MMCharacterSetNorwegian;
+            break;
+        case '4':
+            characterSet = MMCharacterSetDutch;
+            break;
+        case 'C':
+        case '5':
+            characterSet = MMCharacterSetFinnish;
+            break;
+        case 'R':
+            characterSet = MMCharacterSetFrench;
+            break;
+        case 'Q':
+            characterSet = MMCharacterSetFrenchCanadian;
+            break;
+        case 'K':
+            characterSet = MMCharacterSetGerman;
+            break;
+        case 'Y':
+            characterSet = MMCharacterSetItalian;
+            break;
+        case 'Z':
+            characterSet = MMCharacterSetSpanish;
+            break;
+        case 'H':
+        case '7':
+            characterSet = MMCharacterSetSwedish;
+            break;
+        case '=':
+            characterSet = MMCharacterSetSwiss;
+            break;
+    }
+
+    if (escapeCode == '(') {
+        self.delegate.G0CharacterSet = characterSet;
+    } else if (escapeCode == ')') {
+        self.delegate.G1CharacterSet = characterSet;
+    } else if (escapeCode == '*') {
+        self.delegate.G2CharacterSet = characterSet;
+    } else if (escapeCode == '+') {
+        self.delegate.G3CharacterSet = characterSet;
+    }
+}
+
+@end
+
+@implementation MMCharacterSetInvocation
+
++ (NSArray *)_defaultArguments { return @[@0]; }
+
+- (void)do;
+{
+    [self.delegate setCharacterSetSlot:[[self defaultedArgumentAtIndex:0] integerValue]];
 }
 
 @end

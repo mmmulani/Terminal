@@ -515,6 +515,47 @@
     CheckInputAgainstExpectedOutputWithExpectedCursor(@"a\016\016b", @"ab", MMPositionMake(3, 1));
     CheckInputAgainstExpectedOutputWithExpectedCursor(@"a\017b", @"ab", MMPositionMake(3, 1));
     CheckInputAgainstExpectedOutputWithExpectedCursor(@"a\017b\017", @"ab", MMPositionMake(3, 1));
+
+    CheckInputAgainstExpectedOutput(@"\033(0ABCabc", @"ABC▒␉␌");
+
+    // DEC Special Character and Line Drawing keyboard.
+    CheckInputAgainstExpectedOutput(@"\033(0`abcdefghijklmnopqrstuvwxyz{|}~", @"◆▒␉␌␍␊°±␤␋┘┐┌└┼⎺⎻─⎼⎽├┤┴┬│≤≥π≠£·");
+
+    // United Kingdom keyboard.
+    CheckInputAgainstExpectedOutput(@"\033(A#", @"£");
+
+    // Norwegian/Danish keyboard.
+    CheckInputAgainstExpectedOutput(@"\033(E@[\\]^`{|}~", @"ÄÆØÅÜäæøåü");
+    CheckInputAgainstExpectedOutput(@"\033(6@[\\]^`{|}~", @"ÄÆØÅÜäæøåü");
+
+    // Dutch keyboard.
+    CheckInputAgainstExpectedOutput(@"\033(4#@[\\]{|}~", @"£¾ÿ½|¨f¼´");
+
+    // Finnish keyboard.
+    CheckInputAgainstExpectedOutput(@"\033(C[\\]^`{|}~", @"ÄÖÅÜéäöåü");
+    CheckInputAgainstExpectedOutput(@"\033(5[\\]^`{|}~", @"ÄÖÅÜéäöåü");
+
+    // French keyboard.
+    CheckInputAgainstExpectedOutput(@"\033(R#@[\\]{|}~", @"£à°ç§éùè¨");
+
+    // French Canadian keyboard.
+    CheckInputAgainstExpectedOutput(@"\033(Q@[\\]^`{|}~", @"àâçêîôéùèû");
+
+    // German keyboard.
+    CheckInputAgainstExpectedOutput(@"\033(K@[\\]{|}~", @"§ÄÖÜäöüß");
+
+    // Italian keyboard.
+    CheckInputAgainstExpectedOutput(@"\033(Y#@[\\]`{|}~", @"£§°çéùàòèì");
+
+    // Spanish keyboard.
+    CheckInputAgainstExpectedOutput(@"\033(Z#@[\\]{|}", @"£§¡Ñ¿°ñç");
+
+    // Swedish keyboard.
+    CheckInputAgainstExpectedOutput(@"\033(H@[\\]^`{|}~", @"ÉÄÖÅÜéäöåü");
+    CheckInputAgainstExpectedOutput(@"\033(7@[\\]^`{|}~", @"ÉÄÖÅÜéäöåü");
+
+    // Swiss keyboard.
+    CheckInputAgainstExpectedOutput(@"\033(=#@[\\]^_`{|}~", @"ùàéçêîèôäöüû");
 }
 
 @end

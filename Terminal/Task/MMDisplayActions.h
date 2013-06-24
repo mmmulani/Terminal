@@ -35,3 +35,11 @@
 @interface MMANSIModeSet : MMANSIAction
 
 @end
+
+@interface MMCharacterSetDesignation : MMANSIAction
+
+@end
+
+@interface MMCharacterSetInvocation : MMANSIAction
+
+@end

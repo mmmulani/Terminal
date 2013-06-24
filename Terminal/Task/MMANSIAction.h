@@ -30,6 +30,22 @@ typedef enum {
     MMANSIModeNewline = 20, // LNM
 } MMANSIMode;
 
+typedef enum {
+    MMCharacterSetUSASCII = 0,
+    MMCharacterSetDECLineDrawing,
+    MMCharacterSetUnitedKingdom,
+    MMCharacterSetDutch,
+    MMCharacterSetFinnish,
+    MMCharacterSetFrench,
+    MMCharacterSetFrenchCanadian,
+    MMCharacterSetGerman,
+    MMCharacterSetItalian,
+    MMCharacterSetNorwegian,
+    MMCharacterSetSpanish,
+    MMCharacterSetSwedish,
+    MMCharacterSetSwiss,
+} MMCharacterSet;
+
 @protocol MMANSIActionDelegate;
 
 @interface MMANSIAction : NSObject
@@ -63,6 +79,11 @@ typedef enum {
 @property (readonly) NSInteger scrollMarginTop;
 @property (readonly) NSInteger scrollMarginBottom;
 
+@property MMCharacterSet G0CharacterSet;
+@property MMCharacterSet G1CharacterSet;
+@property MMCharacterSet G2CharacterSet;
+@property MMCharacterSet G3CharacterSet;
+
 @property BOOL hasUsedWholeScreen;
 
 - (void)setCursorToX:(NSInteger)x Y:(NSInteger)y;
@@ -88,6 +109,8 @@ typedef enum {
 - (BOOL)isANSIModeSet:(MMANSIMode)ansiMode;
 - (void)setDECPrivateMode:(MMDECMode)decPrivateMode on:(BOOL)on;
 - (BOOL)isDECPrivateModeSet:(MMDECMode)decPrivateMode;
+
+- (void)setCharacterSetSlot:(NSInteger)slot;
 
 - (void)tryToResizeTerminalForColumns:(NSInteger)columns rows:(NSInteger)rows;
 

@@ -47,6 +47,10 @@ typedef enum {
 @property (readonly) NSMutableAttributedString *currentANSIDisplay;
 @property MMPosition cursorPosition;
 @property (readonly) NSInteger cursorPositionByCharacters;
+@property MMCharacterSet G0CharacterSet;
+@property MMCharacterSet G1CharacterSet;
+@property MMCharacterSet G2CharacterSet;
+@property MMCharacterSet G3CharacterSet;
 
 @property (weak) MMTerminalConnection *terminalConnection;
 @property (weak) id<MMTaskDelegate> delegate;
