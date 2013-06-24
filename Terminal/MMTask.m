@@ -127,7 +127,7 @@
     [self.output appendString:output];
 
     NSString *outputToHandle = self.unreadOutput ? [self.unreadOutput stringByAppendingString:output] : output;
-    NSCharacterSet *nonPrintableCharacters = [NSCharacterSet characterSetWithCharactersInString:@"\013\014\n\t\r\b\a\033"];
+    NSCharacterSet *nonPrintableCharacters = [NSCharacterSet characterSetWithCharactersInString:@"\013\014\n\t\r\b\a\033\016\017"];
     self.unreadOutput = nil;
     for (NSUInteger i = 0; i < [outputToHandle length]; i++) {
         if (self.cursorPosition.y > self.termHeight) {

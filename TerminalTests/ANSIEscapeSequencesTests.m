@@ -508,4 +508,13 @@
     CheckInputAgainstExpectedOutputWithExpectedCursor(@"AB\033[1\tCD", @"AB\t D", MMPositionMake(11, 1));
 }
 
+- (void)testCharacterSets;
+{
+    // Test that the Shift Out and Shift In control characters do not get printed.
+    CheckInputAgainstExpectedOutputWithExpectedCursor(@"a\016b", @"ab", MMPositionMake(3, 1));
+    CheckInputAgainstExpectedOutputWithExpectedCursor(@"a\016\016b", @"ab", MMPositionMake(3, 1));
+    CheckInputAgainstExpectedOutputWithExpectedCursor(@"a\017b", @"ab", MMPositionMake(3, 1));
+    CheckInputAgainstExpectedOutputWithExpectedCursor(@"a\017b\017", @"ab", MMPositionMake(3, 1));
+}
+
 @end
