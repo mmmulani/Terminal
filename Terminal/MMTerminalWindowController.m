@@ -17,6 +17,7 @@
 #import "MMCommandsTextView.h"
 #import "MMAppDelegate.h"
 #import "MMInfoOverlayView.h"
+#import "MMInfoPanelController.h"
 
 #import <tgmath.h>
 #import <QuartzCore/QuartzCore.h>
@@ -193,6 +194,8 @@
     [self.terminalConnection startShellsToRunCommands:(self.numberOfTasksRunning + 1)];
 
     [self showCommandControlsIfNecessary];
+
+    [[MMInfoPanelController sharedController] showPanel:@"SuspendControls"];
 }
 
 - (void)hideCommandControlsIfNecessary;

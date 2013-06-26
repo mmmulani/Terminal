@@ -13,6 +13,8 @@ FOUNDATION_EXPORT void MMLog(NSString *format, ...) NS_FORMAT_FUNCTION(1,2);
 
 #define MMSelfKey(key) ((NO && self.key) ? nil : @#key)
 
+#define MMUserDefaultsKey(key) ([[[NSBundle mainBundle] bundleIdentifier] stringByAppendingString:@"."#key])
+
 @interface MMShared : NSObject
 
 @end

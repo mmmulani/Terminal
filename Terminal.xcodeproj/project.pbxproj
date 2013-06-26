@@ -66,6 +66,8 @@
 		91C7D98D1740793800875974 /* libiconv.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 91C7D9881740575700875974 /* libiconv.dylib */; };
 		91D8FD05177B21E9005934AE /* Sparkle.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 91D8FD04177B21E9005934AE /* Sparkle.framework */; };
 		91D8FD06177B26AA005934AE /* Sparkle.framework in CopyFiles */ = {isa = PBXBuildFile; fileRef = 91D8FD04177B21E9005934AE /* Sparkle.framework */; };
+		91D8FD0A177B3542005934AE /* MMInfoPanelController.m in Sources */ = {isa = PBXBuildFile; fileRef = 91D8FD08177B3542005934AE /* MMInfoPanelController.m */; };
+		91D8FD0B177B3542005934AE /* MMInfoPanelController.xib in Resources */ = {isa = PBXBuildFile; fileRef = 91D8FD09177B3542005934AE /* MMInfoPanelController.xib */; };
 		91DF63DB1774ECDB0053CB4F /* MMUtilities.m in Sources */ = {isa = PBXBuildFile; fileRef = 912141A71758F61200A50F6E /* MMUtilities.m */; };
 		91E4A26A1753F9EF00EFDDBE /* MMCommandGroup.m in Sources */ = {isa = PBXBuildFile; fileRef = 91E4A2691753F9EF00EFDDBE /* MMCommandGroup.m */; };
 		91E4A26B1754371400EFDDBE /* MMCommandGroup.m in Sources */ = {isa = PBXBuildFile; fileRef = 91E4A2691753F9EF00EFDDBE /* MMCommandGroup.m */; };
@@ -263,6 +265,9 @@
 		91C7D986173F250300875974 /* MMCompletionEngine.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = MMCompletionEngine.m; path = CommandLine/MMCompletionEngine.m; sourceTree = "<group>"; };
 		91C7D9881740575700875974 /* libiconv.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libiconv.dylib; path = usr/lib/libiconv.dylib; sourceTree = SDKROOT; };
 		91D8FD04177B21E9005934AE /* Sparkle.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = Sparkle.framework; sourceTree = "<group>"; };
+		91D8FD07177B3542005934AE /* MMInfoPanelController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MMInfoPanelController.h; sourceTree = "<group>"; };
+		91D8FD08177B3542005934AE /* MMInfoPanelController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MMInfoPanelController.m; sourceTree = "<group>"; };
+		91D8FD09177B3542005934AE /* MMInfoPanelController.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = MMInfoPanelController.xib; sourceTree = "<group>"; };
 		91E4A2681753F9EF00EFDDBE /* MMCommandGroup.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = MMCommandGroup.h; path = ../Terminal/CommandLine/MMCommandGroup.h; sourceTree = "<group>"; };
 		91E4A2691753F9EF00EFDDBE /* MMCommandGroup.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = MMCommandGroup.m; path = ../Terminal/CommandLine/MMCommandGroup.m; sourceTree = "<group>"; };
 		91E4C02B1742C65400062EF5 /* Icon.icns */ = {isa = PBXFileReference; lastKnownFileType = image.icns; name = Icon.icns; path = ../Icon.icns; sourceTree = "<group>"; };
@@ -415,6 +420,9 @@
 				9101DC271764E7CF00F05A43 /* MMInfoOverlayView.m */,
 				91563C43176E575C009FF46A /* MMOutputScrollView.h */,
 				91563C44176E575C009FF46A /* MMOutputScrollView.m */,
+				91D8FD07177B3542005934AE /* MMInfoPanelController.h */,
+				91D8FD08177B3542005934AE /* MMInfoPanelController.m */,
+				91D8FD09177B3542005934AE /* MMInfoPanelController.xib */,
 			);
 			name = "Terminal window";
 			sourceTree = "<group>";
@@ -732,6 +740,7 @@
 				913DE70F176A5CE80068ED2F /* glyphiconsStop.png in Resources */,
 				913DE710176A5CE80068ED2F /* glyphiconsWarning.png in Resources */,
 				917DE9E2176A7FC200591874 /* glyphiconsX.png in Resources */,
+				91D8FD0B177B3542005934AE /* MMInfoPanelController.xib in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -822,6 +831,7 @@
 				9101DC281764E7CF00F05A43 /* MMInfoOverlayView.m in Sources */,
 				91814925176CACDC0020AB9D /* MMTaskInfo.m in Sources */,
 				91563C45176E575C009FF46A /* MMOutputScrollView.m in Sources */,
+				91D8FD0A177B3542005934AE /* MMInfoPanelController.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
