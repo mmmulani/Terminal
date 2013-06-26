@@ -919,6 +919,9 @@
         self.characterOffsetToScreen = currentPosition;
         self.termHeight = newHeight;
     }
+
+    self.scrollMarginTop = 1;
+    self.scrollMarginBottom = self.termHeight;
 }
 
 # pragma mark - MMANSIActionDelegate methods

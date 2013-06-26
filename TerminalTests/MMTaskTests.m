@@ -179,6 +179,8 @@
     STAssertEquals(task.characterOffsetToScreen, (NSInteger)0, @"");
     STAssertEquals(task.cursorPositionX, (NSInteger)2, @"");
     STAssertEquals(task.cursorPositionY, (NSInteger)3, @"");
+    STAssertEquals(task.scrollMarginTop, (NSInteger)1, @"");
+    STAssertEquals(task.scrollMarginBottom, (NSInteger)24, @"");
 
     [task changeTerminalHeightTo:20];
     STAssertEquals(task.characterOffsetToScreen, (NSInteger)0, @"");
@@ -187,6 +189,16 @@
     STAssertEqualObjects(task.characterCountsOnVisibleRows, (@[@1, @1, @1, @0, @0, @0, @0, @0, @0, @0, @0, @0, @0, @0, @0, @0, @0, @0, @0, @0]), @"");
     STAssertEqualObjects(task.scrollRowHasNewline, (@[@YES, @YES, @NO, @NO, @NO, @NO, @NO, @NO, @NO, @NO, @NO, @NO, @NO, @NO, @NO, @NO, @NO, @NO, @NO, @NO]), @"");
     STAssertEquals(task.termHeight, (NSInteger)20, @"");
+    STAssertEquals(task.scrollMarginTop, (NSInteger)1, @"");
+    STAssertEquals(task.scrollMarginBottom, (NSInteger)20, @"");
+
+    SendInputToTask(task, @"\033[2;10r");
+    STAssertEquals(task.scrollMarginTop, (NSInteger)2, @"");
+    STAssertEquals(task.scrollMarginBottom, (NSInteger)10, @"");
+
+    [task changeTerminalHeightTo:21];
+    STAssertEquals(task.scrollMarginTop, (NSInteger)1, @"");
+    STAssertEquals(task.scrollMarginBottom, (NSInteger)21, @"");
 
     // Test the top being scrolled away.
     task = [MMTask new];
