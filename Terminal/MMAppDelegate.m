@@ -96,6 +96,10 @@
 
     NSArray *windowMenuItems = [menuItems subarrayWithRange:NSMakeRange(i, menuItems.count - i)];
     for (NSMenuItem *menuItem in windowMenuItems) {
+        if (![[menuItem.target windowController] isKindOfClass:[MMTerminalWindowController class]]) {
+            continue;
+        }
+
         MMTerminalWindowController *terminalWindowController = [menuItem.target windowController];
         menuItem.keyEquivalent = [NSNumber numberWithInteger:terminalWindowController.keyboardShortcut].stringValue;
         menuItem.keyEquivalentModifierMask = NSCommandKeyMask;
