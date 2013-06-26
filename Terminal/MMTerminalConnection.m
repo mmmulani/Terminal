@@ -420,7 +420,9 @@ void iconvFallback(const char *inbuf, size_t inbufsize, void (*write_replacement
     [self setUpTermIOSettings:&terminalSettings];
     ioctl(fd, TIOCSETA, &terminalSettings);
 
-    [task processFinished:status data:data];
+    dispatch_async(dispatch_get_main_queue(), ^{
+        [task processFinished:status data:data];
+    });
 }
 
 - (void)directoryChangedTo:(NSString *)newPath;
@@ -440,7 +442,9 @@ void iconvFallback(const char *inbuf, size_t inbufsize, void (*write_replacement
     }
 
     [self.shellCommandTasks removeObject:task];
-    [task processFinished:success data:attachment];
+    dispatch_async(dispatch_get_main_queue(), ^{
+        [task processFinished:success data:attachment];
+    });
 }
 
 # pragma mark - Shell identifier organization
