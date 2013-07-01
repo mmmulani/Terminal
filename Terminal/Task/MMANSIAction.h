@@ -111,6 +111,8 @@ typedef enum {
 - (BOOL)isANSIModeSet:(MMANSIMode)ansiMode;
 - (void)setDECPrivateMode:(MMDECMode)decPrivateMode on:(BOOL)on;
 - (BOOL)isDECPrivateModeSet:(MMDECMode)decPrivateMode;
+// TODO: Rethink how colour/attributes are handled for testing and better abstraction.
+- (void)handleCharacterAttributes:(NSArray *)items;
 
 - (void)setCharacterSetSlot:(NSInteger)slot;
 

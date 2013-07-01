@@ -205,3 +205,12 @@
 }
 
 @end
+
+@implementation MMCharacterAttributes
+
+- (void)do;
+{
+    [self.delegate handleCharacterAttributes:self.arguments];
+}
+
+@end

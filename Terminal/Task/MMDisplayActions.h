@@ -43,3 +43,7 @@
 @interface MMCharacterSetInvocation : MMANSIAction
 
 @end
+
+@interface MMCharacterAttributes : MMANSIAction
+
+@end

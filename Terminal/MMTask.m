@@ -39,6 +39,7 @@
 @property NSMutableSet *ansiModes;
 @property NSMutableSet *decModes;
 @property NSInteger currentCharacterSetSlot;
+@property NSMutableArray *ansiActions;
 
 @property MMTaskIdentifier identifier;
 
@@ -96,6 +97,7 @@
     self.characterAttributes[NSParagraphStyleAttributeName] = paragraphStyle;
     self.ansiModes = [NSMutableSet set];
     self.decModes = [NSMutableSet set];
+    self.ansiActions = [NSMutableArray array];
 
     [self setDECPrivateMode:MMDECModeAutoWrap on:YES];
 
@@ -123,10 +125,6 @@
 
 - (void)handleCommandOutput:(NSString *)output;
 {
-    [self.displayTextStorage beginEditing];
-
-    [self readdTrailingNewlineIfNecessary];
-
     [self.output appendString:output];
 
     NSString *outputToHandle = self.unreadOutput ? [self.unreadOutput stringByAppendingString:output] : output;
@@ -144,8 +142,7 @@
             for (end = i + 1; end < outputToHandle.length && ![nonPrintableCharacters characterIsMember:[outputToHandle characterAtIndex:end]]; end++);
 
             MMANSIAction *action = [[MMANSIPrint alloc] initWithArguments:@[[outputToHandle substringWithRange:NSMakeRange(i, end - i)]]];
-            action.delegate = self;
-            [action do];
+            [self.ansiActions addObject:action];
 
             i = end - 1;
             continue;
@@ -199,8 +196,16 @@
         }
     }
 
-    [self removeTrailingNewlineIfNecessary];
+    [self.displayTextStorage beginEditing];
+    [self readdTrailingNewlineIfNecessary];
 
+    for (MMANSIAction *action in self.ansiActions) {
+        action.delegate = self;
+        [action do];
+    }
+    [self.ansiActions removeAllObjects];
+
+    [self removeTrailingNewlineIfNecessary];
     [self.displayTextStorage endEditing];
 
     [self.delegate taskReceivedOutput:self];
@@ -226,8 +231,7 @@
     } else if (currentChar == '\017') { // Shift In.
         action = [[MMCharacterSetInvocation alloc] initWithArguments:@[@0]];
     }
-    action.delegate = self;
-    [action do];
+    [self.ansiActions addObject:action];
 }
 
 - (BOOL)shouldDrawFullTerminalScreen;
@@ -529,7 +533,7 @@
         } else if (escapeCode == 'D') {
             action = [[MMMoveCursorBackward alloc] initWithArguments:items];
         } else if (escapeCode == 'G') {
-            action = [[MMMoveCursorPosition alloc] initWithArguments:[@[@(self.cursorPosition.y)] arrayByAddingObjectsFromArray:items]];
+            action = [[MMMoveHorizontalAbsolute alloc] initWithArguments:items];
         } else if (escapeCode == 'H' || escapeCode == 'f') {
             action = [[MMMoveCursorPosition alloc] initWithArguments:items];
         } else if (escapeCode == 'K') {
@@ -545,9 +549,7 @@
         } else if (escapeCode == 'c') {
             [self handleUserInput:@"\033[?1;2c"];
         } else if (escapeCode == 'd') {
-            // TODO: Make this determine the second argument at evaluation-time.
-            id firstArg = items.count >= 1 ? items[0] : MMMoveCursorPosition.defaultArguments[0];
-            action = [[MMMoveCursorPosition alloc] initWithArguments:@[firstArg, @(self.cursorPosition.x)]];
+            action = [[MMMoveVerticalAbsolute alloc] initWithArguments:items];
         } else if (escapeCode == 'h' && [escapeSequence characterAtIndex:2] == '?') {
             items = [[escapeSequence substringWithRange:NSMakeRange(3, [escapeSequence length] - 4)] componentsSeparatedByString:@";"];
             action = [[MMDECPrivateModeSet alloc] initWithArguments:items];
@@ -559,7 +561,7 @@
         } else if (escapeCode == 'l') {
             action = [[MMANSIModeReset alloc] initWithArguments:items];
         } else if (escapeCode == 'm') {
-            [self handleCharacterAttributes:items];
+            action = [[MMCharacterAttributes alloc] initWithArguments:items];
         } else if (escapeCode == 'r') {
             action = [[MMSetScrollMargins alloc] initWithArguments:items];
         } else if (escapeCode == '@') {
@@ -592,8 +594,7 @@
     }
 
     if (action) {
-        action.delegate = self;
-        [action do];
+        [self.ansiActions addObject:action];
     }
 }
 

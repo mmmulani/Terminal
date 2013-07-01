@@ -32,6 +32,14 @@
 
 @end
 
+@interface MMMoveHorizontalAbsolute : MMANSIAction
+
+@end
+
+@interface MMMoveVerticalAbsolute : MMANSIAction
+
+@end
+
 @interface MMCarriageReturn : MMANSIAction
 
 @end

@@ -148,6 +148,32 @@
 
 @end
 
+@implementation MMMoveHorizontalAbsolute
+
++ (NSArray *)_defaultArguments { return @[@1]; }
+
+- (void)do;
+{
+    MMANSIAction *action = [[MMMoveCursorPosition alloc] initWithArguments:[@[@(self.delegate.cursorPositionY)] arrayByAddingObjectsFromArray:self.arguments]];
+    action.delegate = self.delegate;
+    [action do];
+}
+
+@end
+
+@implementation MMMoveVerticalAbsolute
+
++ (NSArray *)_defaultArguments { return @[@1]; }
+
+- (void)do;
+{
+    MMANSIAction *action = [[MMMoveCursorPosition alloc] initWithArguments:@[[self defaultedArgumentAtIndex:0], @(self.delegate.cursorPositionX)]];
+    action.delegate = self.delegate;
+    [action do];
+}
+
+@end
+
 @implementation MMCarriageReturn
 
 -(void)do;
