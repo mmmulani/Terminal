@@ -14,6 +14,7 @@
 #import "MMLineManipulationActions.h"
 #import "MMIndexActions.h"
 #import "MMDisplayActions.h"
+#import "MMPrintingActions.h"
 #import "MMTabAction.h"
 #import "MMTerminalWindowController.h"
 #import "MMCommandLineArgumentsParser.h"
@@ -597,6 +598,8 @@
             [self handleCharacterAttributes:items];
         } else if (escapeCode == 'r') {
             action = [[MMSetScrollMargins alloc] initWithArguments:items];
+        } else if (escapeCode == '@') {
+            action = [[MMInsertCharacters alloc] initWithArguments:items];
         } else {
             MMLog(@"Unhandled escape sequence: %@", escapeSequence);
         }
@@ -1007,7 +1010,7 @@
 - (void)removeCharactersInScrollRow:(NSInteger)row range:(NSRange)range shiftCharactersAfter:(BOOL)shift;
 {
     NSAssert(range.location > 0, @"Range location must be provided in ANSI column form");
-    if (range.location > [self numberOfCharactersInScrollRow:row]) {
+    if (range.location > [self numberOfCharactersInScrollRow:row] || range.length == 0) {
         return;
     }
 
@@ -1016,6 +1019,17 @@
     NSInteger numberOfCharactersBeingRemoved = MIN([self numberOfCharactersInScrollRow:row], range.location + range.length - 1) - range.location + 1;
     [self.displayTextStorage deleteCharactersInRange:NSMakeRange([self characterOffsetUpToScrollRow:row scrollColumn:range.location], numberOfCharactersBeingRemoved)];
     [self adjustNumberOfCharactersOnScrollRow:row byAmount:(-numberOfCharactersBeingRemoved)];
+}
+
+- (void)insertCharactersAtScrollRow:(NSInteger)row scrollColumn:(NSInteger)column text:(NSString *)string;
+{
+    NSAssert(column + string.length - 1 <= self.termWidth, @"Cannot write past the right margin");
+
+    [self expandTabCharactersInColumnRange:NSMakeRange(column, string.length) inScrollRow:row];
+
+    NSAttributedString *attributedString = [[NSAttributedString alloc] initWithString:string attributes:self.characterAttributes];
+    [self.displayTextStorage insertAttributedString:attributedString atIndex:[self characterOffsetUpToScrollRow:row scrollColumn:column]];
+    [self adjustNumberOfCharactersOnScrollRow:row byAmount:string.length];
 }
 
 - (void)insertBlankLineAtScrollRow:(NSInteger)row withNewline:(BOOL)newline;

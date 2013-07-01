@@ -9,6 +9,7 @@
 #import "ANSIEscapeSequencesTests.h"
 #import "MMTask.h"
 #import "MMTestHelpers.h"
+#import "NSString+MMAdditions.h"
 
 @interface ANSIEscapeSequencesTests ()
 
@@ -556,6 +557,29 @@
 
     // Swiss keyboard.
     CheckInputAgainstExpectedOutput(@"\033(=#@[\\]^_`{|}~", @"ùàéçêîèôäöüû");
+}
+
+- (void)testInsertSpaces;
+{
+    CheckInputAgainstExpectedOutput(@"\033[1@", @" ");
+    CheckInputAgainstExpectedOutput(@"\033[@", @" ");
+    CheckInputAgainstExpectedOutput(@"\033[0@", @" ");
+    CheckInputAgainstExpectedOutput(@"\033[@a", @"a");
+    CheckInputAgainstExpectedOutput(@"\033[5@a", @"a    ");
+
+    // Test moving the input forward.
+    CheckInputAgainstExpectedOutput(@"abc\033[1;1H\033[5@", @"     abc");
+    CheckInputAgainstExpectedOutput(@"abcdef\033[1;3H\033[2@", @"ab  cdef");
+    CheckInputAgainstExpectedOutput(@"abcdef\033[1;3H\033[2@g", @"abg cdef");
+
+    // Test that text moved past the right margin is cut-off.
+    CheckInputAgainstExpectedOutput(@"\033[1;79HAB\033[1;79H\033[2@", [@" " repeatedTimes:80]);
+    CheckInputAgainstExpectedOutput(@"\033[1;80HAB\033[1;80H\033[1@", [[@" " repeatedTimes:80] stringByAppendingString:@"B"]);
+    CheckInputAgainstExpectedOutput(@"\033[1;80HAB\033[1;80H\033[10@", [[@" " repeatedTimes:80] stringByAppendingString:@"B"]);
+
+    // Test that it does not work outside scrolling regions.
+    CheckInputAgainstExpectedOutput(@"\033[2;10r\033[1;1HABC\033[1;1H\033[1@", @"ABC");
+    CheckInputAgainstExpectedOutput(@"\033[2;10r\033[2;1HABC\033[2;1H\033[1@", @"\n ABC");
 }
 
 @end

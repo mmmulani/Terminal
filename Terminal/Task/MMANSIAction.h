@@ -96,6 +96,7 @@ typedef enum {
 
 - (void)replaceCharactersAtScrollRow:(NSInteger)row scrollColumn:(NSInteger)column withString:(NSString *)replacementString;
 - (void)removeCharactersInScrollRow:(NSInteger)row range:(NSRange)range shiftCharactersAfter:(BOOL)shift;
+- (void)insertCharactersAtScrollRow:(NSInteger)row scrollColumn:(NSInteger)column text:(NSString *)string;
 
 - (void)createBlankLinesUpToCursor;
 - (void)insertBlankLineAtScrollRow:(NSInteger)row withNewline:(BOOL)newline;

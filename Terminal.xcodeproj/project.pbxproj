@@ -38,6 +38,10 @@
 		91557406175E9BFB004C2ED1 /* MMTabAction.m in Sources */ = {isa = PBXBuildFile; fileRef = 91557405175E9BFB004C2ED1 /* MMTabAction.m */; };
 		91557CA7175A557F00CEEFC8 /* MMDisplayActions.m in Sources */ = {isa = PBXBuildFile; fileRef = 91557CA6175A557F00CEEFC8 /* MMDisplayActions.m */; };
 		91563C45176E575C009FF46A /* MMOutputScrollView.m in Sources */ = {isa = PBXBuildFile; fileRef = 91563C44176E575C009FF46A /* MMOutputScrollView.m */; };
+		916E893B17811CE30070A1C6 /* MMPrintingActions.m in Sources */ = {isa = PBXBuildFile; fileRef = 916E893A17811CE30070A1C6 /* MMPrintingActions.m */; };
+		916E893E17811F900070A1C6 /* NSString+MMAdditions.m in Sources */ = {isa = PBXBuildFile; fileRef = 916E893D17811F900070A1C6 /* NSString+MMAdditions.m */; };
+		916E893F17811F900070A1C6 /* NSString+MMAdditions.m in Sources */ = {isa = PBXBuildFile; fileRef = 916E893D17811F900070A1C6 /* NSString+MMAdditions.m */; };
+		916E894017811F900070A1C6 /* NSString+MMAdditions.m in Sources */ = {isa = PBXBuildFile; fileRef = 916E893D17811F900070A1C6 /* NSString+MMAdditions.m */; };
 		917D1C42173963C800503158 /* lexer.lm in Sources */ = {isa = PBXBuildFile; fileRef = 917D1C41173963C800503158 /* lexer.lm */; };
 		917D1C4417396C8000503158 /* parser.ym in Sources */ = {isa = PBXBuildFile; fileRef = 917D1C4317396C8000503158 /* parser.ym */; };
 		917D1C47173973D600503158 /* MMParserContext.m in Sources */ = {isa = PBXBuildFile; fileRef = 917D1C46173973D600503158 /* MMParserContext.m */; };
@@ -224,6 +228,10 @@
 		91557CA6175A557F00CEEFC8 /* MMDisplayActions.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = MMDisplayActions.m; path = Task/MMDisplayActions.m; sourceTree = "<group>"; };
 		91563C43176E575C009FF46A /* MMOutputScrollView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MMOutputScrollView.h; sourceTree = "<group>"; };
 		91563C44176E575C009FF46A /* MMOutputScrollView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MMOutputScrollView.m; sourceTree = "<group>"; };
+		916E893917811CE30070A1C6 /* MMPrintingActions.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = MMPrintingActions.h; path = Task/MMPrintingActions.h; sourceTree = "<group>"; };
+		916E893A17811CE30070A1C6 /* MMPrintingActions.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = MMPrintingActions.m; path = Task/MMPrintingActions.m; sourceTree = "<group>"; };
+		916E893C17811F900070A1C6 /* NSString+MMAdditions.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSString+MMAdditions.h"; sourceTree = "<group>"; };
+		916E893D17811F900070A1C6 /* NSString+MMAdditions.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSString+MMAdditions.m"; sourceTree = "<group>"; };
 		917D1C41173963C800503158 /* lexer.lm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.lex; name = lexer.lm; path = CommandLine/lexer.lm; sourceTree = "<group>"; };
 		917D1C4317396C8000503158 /* parser.ym */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.yacc; name = parser.ym; path = CommandLine/parser.ym; sourceTree = "<group>"; };
 		917D1C45173973D600503158 /* MMParserContext.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = MMParserContext.h; path = CommandLine/MMParserContext.h; sourceTree = "<group>"; };
@@ -371,6 +379,8 @@
 				91557CA6175A557F00CEEFC8 /* MMDisplayActions.m */,
 				91557404175E9BFB004C2ED1 /* MMTabAction.h */,
 				91557405175E9BFB004C2ED1 /* MMTabAction.m */,
+				916E893917811CE30070A1C6 /* MMPrintingActions.h */,
+				916E893A17811CE30070A1C6 /* MMPrintingActions.m */,
 			);
 			name = "Task and xterm simulation";
 			sourceTree = "<group>";
@@ -442,6 +452,8 @@
 				91814923176CACDC0020AB9D /* MMTaskInfo.h */,
 				91814924176CACDC0020AB9D /* MMTaskInfo.m */,
 				91814927176CB1270020AB9D /* MMShellProxy.h */,
+				916E893C17811F900070A1C6 /* NSString+MMAdditions.h */,
+				916E893D17811F900070A1C6 /* NSString+MMAdditions.m */,
 			);
 			name = Shared;
 			path = MMShared;
@@ -774,6 +786,7 @@
 				919BA9C016C87E4F0091CB1B /* MMShellMain.m in Sources */,
 				910D0EEE1757B8B100FFF569 /* MMShellCommands.m in Sources */,
 				91814926176CACDC0020AB9D /* MMTaskInfo.m in Sources */,
+				916E893F17811F900070A1C6 /* NSString+MMAdditions.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -795,6 +808,7 @@
 				91B8050B16FBC70B00E6D9DF /* MMShellMain.m in Sources */,
 				91B8050F16FF9BCD00E6D9DF /* ANSIEscapeSequencesTests.m in Sources */,
 				919ABB5016FFA22900BB7108 /* MMTaskTests.m in Sources */,
+				916E894017811F900070A1C6 /* NSString+MMAdditions.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -832,6 +846,8 @@
 				91814925176CACDC0020AB9D /* MMTaskInfo.m in Sources */,
 				91563C45176E575C009FF46A /* MMOutputScrollView.m in Sources */,
 				91D8FD0A177B3542005934AE /* MMInfoPanelController.m in Sources */,
+				916E893B17811CE30070A1C6 /* MMPrintingActions.m in Sources */,
+				916E893E17811F900070A1C6 /* NSString+MMAdditions.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
