@@ -26,13 +26,6 @@
     return NO;
 }
 
-- (void)drawRect:(NSRect)rect;
-{
-    [super drawRect:rect];
-
-
-}
-
 - (BOOL)resignFirstResponder;
 {
     self.enclosingScrollView.needsDisplay = YES;
