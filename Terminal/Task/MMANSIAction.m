@@ -59,16 +59,6 @@
     return self.arguments[index];
 }
 
-- (void)setUp;
-{
-    // This method is called before |do|.
-}
-
-- (void)tearDown;
-{
-    // This method is called after |do|.
-}
-
 - (void)do;
 {
     NSAssert(NO, @"Subclass must implement do method");

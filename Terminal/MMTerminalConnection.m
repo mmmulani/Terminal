@@ -36,6 +36,7 @@
 @property NSMutableDictionary *shellIdentifierToFD;
 @property NSMutableDictionary *shellIdentifierToProxy;
 @property NSMutableArray *shellCommandTasks;
+@property dispatch_queue_t outputQueue;
 
 - (MMShellIdentifier)unusedShell;
 - (NSProxy<MMShellProxy> *)proxyForShellIdentifier:(MMShellIdentifier)identifier;
@@ -69,6 +70,8 @@
     self.shellIdentifierToFD = [NSMutableDictionary dictionary];
     self.shellIdentifierToProxy = [NSMutableDictionary dictionary];
     self.shellCommandTasks = [NSMutableArray array];
+
+    self.outputQueue = dispatch_queue_create(NULL, DISPATCH_QUEUE_SERIAL);
 
     return self;
 }
@@ -359,7 +362,7 @@ void iconvFallback(const char *inbuf, size_t inbufsize, void (*write_replacement
 {
     MMTask *task = self.tasksByFD[@(fd)];
 
-    dispatch_async(dispatch_get_main_queue(), ^{
+    dispatch_async(self.outputQueue, ^{
         @try {
             [task handleCommandOutput:output];
         }

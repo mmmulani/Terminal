@@ -131,10 +131,6 @@
     NSCharacterSet *nonPrintableCharacters = [NSCharacterSet characterSetWithCharactersInString:@"\013\014\n\t\r\b\a\033\016\017"];
     self.unreadOutput = nil;
     for (NSUInteger i = 0; i < [outputToHandle length]; i++) {
-        if (self.cursorPosition.y > self.termHeight) {
-            MMLog(@"Cursor position too low");
-            break;
-        }
         unichar currentChar = [outputToHandle characterAtIndex:i];
 
         if (![nonPrintableCharacters characterIsMember:currentChar]) {
@@ -142,7 +138,9 @@
             for (end = i + 1; end < outputToHandle.length && ![nonPrintableCharacters characterIsMember:[outputToHandle characterAtIndex:end]]; end++);
 
             MMANSIAction *action = [[MMANSIPrint alloc] initWithArguments:@[[outputToHandle substringWithRange:NSMakeRange(i, end - i)]]];
-            [self.ansiActions addObject:action];
+            @synchronized(self.ansiActions) {
+                [self.ansiActions addObject:action];
+            }
 
             i = end - 1;
             continue;
@@ -196,19 +194,34 @@
         }
     }
 
-    [self.displayTextStorage beginEditing];
-    [self readdTrailingNewlineIfNecessary];
+    [self performSelectorOnMainThread:@selector(handlePendingActions) withObject:nil waitUntilDone:[NSThread isMainThread]];
+}
 
-    for (MMANSIAction *action in self.ansiActions) {
-        action.delegate = self;
-        [action do];
+- (void)handlePendingActions;
+{
+    while (YES) {
+        NSArray *actions;
+        @synchronized(self.ansiActions) {
+            actions = [self.ansiActions copy];
+            [self.ansiActions removeAllObjects];
+        }
+        if (actions.count == 0) {
+            return;
+        }
+
+        [self.displayTextStorage beginEditing];
+        [self readdTrailingNewlineIfNecessary];
+
+        for (MMANSIAction *action in actions) {
+            action.delegate = self;
+            [action do];
+        }
+
+        [self removeTrailingNewlineIfNecessary];
+        [self.displayTextStorage endEditing];
+        
+        [self.delegate taskReceivedOutput:self];
     }
-    [self.ansiActions removeAllObjects];
-
-    [self removeTrailingNewlineIfNecessary];
-    [self.displayTextStorage endEditing];
-
-    [self.delegate taskReceivedOutput:self];
 }
 
 - (void)handleNonPrintableOutput:(unichar)currentChar;
@@ -231,7 +244,9 @@
     } else if (currentChar == '\017') { // Shift In.
         action = [[MMCharacterSetInvocation alloc] initWithArguments:@[@0]];
     }
-    [self.ansiActions addObject:action];
+    @synchronized(self.ansiActions) {
+        [self.ansiActions addObject:action];
+    }
 }
 
 - (BOOL)shouldDrawFullTerminalScreen;
@@ -285,7 +300,7 @@
         self.finishStatus = status;
         self.finishCode = [data integerValue];
 
-        [self removeTrailingNewlineIfNecessary];
+        [self performSelectorOnMainThread:@selector(removeTrailingNewlineIfNecessary) withObject:nil waitUntilDone:[NSThread isMainThread]];
     }
 
     [self.delegate taskFinished:self];
@@ -594,7 +609,9 @@
     }
 
     if (action) {
-        [self.ansiActions addObject:action];
+        @synchronized(self.ansiActions) {
+            [self.ansiActions addObject:action];
+        }
     }
 }
 

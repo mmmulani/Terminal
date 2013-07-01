@@ -98,7 +98,6 @@
                 MMANSIAction *action = [MMFullReset new];
                 action.delegate = self.delegate;
                 [action do];
-
             }
         }
     }

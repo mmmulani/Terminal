@@ -60,8 +60,6 @@ typedef enum {
 
 - (id)defaultedArgumentAtIndex:(NSInteger)index;
 
-- (void)setUp;
-- (void)tearDown;
 - (void)do;
 
 @end
