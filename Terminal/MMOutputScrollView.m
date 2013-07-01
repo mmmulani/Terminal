@@ -13,8 +13,7 @@
 - (void)drawRect:(NSRect)rect;
 {
     [super drawRect:rect];
-
-    if (self.window.firstResponder == self.documentView) {
+    if (self.window.isKeyWindow && [self.window.firstResponder isEqual:self.documentView]) {
         NSSetFocusRingStyle(NSFocusRingOnly);
         NSRectFill(self.bounds);
     }

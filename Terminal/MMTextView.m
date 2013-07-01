@@ -26,18 +26,30 @@
     return NO;
 }
 
-- (BOOL)resignFirstResponder;
-{
-    self.enclosingScrollView.needsDisplay = YES;
-
-    return [super resignFirstResponder];
-}
-
 - (BOOL)becomeFirstResponder;
 {
-    self.enclosingScrollView.needsDisplay = YES;
+    [self.window addObserver:self forKeyPath:@"firstResponder" options:NSKeyValueObservingOptionInitial context:NULL];
+    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(updateFocusRing) name:NSWindowDidResignKeyNotification object:nil];
+    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(updateFocusRing) name:NSWindowDidBecomeKeyNotification object:nil];
 
     return [super becomeFirstResponder];
+}
+
+- (void)observeValueForKeyPath:(NSString *)keyPath ofObject:(id)object change:(NSDictionary *)change context:(void *)context;
+{
+    if ([keyPath isEqualToString:@"firstResponder"]) {
+        [self updateFocusRing];
+
+        if (![self.window.firstResponder isEqual:self]) {
+            [self.window removeObserver:self forKeyPath:@"firstResponder"];
+            [[NSNotificationCenter defaultCenter] removeObserver:self];
+        }
+    }
+}
+
+- (void)updateFocusRing;
+{
+    [self.enclosingScrollView setKeyboardFocusRingNeedsDisplayInRect:self.enclosingScrollView.bounds];
 }
 
 @end
