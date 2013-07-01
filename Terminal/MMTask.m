@@ -21,6 +21,7 @@
 #import "MMShellCommands.h"
 #import "MMCommandGroup.h"
 #import "MMTaskInfo.h"
+#import "NSString+MMAdditions.h"
 
 @interface MMTask ()
 
@@ -430,7 +431,7 @@
 
     NSInteger numberOfSpacesToInsert = MAX(self.cursorPosition.x - [self numberOfCharactersInScrollRow:self.cursorPosition.y] - 1, 0);
     if (numberOfSpacesToInsert > 0) {
-        [self replaceCharactersAtScrollRow:self.cursorPosition.y scrollColumn:(self.cursorPosition.x - numberOfSpacesToInsert) withString:[@"" stringByPaddingToLength:numberOfSpacesToInsert withString:@" " startingAtIndex:0]];
+        [self replaceCharactersAtScrollRow:self.cursorPosition.y scrollColumn:(self.cursorPosition.x - numberOfSpacesToInsert) withString:[@" " repeatedTimes:numberOfSpacesToInsert]];
     }
 }
 
@@ -753,7 +754,7 @@
 
 - (void)convertTabRangeToCharacters:(NSRange)tabRange inScrollRow:(NSInteger)row;
 {
-    NSAttributedString *attributedString = [[NSAttributedString alloc] initWithString:[@"" stringByPaddingToLength:tabRange.length withString:@" " startingAtIndex:0] attributes:self.characterAttributes];
+    NSAttributedString *attributedString = [[NSAttributedString alloc] initWithString:[@" " repeatedTimes:tabRange.length] attributes:self.characterAttributes];
     [self.displayTextStorage replaceCharactersInRange:NSMakeRange([self characterOffsetUpToScrollRow:row scrollColumn:tabRange.location], 1) withAttributedString:attributedString];
 }
 

@@ -11,6 +11,7 @@
 #import "MMTerminalConnection.h"
 #import "MMTerminalWindowController.h"
 #import "MMTestHelpers.h"
+#import "NSString+MMAdditions.h"
 
 #import <OCMock/OCMock.h>
 
@@ -35,14 +36,14 @@
     CheckInputAgainstExpectedCursorPositionByCharacters(@"abc\033[1;1H", 0);
     CheckInputAgainstExpectedCursorPositionByCharacters(@"abc\033[1;1Hd", 1);
     CheckInputAgainstExpectedCursorPositionByCharacters(@"abc\033[1;2H", 1);
-    NSString *longString = [@"" stringByPaddingToLength:150 withString:@"1234567890" startingAtIndex:0];
+    NSString *longString = [@"1234567890" repeatedTimes:15];
     CheckInputAgainstExpectedCursorPositionByCharacters(longString, 150);
     CheckInputAgainstExpectedCursorPositionByCharacters(@"\033[5;1H", 4);
 
-    NSString *longerThanScreenString = [@"" stringByPaddingToLength:(25 * 81) withString:@"1234567890" startingAtIndex:0];
+    NSString *longerThanScreenString = [@"1234567890" repeatedToLength:(25 * 81)];
     CheckInputAgainstExpectedCursorPositionByCharacters(longerThanScreenString, 25 * 81);
 
-    NSString *lotsOfNewlines = [@"" stringByPaddingToLength:30 withString:@"\n" startingAtIndex:0];
+    NSString *lotsOfNewlines = [@"\n" repeatedTimes:30];
     CheckInputAgainstExpectedCursorPositionByCharacters(lotsOfNewlines, 30);
 }
 
@@ -137,7 +138,7 @@
 
     // Test enough newlines to go beyond a single screen.
     task = [MMTask new];
-    SendInputToTask(task, [@"" stringByPaddingToLength:25 withString:@"\n" startingAtIndex:0]);
+    SendInputToTask(task, [@"\n" repeatedTimes:25]);
     STAssertEquals(task.characterOffsetToScreen, (NSInteger)2, @"");
     STAssertEquals(task.cursorPositionX, (NSInteger)1, @"");
     STAssertEquals(task.cursorPositionY, (NSInteger)24, @"");
@@ -152,7 +153,7 @@
 
     // Test a line long enough to fill the screen when resized.
     task = [MMTask new];
-    SendInputToTask(task, [@"\n" stringByAppendingString:[@"" stringByPaddingToLength:500 withString:@"1234567890" startingAtIndex:0]]);
+    SendInputToTask(task, [@"\n" stringByAppendingString:[@"1234567890" repeatedToLength:500]]);
     STAssertEquals(task.cursorPositionX, (NSInteger)21, @"");
     STAssertEquals(task.cursorPositionY, (NSInteger)8, @"");
 

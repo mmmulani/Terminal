@@ -44,7 +44,7 @@
     CheckInputAgainstExpectedOutput(@"a\nb\n", @"a\nb\n");
 
     // Really long strings shouldn't be separated to multiple lines.
-    NSString *longString = [@"" stringByPaddingToLength:100 withString:@"1234567890" startingAtIndex:0];
+    NSString *longString = [@"1234567890" repeatedToLength:100];
     CheckInputAgainstExpectedOutput(longString, longString);
 }
 
@@ -59,7 +59,7 @@
     CheckInputAgainstExpectedOutput(@"1\n2\033[1J_", @"\n _");
     CheckInputAgainstExpectedOutput(@"1\n2\033[2;1H\033[1J", @"");
     CheckInputAgainstExpectedOutput(@"1\n2\n3\033[2;1H\033[1J", @"\n\n3");
-    CheckInputAgainstExpectedOutput([[@"" stringByPaddingToLength:82 withString:@" " startingAtIndex:0] stringByAppendingString:@"\033[1;80H\033[1J"], @"\n  ");
+    CheckInputAgainstExpectedOutput([[@" " repeatedTimes:82] stringByAppendingString:@"\033[1;80H\033[1J"], @"\n  ");
     CheckInputAgainstExpectedOutput(@"abc\033[1;2H\033[1J", @"  c");
 
     CheckInputAgainstExpectedOutputWithExpectedCursor(@"\033[2J", @"", MMPositionMake(1,1));
@@ -69,11 +69,11 @@
     CheckInputAgainstExpectedOutput(@"12\n34\n\033[2J", @"");
 
     // The rest of these tests are against crashes.
-    NSString *lotsOfNewLines = [@"" stringByPaddingToLength:80 withString:@"\n" startingAtIndex:0];
-    CheckInputAgainstExpectedOutput([lotsOfNewLines stringByAppendingString:@"\033[2J"], [@"" stringByPaddingToLength:(80 - 23) withString:@"\n" startingAtIndex:0]);
+    NSString *lotsOfNewLines = [@"\n" repeatedTimes:80];
+    CheckInputAgainstExpectedOutput([lotsOfNewLines stringByAppendingString:@"\033[2J"], [@"\n" repeatedTimes:(80 - 23)]);
 
     CheckInputAgainstExpectedOutput(@"\033[0J\033[2J", @"");
-    CheckInputAgainstExpectedOutput(@"\033[24;1H\n\n\n\033[2Ja", [[@"" stringByPaddingToLength:26 withString:@"\n" startingAtIndex:0] stringByAppendingString:@"a"]);
+    CheckInputAgainstExpectedOutput(@"\033[24;1H\n\n\n\033[2Ja", [[@"\n" repeatedTimes:26] stringByAppendingString:@"a"]);
 }
 
 - (void)testCursorHorizontalAbsolute;
@@ -96,7 +96,7 @@
     CheckInputAgainstExpectedOutput(@"\na\033[0db", @" b\na");
     CheckInputAgainstExpectedOutput(@"\na\033[1db", @" b\na");
     CheckInputAgainstExpectedOutput(@"a\033[2db", @"a\n b");
-    CheckInputAgainstExpectedOutput(@"\033[100da", [[@"" stringByPaddingToLength:23 withString:@"\n" startingAtIndex:0] stringByAppendingFormat:@"a"]);
+    CheckInputAgainstExpectedOutput(@"\033[100da", [[@"\n" repeatedTimes:23] stringByAppendingFormat:@"a"]);
 }
 
 - (void)testNewlineHandling;
@@ -110,18 +110,18 @@
 
     // Test that the terminal can handle nearly full screen. By that we mean 23 full lines and a non-empty 24th line.
     // This tests how the terminal handles wrapping around at the end of a line.
-    NSString *spaceFillingLine = [@"" stringByPaddingToLength:80 withString:@"1234567890" startingAtIndex:0];
-    NSString *nearlyFullScreen = [[@"" stringByPaddingToLength:(80 * 23) withString:spaceFillingLine startingAtIndex:0] stringByAppendingString:@"1"];
+    NSString *spaceFillingLine = [@"1234567890" repeatedTimes:8];
+    NSString *nearlyFullScreen = [[spaceFillingLine repeatedTimes:23] stringByAppendingString:@"1"];
     CheckInputAgainstExpectedOutput(nearlyFullScreen, nearlyFullScreen);
-    NSString *nearlyFullScreenWithNewlines = [[@"" stringByPaddingToLength:(81 * 23) withString:[spaceFillingLine stringByAppendingString:@"\n"] startingAtIndex:0] stringByAppendingString:@"1"];
+    NSString *nearlyFullScreenWithNewlines = [[[spaceFillingLine stringByAppendingString:@"\n"] repeatedTimes:23] stringByAppendingString:@"1"];
     CheckInputAgainstExpectedOutput(nearlyFullScreenWithNewlines, nearlyFullScreenWithNewlines);
-    NSString *overflowedScreen = [[@"" stringByPaddingToLength:(80 * 26) withString:spaceFillingLine startingAtIndex:0] stringByAppendingString:@"1"];
+    NSString *overflowedScreen = [[spaceFillingLine repeatedTimes:26] stringByAppendingString:@"1"];
     CheckInputAgainstExpectedOutput(overflowedScreen, overflowedScreen);
 
     // Writing characters past the terminal limit should overwrite the newline present on that line.
     CheckInputAgainstExpectedOutput(@"\033[1;1H\n\033[1;79Habcde", @"                                                                              abcde");
 
-    CheckInputAgainstExpectedOutput([[@"" stringByPaddingToLength:160 withString:@" " startingAtIndex:0] stringByAppendingString:@"\r\r\nA"], [[@"" stringByPaddingToLength:160 withString:@" " startingAtIndex:0] stringByAppendingString:@"\nA"]);
+    CheckInputAgainstExpectedOutput([[@" " repeatedTimes:160] stringByAppendingString:@"\r\r\nA"], [[@" " repeatedTimes:160] stringByAppendingString:@"\nA"]);
 
     // Test that a raw newline does not change the cursor position.
     CheckRawInputAgainstExpectedOutput(@"A\nB", @"A\n B");
@@ -180,9 +180,9 @@
     CheckInputAgainstExpectedOutput(@"A\033[1BB", @"A\n B");
     CheckInputAgainstExpectedOutput(@"A\033[3BB", @"A\n\n\n B");
 
-    NSString *twentyThreeNewlines = [@"" stringByPaddingToLength:23 withString:@"\n" startingAtIndex:0];
+    NSString *twentyThreeNewlines = [@"\n" repeatedTimes:23];
     CheckInputAgainstExpectedOutput(@"A\033[100BB", ([NSString stringWithFormat:@"A%@ B", twentyThreeNewlines]));
-    NSString *seventyNineSpaces = [@"" stringByPaddingToLength:79 withString:@" " startingAtIndex:0];
+    NSString *seventyNineSpaces = [@" " repeatedTimes:79];
     CheckInputAgainstExpectedOutput(@"\033[24;80HA\033[1BB", ([NSString stringWithFormat:@"%@%@B", twentyThreeNewlines, seventyNineSpaces]));
 }
 
@@ -197,11 +197,11 @@
     CheckInputAgainstExpectedOutput(@"\033[1;800Ha", @"                                                                               a");
     CheckInputAgainstExpectedOutput(@"\033[2;800Ha", @"\n                                                                               a");
     CheckInputAgainstExpectedOutput(@"\033[1;79Ha", @"                                                                              a");
-    CheckInputAgainstExpectedOutput(@"\033[23;1Ha", [[@"" stringByPaddingToLength:22 withString:@"\n" startingAtIndex:0] stringByAppendingString:@"a"]);
-    CheckInputAgainstExpectedOutput(@"\033[24;1Ha", [[@"" stringByPaddingToLength:23 withString:@"\n" startingAtIndex:0] stringByAppendingString:@"a"]);
+    CheckInputAgainstExpectedOutput(@"\033[23;1Ha", [[@"\n" repeatedTimes:22] stringByAppendingString:@"a"]);
+    CheckInputAgainstExpectedOutput(@"\033[24;1Ha", [[@"\n" repeatedTimes:23] stringByAppendingString:@"a"]);
     // Both of these are expected failures:
-    CheckInputAgainstExpectedOutput(@"\033[24;80Ha", [[@"" stringByPaddingToLength:23 withString:@"\n" startingAtIndex:0] stringByAppendingString:@"                                                                               a"]);
-    CheckInputAgainstExpectedOutput(@"\033[100;100Ha", [[@"" stringByPaddingToLength:23 withString:@"\n" startingAtIndex:0] stringByAppendingString:@"                                                                               a"]);
+    CheckInputAgainstExpectedOutput(@"\033[24;80Ha", [[@"\n" repeatedTimes:23] stringByAppendingString:@"                                                                               a"]);
+    CheckInputAgainstExpectedOutput(@"\033[100;100Ha", [[@"\n" repeatedTimes:23] stringByAppendingString:@"                                                                               a"]);
 
     CheckInputAgainstExpectedOutput(@"\033[2;1Ha", @"\na");
     CheckInputAgainstExpectedOutput(@"\033[2;2Ha", @"\n a");
@@ -257,14 +257,14 @@
     CheckInputAgainstExpectedOutputWithExpectedCursor(@"abc\ndef\033[1;2H\033[1Lg", @"g\nabc\ndef", MMPositionMake(2, 1));
 
     CheckInputAgainstExpectedOutput(@"\033[24;1H12345678901234567890123456789012345678901234567890123456789012345678901234567890\033[10;1H\033[100L", @"\n\n\n\n\n\n\n\n\n");
-    CheckInputAgainstExpectedOutput(@"\033[24;1Habc\033[23;1H\033[1Ld", [[[@"" stringByPaddingToLength:22 withString:@"\n" startingAtIndex:0] stringByAppendingString:@"d"] stringByAppendingString:@"\n"]);
-    CheckInputAgainstExpectedOutput(@"\033[24;1Ha\033[1Lb", [[@"" stringByPaddingToLength:23 withString:@"\n" startingAtIndex:0] stringByAppendingString:@"b"]);
+    CheckInputAgainstExpectedOutput(@"\033[24;1Habc\033[23;1H\033[1Ld", [[[@"\n" repeatedTimes:22] stringByAppendingString:@"d"] stringByAppendingString:@"\n"]);
+    CheckInputAgainstExpectedOutput(@"\033[24;1Ha\033[1Lb", [[@"\n" repeatedTimes:23] stringByAppendingString:@"b"]);
 
     // Make sure that nothing happens when we are not in the scroll region.
     CheckInputAgainstExpectedOutput(@"a\nb\nc\033[2;3r\033[1;1H\033[1L", @"a\nb\nc");
 
     // Make sure that the bottom line doesn't inherit a newline character when it is pushed down by the insert line command.
-    CheckInputAgainstExpectedOutput(@"\033[23;1HA\n\033[1;1H\033[L", [[@"" stringByPaddingToLength:23 withString:@"\n" startingAtIndex:0] stringByAppendingString:@"A"]);
+    CheckInputAgainstExpectedOutput(@"\033[23;1HA\n\033[1;1H\033[L", [[@"\n" repeatedTimes:23] stringByAppendingString:@"A"]);
 
     // Test inserting lots of lines.
     CheckInputAgainstExpectedOutput(@"1\n2\n3\n4\n5\n6\n7\n8\n9\n10\n11\n12\n13\n14\n15\n16\n17\n18\n19\n20\n21\n22\n23\n24\033[2;1H\033[22M\033[22L", @"1\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n24");
@@ -278,7 +278,7 @@
     CheckInputAgainstExpectedOutputWithExpectedCursor(@"abc\033[1M", @"", MMPositionMake(1, 1));
     CheckInputAgainstExpectedOutputWithExpectedCursor(@"abc\033[2M", @"", MMPositionMake(1, 1));
     CheckInputAgainstExpectedOutputWithExpectedCursor(@"abc\ndef\033[1;1H\033[1M", @"def", MMPositionMake(1, 1));
-    CheckInputAgainstExpectedOutputWithExpectedCursor(@"\033[24;1Habc\033[1M", [@"" stringByPaddingToLength:23 withString:@"\n" startingAtIndex:0], MMPositionMake(1, 24));
+    CheckInputAgainstExpectedOutputWithExpectedCursor(@"\033[24;1Habc\033[1M", [@"\n" repeatedTimes:23], MMPositionMake(1, 24));
 
     CheckInputAgainstExpectedOutput(@"a\nb\nc\nd\ne\nf\033[1;3r\033[4;1H\033[1M", @"a\nb\nc\nd\ne\nf");
     CheckInputAgainstExpectedOutput(@"a\nb\nc\nd\ne\nf\033[1;3r\033[1;1H\033[1M", @"b\nc\n\nd\ne\nf");
@@ -314,10 +314,10 @@
     [task handleCommandOutput:@"\033[0J\n\n\n"];
     STAssertEquals(task.cursorPositionByCharacters, (NSInteger)3, @"Should not crash in looking at the cursor position for a row which does not exist");
 
-    CheckInputAgainstExpectedOutput(([NSString stringWithFormat:@"\033[%@HA", [@"" stringByPaddingToLength:875 withString:@"1;" startingAtIndex:0]]), @"A");
+    CheckInputAgainstExpectedOutput(([NSString stringWithFormat:@"\033[%@HA", [@"1;" repeatedToLength:875]]), @"A");
 
     CheckInputAgainstExpectedOutput(@"\033[0J\033D\033[0J", @"");
-    CheckInputAgainstExpectedOutput([@"\033[0J" stringByPaddingToLength:300 withString:@"A" startingAtIndex:0], [@"" stringByPaddingToLength:296 withString:@"A" startingAtIndex:0]);
+    CheckInputAgainstExpectedOutput([@"\033[0J" stringByPaddingToLength:300 withString:@"A" startingAtIndex:0], [@"A" repeatedTimes:296]);
 }
 
 - (void)testReverseIndex;
@@ -347,16 +347,16 @@
     CheckInputAgainstExpectedOutput([[self.twentyFourNumberedLines componentsJoinedByString:@""] stringByAppendingString:@"\033D!"], [[self.twentyFourNumberedLines componentsJoinedByString:@""] stringByAppendingString:@"!"]);
     CheckInputAgainstExpectedOutput([[self.twentyFourNumberedLines componentsJoinedByString:@""] stringByAppendingString:@"\033[24;5H\033D!"], [[self.twentyFourNumberedLines componentsJoinedByString:@""] stringByAppendingString:@"    !"]);
     // Make sure that newline is added if necessary.
-    CheckInputAgainstExpectedOutput([[@"" stringByPaddingToLength:23 withString:@"\n" startingAtIndex:0] stringByAppendingString:@"\033[24;5H\033D!"], [[@"" stringByPaddingToLength:24 withString:@"\n" startingAtIndex:0] stringByAppendingString:@"    !"]);
+    CheckInputAgainstExpectedOutput([[@"\n" repeatedTimes:23] stringByAppendingString:@"\033[24;5H\033D!"], [[@"\n" repeatedTimes:24] stringByAppendingString:@"    !"]);
 }
 
 - (void)testNextLine;
 {
     CheckInputAgainstExpectedOutput(@"\033E!", @"\n!");
-    CheckInputAgainstExpectedOutput([[@"" stringByPaddingToLength:79 withString:@" " startingAtIndex:0] stringByAppendingString:@"\033E_"], [[@"" stringByPaddingToLength:79 withString:@" " startingAtIndex:0] stringByAppendingString:@"\n_"]);
-    CheckInputAgainstExpectedOutput([[@"" stringByPaddingToLength:80 withString:@" " startingAtIndex:0] stringByAppendingString:@"\033E_"], [[@"" stringByPaddingToLength:80 withString:@" " startingAtIndex:0] stringByAppendingString:@"_"]);
+    CheckInputAgainstExpectedOutput([[@" " repeatedTimes:79] stringByAppendingString:@"\033E_"], [[@" " repeatedTimes:79] stringByAppendingString:@"\n_"]);
+    CheckInputAgainstExpectedOutput([[@" " repeatedTimes:80] stringByAppendingString:@"\033E_"], [[@" " repeatedTimes:80] stringByAppendingString:@"_"]);
     CheckInputAgainstExpectedOutput([[self.twentyFourNumberedLines componentsJoinedByString:@""] stringByAppendingString:@"\033E!"], [[self.twentyFourNumberedLines componentsJoinedByString:@""] stringByAppendingString:@"!"]);
-    CheckInputAgainstExpectedOutput([[@"" stringByPaddingToLength:23 withString:@"\n" startingAtIndex:0] stringByAppendingString:@"\033[1;10r\033[24;1H1\033E2"], [[@"" stringByPaddingToLength:23 withString:@"\n" startingAtIndex:0] stringByAppendingString:@"2"]);
+    CheckInputAgainstExpectedOutput([[@"\n" repeatedTimes:23] stringByAppendingString:@"\033[1;10r\033[24;1H1\033E2"], [[@"\n" repeatedTimes:23] stringByAppendingString:@"2"]);
 }
 
 - (void)testScreenAlignmentTest;
@@ -364,7 +364,7 @@
     CheckInputAgainstExpectedOutput(@"\033#8\033[2Ja", @"a");
     NSMutableArray *lines = [NSMutableArray array];
     for (NSInteger i = 0; i < 24; i++) {
-        [lines addObject:[@"" stringByPaddingToLength:80 withString:@"E" startingAtIndex:0]];
+        [lines addObject:[@"E" repeatedTimes:80]];
     }
     CheckInputAgainstExpectedOutput(@"\033#8", [lines componentsJoinedByString:@"\n"]);
 }
@@ -372,18 +372,18 @@
 - (void)testAutowrapMode;
 {
     // Test that autowrap is on by default.
-    NSString *longString = [@"" stringByPaddingToLength:250 withString:@"123" startingAtIndex:0];
+    NSString *longString = [@"123" repeatedToLength:250];
     CheckInputAgainstExpectedOutput(longString, longString);
 
     // The behaviour autowrap and rather surprising compared to the expected behaviour.
     // With autowrap disabled:
     // - when a large block of text is to be printed, it will only print up to the end of the line, and it will only print enough characters to fill the screen. That is, the tail end may not be printed.
     // - when a block of text is about to be printed, if it is past the right margin, it will be moved to within the screen and then the print operation will commence.
-    NSString *longerThanLineString = [@"" stringByPaddingToLength:85 withString:@"1234567890" startingAtIndex:0];
+    NSString *longerThanLineString = [@"1234567890" repeatedToLength:85];
     NSString *expectedOutput = [longerThanLineString substringToIndex:80];
     CheckInputAgainstExpectedOutput([@"\033[?7l" stringByAppendingString:longerThanLineString], expectedOutput);
 
-    CheckInputAgainstExpectedOutput(@"\033[?7l\033[1;80HA\033[mB", [[@"" stringByPaddingToLength:79 withString:@" " startingAtIndex:0] stringByAppendingString:@"B"]);
+    CheckInputAgainstExpectedOutput(@"\033[?7l\033[1;80HA\033[mB", [[@" " repeatedTimes:79] stringByAppendingString:@"B"]);
 
     CheckInputAgainstExpectedOutput(@"12345678901234567890123456789012345678901234567890123456789012345678901234567890\n"
                                     "12345678901234567890123456789012345678901234567890123456789012345678901234567890\033[?7l\033[1;80HAB",
@@ -416,15 +416,15 @@
     CheckInputAgainstExpectedOutput(@"1\b2", @"2");
     CheckInputAgainstExpectedOutput(@"1\b\b2", @"2");
     CheckInputAgainstExpectedOutput(@"1 \b2", @"12");
-    CheckInputAgainstExpectedOutput(@"\033[1;80H1\b2", [[@"" stringByPaddingToLength:78 withString:@" " startingAtIndex:0] stringByAppendingString:@"21"]);
+    CheckInputAgainstExpectedOutput(@"\033[1;80H1\b2", [[@" " repeatedTimes:78] stringByAppendingString:@"21"]);
 
-    CheckInputAgainstExpectedOutput(@"\033[1;80H12\b\b\b3", [[@"" stringByPaddingToLength:78 withString:@" " startingAtIndex:0] stringByAppendingString:@"312"]);
-    CheckInputAgainstExpectedOutput(@"\033[1;80H12\b\b3", [[@"" stringByPaddingToLength:79 withString:@" " startingAtIndex:0] stringByAppendingString:@"32"]);
-    CheckInputAgainstExpectedOutput(@"\033[1;80H12\b3", [[@"" stringByPaddingToLength:79 withString:@" " startingAtIndex:0] stringByAppendingString:@"13"]);
+    CheckInputAgainstExpectedOutput(@"\033[1;80H12\b\b\b3", [[@" " repeatedTimes:78] stringByAppendingString:@"312"]);
+    CheckInputAgainstExpectedOutput(@"\033[1;80H12\b\b3", [[@" " repeatedTimes:79] stringByAppendingString:@"32"]);
+    CheckInputAgainstExpectedOutput(@"\033[1;80H12\b3", [[@" " repeatedTimes:79] stringByAppendingString:@"13"]);
 
-    CheckInputAgainstExpectedOutput(@"\033[1;80H1\n\b2", [[@"" stringByPaddingToLength:79 withString:@" " startingAtIndex:0] stringByAppendingString:@"1\n2"]);
-    CheckInputAgainstExpectedOutput(@"\033[1;80H1\n\b\b2", [[@"" stringByPaddingToLength:79 withString:@" " startingAtIndex:0] stringByAppendingString:@"1\n2"]);
-    CheckInputAgainstExpectedOutputWithExpectedCursor([[@"" stringByPaddingToLength:80 withString:@" " startingAtIndex:0] stringByAppendingString:@"a\bb"], [[@"" stringByPaddingToLength:80 withString:@" " startingAtIndex:0] stringByAppendingString:@"b"], MMPositionMake(2, 2));
+    CheckInputAgainstExpectedOutput(@"\033[1;80H1\n\b2", [[@" " repeatedTimes:79] stringByAppendingString:@"1\n2"]);
+    CheckInputAgainstExpectedOutput(@"\033[1;80H1\n\b\b2", [[@" " repeatedTimes:79] stringByAppendingString:@"1\n2"]);
+    CheckInputAgainstExpectedOutputWithExpectedCursor([[@" " repeatedTimes:80] stringByAppendingString:@"a\bb"], [[@" " repeatedTimes:80] stringByAppendingString:@"b"], MMPositionMake(2, 2));
 }
 
 - (void)testTabs;
@@ -480,7 +480,7 @@
 
     // Test that the character offset changes by the number of printable characters.
     MMTask *task = [MMTask new];
-    [task handleCommandOutput:[@"\t" stringByAppendingString:[@"" stringByPaddingToLength:30 withString:@"\n" startingAtIndex:0]]];
+    [task handleCommandOutput:[@"\t" stringByAppendingString:[@"\n" repeatedTimes:30]]];
     STAssertEquals(task.cursorPositionByCharacters, (NSInteger)31, @"Cursor should be offset by number of printable characters.");
 }
 

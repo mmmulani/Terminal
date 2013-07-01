@@ -7,6 +7,7 @@
 //
 
 #import "MMDisplayActions.h"
+#import "NSString+MMAdditions.h"
 
 @implementation MMDECAlignmentTest
 
@@ -20,7 +21,7 @@
         [self.delegate insertBlankLineAtScrollRow:(self.delegate.termHeight - numberOfRowsToCreate + i + 1) withNewline:NO];
     }
 
-    NSString *alignmentText = [@"" stringByPaddingToLength:self.delegate.termWidth withString:@"E" startingAtIndex:0];
+    NSString *alignmentText = [@"E" repeatedTimes:self.delegate.termWidth];
     for (NSInteger i = 1; i <= self.delegate.termHeight; i++) {
         [self.delegate replaceCharactersAtScrollRow:i scrollColumn:1 withString:alignmentText];
         [self.delegate setScrollRow:i hasNewline:(i != self.delegate.termHeight)];

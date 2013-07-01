@@ -7,6 +7,7 @@
 //
 
 #import "MMErasingActions.h"
+#import "NSString+MMAdditions.h"
 
 @implementation MMClearUntilEndOfLine
 
@@ -31,7 +32,7 @@
             break;
     }
     if (fillWithSpaces) {
-        [self.delegate replaceCharactersAtScrollRow:self.delegate.cursorPositionY scrollColumn:rangeToRemove.location withString:[@"" stringByPaddingToLength:rangeToRemove.length withString:@" " startingAtIndex:0]];
+        [self.delegate replaceCharactersAtScrollRow:self.delegate.cursorPositionY scrollColumn:rangeToRemove.location withString:[@" " repeatedTimes:rangeToRemove.length]];
     } else {
         [self.delegate removeCharactersInScrollRow:self.delegate.cursorPositionY range:rangeToRemove shiftCharactersAfter:NO];
     }
@@ -70,7 +71,7 @@
             [self.delegate removeCharactersInScrollRow:self.delegate.cursorPositionY range:NSMakeRange(1, MIN(self.delegate.cursorPositionX, [self.delegate numberOfCharactersInScrollRow:self.delegate.cursorPositionY])) shiftCharactersAfter:NO];
             [self.delegate setScrollRow:self.delegate.cursorPositionY hasNewline:fillWithNewlines];
         } else {
-            [self.delegate replaceCharactersAtScrollRow:self.delegate.cursorPositionY scrollColumn:1 withString:[@"" stringByPaddingToLength:MIN(self.delegate.cursorPositionX, [self.delegate numberOfCharactersInScrollRow:self.delegate.cursorPositionY]) withString:@" " startingAtIndex:0]];
+            [self.delegate replaceCharactersAtScrollRow:self.delegate.cursorPositionY scrollColumn:1 withString:[@" " repeatedTimes:MIN(self.delegate.cursorPositionX, [self.delegate numberOfCharactersInScrollRow:self.delegate.cursorPositionY])]];
         }
     } else if ([[self defaultedArgumentAtIndex:0] integerValue] == 2) {
         // Erase entire screen.
