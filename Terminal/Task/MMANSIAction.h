@@ -94,6 +94,7 @@ typedef enum {
 - (BOOL)isColumnWithinTab:(NSInteger)column inScrollRow:(NSInteger)row;
 - (NSInteger)numberOfRowsOnScreen;
 
+- (NSString *)convertStringForCurrentKeyboard:(NSString *)string;
 - (void)replaceCharactersAtScrollRow:(NSInteger)row scrollColumn:(NSInteger)column withString:(NSString *)replacementString;
 - (void)removeCharactersInScrollRow:(NSInteger)row range:(NSRange)range shiftCharactersAfter:(BOOL)shift;
 - (void)insertCharactersAtScrollRow:(NSInteger)row scrollColumn:(NSInteger)column text:(NSString *)string;
@@ -117,5 +118,6 @@ typedef enum {
 
 // XXX: Try to remove these or change them to ensure that all calculations for ANSIActions can be done in |setUp|.
 - (void)checkIfExceededLastLineAndObeyScrollMargin:(BOOL)obeyScrollMargin;
+- (void)fillCurrentScreenWithSpacesUpToCursor;
 
 @end

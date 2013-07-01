@@ -143,7 +143,9 @@
             NSInteger end = i + 1;
             for (end = i + 1; end < outputToHandle.length && ![nonPrintableCharacters characterIsMember:[outputToHandle characterAtIndex:end]]; end++);
 
-            [self ansiPrint:[outputToHandle substringWithRange:NSMakeRange(i, end - i)]];
+            MMANSIAction *action = [[MMANSIPrint alloc] initWithArguments:@[[outputToHandle substringWithRange:NSMakeRange(i, end - i)]]];
+            action.delegate = self;
+            [action do];
 
             i = end - 1;
             continue;
@@ -376,45 +378,6 @@
     }
 
     return convertedString;
-}
-
-- (void)ansiPrint:(NSString *)string;
-{
-    [self fillCurrentScreenWithSpacesUpToCursor];
-
-    string = [self convertStringForCurrentKeyboard:string];
-
-    // If we are not in autowrap mode, we only print the characters that will fit on the current line.
-    // Furthermore, as per the vt100 wrapping glitch (at http://invisible-island.net/xterm/xterm.faq.html#vt100_wrapping), we only print the "head" of the content to be outputted.
-    if (![self isDECPrivateModeSet:MMDECModeAutoWrap] && string.length > (self.termWidth - self.cursorPosition.x + 1)) {
-        self.cursorPosition = MMPositionMake(MIN(self.termWidth, self.cursorPosition.x), self.cursorPosition.y);
-        NSString *charactersToInsertFromHead = [string substringWithRange:NSMakeRange(0, self.termWidth - self.cursorPositionX + 1)];
-        string = charactersToInsertFromHead;
-    }
-
-    NSInteger i = 0;
-    while (i < string.length) {
-        if (self.cursorPosition.x == self.termWidth + 1) {
-            // If there is a newline present at the end of this line, we clear it as the text will now flow to the next line.
-            [self setScrollRow:self.cursorPosition.y hasNewline:NO];
-            self.cursorPosition = MMPositionMake(1, self.cursorPosition.y + 1);
-            [self checkIfExceededLastLineAndObeyScrollMargin:YES];
-        }
-
-        NSInteger lengthToPrintOnLine = MIN(string.length - i, self.termWidth - self.cursorPosition.x + 1);
-        [self expandTabCharactersInColumnRange:NSMakeRange(self.cursorPosition.x, lengthToPrintOnLine) inScrollRow:self.cursorPosition.y];
-
-        NSAttributedString *attributedString = [[NSAttributedString alloc] initWithString:[string substringWithRange:NSMakeRange(i, lengthToPrintOnLine)] attributes:self.characterAttributes];
-        NSInteger numberOfCharactersToDelete = MIN(lengthToPrintOnLine, [self numberOfCharactersInScrollRow:self.cursorPosition.y] - self.cursorPosition.x + 1);
-        if (numberOfCharactersToDelete > 0) {
-            [self.displayTextStorage deleteCharactersInRange:NSMakeRange(self.cursorPositionByCharacters, numberOfCharactersToDelete)];
-        }
-        [self.displayTextStorage insertAttributedString:attributedString atIndex:self.cursorPositionByCharacters];
-        [self adjustNumberOfCharactersOnScrollRow:self.cursorPosition.y byAmount:(lengthToPrintOnLine - numberOfCharactersToDelete)];
-        self.cursorPosition = MMPositionMake(self.cursorPosition.x + lengthToPrintOnLine, self.cursorPosition.y);
-
-        i += lengthToPrintOnLine;
-    }
 }
 
 - (void)fillCurrentScreenWithSpacesUpToCursor;

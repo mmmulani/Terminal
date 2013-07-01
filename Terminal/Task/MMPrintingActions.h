@@ -11,3 +11,7 @@
 @interface MMInsertCharacters : MMANSIAction
 
 @end
+
+@interface MMANSIPrint : MMANSIAction
+
+@end
