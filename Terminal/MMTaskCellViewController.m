@@ -45,7 +45,9 @@
         }
     }
 
-    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(outputFrameChanged:) name:NSViewFrameDidChangeNotification object:self.outputView];
+    if (!self.task.isFinished) {
+        [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(outputFrameChanged:) name:NSViewFrameDidChangeNotification object:self.outputView];
+    }
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(labelFrameChanged:) name:NSViewFrameDidChangeNotification object:self.label];
 }
 
@@ -92,7 +94,10 @@
     }
 
     NSRect clipViewFrame = self.outputView.superview.frame;
-    [((NSClipView *)self.outputView.superview) scrollToPoint:NSMakePoint(0, self.outputView.frame.size.height - clipViewFrame.size.height + extraScroll)];
+    CGFloat scrollY = self.outputView.frame.size.height - clipViewFrame.size.height + extraScroll;
+    if (ABS(self.outputView.enclosingScrollView.contentView.bounds.origin.y - scrollY) > 1) {
+        [((NSClipView *)self.outputView.superview) scrollToPoint:NSMakePoint(0, scrollY)];
+    }
 }
 
 - (CGFloat)heightToFitAllOfOutput;
@@ -227,6 +232,8 @@
 
         [self updateWithANSIOutput];
     }
+
+    [[NSNotificationCenter defaultCenter] removeObserver:self name:NSViewFrameDidChangeNotification object:self.outputView];
 
     [self.windowController taskFinished:self];
 
