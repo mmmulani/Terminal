@@ -668,6 +668,9 @@
             case 37:
                 self.characterAttributes[NSForegroundColorAttributeName] = [NSColor colorWithCalibratedHue:(184.0 / 360.0) saturation:0.0 brightness:0.75 alpha:1.0];
                 break;
+            case 39:
+                [self.characterAttributes removeObjectForKey:NSForegroundColorAttributeName];
+                break;
             case 40:
                 self.characterAttributes[NSBackgroundColorAttributeName] = [NSColor blackColor];
                 break;
@@ -691,6 +694,12 @@
                 break;
             case 47:
                 self.characterAttributes[NSBackgroundColorAttributeName] = [NSColor colorWithCalibratedHue:(184.0 / 360.0) saturation:0.0 brightness:0.75 alpha:1.0];
+                break;
+            case 49:
+                [self.characterAttributes removeObjectForKey:NSBackgroundColorAttributeName];
+                break;
+            default:
+                MMLog(@"Unhandled character attribute argument: %@", argument);
                 break;
         }
     }
