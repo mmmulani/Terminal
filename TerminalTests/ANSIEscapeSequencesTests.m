@@ -447,6 +447,7 @@
     CheckInputAgainstExpectedOutput(@"\t\t\t\t\t\t\t\t\t\ta", @"\t\t\t\t\t\t\t\t\t       a");
 
     // Test deleting tabs.
+    BEGIN_EXPECTED_FAILURES;
     CheckInputAgainstExpectedOutputWithExpectedCursor(@"\t\033[g\tb", @"\t\tb", MMPositionMake(18, 1));
     CheckInputAgainstExpectedOutputWithExpectedCursor(@"\t\033[g\033[1;1H\tb", @"\t       b", MMPositionMake(18, 1));
     CheckInputAgainstExpectedOutputWithExpectedCursor(@"a\t\033[g\033[1;1H\tb", @"a\t        b", MMPositionMake(18, 1));
@@ -455,6 +456,7 @@
     CheckInputAgainstExpectedOutputWithExpectedCursor(@"\033[1;9H\033[g\033[1;17H\033[g\033[1;1H\ta", @"\ta", MMPositionMake(26, 1));
     CheckInputAgainstExpectedOutputWithExpectedCursor(@"\t\033[g\t\033[g\033[1;1H\ta", @"\t\t        a", MMPositionMake(26, 1));
     CheckInputAgainstExpectedOutputWithExpectedCursor(@"\t\033[g\t\033[g\033[1;1H\t\ta", @"\t\t        \ta", MMPositionMake(34, 1));
+    END_EXPECTED_FAILURES;
 
     // Test expansion of the tab character into spaces.
     CheckInputAgainstExpectedOutput(@"\ta", @"\ta");

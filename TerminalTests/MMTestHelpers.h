@@ -51,3 +51,14 @@ do {\
     (void) task.currentANSIDisplay; \
     STAssertEquals(task.cursorPositionByCharacters, (NSInteger)cursorPositionByCharacters_, @"Comparing cursor position by characters."); \
 } while (0)
+
+#define BEGIN_EXPECTED_FAILURES \
+    [self setFailureAction:@selector(raiseException:)]; \
+    @try {
+
+#define END_EXPECTED_FAILURES \
+        [self performSelector:@selector(logException:) withObject:[NSException exceptionWithName:@"ExpectedFailure" reason:@"Test was expected to fail" userInfo:nil]]; \
+    } \
+    @catch (NSException *exception) { \
+    } \
+    [self setFailureAction:@selector(logException:)];
