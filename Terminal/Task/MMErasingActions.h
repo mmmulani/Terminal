@@ -19,3 +19,7 @@
 @interface MMDeleteCharacters : MMANSIAction
 
 @end
+
+@interface MMEraseCharacters : MMANSIAction
+
+@end

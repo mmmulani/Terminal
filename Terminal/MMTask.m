@@ -561,6 +561,8 @@
             action = [[MMDeleteLines alloc] initWithArguments:items];
         } else if (escapeCode == 'P') {
             action = [[MMDeleteCharacters alloc] initWithArguments:items];
+        } else if (escapeCode == 'X') {
+            action = [[MMEraseCharacters alloc] initWithArguments:items];
         } else if (escapeCode == 'c') {
             [self handleUserInput:@"\033[?1;2c"];
         } else if (escapeCode == 'd') {

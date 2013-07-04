@@ -103,3 +103,20 @@
 }
 
 @end
+
+@implementation MMEraseCharacters
+
++ (NSArray *)_defaultArguments { return @[@1]; }
+
+- (void)do;
+{
+    // This implements the VT550 feature "Erase Character" (ECH).
+    // It differs from the Delete Character escape sequence in that this sequence replaces the erased characters with spaces.
+    NSInteger adjustedPositionX = MIN(self.delegate.cursorPositionX, self.delegate.termWidth);
+    NSInteger spacesToInsert = MIN(MAX(1, [[self defaultedArgumentAtIndex:0] integerValue]), self.delegate.termWidth - adjustedPositionX + 1);
+    NSInteger charactersToDelete = MIN(spacesToInsert, [self.delegate numberOfCharactersInScrollRow:self.delegate.cursorPositionY] - adjustedPositionX + 1);
+    [self.delegate removeCharactersInScrollRow:self.delegate.cursorPositionY range:NSMakeRange(self.delegate.cursorPositionX, charactersToDelete) shiftCharactersAfter:YES];
+    [self.delegate insertCharactersAtScrollRow:self.delegate.cursorPositionY scrollColumn:self.delegate.cursorPositionX text:[@" " repeatedTimes:spacesToInsert]];
+}
+
+@end

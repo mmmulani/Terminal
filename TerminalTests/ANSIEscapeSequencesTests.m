@@ -582,4 +582,23 @@
     CheckInputAgainstExpectedOutput(@"\033[2;10r\033[2;1HABC\033[2;1H\033[1@", @"\n ABC");
 }
 
+- (void)testEraseCharacters;
+{
+    CheckInputAgainstExpectedOutput(@"1234\033[1X", @"1234 ");
+    CheckInputAgainstExpectedOutput(@"1234\033[1;1H\033[1X", @" 234");
+    CheckInputAgainstExpectedOutput(@"1234\033[1;1H\033[X", @" 234");
+    CheckInputAgainstExpectedOutput(@"1234\033[1;1H\033[0X", @" 234");
+    CheckInputAgainstExpectedOutput(@"1234\033[1;1H\033[5X", @"     ");
+    CheckInputAgainstExpectedOutput(@"1234\n\033[1;1H\033[5X", @"     \n");
+
+    // Test that it does not erase beyond the right margin.
+    CheckInputAgainstExpectedOutput(@"\033[1;79H1234\033[1;79H\033[1X", [[@" " repeatedTimes:79] stringByAppendingString:@"234"]);
+    CheckInputAgainstExpectedOutput(@"\033[1;79H1234\033[1;79H\033[2X", [[@" " repeatedTimes:80] stringByAppendingString:@"34"]);
+    CheckInputAgainstExpectedOutput(@"\033[1;79H1234\033[1;79H\033[4X", [[@" " repeatedTimes:80] stringByAppendingString:@"34"]);
+
+    // Test that the cursor does not move after erasing characters.
+    CheckInputAgainstExpectedOutputWithExpectedCursor(@"\033[2X", @"  ", MMPositionMake(1, 1));
+    CheckInputAgainstExpectedOutputWithExpectedCursor(@"123\033[1X", @"123 ", MMPositionMake(4, 1));
+}
+
 @end
