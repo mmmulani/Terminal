@@ -47,591 +47,591 @@
 
 - (id)initWithTerminalConnection:(MMTerminalConnection *)terminalConnection withState:(NSCoder *)state completionHandler:(void (^)(NSWindow *, NSError *))completionHandler;
 {
-    self = [self initWithWindowNibName:@"MMTerminalWindow"];
+  self = [self initWithWindowNibName:@"MMTerminalWindow"];
 
-    self.tasks = [NSMutableArray array];
-    self.taskViewControllers = [NSMutableArray array];
-    self.commandHistoryIndex = 0;
-    self.directoriesBeingWatched = [NSMutableDictionary dictionary];
-    self.terminalConnection = terminalConnection;
-    self.window.restorationClass = [[NSApp delegate] class];
+  self.tasks = [NSMutableArray array];
+  self.taskViewControllers = [NSMutableArray array];
+  self.commandHistoryIndex = 0;
+  self.directoriesBeingWatched = [NSMutableDictionary dictionary];
+  self.terminalConnection = terminalConnection;
+  self.window.restorationClass = [[NSApp delegate] class];
 
-    self.extraWidthMargin = 56.0;
-    self.extraHeightMargin = 335.0;
+  self.extraWidthMargin = 56.0;
+  self.extraHeightMargin = 335.0;
 
-    if (state) {
-        self.tasks = [state decodeObjectForKey:MMSelfKey(tasks)];
-        if (!self.tasks) {
-            self.tasks = [NSMutableArray array];
-        }
-        [self _prepareViewControllersUntilRow:(self.tasks.count - 1)];
-        [NSAnimationContext beginGrouping];
-        [[NSAnimationContext currentContext] setDuration:0.0];
-        [self.tableView insertRowsAtIndexes:[NSIndexSet indexSetWithIndexesInRange:NSMakeRange(0, self.tasks.count)] withAnimation:NSTableViewAnimationEffectNone];
-        [self.tableView noteHeightOfRowsWithIndexesChanged:[NSIndexSet indexSetWithIndexesInRange:NSMakeRange(0, self.tasks.count)]];
-        [NSAnimationContext endGrouping];
+  if (state) {
+    self.tasks = [state decodeObjectForKey:MMSelfKey(tasks)];
+    if (!self.tasks) {
+      self.tasks = [NSMutableArray array];
+    }
+    [self _prepareViewControllersUntilRow:(self.tasks.count - 1)];
+    [NSAnimationContext beginGrouping];
+    [[NSAnimationContext currentContext] setDuration:0.0];
+    [self.tableView insertRowsAtIndexes:[NSIndexSet indexSetWithIndexesInRange:NSMakeRange(0, self.tasks.count)] withAnimation:NSTableViewAnimationEffectNone];
+    [self.tableView noteHeightOfRowsWithIndexesChanged:[NSIndexSet indexSetWithIndexesInRange:NSMakeRange(0, self.tasks.count)]];
+    [NSAnimationContext endGrouping];
 
-        NSInteger terminalWidth = [state decodeIntegerForKey:@"terminalWidth"];
-        NSInteger terminalHeight = [state decodeIntegerForKey:@"terminalHeight"];
-        if (terminalWidth > 0) {
-            self.terminalConnection.terminalWidth = terminalWidth;
-            self.terminalConnection.terminalHeight = terminalHeight;
-        }
-
-        if ([state containsValueForKey:MMSelfKey(extraWidthMargin)]) {
-            self.extraWidthMargin = [state decodeFloatForKey:MMSelfKey(extraWidthMargin)];
-            self.extraHeightMargin = [state decodeFloatForKey:MMSelfKey(extraHeightMargin)];
-        }
+    NSInteger terminalWidth = [state decodeIntegerForKey:@"terminalWidth"];
+    NSInteger terminalHeight = [state decodeIntegerForKey:@"terminalHeight"];
+    if (terminalWidth > 0) {
+      self.terminalConnection.terminalWidth = terminalWidth;
+      self.terminalConnection.terminalHeight = terminalHeight;
     }
 
-    // Set our terminal height and width correctly.
-    [self windowDidResize:nil];
+    if ([state containsValueForKey:MMSelfKey(extraWidthMargin)]) {
+      self.extraWidthMargin = [state decodeFloatForKey:MMSelfKey(extraWidthMargin)];
+      self.extraHeightMargin = [state decodeFloatForKey:MMSelfKey(extraHeightMargin)];
+    }
+  }
 
-    return self;
+  // Set our terminal height and width correctly.
+  [self windowDidResize:nil];
+
+  return self;
 }
 
 - (void)awakeFromNib;
 {
-    self.tableView.selectionHighlightStyle = NSTableViewSelectionHighlightStyleNone;
+  self.tableView.selectionHighlightStyle = NSTableViewSelectionHighlightStyleNone;
 }
 
 - (void)windowDidLoad
 {
-    [super windowDidLoad];
+  [super windowDidLoad];
 
-    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(terminalOutputFrameChanged:) name:NSViewFrameDidChangeNotification object:self.tableView];
-    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(terminalOutputFrameChanged:) name:NSViewFrameDidChangeNotification object:self.tableView.superview];
+  [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(terminalOutputFrameChanged:) name:NSViewFrameDidChangeNotification object:self.tableView];
+  [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(terminalOutputFrameChanged:) name:NSViewFrameDidChangeNotification object:self.tableView.superview];
 
-    self.originalCommandControlsLayoutConstraintConstant = self.commandControlsLayoutConstraint.constant;
-    self.commandInput.font = [NSFont systemFontOfSize:13.0];
-    self.commandInput.completionEngine.terminalConnection = self.terminalConnection;
+  self.originalCommandControlsLayoutConstraintConstant = self.commandControlsLayoutConstraint.constant;
+  self.commandInput.font = [NSFont systemFontOfSize:13.0];
+  self.commandInput.completionEngine.terminalConnection = self.terminalConnection;
 
-    MMAppDelegate *appDelegate = [NSApp delegate];
-    self.keyboardShortcut = [appDelegate uniqueWindowShortcut];
-    // Though we have assigned a keyboard shortcut, we have not updated the MainMenu with it.
-    // Since we are required to update the MainMenu with keyboard shortcuts after the title changes, we set it in |updateTitle|.
+  MMAppDelegate *appDelegate = [NSApp delegate];
+  self.keyboardShortcut = [appDelegate uniqueWindowShortcut];
+  // Though we have assigned a keyboard shortcut, we have not updated the MainMenu with it.
+  // Since we are required to update the MainMenu with keyboard shortcuts after the title changes, we set it in |updateTitle|.
 
-    [self.window makeFirstResponder:self.commandInput];
+  [self.window makeFirstResponder:self.commandInput];
 
-    [self invalidateRestorableState];
+  [self invalidateRestorableState];
 }
 
 - (void)dealloc;
 {
-    [[NSNotificationCenter defaultCenter] removeObserver:self];
+  [[NSNotificationCenter defaultCenter] removeObserver:self];
 }
 
 - (void)terminalOutputFrameChanged:(NSNotification *)notification;
 {
-    // TODO: Add a check to see if we are already scrolled to the bottom, and only scroll down then.
-    NSRect clipViewFrame = self.tableView.superview.frame;
-    [((NSClipView *)self.tableView.superview) scrollToPoint:NSMakePoint(0, MAX(self.tableView.frame.size.height - clipViewFrame.size.height, 0))];
+  // TODO: Add a check to see if we are already scrolled to the bottom, and only scroll down then.
+  NSRect clipViewFrame = self.tableView.superview.frame;
+  [((NSClipView *)self.tableView.superview) scrollToPoint:NSMakePoint(0, MAX(self.tableView.frame.size.height - clipViewFrame.size.height, 0))];
 }
 
 - (NSInteger)indexOfTask:(MMTaskCellViewController *)taskViewController;
 {
-    NSInteger i;
-    for (i = self.taskViewControllers.count - 1; i >= 0 && ![self.taskViewControllers[i] isEqual:taskViewController]; i--);
-    NSAssert(i >= 0, @"Must be able to find index for view controller");
-    return i;
+  NSInteger i;
+  for (i = self.taskViewControllers.count - 1; i >= 0 && ![self.taskViewControllers[i] isEqual:taskViewController]; i--);
+  NSAssert(i >= 0, @"Must be able to find index for view controller");
+  return i;
 }
 
 - (void)noteHeightChangeForTask:(MMTaskCellViewController *)taskViewController;
 {
-    [NSAnimationContext beginGrouping];
-    [[NSAnimationContext currentContext] setDuration:0.0];
-    [self.tableView noteHeightOfRowsWithIndexesChanged:[NSIndexSet indexSetWithIndex:[self indexOfTask:taskViewController]]];
-    [NSAnimationContext endGrouping];
+  [NSAnimationContext beginGrouping];
+  [[NSAnimationContext currentContext] setDuration:0.0];
+  [self.tableView noteHeightOfRowsWithIndexesChanged:[NSIndexSet indexSetWithIndex:[self indexOfTask:taskViewController]]];
+  [NSAnimationContext endGrouping];
 }
 
 - (void)taskStarted:(MMTaskCellViewController *)taskController;
 {
-    self.numberOfTasksRunning++;
+  self.numberOfTasksRunning++;
 
-    [self hideCommandControlsIfNecessary];
+  [self hideCommandControlsIfNecessary];
 }
 
 - (void)taskFinished:(MMTaskCellViewController *)taskController;
 {
-    self.numberOfTasksRunning--;
-    NSAssert(self.numberOfTasksRunning >= 0, @"Number of tasks cannot be negative");
-    [self invalidateRestorableState];
+  self.numberOfTasksRunning--;
+  NSAssert(self.numberOfTasksRunning >= 0, @"Number of tasks cannot be negative");
+  [self invalidateRestorableState];
 
-    // If there are still tasks running, we make sure the running tasks stay at the bottom.
-    if (self.numberOfTasksRunning > 0) {
-        NSInteger oldIndex = [self indexOfTask:taskController];
-        MMTask *task = self.tasks[oldIndex];
-        [self.tasks removeObjectAtIndex:oldIndex];
-        [self.taskViewControllers removeObjectAtIndex:oldIndex];
+  // If there are still tasks running, we make sure the running tasks stay at the bottom.
+  if (self.numberOfTasksRunning > 0) {
+    NSInteger oldIndex = [self indexOfTask:taskController];
+    MMTask *task = self.tasks[oldIndex];
+    [self.tasks removeObjectAtIndex:oldIndex];
+    [self.taskViewControllers removeObjectAtIndex:oldIndex];
 
-        NSInteger indexToMoveTask;
-        NSInteger runningTasksSeen = 0;
-        for (indexToMoveTask = self.taskViewControllers.count - 1; indexToMoveTask >= 0; indexToMoveTask--) {
-            if (!((MMTask *)self.tasks[indexToMoveTask]).isFinished) {
-                runningTasksSeen++;
-            }
+    NSInteger indexToMoveTask;
+    NSInteger runningTasksSeen = 0;
+    for (indexToMoveTask = self.taskViewControllers.count - 1; indexToMoveTask >= 0; indexToMoveTask--) {
+      if (!((MMTask *)self.tasks[indexToMoveTask]).isFinished) {
+        runningTasksSeen++;
+      }
 
-            if (runningTasksSeen == self.numberOfTasksRunning) {
-                break;
-            }
-        }
-
-        [self.tasks insertObject:task atIndex:indexToMoveTask];
-        [self.taskViewControllers insertObject:taskController atIndex:indexToMoveTask];
-
-        [NSAnimationContext beginGrouping];
-        [[NSAnimationContext currentContext] setDuration:0.0];
-        [self.tableView reloadData];
-        [self.tableView noteHeightOfRowsWithIndexesChanged:[NSIndexSet indexSetWithIndexesInRange:NSMakeRange(indexToMoveTask, self.tasks.count - indexToMoveTask)]];
-        [NSAnimationContext endGrouping];
+      if (runningTasksSeen == self.numberOfTasksRunning) {
+        break;
+      }
     }
 
-    [self showCommandControlsIfNecessary];
+    [self.tasks insertObject:task atIndex:indexToMoveTask];
+    [self.taskViewControllers insertObject:taskController atIndex:indexToMoveTask];
+
+    [NSAnimationContext beginGrouping];
+    [[NSAnimationContext currentContext] setDuration:0.0];
+    [self.tableView reloadData];
+    [self.tableView noteHeightOfRowsWithIndexesChanged:[NSIndexSet indexSetWithIndexesInRange:NSMakeRange(indexToMoveTask, self.tasks.count - indexToMoveTask)]];
+    [NSAnimationContext endGrouping];
+  }
+
+  [self showCommandControlsIfNecessary];
 }
 
 - (void)taskRunsInBackground:(MMTaskCellViewController *)taskController;
 {
-    [self.terminalConnection startShellsToRunCommands:(self.numberOfTasksRunning + 1)];
+  [self.terminalConnection startShellsToRunCommands:(self.numberOfTasksRunning + 1)];
 
-    [self showCommandControlsIfNecessary];
+  [self showCommandControlsIfNecessary];
 
-    [[MMInfoPanelController sharedController] showPanel:@"SuspendControls"];
+  [[MMInfoPanelController sharedController] showPanel:@"SuspendControls"];
 }
 
 - (void)hideCommandControlsIfNecessary;
 {
-    if (self.hidingCommandInputControls) {
-        return;
-    }
+  if (self.hidingCommandInputControls) {
+    return;
+  }
 
-    [NSAnimationContext beginGrouping];
-    CABasicAnimation *animation = [CABasicAnimation animation];
-    animation.timingFunction = [CAMediaTimingFunction functionWithName:kCAMediaTimingFunctionDefault];
-    animation.duration = 0.25;
-    self.commandControlsLayoutConstraint.animations = @{@"constant": animation};
-    [[NSAnimationContext currentContext] setCompletionHandler:^{
-        [self.window.contentView layout];
-    }];
+  [NSAnimationContext beginGrouping];
+  CABasicAnimation *animation = [CABasicAnimation animation];
+  animation.timingFunction = [CAMediaTimingFunction functionWithName:kCAMediaTimingFunctionDefault];
+  animation.duration = 0.25;
+  self.commandControlsLayoutConstraint.animations = @{@"constant": animation};
+  [[NSAnimationContext currentContext] setCompletionHandler:^{
+    [self.window.contentView layout];
+  }];
 
-    [self.commandControlsLayoutConstraint.animator setConstant:0.0];
-    [NSAnimationContext endGrouping];
+  [self.commandControlsLayoutConstraint.animator setConstant:0.0];
+  [NSAnimationContext endGrouping];
 
-    self.hidingCommandInputControls = YES;
+  self.hidingCommandInputControls = YES;
 }
 
 - (void)showCommandControlsIfNecessary;
 {
-    [self.window makeFirstResponder:self.commandInput];
+  [self.window makeFirstResponder:self.commandInput];
 
-    if (!self.hidingCommandInputControls) {
-        return;
-    }
+  if (!self.hidingCommandInputControls) {
+    return;
+  }
 
-    [NSAnimationContext beginGrouping];
-    CABasicAnimation *animation = [CABasicAnimation animation];
-    animation.timingFunction = [CAMediaTimingFunction functionWithName:kCAMediaTimingFunctionDefault];
-    animation.duration = 0.25;
-    self.commandControlsLayoutConstraint.animations = @{@"constant": animation};
-    [[NSAnimationContext currentContext] setCompletionHandler:^{
-        [self.window.contentView layout];
-    }];
+  [NSAnimationContext beginGrouping];
+  CABasicAnimation *animation = [CABasicAnimation animation];
+  animation.timingFunction = [CAMediaTimingFunction functionWithName:kCAMediaTimingFunctionDefault];
+  animation.duration = 0.25;
+  self.commandControlsLayoutConstraint.animations = @{@"constant": animation};
+  [[NSAnimationContext currentContext] setCompletionHandler:^{
+    [self.window.contentView layout];
+  }];
 
-    [self.commandControlsLayoutConstraint.animator setConstant:self.originalCommandControlsLayoutConstraintConstant];
-    [NSAnimationContext endGrouping];
+  [self.commandControlsLayoutConstraint.animator setConstant:self.originalCommandControlsLayoutConstraintConstant];
+  [NSAnimationContext endGrouping];
 
-    self.hidingCommandInputControls = NO;
+  self.hidingCommandInputControls = NO;
 }
 
 - (void)directoryChangedTo:(NSString *)newPath;
 {
-    if (self.currentDirectory) {
-        [self unregisterDirectory:self.currentDirectory];
-    }
-    self.currentDirectory = newPath;
-    [self registerDirectoryToBeObserved:newPath];
+  if (self.currentDirectory) {
+    [self unregisterDirectory:self.currentDirectory];
+  }
+  self.currentDirectory = newPath;
+  [self registerDirectoryToBeObserved:newPath];
 
-    [self updateDirectoryView:newPath];
-    [self updateTitle];
+  [self updateDirectoryView:newPath];
+  [self updateTitle];
 }
 
 - (void)updateDirectoryView:(NSString *)directoryPath;
 {
-    [self.currentDirectoryLabel setStringValue:[NSString stringWithFormat:@"Current directory: %@", directoryPath]];
+  [self.currentDirectoryLabel setStringValue:[NSString stringWithFormat:@"Current directory: %@", directoryPath]];
 
-    NSArray *fileURLs = [[NSFileManager defaultManager] contentsOfDirectoryAtURL:[NSURL fileURLWithPath:directoryPath] includingPropertiesForKeys:@[NSURLCustomIconKey, NSURLEffectiveIconKey, NSURLFileResourceTypeKey, NSURLNameKey] options:NSDirectoryEnumerationSkipsHiddenFiles error:nil];
-    NSMutableArray *directoryCollectionViewData = [NSMutableArray arrayWithCapacity:[fileURLs count]];
-    for (NSURL *file in fileURLs) {
-        NSDictionary *fileResources = [file resourceValuesForKeys:@[NSURLCustomIconKey, NSURLEffectiveIconKey, NSURLFileResourceTypeKey, NSURLNameKey] error:nil];
-        [directoryCollectionViewData addObject:
-         @{
-         @"name": fileResources[NSURLNameKey],
-         @"icon": fileResources[NSURLEffectiveIconKey],
-         }];
+  NSArray *fileURLs = [[NSFileManager defaultManager] contentsOfDirectoryAtURL:[NSURL fileURLWithPath:directoryPath] includingPropertiesForKeys:@[NSURLCustomIconKey, NSURLEffectiveIconKey, NSURLFileResourceTypeKey, NSURLNameKey] options:NSDirectoryEnumerationSkipsHiddenFiles error:nil];
+  NSMutableArray *directoryCollectionViewData = [NSMutableArray arrayWithCapacity:[fileURLs count]];
+  for (NSURL *file in fileURLs) {
+    NSDictionary *fileResources = [file resourceValuesForKeys:@[NSURLCustomIconKey, NSURLEffectiveIconKey, NSURLFileResourceTypeKey, NSURLNameKey] error:nil];
+    [directoryCollectionViewData addObject:
+     @{
+       @"name": fileResources[NSURLNameKey],
+       @"icon": fileResources[NSURLEffectiveIconKey],
+       }];
+  }
+
+  // XXX: This is a hack to arrange the items vertically first, then horizontally in the NSCollectionView.
+  NSUInteger numberOfRows = 4;
+
+  NSUInteger numberOfColumns = ceil((double)[directoryCollectionViewData count] / (double)numberOfRows);
+  [self.directoryCollectionView setMaxNumberOfColumns:numberOfColumns];
+  [self.directoryCollectionView setMaxNumberOfRows:numberOfRows];
+  NSUInteger numberOfItemsNecessaryForDrawing = numberOfColumns * numberOfRows;
+  NSMutableArray *layoutedCollectionViewData = [NSMutableArray arrayWithCapacity:numberOfItemsNecessaryForDrawing];
+
+  for (NSUInteger i = 0; i < numberOfItemsNecessaryForDrawing; i++) {
+    layoutedCollectionViewData[i] = @{};
+  }
+
+  for (NSUInteger i = 0; i < numberOfItemsNecessaryForDrawing; i++) {
+    NSUInteger newRow = i % numberOfRows;
+    NSUInteger newColumn = i / numberOfRows;
+
+    NSUInteger newIndex = newRow * numberOfColumns + newColumn;
+
+    if (i < [directoryCollectionViewData count]) {
+      layoutedCollectionViewData[newIndex] = directoryCollectionViewData[i];
     }
+  }
 
-    // XXX: This is a hack to arrange the items vertically first, then horizontally in the NSCollectionView.
-    NSUInteger numberOfRows = 4;
-
-    NSUInteger numberOfColumns = ceil((double)[directoryCollectionViewData count] / (double)numberOfRows);
-    [self.directoryCollectionView setMaxNumberOfColumns:numberOfColumns];
-    [self.directoryCollectionView setMaxNumberOfRows:numberOfRows];
-    NSUInteger numberOfItemsNecessaryForDrawing = numberOfColumns * numberOfRows;
-    NSMutableArray *layoutedCollectionViewData = [NSMutableArray arrayWithCapacity:numberOfItemsNecessaryForDrawing];
-
-    for (NSUInteger i = 0; i < numberOfItemsNecessaryForDrawing; i++) {
-        layoutedCollectionViewData[i] = @{};
-    }
-
-    for (NSUInteger i = 0; i < numberOfItemsNecessaryForDrawing; i++) {
-        NSUInteger newRow = i % numberOfRows;
-        NSUInteger newColumn = i / numberOfRows;
-
-        NSUInteger newIndex = newRow * numberOfColumns + newColumn;
-
-        if (i < [directoryCollectionViewData count]) {
-            layoutedCollectionViewData[newIndex] = directoryCollectionViewData[i];
-        }
-    }
-
-    self.directoryCollectionView.content = layoutedCollectionViewData;
+  self.directoryCollectionView.content = layoutedCollectionViewData;
 }
 
 - (void)updateTitle;
 {
-    NSString *title;
-    if (self.keyboardShortcut != -1) {
-        title = [NSString stringWithFormat:@"%@ — ⌘%ld", [self.currentDirectory stringByAbbreviatingWithTildeInPath], self.keyboardShortcut];
-    } else {
-        title = [self.currentDirectory stringByAbbreviatingWithTildeInPath];
-    }
+  NSString *title;
+  if (self.keyboardShortcut != -1) {
+    title = [NSString stringWithFormat:@"%@ — ⌘%ld", [self.currentDirectory stringByAbbreviatingWithTildeInPath], self.keyboardShortcut];
+  } else {
+    title = [self.currentDirectory stringByAbbreviatingWithTildeInPath];
+  }
 
-    self.window.title = title;
+  self.window.title = title;
 
-    // Changing the title resets the window shortcut, so we must reassign it.
-    MMAppDelegate *appDelegate = [NSApp delegate];
-    [appDelegate updateWindowMenu];
+  // Changing the title resets the window shortcut, so we must reassign it.
+  MMAppDelegate *appDelegate = [NSApp delegate];
+  [appDelegate updateWindowMenu];
 }
 
 - (NSInteger)indexOfSelectedRow;
 {
-    if (![self.window.firstResponder isKindOfClass:[MMTextView class]]) {
-        return -1;
-    }
-    NSView *view = (NSView *)self.window.firstResponder;
-    while (![view isKindOfClass:[NSTableRowView class]]) {
-        view = view.superview;
-    }
-    view = view.subviews[0];
+  if (![self.window.firstResponder isKindOfClass:[MMTextView class]]) {
+    return -1;
+  }
+  NSView *view = (NSView *)self.window.firstResponder;
+  while (![view isKindOfClass:[NSTableRowView class]]) {
+    view = view.superview;
+  }
+  view = view.subviews[0];
 
-    NSInteger i;
-    for (i = self.taskViewControllers.count - 1; i >= 0; i--) {
-        if ([[self.taskViewControllers[i] view] isEqual:view]) {
-            break;
-        }
+  NSInteger i;
+  for (i = self.taskViewControllers.count - 1; i >= 0; i--) {
+    if ([[self.taskViewControllers[i] view] isEqual:view]) {
+      break;
     }
+  }
 
-    return i;
+  return i;
 }
 
 - (IBAction)selectPreviousCommand:(id)sender;
 {
-    NSInteger currentCommand = [self indexOfSelectedRow];
-    if (currentCommand != -1 &&
-        currentCommand > 0 &&
-        ![self.taskViewControllers[currentCommand - 1] task].isFinished) {
-        [self.window makeFirstResponder:((MMTaskCellViewController *)self.taskViewControllers[currentCommand - 1]).outputView];
-    } else if (![self.taskViewControllers.lastObject task].isFinished) {
-        [self.window makeFirstResponder:((MMTaskCellViewController *)self.taskViewControllers.lastObject).outputView];
-    }
+  NSInteger currentCommand = [self indexOfSelectedRow];
+  if (currentCommand != -1 &&
+      currentCommand > 0 &&
+      ![self.taskViewControllers[currentCommand - 1] task].isFinished) {
+    [self.window makeFirstResponder:((MMTaskCellViewController *)self.taskViewControllers[currentCommand - 1]).outputView];
+  } else if (![self.taskViewControllers.lastObject task].isFinished) {
+    [self.window makeFirstResponder:((MMTaskCellViewController *)self.taskViewControllers.lastObject).outputView];
+  }
 }
 
 - (IBAction)selectNextCommand:(id)sender;
 {
-    NSInteger currentCommand = [self indexOfSelectedRow];
-    if (currentCommand != -1 &&
-        currentCommand < self.taskViewControllers.count - 1 &&
-        ![self.taskViewControllers[currentCommand + 1] task].isFinished) {
-        [self.window makeFirstResponder:((MMTaskCellViewController *)self.taskViewControllers[currentCommand + 1]).outputView];
-    } else if (![self.taskViewControllers.lastObject task].isFinished) {
-        [self.window makeFirstResponder:((MMTaskCellViewController *)self.taskViewControllers.lastObject).outputView];
-    }
+  NSInteger currentCommand = [self indexOfSelectedRow];
+  if (currentCommand != -1 &&
+      currentCommand < self.taskViewControllers.count - 1 &&
+      ![self.taskViewControllers[currentCommand + 1] task].isFinished) {
+    [self.window makeFirstResponder:((MMTaskCellViewController *)self.taskViewControllers[currentCommand + 1]).outputView];
+  } else if (![self.taskViewControllers.lastObject task].isFinished) {
+    [self.window makeFirstResponder:((MMTaskCellViewController *)self.taskViewControllers.lastObject).outputView];
+  }
 }
 
 # pragma mark - Directory watching
 
 - (void)directoryModified:(NSString *)path;
 {
-    if ([self.currentDirectory isEqualToString:path]) {
-        [self updateDirectoryView:path];
-    }
+  if ([self.currentDirectory isEqualToString:path]) {
+    [self updateDirectoryView:path];
+  }
 }
 
 - (void)registerDirectoryToBeObserved:(NSString *)path;
 {
-    // TODO: Support multiple directories being observed. Maybe accomplish this by storing kqRefs instead of FDs in |directoriesBeingWatched|.
+  // TODO: Support multiple directories being observed. Maybe accomplish this by storing kqRefs instead of FDs in |directoriesBeingWatched|.
 
-    if (self.directoriesBeingWatched[path]) {
-        return;
-    }
+  if (self.directoriesBeingWatched[path]) {
+    return;
+  }
 
-    int dirFD = open([path fileSystemRepresentation], O_EVTONLY);
-    if (dirFD < 0) {
-        MMLog(@"Ran into problem observing %@.", path);
-        return;
-    }
+  int dirFD = open([path fileSystemRepresentation], O_EVTONLY);
+  if (dirFD < 0) {
+    MMLog(@"Ran into problem observing %@.", path);
+    return;
+  }
 
-    int kq = kqueue();
-    if (kq < 0) {
-        MMLog(@"Ran into a problem running kqueue() while observing %@.", path);
-        close(dirFD);
-        return;
-    }
+  int kq = kqueue();
+  if (kq < 0) {
+    MMLog(@"Ran into a problem running kqueue() while observing %@.", path);
+    close(dirFD);
+    return;
+  }
 
-    struct kevent event;
-    event.ident = dirFD;
-    event.filter = EVFILT_VNODE;
-    event.flags = EV_ADD | EV_CLEAR;
-    event.fflags = NOTE_WRITE;
-    event.data = 0;
-    event.udata = NULL;
+  struct kevent event;
+  event.ident = dirFD;
+  event.filter = EVFILT_VNODE;
+  event.flags = EV_ADD | EV_CLEAR;
+  event.fflags = NOTE_WRITE;
+  event.data = 0;
+  event.udata = NULL;
 
-    self.directoriesBeingWatched[path] = [NSNumber numberWithUnsignedLong:event.ident];
+  self.directoriesBeingWatched[path] = [NSNumber numberWithUnsignedLong:event.ident];
 
-    if (kevent(kq, &event, 1, NULL, 0, NULL)) {
-        MMLog(@"Ran into a problem with kevent() while observing %@.", path);
-        close(kq);
-        close(dirFD);
-        return;
-    }
+  if (kevent(kq, &event, 1, NULL, 0, NULL)) {
+    MMLog(@"Ran into a problem with kevent() while observing %@.", path);
+    close(kq);
+    close(dirFD);
+    return;
+  }
 
-    CFFileDescriptorContext context = { 0, (__bridge void *)self, NULL, NULL, NULL };
-    self.directoryKqRef = CFFileDescriptorCreate(NULL, kq, true, directoryWatchingCallback, &context);
-    if (!self.directoryKqRef) {
-        MMLog(@"Ran into a problem creating a file descriptor for kq while observing %@,", path);
-        close(kq);
-        close(dirFD);
-        return;
-    }
+  CFFileDescriptorContext context = { 0, (__bridge void *)self, NULL, NULL, NULL };
+  self.directoryKqRef = CFFileDescriptorCreate(NULL, kq, true, directoryWatchingCallback, &context);
+  if (!self.directoryKqRef) {
+    MMLog(@"Ran into a problem creating a file descriptor for kq while observing %@,", path);
+    close(kq);
+    close(dirFD);
+    return;
+  }
 
-    CFRunLoopSourceRef runLoopSourceRef = CFFileDescriptorCreateRunLoopSource(NULL, self.directoryKqRef, 0);
-    if (!runLoopSourceRef) {
-        MMLog(@"Ran into a problem creating a run loop source while observing %@,", path);
-        CFFileDescriptorInvalidate(self.directoryKqRef);
-        close(dirFD);
-        return;
-    }
+  CFRunLoopSourceRef runLoopSourceRef = CFFileDescriptorCreateRunLoopSource(NULL, self.directoryKqRef, 0);
+  if (!runLoopSourceRef) {
+    MMLog(@"Ran into a problem creating a run loop source while observing %@,", path);
+    CFFileDescriptorInvalidate(self.directoryKqRef);
+    close(dirFD);
+    return;
+  }
 
-    CFRunLoopAddSource(CFRunLoopGetCurrent(), runLoopSourceRef, kCFRunLoopDefaultMode);
-    CFRelease(runLoopSourceRef);
+  CFRunLoopAddSource(CFRunLoopGetCurrent(), runLoopSourceRef, kCFRunLoopDefaultMode);
+  CFRelease(runLoopSourceRef);
 
-    CFFileDescriptorEnableCallBacks(self.directoryKqRef, kCFFileDescriptorReadCallBack);
+  CFFileDescriptorEnableCallBacks(self.directoryKqRef, kCFFileDescriptorReadCallBack);
 }
 
 - (void)unregisterDirectory:(NSString *)path;
 {
-    NSAssert(self.directoriesBeingWatched[path], @"Directory must be currently watched");
-    int kq = CFFileDescriptorGetNativeDescriptor(self.directoryKqRef);
-    NSAssert(kq > 0, @"kq should exist.");
+  NSAssert(self.directoriesBeingWatched[path], @"Directory must be currently watched");
+  int kq = CFFileDescriptorGetNativeDescriptor(self.directoryKqRef);
+  NSAssert(kq > 0, @"kq should exist.");
 
-    CFFileDescriptorDisableCallBacks(self.directoryKqRef, kCFFileDescriptorReadCallBack);
-    CFFileDescriptorInvalidate(self.directoryKqRef);
-    CFRelease(self.directoryKqRef);
-    self.directoryKqRef = NULL;
-    close([self.directoriesBeingWatched[path] intValue]);
-    [self.directoriesBeingWatched removeObjectForKey:path];
+  CFFileDescriptorDisableCallBacks(self.directoryKqRef, kCFFileDescriptorReadCallBack);
+  CFFileDescriptorInvalidate(self.directoryKqRef);
+  CFRelease(self.directoryKqRef);
+  self.directoryKqRef = NULL;
+  close([self.directoriesBeingWatched[path] intValue]);
+  [self.directoriesBeingWatched removeObjectForKey:path];
 }
 
 static void directoryWatchingCallback(CFFileDescriptorRef kqRef, CFOptionFlags callBackTypes, void *info) {
-    int kq = CFFileDescriptorGetNativeDescriptor(((__bridge MMTerminalWindowController *)info).directoryKqRef);
-    if (kq < 0) {
-        return;
-    }
+  int kq = CFFileDescriptorGetNativeDescriptor(((__bridge MMTerminalWindowController *)info).directoryKqRef);
+  if (kq < 0) {
+    return;
+  }
 
-    struct kevent event;
-    struct timespec timeout = { 0, 0 };
-    if (kevent(kq, NULL, 0, &event, 1, &timeout) == 1) {
-        NSArray *directories = [((__bridge MMTerminalWindowController *)info).directoriesBeingWatched allKeysForObject:[NSNumber numberWithUnsignedLong:event.ident]];
-        MMLog(@"Directories modified: %@", directories);
-        for (NSString *path in directories) {
-            [((__bridge MMTerminalWindowController *)info) directoryModified:path];
-        }
+  struct kevent event;
+  struct timespec timeout = { 0, 0 };
+  if (kevent(kq, NULL, 0, &event, 1, &timeout) == 1) {
+    NSArray *directories = [((__bridge MMTerminalWindowController *)info).directoriesBeingWatched allKeysForObject:[NSNumber numberWithUnsignedLong:event.ident]];
+    MMLog(@"Directories modified: %@", directories);
+    for (NSString *path in directories) {
+      [((__bridge MMTerminalWindowController *)info) directoryModified:path];
     }
+  }
 
-    CFFileDescriptorEnableCallBacks(((__bridge MMTerminalWindowController *)info).directoryKqRef, kCFFileDescriptorReadCallBack);
+  CFFileDescriptorEnableCallBacks(((__bridge MMTerminalWindowController *)info).directoryKqRef, kCFFileDescriptorReadCallBack);
 }
 
 # pragma mark - NSTextDelegate
 
 - (BOOL)textShouldBeginEditing:(NSText *)fieldEditor;
 {
-    if (self.hidingCommandInputControls) {
-        MMTaskCellViewController *lastController = self.taskViewControllers.lastObject;
-        [self.window makeFirstResponder:lastController.outputView];
-    }
-    return !self.hidingCommandInputControls;
+  if (self.hidingCommandInputControls) {
+    MMTaskCellViewController *lastController = self.taskViewControllers.lastObject;
+    [self.window makeFirstResponder:lastController.outputView];
+  }
+  return !self.hidingCommandInputControls;
 }
 
 - (BOOL)textView:(NSTextView *)textView doCommandBySelector:(SEL)commandSelector;
 {
-    if (commandSelector == @selector(insertNewline:)) {
-        MMTaskCellViewController *taskViewController = [[MMTaskCellViewController alloc] init];
-        MMTask *task = [self.terminalConnection createAndRunTaskWithCommand:textView.string taskDelegate:taskViewController];
+  if (commandSelector == @selector(insertNewline:)) {
+    MMTaskCellViewController *taskViewController = [[MMTaskCellViewController alloc] init];
+    MMTask *task = [self.terminalConnection createAndRunTaskWithCommand:textView.string taskDelegate:taskViewController];
 
-        if (!task) {
-            return YES;
-        }
-
-        NSInteger taskIndex = self.tasks.count;
-        [self.tasks addObject:task];
-        [self.taskViewControllers addObject:taskViewController];
-
-        [textView setString:@""];
-        self.commandHistoryIndex = taskIndex + 1;
-
-        [self.tableView insertRowsAtIndexes:[NSIndexSet indexSetWithIndex:taskIndex] withAnimation:NSTableViewAnimationEffectNone];
-
-        [self.window makeFirstResponder:taskViewController.outputView];
-
-        return YES;
-    } else if (commandSelector == @selector(scrollPageUp:)) {
-        if (self.tasks.count > 0) {
-            if (self.commandHistoryIndex == 0) {
-                self.commandHistoryIndex = self.tasks.count;
-            } else {
-                self.commandHistoryIndex--;
-            }
-            NSString *commandToFill = self.commandHistoryIndex == self.tasks.count ? @"" : [(MMTask *)self.tasks[self.commandHistoryIndex] command];
-
-            textView.string = commandToFill;
-            return YES;
-        }
-    } else if (commandSelector == @selector(scrollPageDown:)) {
-        if (self.tasks.count > 0) {
-            if (self.commandHistoryIndex == self.tasks.count) {
-                self.commandHistoryIndex = 0;
-            } else {
-                self.commandHistoryIndex++;
-            }
-
-            // When the user scrolls down past the last ran command, we fill the textbox with what they were typing.
-            // TODO: Actually save what they were typing before they started scrolling.
-            NSString *commandToFill = self.commandHistoryIndex == self.tasks.count ? @"" : [(MMTask *)self.tasks[self.commandHistoryIndex] command];
-
-            textView.string = commandToFill;
-            return YES;
-        }
-    } else if (commandSelector == @selector(insertTab:)) {
-        [textView complete:self];
-        return YES;
+    if (!task) {
+      return YES;
     }
 
-    return NO;
+    NSInteger taskIndex = self.tasks.count;
+    [self.tasks addObject:task];
+    [self.taskViewControllers addObject:taskViewController];
+
+    [textView setString:@""];
+    self.commandHistoryIndex = taskIndex + 1;
+
+    [self.tableView insertRowsAtIndexes:[NSIndexSet indexSetWithIndex:taskIndex] withAnimation:NSTableViewAnimationEffectNone];
+
+    [self.window makeFirstResponder:taskViewController.outputView];
+
+    return YES;
+  } else if (commandSelector == @selector(scrollPageUp:)) {
+    if (self.tasks.count > 0) {
+      if (self.commandHistoryIndex == 0) {
+        self.commandHistoryIndex = self.tasks.count;
+      } else {
+        self.commandHistoryIndex--;
+      }
+      NSString *commandToFill = self.commandHistoryIndex == self.tasks.count ? @"" : [(MMTask *)self.tasks[self.commandHistoryIndex] command];
+
+      textView.string = commandToFill;
+      return YES;
+    }
+  } else if (commandSelector == @selector(scrollPageDown:)) {
+    if (self.tasks.count > 0) {
+      if (self.commandHistoryIndex == self.tasks.count) {
+        self.commandHistoryIndex = 0;
+      } else {
+        self.commandHistoryIndex++;
+      }
+
+      // When the user scrolls down past the last ran command, we fill the textbox with what they were typing.
+      // TODO: Actually save what they were typing before they started scrolling.
+      NSString *commandToFill = self.commandHistoryIndex == self.tasks.count ? @"" : [(MMTask *)self.tasks[self.commandHistoryIndex] command];
+
+      textView.string = commandToFill;
+      return YES;
+    }
+  } else if (commandSelector == @selector(insertTab:)) {
+    [textView complete:self];
+    return YES;
+  }
+
+  return NO;
 }
 
 # pragma mark - NSTableViewDataSource
 
 - (NSInteger)numberOfRowsInTableView:(NSTableView *)tableView;
 {
-    return [self.tasks count];
+  return [self.tasks count];
 }
 
 - (CGFloat)tableView:(NSTableView *)tableView heightOfRow:(NSInteger)row;
 {
-    return [(MMTaskCellViewController *)self.taskViewControllers[row] heightToFitAllOfOutput];
+  return [(MMTaskCellViewController *)self.taskViewControllers[row] heightToFitAllOfOutput];
 }
 
 - (NSView *)tableView:(NSTableView *)tableView viewForTableColumn:(NSTableColumn *)tableColumn row:(NSInteger)row;
 {
-    return [self.taskViewControllers[row] view];
+  return [self.taskViewControllers[row] view];
 }
 
 - (void)_prepareViewControllersUntilRow:(NSInteger)row;
 {
-    for (NSInteger i = [self.taskViewControllers count]; i <= row; i++) {
-        MMTaskCellViewController *taskViewController = [[MMTaskCellViewController alloc] init];
-        taskViewController.task = self.tasks[i];
-        [self.taskViewControllers addObject:taskViewController];
-    }
+  for (NSInteger i = [self.taskViewControllers count]; i <= row; i++) {
+    MMTaskCellViewController *taskViewController = [[MMTaskCellViewController alloc] init];
+    taskViewController.task = self.tasks[i];
+    [self.taskViewControllers addObject:taskViewController];
+  }
 }
 
 # pragma mark - NSWindowDelegate
 
 - (void)windowWillStartLiveResize:(NSNotification *)notification;
 {
-    self.infoOverlayView.alphaValue = 1.0;
+  self.infoOverlayView.alphaValue = 1.0;
 }
 
 - (void)windowDidEndLiveResize:(NSNotification *)notification;
 {
-    [NSAnimationContext beginGrouping];
-    [[NSAnimationContext currentContext] setDuration:0.75];
-    [self.infoOverlayView.animator setAlphaValue:0.0];
-    [NSAnimationContext endGrouping];
+  [NSAnimationContext beginGrouping];
+  [[NSAnimationContext currentContext] setDuration:0.75];
+  [self.infoOverlayView.animator setAlphaValue:0.0];
+  [NSAnimationContext endGrouping];
 }
 
 - (NSSize)windowWillResize:(NSWindow *)sender toSize:(NSSize)frameSize;
 {
-    // In terms of width considerations:
-    // 7.82666 is required for each column and (by default) we add 56 for the surrounding chrome.
-    // For height:
-    // 15 is added for each row of text and (by default) we add 335 for the surrounding chrome/context.
-    // The 335 value is a margin that is modifiable by the user, by resizing and holding down Command.
+  // In terms of width considerations:
+  // 7.82666 is required for each column and (by default) we add 56 for the surrounding chrome.
+  // For height:
+  // 15 is added for each row of text and (by default) we add 335 for the surrounding chrome/context.
+  // The 335 value is a margin that is modifiable by the user, by resizing and holding down Command.
 
-    if ([NSEvent modifierFlags] & NSCommandKeyMask) {
-        self.extraHeightMargin = frameSize.height - (15 * self.terminalConnection.terminalHeight);
-    }
+  if ([NSEvent modifierFlags] & NSCommandKeyMask) {
+    self.extraHeightMargin = frameSize.height - (15 * self.terminalConnection.terminalHeight);
+  }
 
-    NSSize newFrame = frameSize;
-    NSInteger columns = MAX(20, round((frameSize.width - self.extraWidthMargin) / 7.82666));
-    NSInteger rows = MAX(10, round((frameSize.height - self.extraHeightMargin) / 15));
+  NSSize newFrame = frameSize;
+  NSInteger columns = MAX(20, round((frameSize.width - self.extraWidthMargin) / 7.82666));
+  NSInteger rows = MAX(10, round((frameSize.height - self.extraHeightMargin) / 15));
 
-    self.infoOverlayView.displayText = [NSString stringWithFormat:@"%ldx%ld", columns, rows];
+  self.infoOverlayView.displayText = [NSString stringWithFormat:@"%ldx%ld", columns, rows];
 
-    newFrame.width = floor(self.extraWidthMargin + columns * 7.82666);
-    newFrame.height = floor(self.extraHeightMargin + rows * 15);
-    return newFrame;
+  newFrame.width = floor(self.extraWidthMargin + columns * 7.82666);
+  newFrame.height = floor(self.extraHeightMargin + rows * 15);
+  return newFrame;
 }
 
 - (void)resizeWindowForTerminalScreenSizeOfColumns:(NSInteger)columns rows:(NSInteger)rows;
 {
-    CGSize newSize = self.window.frame.size;
-    newSize.width = round(7.82666 * columns) + self.extraWidthMargin;
-    newSize.height = 15 * rows + self.extraHeightMargin;
-    NSRect newFrame = self.window.frame;
-    newFrame.size = newSize;
+  CGSize newSize = self.window.frame.size;
+  newSize.width = round(7.82666 * columns) + self.extraWidthMargin;
+  newSize.height = 15 * rows + self.extraHeightMargin;
+  NSRect newFrame = self.window.frame;
+  newFrame.size = newSize;
 
-    [self.window setFrame:newFrame display:YES];
+  [self.window setFrame:newFrame display:YES];
 }
 
 - (void)windowDidResize:(NSNotification *)notification;
 {
-    NSInteger newWidth = lround((self.window.frame.size.width - self.extraWidthMargin) / 7.82666);
-    NSInteger newHeight = lround((self.window.frame.size.height - self.extraHeightMargin) / 15);
+  NSInteger newWidth = lround((self.window.frame.size.width - self.extraWidthMargin) / 7.82666);
+  NSInteger newHeight = lround((self.window.frame.size.height - self.extraHeightMargin) / 15);
 
-    [self.terminalConnection changeTerminalSizeToColumns:newWidth rows:newHeight];
-    // TODO: Affect all active tasks.
-    [[self.taskViewControllers lastObject] resizeTerminalToColumns:newWidth rows:newHeight];
+  [self.terminalConnection changeTerminalSizeToColumns:newWidth rows:newHeight];
+  // TODO: Affect all active tasks.
+  [[self.taskViewControllers lastObject] resizeTerminalToColumns:newWidth rows:newHeight];
 }
 
 - (void)windowWillClose:(NSNotification *)notification;
 {
-    MMAppDelegate *appDelegate = [NSApp delegate];
-    [appDelegate terminalWindowWillClose:self];
-    if (self.currentDirectory) {
-        [self unregisterDirectory:self.currentDirectory];
-    }
+  MMAppDelegate *appDelegate = [NSApp delegate];
+  [appDelegate terminalWindowWillClose:self];
+  if (self.currentDirectory) {
+    [self unregisterDirectory:self.currentDirectory];
+  }
 }
 
 # pragma mark - NSWindowRestoration
 
 - (void)encodeRestorableStateWithCoder:(NSCoder *)coder;
 {
-    [coder encodeObject:self.tasks forKey:MMSelfKey(tasks)];
-    [coder encodeObject:self.currentDirectory forKey:MMSelfKey(currentDirectory)];
-    [coder encodeInteger:self.terminalConnection.terminalHeight forKey:@"terminalHeight"];
-    [coder encodeInteger:self.terminalConnection.terminalWidth forKey:@"terminalWidth"];
-    [coder encodeFloat:self.extraWidthMargin forKey:MMSelfKey(extraWidthMargin)];
-    [coder encodeFloat:self.extraHeightMargin forKey:MMSelfKey(extraHeightMargin)];
+  [coder encodeObject:self.tasks forKey:MMSelfKey(tasks)];
+  [coder encodeObject:self.currentDirectory forKey:MMSelfKey(currentDirectory)];
+  [coder encodeInteger:self.terminalConnection.terminalHeight forKey:@"terminalHeight"];
+  [coder encodeInteger:self.terminalConnection.terminalWidth forKey:@"terminalWidth"];
+  [coder encodeFloat:self.extraWidthMargin forKey:MMSelfKey(extraWidthMargin)];
+  [coder encodeFloat:self.extraHeightMargin forKey:MMSelfKey(extraHeightMargin)];
 }
 
 @end

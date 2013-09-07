@@ -14,17 +14,17 @@
 
 + (NSArray *)commandGroupsFromCommandLine:(NSString *)commandLineText;
 {
-    return [[MMParserContext new] parseString:commandLineText forTokens:NO];
+  return [[MMParserContext new] parseString:commandLineText forTokens:NO];
 }
 
 + (NSArray *)tokensFromCommandLineWithoutEscaping:(NSString *)commandLineText;
 {
-    return [[MMParserContext new] parseString:commandLineText forTokens:YES];
+  return [[MMParserContext new] parseString:commandLineText forTokens:YES];
 }
 
 + (NSArray *)tokenEndingsFromCommandLine:(NSString *)commandLineText;
 {
-    return [[[MMParserContext alloc] init] parseStringForTokenEndings:commandLineText];
+  return [[[MMParserContext alloc] init] parseStringForTokenEndings:commandLineText];
 }
 
 @end

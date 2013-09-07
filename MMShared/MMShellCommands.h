@@ -9,7 +9,7 @@
 #import <Foundation/Foundation.h>
 
 typedef enum {
-    MMShellCommandCd = 0,
+  MMShellCommandCd = 0,
 } MMShellCommand;
 
 @class MMCommand;

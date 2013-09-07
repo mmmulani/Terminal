@@ -9,41 +9,41 @@
 #import <Foundation/Foundation.h>
 
 typedef enum {
-    MMDECModeError = 0,
-    MMDECModeCursorKey = 1, // DECCKM
-    MMDECModeVT52 = 2, // DECANM
-    MMDECModeWideColumn = 3, // DECCOLM
-    MMDECModeScroll = 4, // DECSCLM
-    MMDECModeScreen = 5, // DECSCNM
-    MMDECModeOrigin = 6, // DECOM
-    MMDECModeAutoWrap = 7, // DECAWM
-    MMDECModeAutoRepeat = 8, // DECARM
-    MMDECModeCursorVisible = 25, // DECTCEM
-    MMDECModeAllowColumnChange = 40,
+  MMDECModeError = 0,
+  MMDECModeCursorKey = 1, // DECCKM
+  MMDECModeVT52 = 2, // DECANM
+  MMDECModeWideColumn = 3, // DECCOLM
+  MMDECModeScroll = 4, // DECSCLM
+  MMDECModeScreen = 5, // DECSCNM
+  MMDECModeOrigin = 6, // DECOM
+  MMDECModeAutoWrap = 7, // DECAWM
+  MMDECModeAutoRepeat = 8, // DECARM
+  MMDECModeCursorVisible = 25, // DECTCEM
+  MMDECModeAllowColumnChange = 40,
 } MMDECMode;
 
 typedef enum {
-    MMANSIModeError = 0,
-    MMANSIModeKeyboardAction = 2, // KAM
-    MMANSIModeInsert = 4, // IRM
-    MMANSIModeEcho = 12, // SRM
-    MMANSIModeNewline = 20, // LNM
+  MMANSIModeError = 0,
+  MMANSIModeKeyboardAction = 2, // KAM
+  MMANSIModeInsert = 4, // IRM
+  MMANSIModeEcho = 12, // SRM
+  MMANSIModeNewline = 20, // LNM
 } MMANSIMode;
 
 typedef enum {
-    MMCharacterSetUSASCII = 0,
-    MMCharacterSetDECLineDrawing,
-    MMCharacterSetUnitedKingdom,
-    MMCharacterSetDutch,
-    MMCharacterSetFinnish,
-    MMCharacterSetFrench,
-    MMCharacterSetFrenchCanadian,
-    MMCharacterSetGerman,
-    MMCharacterSetItalian,
-    MMCharacterSetNorwegian,
-    MMCharacterSetSpanish,
-    MMCharacterSetSwedish,
-    MMCharacterSetSwiss,
+  MMCharacterSetUSASCII = 0,
+  MMCharacterSetDECLineDrawing,
+  MMCharacterSetUnitedKingdom,
+  MMCharacterSetDutch,
+  MMCharacterSetFinnish,
+  MMCharacterSetFrench,
+  MMCharacterSetFrenchCanadian,
+  MMCharacterSetGerman,
+  MMCharacterSetItalian,
+  MMCharacterSetNorwegian,
+  MMCharacterSetSpanish,
+  MMCharacterSetSwedish,
+  MMCharacterSetSwiss,
 } MMCharacterSet;
 
 @protocol MMANSIActionDelegate;

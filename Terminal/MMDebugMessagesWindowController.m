@@ -18,30 +18,30 @@
 
 - (id)init;
 {
-    self = [self initWithWindowNibName:@"MMDebugMessagesPanel"];
-    if (!self) {
-        return nil;
-    }
+  self = [self initWithWindowNibName:@"MMDebugMessagesPanel"];
+  if (!self) {
+    return nil;
+  }
 
-    return self;
+  return self;
 }
 
 - (void)windowDidLoad
 {
-    [super windowDidLoad];
+  [super windowDidLoad];
 
-    [self.debugOutput.layoutManager replaceTextStorage:[[NSApp delegate] debugMessages]];
+  [self.debugOutput.layoutManager replaceTextStorage:[[NSApp delegate] debugMessages]];
 
-    [self.window setLevel:NSNormalWindowLevel];
+  [self.window setLevel:NSNormalWindowLevel];
 }
 
 - (void)updateOutput;
 {
-    CGFloat distanceFromBottom = [(NSView *)self.debugScrollView.documentView frame].size.height - (self.debugScrollView.contentView.bounds.origin.y + self.debugScrollView.contentView.bounds.size.height);
+  CGFloat distanceFromBottom = [(NSView *)self.debugScrollView.documentView frame].size.height - (self.debugScrollView.contentView.bounds.origin.y + self.debugScrollView.contentView.bounds.size.height);
 
-    if (distanceFromBottom < 0.5) {
-        [self.debugOutput scrollToEndOfDocument:self];
-    }
+  if (distanceFromBottom < 0.5) {
+    [self.debugOutput scrollToEndOfDocument:self];
+  }
 }
 
 @end

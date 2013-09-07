@@ -9,15 +9,15 @@
 #import <Foundation/Foundation.h>
 
 typedef enum {
-    MMSourceTypeDefault = 0,
-    MMSourceTypePipe,
-    MMSourceTypeFile,
+  MMSourceTypeDefault = 0,
+  MMSourceTypePipe,
+  MMSourceTypeFile,
 } MMSourceType;
 
 typedef enum {
-    MMCommandOperatorPipe = 0,
-    MMCommandOperatorAnd,
-    MMCommandOperatorOr,
+  MMCommandOperatorPipe = 0,
+  MMCommandOperatorAnd,
+  MMCommandOperatorOr,
 } MMCommandOperator;
 
 @interface MMCommand : NSObject <NSCoding>

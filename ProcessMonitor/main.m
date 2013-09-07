@@ -11,11 +11,11 @@
 
 int main(int argc, const char * argv[])
 {
-    @autoreleasepool {
+  @autoreleasepool {
 
-        [[MMProcessMonitorMain sharedApplication] start];
+    [[MMProcessMonitorMain sharedApplication] start];
 
-    }
-    return 0;
+  }
+  return 0;
 }
 

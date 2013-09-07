@@ -12,56 +12,56 @@
 
 + (NSArray *)_defaultArguments;
 {
-    return @[];
+  return @[];
 }
 
 + (NSArray *)defaultArguments;
 {
-    static NSArray *defaultArguments;
-    static dispatch_once_t onceToken;
-    dispatch_once(&onceToken, ^{
-        defaultArguments = [self _defaultArguments];
-    });
+  static NSArray *defaultArguments;
+  static dispatch_once_t onceToken;
+  dispatch_once(&onceToken, ^{
+    defaultArguments = [self _defaultArguments];
+  });
 
-    return defaultArguments;
+  return defaultArguments;
 }
 
 - (id)init;
 {
-    self = [super init];
-    if (!self) {
-        return nil;
-    }
+  self = [super init];
+  if (!self) {
+    return nil;
+  }
 
-    self.data = [NSMutableDictionary dictionary];
+  self.data = [NSMutableDictionary dictionary];
 
-    return self;
+  return self;
 }
 
 - (id)initWithArguments:(NSArray *)arguments;
 {
-    self = [self init];
-    if (!self) {
-        return nil;
-    }
+  self = [self init];
+  if (!self) {
+    return nil;
+  }
 
-    self.arguments = arguments;
+  self.arguments = arguments;
 
-    return self;
+  return self;
 }
 
 - (id)defaultedArgumentAtIndex:(NSInteger)index;
 {
-    if (index > self.arguments.count - 1) {
-        return self.class.defaultArguments[index];
-    }
+  if (index > self.arguments.count - 1) {
+    return self.class.defaultArguments[index];
+  }
 
-    return self.arguments[index];
+  return self.arguments[index];
 }
 
 - (void)do;
 {
-    NSAssert(NO, @"Subclass must implement do method");
+  NSAssert(NO, @"Subclass must implement do method");
 }
 
 @end

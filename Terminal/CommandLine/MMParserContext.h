@@ -9,10 +9,10 @@
 #import <Foundation/Foundation.h>
 
 typedef struct {
-    void *scanner;
-    __unsafe_unretained id result;
-    const char *error_text;
-    int error_line;
+  void *scanner;
+  __unsafe_unretained id result;
+  const char *error_text;
+  int error_line;
 } MMParserCtx;
 
 extern int yydebug;

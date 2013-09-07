@@ -11,13 +11,13 @@
 
 #define YY_INPUT(buf, bytesRead, maxSize) \
 	{ \
-        MMParserContext *parserContext = [MMParserContext parserForContext:yyextra]; \
-        if (parserContext) { \
-            bytesRead = [parserContext inputToBuffer:buf maxBytesToRead:maxSize]; \
-        } else { \
-            bytesRead = YY_NULL; \
-        } \
-    }
+    MMParserContext *parserContext = [MMParserContext parserForContext:yyextra]; \
+    if (parserContext) { \
+      bytesRead = [parserContext inputToBuffer:buf maxBytesToRead:maxSize]; \
+    } else { \
+      bytesRead = YY_NULL; \
+    } \
+  }
 %}
 
 WS [ \t]+
@@ -26,56 +26,56 @@ EXCLUDECOMMANDJOIN [^\\ \t\";&<>|]
 %%
 
 \; {
-    [MMParserContext incrementCurrentPosition:yyleng];
-    return SEMICOLON;
+  [MMParserContext incrementCurrentPosition:yyleng];
+  return SEMICOLON;
 }
 
 \| {
-    [MMParserContext incrementCurrentPosition:yyleng];
-    return PIPE;
+  [MMParserContext incrementCurrentPosition:yyleng];
+  return PIPE;
 }
 
 & {
-    [MMParserContext incrementCurrentPosition:yyleng];
-    return AMPERSAND;
+  [MMParserContext incrementCurrentPosition:yyleng];
+  return AMPERSAND;
 }
 
 && {
-    [MMParserContext incrementCurrentPosition:yyleng];
-    return DOUBLE_AMPERSAND;
+  [MMParserContext incrementCurrentPosition:yyleng];
+  return DOUBLE_AMPERSAND;
 }
 
 > {
-    [MMParserContext incrementCurrentPosition:yyleng];
-    return GREATER_THAN;
+  [MMParserContext incrementCurrentPosition:yyleng];
+  return GREATER_THAN;
 }
 
 \< {
-    [MMParserContext incrementCurrentPosition:yyleng];
-    return LESS_THAN;
+  [MMParserContext incrementCurrentPosition:yyleng];
+  return LESS_THAN;
 }
 
 \|\| {
-    [MMParserContext incrementCurrentPosition:yyleng];
-    return DOUBLE_PIPE;
+  [MMParserContext incrementCurrentPosition:yyleng];
+  return DOUBLE_PIPE;
 }
 
 ((\\.|{EXCLUDECOMMANDJOIN})|(\"(\\.|[^\\"])*\"))+ {
-    NSString *result = [NSString stringWithUTF8String:yytext];
-    [MMParserContext incrementCurrentPosition:result.length];
-    [MMParserContext storeObject:result];
-    [MMParserContext addScannedToken:result];
-    [MMParserContext setEnd:[MMParserContext currentPosition] forToken:result];
-    yylval->node = result;
-    return WORD;
+  NSString *result = [NSString stringWithUTF8String:yytext];
+  [MMParserContext incrementCurrentPosition:result.length];
+  [MMParserContext storeObject:result];
+  [MMParserContext addScannedToken:result];
+  [MMParserContext setEnd:[MMParserContext currentPosition] forToken:result];
+  yylval->node = result;
+  return WORD;
 }
 
 {WS} {
-    [MMParserContext incrementCurrentPosition:yyleng];
+  [MMParserContext incrementCurrentPosition:yyleng];
 }
 
 . {
-    /* empty */
+  /* empty */
 }
 
 %%

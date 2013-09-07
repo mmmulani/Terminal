@@ -12,21 +12,21 @@
 #import "MMTerminalProxy.h"
 
 typedef struct _MMPosition {
-    NSInteger x;
-    NSInteger y;
+  NSInteger x;
+  NSInteger y;
 } MMPosition;
 
 NS_INLINE MMPosition
 MMPositionMake(NSInteger x, NSInteger y)
 {
-    MMPosition p; p.x = x; p.y = y; return p;
+  MMPosition p; p.x = x; p.y = y; return p;
 }
 
 typedef enum {
-    MMArrowKeyUp = 0,
-    MMArrowKeyDown,
-    MMArrowKeyRight,
-    MMArrowKeyLeft,
+  MMArrowKeyUp = 0,
+  MMArrowKeyDown,
+  MMArrowKeyRight,
+  MMArrowKeyLeft,
 } MMArrowKey;
 
 @class MMTaskInfo;

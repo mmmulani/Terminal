@@ -20,7 +20,7 @@
 %{
 
 void yyerror(YYLTYPE* locp, void* context, const char* err) {
-    fprintf(stderr,"Error at line %d: %s\n", locp->first_line, err);
+  fprintf(stderr,"Error at line %d: %s\n", locp->first_line, err);
 }
 
 int yylex(YYSTYPE* lvalp, YYLTYPE* llocp, void* scanner);
@@ -31,70 +31,70 @@ int yylex(YYSTYPE* lvalp, YYLTYPE* llocp, void* scanner);
 
 %%
 start : command_groups {
-    context->result = $1;
+  context->result = $1;
 };
 
 command_groups : /* empty */ {
-    NSMutableArray *array = [NSMutableArray array];
-    [MMParserContext storeObject:array];
-    $$ = array;
+  NSMutableArray *array = [NSMutableArray array];
+  [MMParserContext storeObject:array];
+  $$ = array;
 }
 | command_group SEMICOLON command_groups {
-    [$3 insertObject:$1 atIndex:0];
-    $$ = $3;
+  [$3 insertObject:$1 atIndex:0];
+  $$ = $3;
 }
 | command_group {
-    NSMutableArray *array = [NSMutableArray array];
-    [MMParserContext storeObject:array];
-    [array insertObject:$1 atIndex:0];
-    $$ = array;
+  NSMutableArray *array = [NSMutableArray array];
+  [MMParserContext storeObject:array];
+  [array insertObject:$1 atIndex:0];
+  $$ = array;
 }
 ;
 
 command_group : /* empty */ {
-    MMCommandGroup *commandGroup = [MMCommandGroup new];
-    [MMParserContext storeObject:commandGroup];
-    $$ = commandGroup;
+  MMCommandGroup *commandGroup = [MMCommandGroup new];
+  [MMParserContext storeObject:commandGroup];
+  $$ = commandGroup;
 }
 | command PIPE command_group {
-    [$3 insertCommand:$1 withBinaryOperator:MMCommandOperatorPipe];
-    $$ = $3;
+  [$3 insertCommand:$1 withBinaryOperator:MMCommandOperatorPipe];
+  $$ = $3;
 }
 | command DOUBLE_AMPERSAND command_group {
-    [$3 insertCommand:$1 withBinaryOperator:MMCommandOperatorAnd];
-    $$ = $3;
+  [$3 insertCommand:$1 withBinaryOperator:MMCommandOperatorAnd];
+  $$ = $3;
 }
 | command DOUBLE_PIPE command_group {
-    [$3 insertCommand:$1 withBinaryOperator:MMCommandOperatorOr];
-    $$ = $3;
+  [$3 insertCommand:$1 withBinaryOperator:MMCommandOperatorOr];
+  $$ = $3;
 }
 | command {
-    MMCommandGroup *commandGroup = [MMCommandGroup commandGroupWithSingleCommand:$1];
-    [MMParserContext storeObject:commandGroup];
-    $$ = commandGroup;
+  MMCommandGroup *commandGroup = [MMCommandGroup commandGroupWithSingleCommand:$1];
+  [MMParserContext storeObject:commandGroup];
+  $$ = commandGroup;
 }
 
 command : /* empty */ {
-    MMCommand *command = [MMCommand new];
-    [MMParserContext storeObject:command];
-    $$ = command;
+  MMCommand *command = [MMCommand new];
+  [MMParserContext storeObject:command];
+  $$ = command;
 }
 | WORD {
-    MMCommand *command = [MMCommand new];
-    [MMParserContext storeObject:command];
-    [command insertArgumentAtFront:$1];
-    $$ = command;
+  MMCommand *command = [MMCommand new];
+  [MMParserContext storeObject:command];
+  [command insertArgumentAtFront:$1];
+  $$ = command;
 }
 | WORD command {
-    [$2 insertArgumentAtFront:$1];
-    $$ = $2;
+  [$2 insertArgumentAtFront:$1];
+  $$ = $2;
 }
 | GREATER_THAN command {
-    [$2 treatFirstArgumentAsStandardOutput];
-    $$ = $2;
+  [$2 treatFirstArgumentAsStandardOutput];
+  $$ = $2;
 }
 | LESS_THAN command {
-    [$2 treatFirstArgumentAsStandardInput];
-    $$ = $2;
+  [$2 treatFirstArgumentAsStandardInput];
+  $$ = $2;
 }
 ;

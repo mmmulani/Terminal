@@ -16,49 +16,49 @@
 
 #define CheckInputAgainstExpectedOutput(input, output) \
 do {\
-    MMTask *task = [MMTask new]; \
-    SendInputToTask(task, input); \
-    STAssertEqualObjects([task.currentANSIDisplay string], output, @"Compared task output to provided output."); \
+  MMTask *task = [MMTask new]; \
+  SendInputToTask(task, input); \
+  STAssertEqualObjects([task.currentANSIDisplay string], output, @"Compared task output to provided output."); \
 } while (0)
 
 #define CheckRawInputAgainstExpectedOutput(input, output) \
 do {\
-    MMTask *task = [MMTask new]; \
-    SendRawInputToTask(task, input); \
-    STAssertEqualObjects([task.currentANSIDisplay string], output, @"Compared task output to provided output."); \
+  MMTask *task = [MMTask new]; \
+  SendRawInputToTask(task, input); \
+  STAssertEqualObjects([task.currentANSIDisplay string], output, @"Compared task output to provided output."); \
 } while (0)
 
 #define CheckInputAgainstExpectedOutputWithExpectedCursor(input, output, cursorPosition_) \
 do {\
-    MMTask *task = [MMTask new]; \
-    SendInputToTask(task, input); \
-    STAssertEqualObjects([task.currentANSIDisplay string], output, @"Compared task output to provided output."); \
-    STAssertEquals(task.cursorPosition.x, cursorPosition_.x, @"X coord of cursor position"); \
-    STAssertEquals(task.cursorPosition.y, cursorPosition_.y, @"Y coord of cursor position"); \
+  MMTask *task = [MMTask new]; \
+  SendInputToTask(task, input); \
+  STAssertEqualObjects([task.currentANSIDisplay string], output, @"Compared task output to provided output."); \
+  STAssertEquals(task.cursorPosition.x, cursorPosition_.x, @"X coord of cursor position"); \
+  STAssertEquals(task.cursorPosition.y, cursorPosition_.y, @"Y coord of cursor position"); \
 } while (0)
 
 #define CheckThatInputDoesNotCauseACrash(input) \
 do {\
-    MMTask *task = [MMTask new]; \
-    SendInputToTask(task, input); \
-    STAssertNotNil([task.currentANSIDisplay string], nil); \
+  MMTask *task = [MMTask new]; \
+  SendInputToTask(task, input); \
+  STAssertNotNil([task.currentANSIDisplay string], nil); \
 } while (0)
 
 #define CheckInputAgainstExpectedCursorPositionByCharacters(input, cursorPositionByCharacters_) \
 do {\
-    MMTask *task = [MMTask new]; \
-    SendInputToTask(task, input); \
-    (void) task.currentANSIDisplay; \
-    STAssertEquals(task.cursorPositionByCharacters, (NSInteger)cursorPositionByCharacters_, @"Comparing cursor position by characters."); \
+  MMTask *task = [MMTask new]; \
+  SendInputToTask(task, input); \
+  (void) task.currentANSIDisplay; \
+  STAssertEquals(task.cursorPositionByCharacters, (NSInteger)cursorPositionByCharacters_, @"Comparing cursor position by characters."); \
 } while (0)
 
 #define BEGIN_EXPECTED_FAILURES \
-    [self setFailureAction:@selector(raiseException:)]; \
-    @try {
+  [self setFailureAction:@selector(raiseException:)]; \
+  @try {
 
 #define END_EXPECTED_FAILURES \
-        [self performSelector:@selector(logException:) withObject:[NSException exceptionWithName:@"ExpectedFailure" reason:@"Test was expected to fail" userInfo:nil]]; \
-    } \
-    @catch (NSException *exception) { \
-    } \
-    [self setFailureAction:@selector(logException:)];
+      [self performSelector:@selector(logException:) withObject:[NSException exceptionWithName:@"ExpectedFailure" reason:@"Test was expected to fail" userInfo:nil]]; \
+  } \
+  @catch (NSException *exception) { \
+  } \
+  [self setFailureAction:@selector(logException:)];
