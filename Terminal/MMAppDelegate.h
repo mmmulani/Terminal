@@ -24,6 +24,7 @@
 @property (strong) IBOutlet NSMenuItem *windowMenu;
 
 - (IBAction)createNewTerminal:(id)sender;
+- (IBAction)createNewRemoteTerminal:(id)sender;
 - (IBAction)openDebugWindow:(id)sender;
 
 - (NSInteger)uniqueWindowShortcut;

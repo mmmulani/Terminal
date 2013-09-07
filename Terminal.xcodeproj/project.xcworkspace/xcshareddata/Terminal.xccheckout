@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>IDESourceControlProjectFavoriteDictionaryKey</key>
+	<false/>
+	<key>IDESourceControlProjectIdentifier</key>
+	<string>0291108D-1FEC-432C-89FC-21CF2B775E86</string>
+	<key>IDESourceControlProjectName</key>
+	<string>Terminal</string>
+	<key>IDESourceControlProjectOriginsDictionary</key>
+	<dict>
+		<key>D106C473-17D6-42A5-A5F0-5E72BCAC108B</key>
+		<string>ssh://github.com/mmmulani/Terminal.git</string>
+	</dict>
+	<key>IDESourceControlProjectPath</key>
+	<string>Terminal.xcodeproj/project.xcworkspace</string>
+	<key>IDESourceControlProjectRelativeInstallPathDictionary</key>
+	<dict>
+		<key>D106C473-17D6-42A5-A5F0-5E72BCAC108B</key>
+		<string>../..</string>
+	</dict>
+	<key>IDESourceControlProjectURL</key>
+	<string>ssh://github.com/mmmulani/Terminal.git</string>
+	<key>IDESourceControlProjectVersion</key>
+	<integer>110</integer>
+	<key>IDESourceControlProjectWCCIdentifier</key>
+	<string>D106C473-17D6-42A5-A5F0-5E72BCAC108B</string>
+	<key>IDESourceControlProjectWCConfigurations</key>
+	<array>
+		<dict>
+			<key>IDESourceControlRepositoryExtensionIdentifierKey</key>
+			<string>public.vcs.git</string>
+			<key>IDESourceControlWCCIdentifierKey</key>
+			<string>D106C473-17D6-42A5-A5F0-5E72BCAC108B</string>
+			<key>IDESourceControlWCCName</key>
+			<string>Terminal</string>
+		</dict>
+	</array>
+</dict>
+</plist>

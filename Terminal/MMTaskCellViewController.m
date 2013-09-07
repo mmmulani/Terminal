@@ -37,9 +37,15 @@
     [self.view addSubview:self.imageView];
     [self.view addSubview:self.spinningIndicator];
 
-    if (self.task.isFinished) {
-      [self updateWithANSIOutput];
-      [self.label setStringValue:[NSString stringWithFormat:@"Ran %@", self.task.command]];
+    if (self.task.shellCommand) {
+        [self.outputView.enclosingScrollView removeFromSuperview];
+        self.outputView = nil;
+        [self updateViewForShellCommand];
+        
+        BOOL isCd = [[[self.task.commandGroups[0] commands][0] arguments][0] isEqualToString:@"cd"];
+        if (!isCd) {
+            [self.view addSubview:self.catImageView];
+        }
     } else {
       [self.label setStringValue:[NSString stringWithFormat:@"Running %@", self.task.command]];
     }
@@ -102,31 +108,35 @@
 
 - (CGFloat)heightToFitAllOfOutput;
 {
-  if (self.task.isShellCommand) {
-    return 55.0;
-  }
+    if (self.task.isShellCommand) {
+        if (self.catImageView.image) {
+            return self.catImageView.image.size.height + 80.0;
+        }
+        
+        return 55.0;
+    }
 
-  CGFloat textHeight = 0.0f;
-  if (self.task.shouldDrawFullTerminalScreen) {
-    // We let the default maximum later take over, rather than calculate a max height.
-    textHeight = 9999.0f;
-  } else {
-    NSAttributedString *output = [self.outputView.textStorage attributedSubstringFromRange:NSMakeRange(0, self.outputView.textStorage.length)];
+    CGFloat textHeight = 0.0f;
+    if (self.task.shouldDrawFullTerminalScreen) {
+        // We let the default maximum later take over, rather than calculate a max height.
+        textHeight = 9999.0f;
+    } else {
+        NSAttributedString *output = [self.outputView.textStorage attributedSubstringFromRange:NSMakeRange(0, self.outputView.textStorage.length)];
 
-    NSTextStorage *textStorage = [[NSTextStorage alloc] initWithAttributedString:output];
-    NSTextContainer *textContainer = [[NSTextContainer alloc] initWithContainerSize:NSMakeSize(self.view.frame.size.width - 40, FLT_MAX)];
-    NSLayoutManager *layoutManager = [[NSLayoutManager alloc] init];
-    [layoutManager addTextContainer:textContainer];
-    [textStorage addLayoutManager:layoutManager];
-    [layoutManager glyphRangeForTextContainer:textContainer];
-    textHeight = [layoutManager usedRectForTextContainer:textContainer].size.height + 2.0; // + 2.0 for padding.
-  }
+        NSTextStorage *textStorage = [[NSTextStorage alloc] initWithAttributedString:output];
+        NSTextContainer *textContainer = [[NSTextContainer alloc] initWithContainerSize:NSMakeSize(self.view.frame.size.width - 40, FLT_MAX)];
+        NSLayoutManager *layoutManager = [[NSLayoutManager alloc] init];
+        [layoutManager addTextContainer:textContainer];
+        [textStorage addLayoutManager:layoutManager];
+        [layoutManager glyphRangeForTextContainer:textContainer];
+        textHeight = [layoutManager usedRectForTextContainer:textContainer].size.height + 2.0; // + 2.0 for padding.
+    }
 
-  // When drawing the whole screen, we use 64 points for the chrome and 15 points for each line of text.
-  CGFloat heightForWholeScreen = 64.0 + 15.0 * self.task.termHeight;
+    // When drawing the whole screen, we use 64 points for the chrome and 15 points for each line of text.
+    CGFloat heightForWholeScreen = 64.0 + 15.0 * self.task.termHeight;
 
-  CGFloat height = MIN(64 + textHeight, heightForWholeScreen);
-  return height;
+    CGFloat height = MIN(64 + textHeight, heightForWholeScreen);
+    return height;
 }
 
 - (void)updateWithANSIOutput;
@@ -169,21 +179,40 @@
 
 - (void)updateViewForShellCommand;
 {
-  // TODO: Handle other types of shell commands.
-  if (!self.task.shellCommandAttachment) {
-    return;
-  }
+    BOOL isCd = [[[self.task.commandGroups[0] commands][0] arguments][0] isEqualToString:@"cd"];
+    if (isCd) {
+        if (!self.task.shellCommandAttachment) {
+            return;
+        }
 
-  NSString *displayText;
-  if (self.task.shellCommandSuccessful) {
-    displayText = [NSString stringWithFormat:@"Changed directory to %@", self.task.shellCommandAttachment];
-    self.label.textColor = [NSColor grayColor];
-  } else {
-    displayText = [NSString stringWithFormat:@"Unable to change directory to %@", self.task.shellCommandAttachment];
-    self.label.textColor = [NSColor redColor];
-  }
-  self.label.stringValue = displayText;
-  self.label.alignment = NSCenterTextAlignment;
+        NSString *displayText;
+        if (self.task.shellCommandSuccessful) {
+            displayText = [NSString stringWithFormat:@"Changed directory to %@", self.task.shellCommandAttachment];
+            self.label.textColor = [NSColor grayColor];
+        } else {
+            displayText = [NSString stringWithFormat:@"Unable to change directory to %@", self.task.shellCommandAttachment];
+            self.label.textColor = [NSColor redColor];
+        }
+        self.label.stringValue = displayText;
+        self.label.alignment = NSCenterTextAlignment;
+    } else {
+        self.label.stringValue = [NSString stringWithFormat:@"Ran cat_ %@", self.task.shellCommandAttachment[@"image"]];
+        
+        // Image cat.
+        NSString *imageString = self.task.shellCommandAttachment[@"content"];
+        NSMutableData *imageData = [NSMutableData dataWithCapacity:(imageString.length / 2)];
+        for (NSInteger i = 0; i < imageString.length; i += 2) {
+            unichar first = [imageString characterAtIndex:i];
+            unichar second = [imageString characterAtIndex:(i + 1)];
+            NSInteger value = first >= 'a' ? first - 'a' + 10 : first - '0';
+            NSInteger secondValue = second >= 'a' ? second - 'a' + 10 : second - '0';
+            
+            NSInteger totalValue = (value * 16) + secondValue;
+            [imageData appendBytes:&totalValue length:1];
+        }
+        self.catImageView.image = [[NSImage alloc] initWithData:imageData];
+        [self.catImageView setFrame:NSMakeRect(20, -(self.catImageView.image.size.height) + 10, self.catImageView.image.size.width, self.catImageView.image.size.height)];
+    }
 }
 
 - (void)resizeTerminalToColumns:(NSInteger)columns rows:(NSInteger)rows;

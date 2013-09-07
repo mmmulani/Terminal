@@ -57,6 +57,9 @@
 		918649BA16D5D1BD0024D9BE /* MMShared.m in Sources */ = {isa = PBXBuildFile; fileRef = 918649B116D5A6A80024D9BE /* MMShared.m */; };
 		918649BE16D69A700024D9BE /* MMDebugMessagesWindowController.m in Sources */ = {isa = PBXBuildFile; fileRef = 918649BC16D69A6F0024D9BE /* MMDebugMessagesWindowController.m */; };
 		918649BF16D69A700024D9BE /* MMDebugMessagesPanel.xib in Resources */ = {isa = PBXBuildFile; fileRef = 918649BD16D69A700024D9BE /* MMDebugMessagesPanel.xib */; };
+		918CA3EB17A8E0D500A5D852 /* MMRemoteTerminalConnection.m in Sources */ = {isa = PBXBuildFile; fileRef = 918CA3EA17A8E0D500A5D852 /* MMRemoteTerminalConnection.m */; };
+		918CA3EF17A8E94E00A5D852 /* MMConnectRemoteWindowController.m in Sources */ = {isa = PBXBuildFile; fileRef = 918CA3ED17A8E94E00A5D852 /* MMConnectRemoteWindowController.m */; };
+		918CA3F017A8E94E00A5D852 /* MMConnectRemoteWindowController.xib in Resources */ = {isa = PBXBuildFile; fileRef = 918CA3EE17A8E94E00A5D852 /* MMConnectRemoteWindowController.xib */; };
 		919ABB4D16FF9D7200BB7108 /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = 919ABB4B16FF9D7200BB7108 /* InfoPlist.strings */; };
 		919ABB5016FFA22900BB7108 /* MMTaskTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 919ABB4F16FFA22900BB7108 /* MMTaskTests.m */; };
 		919BA9B116C875C40091CB1B /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 919BA9B016C875C40091CB1B /* Foundation.framework */; };
@@ -254,6 +257,11 @@
 		918649BB16D69A6F0024D9BE /* MMDebugMessagesWindowController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MMDebugMessagesWindowController.h; sourceTree = "<group>"; };
 		918649BC16D69A6F0024D9BE /* MMDebugMessagesWindowController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MMDebugMessagesWindowController.m; sourceTree = "<group>"; };
 		918649BD16D69A700024D9BE /* MMDebugMessagesPanel.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = MMDebugMessagesPanel.xib; sourceTree = "<group>"; };
+		918CA3E917A8E0D500A5D852 /* MMRemoteTerminalConnection.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MMRemoteTerminalConnection.h; sourceTree = "<group>"; };
+		918CA3EA17A8E0D500A5D852 /* MMRemoteTerminalConnection.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MMRemoteTerminalConnection.m; sourceTree = "<group>"; };
+		918CA3EC17A8E94E00A5D852 /* MMConnectRemoteWindowController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MMConnectRemoteWindowController.h; sourceTree = "<group>"; };
+		918CA3ED17A8E94E00A5D852 /* MMConnectRemoteWindowController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MMConnectRemoteWindowController.m; sourceTree = "<group>"; };
+		918CA3EE17A8E94E00A5D852 /* MMConnectRemoteWindowController.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = MMConnectRemoteWindowController.xib; sourceTree = "<group>"; };
 		919ABB4C16FF9D7200BB7108 /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = TerminalTests/en.lproj/InfoPlist.strings; sourceTree = "<group>"; };
 		919ABB4E16FFA22900BB7108 /* MMTaskTests.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = MMTaskTests.h; path = TerminalTests/MMTaskTests.h; sourceTree = "<group>"; };
 		919ABB4F16FFA22900BB7108 /* MMTaskTests.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = MMTaskTests.m; path = TerminalTests/MMTaskTests.m; sourceTree = "<group>"; };
@@ -436,6 +444,9 @@
 				91D8FD07177B3542005934AE /* MMInfoPanelController.h */,
 				91D8FD08177B3542005934AE /* MMInfoPanelController.m */,
 				91D8FD09177B3542005934AE /* MMInfoPanelController.xib */,
+				918CA3EC17A8E94E00A5D852 /* MMConnectRemoteWindowController.h */,
+				918CA3ED17A8E94E00A5D852 /* MMConnectRemoteWindowController.m */,
+				918CA3EE17A8E94E00A5D852 /* MMConnectRemoteWindowController.xib */,
 			);
 			name = "Terminal window";
 			sourceTree = "<group>";
@@ -602,6 +613,8 @@
 				918649BD16D69A700024D9BE /* MMDebugMessagesPanel.xib */,
 				9139E15F173B2423009FFC1E /* MMTerminalConnection.h */,
 				9139E160173B2423009FFC1E /* MMTerminalConnection.m */,
+				918CA3E917A8E0D500A5D852 /* MMRemoteTerminalConnection.h */,
+				918CA3EA17A8E0D500A5D852 /* MMRemoteTerminalConnection.m */,
 			);
 			path = Terminal;
 			sourceTree = "<group>";
@@ -758,6 +771,7 @@
 				913DE710176A5CE80068ED2F /* glyphiconsWarning.png in Resources */,
 				917DE9E2176A7FC200591874 /* glyphiconsX.png in Resources */,
 				91D8FD0B177B3542005934AE /* MMInfoPanelController.xib in Resources */,
+				918CA3F017A8E94E00A5D852 /* MMConnectRemoteWindowController.xib in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -854,6 +868,8 @@
 				916E893B17811CE30070A1C6 /* MMPrintingActions.m in Sources */,
 				916E893E17811F900070A1C6 /* NSString+MMAdditions.m in Sources */,
 				91DA06D818663AA000D42E1D /* JSONKit.m in Sources */,
+				918CA3EB17A8E0D500A5D852 /* MMRemoteTerminalConnection.m in Sources */,
+				918CA3EF17A8E94E00A5D852 /* MMConnectRemoteWindowController.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

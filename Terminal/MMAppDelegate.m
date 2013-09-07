@@ -10,6 +10,7 @@
 #import "MMShared.h"
 #import "MMTerminalConnection.h"
 #import "MMFirstRunWindowController.h"
+#import "MMConnectRemoteWindowController.h"
 
 #import <ServiceManagement/ServiceManagement.h>
 #import <Security/Authorization.h>
@@ -17,6 +18,7 @@
 @interface MMAppDelegate ()
 
 @property (strong) NSMutableArray *unassignedWindowShortcuts;
+@property (strong) MMConnectRemoteWindowController *sshWindow;
 
 @end
 
@@ -48,6 +50,12 @@
   }
 
   [self.debugWindow showWindow:nil];
+}
+
+- (IBAction)createNewRemoteTerminal:(id)sender;
+{
+  self.sshWindow = [[MMConnectRemoteWindowController alloc] init];
+  [self.sshWindow showWindow:nil];
 }
 
 - (void)createNewTerminalWithState:(NSCoder *)state completionHandler:(void (^)(NSWindow *, NSError *))completionHandler;
@@ -183,9 +191,9 @@
     }
   }
 
-  if (self.terminalConnections.count == 0) {
-    [self createNewTerminal:nil];
-  }
+    /*if (self.terminalConnections.count == 0) {
+        [self createNewTerminal:nil];
+    }*/
 
 #ifdef DEBUG
   // F-Script can be found here: http://www.fscript.org/download/download.htm

@@ -13,7 +13,7 @@
 
 + (BOOL)isShellCommand:(MMCommand *)command;
 {
-  return command.arguments.count > 0 && [command.arguments[0] isEqualToString:@"cd"];
+    return command.arguments.count > 0 && ([command.arguments[0] isEqualToString:@"cd"] || [command.arguments[0] isEqualToString:@"cat_"]);
 }
 
 

@@ -18,6 +18,7 @@
 @property (strong) IBOutlet NSTextField *label;
 @property (strong) IBOutlet MMTextView *outputView;
 @property (strong) IBOutlet NSImageView *imageView;
+@property (strong) IBOutlet NSImageView *catImageView;
 @property (strong) IBOutlet NSProgressIndicator *spinningIndicator;
 @property (getter=isBackgrounded) BOOL backgrounded;
 

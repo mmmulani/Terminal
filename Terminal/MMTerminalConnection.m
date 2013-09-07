@@ -251,4 +251,16 @@
   return [self.unusedShells[0] integerValue];
 }
 
+- (void)ghettoFunctionByRemote;
+{
+  struct termios terminalSettings;
+  [self setUpTermIOSettings:&terminalSettings];
+  terminalSettings.c_iflag = BRKINT | IUTF8;
+	terminalSettings.c_oflag = 0;
+	terminalSettings.c_cflag = CS8 | CREAD | HUPCL;
+	terminalSettings.c_lflag = ECHOKE | ECHOE | ECHOK | ECHOCTL | ISIG | ICANON | IEXTEN | PENDIN;
+  NSLog(@"Ghetto-ing up %d", [[self.tasksByFD allKeys][0] intValue]);
+  ioctl([[self.tasksByFD allKeys][0] intValue], TIOCSETA, &terminalSettings);
+}
+
 @end
