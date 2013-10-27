@@ -23,3 +23,7 @@
 @interface MMSetScrollMargins : MMANSIAction
 
 @end
+
+@interface MMScrollUpLines : MMANSIAction
+
+@end

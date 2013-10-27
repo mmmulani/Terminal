@@ -561,6 +561,8 @@
       action = [[MMDeleteLines alloc] initWithArguments:items];
     } else if (escapeCode == 'P') {
       action = [[MMDeleteCharacters alloc] initWithArguments:items];
+    } else if (escapeCode == 'S') {
+      action = [[MMScrollUpLines alloc] initWithArguments:items];
     } else if (escapeCode == 'X') {
       action = [[MMEraseCharacters alloc] initWithArguments:items];
     } else if (escapeCode == 'c') {
@@ -1115,6 +1117,23 @@
 - (void)setCharacterSetSlot:(NSInteger)slot;
 {
   self.currentCharacterSetSlot = slot;
+}
+
+- (void)scrollContentUp:(NSInteger)numberOfLines;
+{
+  for (NSInteger i = 0; i < numberOfLines; i++) {
+    if (![self isScrollRowTerminatedInNewline:self.scrollMarginTop] &&
+        [self numberOfDisplayableCharactersInScrollRow:self.scrollMarginTop] != self.termWidth) {
+      [self setScrollRow:self.scrollMarginTop hasNewline:YES];
+    }
+
+    if (self.scrollMarginTop > 1) {
+      [self removeLineAtScrollRow:self.scrollMarginTop];
+    } else {
+      [self incrementRowOffset];
+    }
+    [self insertBlankLineAtScrollRow:self.scrollMarginBottom withNewline:NO];
+  }
 }
 
 # pragma mark - NSCoding

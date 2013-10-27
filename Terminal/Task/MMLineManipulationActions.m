@@ -112,3 +112,19 @@
 }
 
 @end
+
+@implementation MMScrollUpLines
+
++ (NSArray *)_defaultArguments { return @[@1]; }
+
+- (void)do;
+{
+  if (![self.delegate isCursorInScrollRegion]) {
+    return;
+  }
+
+  NSUInteger numberOfLinesToScroll = MIN(self.delegate.scrollMarginBottom + self.delegate.cursorPositionY - self.delegate.scrollMarginTop, MAX(1, [[self defaultedArgumentAtIndex:0] integerValue]));
+  [self.delegate scrollContentUp:numberOfLinesToScroll];
+}
+
+@end

@@ -306,6 +306,32 @@
   CheckInputAgainstExpectedOutput(@"123\n456\033[3;10r789", @"789\n456");
 }
 
+- (void)testScrollingUp
+{
+  // Test cursor is in scroll region.
+  CheckInputAgainstExpectedOutput(@"\033[2;10rABC\033[1SDEF", @"ABCDEF");
+
+  // Test base conditions.
+  CheckInputAgainstExpectedOutputWithExpectedCursor(@"ABC\nDEF\033[SGHI", @"ABC\nDEF\n   GHI", MMPositionMake(7, 2));
+  CheckInputAgainstExpectedOutputWithExpectedCursor(@"ABC\nDEF\033[0SGHI", @"ABC\nDEF\n   GHI", MMPositionMake(7, 2));
+  CheckInputAgainstExpectedOutputWithExpectedCursor(@"ABC\nDEF\033[1SGHI", @"ABC\nDEF\n   GHI", MMPositionMake(7, 2));
+
+  // Test scrolling up multiple lines.
+  CheckInputAgainstExpectedOutputWithExpectedCursor(@"ABC\nDEF\033[2SGHI", @"ABC\nDEF\n\n   GHI", MMPositionMake(7, 2));
+  CheckInputAgainstExpectedOutputWithExpectedCursor(@"ABC\nDEF\033[3SGHI", @"ABC\nDEF\n\n\n   GHI", MMPositionMake(7, 2));
+
+  // Test the max for scrolling up.
+  // The intended behaviour is that the screen can only be scrolled enough so that none of the previous text is shown.
+  CheckInputAgainstExpectedOutput(@"ABC\nDEF\033[25SGHI", [[@"ABC\nDEF" stringByAppendingString:[@"\n" repeatedTimes:25]] stringByAppendingString:@"   GHI"]);
+  CheckInputAgainstExpectedOutput(@"ABC\nDEF\033[28SGHI", [[@"ABC\nDEF" stringByAppendingString:[@"\n" repeatedTimes:25]] stringByAppendingString:@"   GHI"]);
+
+  // Test scrolling up while there is text below the cursor.
+  CheckInputAgainstExpectedOutputWithExpectedCursor(@"ABC\nDEF\033[1;1HJ\033[1SGHI", @"JBC\nDGHI", MMPositionMake(5, 1));
+
+  // Test scrolling in the scroll region.
+  CheckInputAgainstExpectedOutputWithExpectedCursor(@"\033[2;10r\033[1;1HABC\nDEF\033[1SGHI", @"ABC\n   GHI", MMPositionMake(7, 2));
+}
+
 - (void)testPossibleCrashers;
 {
   CheckThatInputDoesNotCauseACrash(@"\033[M\033[24;1Ha");
