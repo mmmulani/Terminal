@@ -214,7 +214,7 @@
     NSTask *task = [[NSTask alloc] init];
     task.launchPath = shellPath;
     task.standardOutput = output;
-    task.environment = @{};
+    task.environment = @{ @"HOME": NSHomeDirectory() };
 
     task.arguments = @[@"-i", @"-l", pathToScript];
 
