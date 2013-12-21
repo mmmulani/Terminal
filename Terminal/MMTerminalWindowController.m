@@ -54,7 +54,7 @@
   self.commandHistoryIndex = 0;
   self.directoriesBeingWatched = [NSMutableDictionary dictionary];
   self.terminalConnection = terminalConnection;
-  self.window.restorationClass = [[NSApp delegate] class];
+  //self.window.restorationClass = [[NSApp delegate] class];
 
   self.extraWidthMargin = 56.0;
   self.extraHeightMargin = 335.0;
@@ -85,7 +85,7 @@
   }
 
   // Set our terminal height and width correctly.
-  [self windowDidResize:nil];
+  //[self windowDidResize:nil];
 
   return self;
 }

@@ -72,6 +72,7 @@
 		91D8FD06177B26AA005934AE /* Sparkle.framework in CopyFiles */ = {isa = PBXBuildFile; fileRef = 91D8FD04177B21E9005934AE /* Sparkle.framework */; };
 		91D8FD0A177B3542005934AE /* MMInfoPanelController.m in Sources */ = {isa = PBXBuildFile; fileRef = 91D8FD08177B3542005934AE /* MMInfoPanelController.m */; };
 		91D8FD0B177B3542005934AE /* MMInfoPanelController.xib in Resources */ = {isa = PBXBuildFile; fileRef = 91D8FD09177B3542005934AE /* MMInfoPanelController.xib */; };
+		91DA06D818663AA000D42E1D /* JSONKit.m in Sources */ = {isa = PBXBuildFile; fileRef = 91DA06D718663AA000D42E1D /* JSONKit.m */; settings = {COMPILER_FLAGS = "-fno-objc-arc"; }; };
 		91DF63DB1774ECDB0053CB4F /* MMUtilities.m in Sources */ = {isa = PBXBuildFile; fileRef = 912141A71758F61200A50F6E /* MMUtilities.m */; };
 		91E4A26A1753F9EF00EFDDBE /* MMCommandGroup.m in Sources */ = {isa = PBXBuildFile; fileRef = 91E4A2691753F9EF00EFDDBE /* MMCommandGroup.m */; };
 		91E4A26B1754371400EFDDBE /* MMCommandGroup.m in Sources */ = {isa = PBXBuildFile; fileRef = 91E4A2691753F9EF00EFDDBE /* MMCommandGroup.m */; };
@@ -276,6 +277,8 @@
 		91D8FD07177B3542005934AE /* MMInfoPanelController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MMInfoPanelController.h; sourceTree = "<group>"; };
 		91D8FD08177B3542005934AE /* MMInfoPanelController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MMInfoPanelController.m; sourceTree = "<group>"; };
 		91D8FD09177B3542005934AE /* MMInfoPanelController.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = MMInfoPanelController.xib; sourceTree = "<group>"; };
+		91DA06D618663AA000D42E1D /* JSONKit.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = JSONKit.h; path = ../../../Downloads/JSONKit.h; sourceTree = "<group>"; };
+		91DA06D718663AA000D42E1D /* JSONKit.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = JSONKit.m; path = ../../../Downloads/JSONKit.m; sourceTree = "<group>"; };
 		91E4A2681753F9EF00EFDDBE /* MMCommandGroup.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = MMCommandGroup.h; path = ../Terminal/CommandLine/MMCommandGroup.h; sourceTree = "<group>"; };
 		91E4A2691753F9EF00EFDDBE /* MMCommandGroup.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = MMCommandGroup.m; path = ../Terminal/CommandLine/MMCommandGroup.m; sourceTree = "<group>"; };
 		91E4C02B1742C65400062EF5 /* Icon.icns */ = {isa = PBXFileReference; lastKnownFileType = image.icns; name = Icon.icns; path = ../Icon.icns; sourceTree = "<group>"; };
@@ -553,6 +556,8 @@
 		91F4EEBE16B8D63D00F65E91 /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				91DA06D618663AA000D42E1D /* JSONKit.h */,
+				91DA06D718663AA000D42E1D /* JSONKit.m */,
 				91D8FD04177B21E9005934AE /* Sparkle.framework */,
 				9101DC201764CEAF00F05A43 /* OCMock.framework */,
 				912141A01757FA4300A50F6E /* Quincy.framework */,
@@ -848,6 +853,7 @@
 				91D8FD0A177B3542005934AE /* MMInfoPanelController.m in Sources */,
 				916E893B17811CE30070A1C6 /* MMPrintingActions.m in Sources */,
 				916E893E17811F900070A1C6 /* NSString+MMAdditions.m in Sources */,
+				91DA06D818663AA000D42E1D /* JSONKit.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
