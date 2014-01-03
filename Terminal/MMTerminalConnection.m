@@ -246,7 +246,7 @@
 
 - (void)end
 {
-
+  [self _sendShellMessage:@"exit" content:@{}];
 }
 
 - (void)changeTerminalSizeToColumns:(NSInteger)columns rows:(NSInteger)rows
