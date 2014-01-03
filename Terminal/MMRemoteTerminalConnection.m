@@ -28,7 +28,6 @@
 
 @interface MMTerminalConnection ()
 
-- (void)ghettoFunctionByRemote;
 @property dispatch_queue_t outputQueue;
 
 @end
@@ -48,7 +47,6 @@
   self.terminalWindow = [[MMTerminalWindowController alloc] initWithTerminalConnection:self withState:state completionHandler:completionHandler];
   [self.terminalWindow showWindow:nil];
   
-  [self.bootstrapTerminalConnection ghettoFunctionByRemote];
 }
 
 - (MMTask *)createAndRunTaskWithCommand:(NSString *)command taskDelegate:(id <MMTaskDelegate>)delegate;

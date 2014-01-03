@@ -288,17 +288,6 @@
         }
     }
 
-  NSArray *fileURLs = [[NSFileManager defaultManager] contentsOfDirectoryAtURL:[NSURL fileURLWithPath:directoryPath] includingPropertiesForKeys:@[NSURLCustomIconKey, NSURLEffectiveIconKey, NSURLFileResourceTypeKey, NSURLNameKey] options:NSDirectoryEnumerationSkipsHiddenFiles error:nil];
-  NSMutableArray *directoryCollectionViewData = [NSMutableArray arrayWithCapacity:[fileURLs count]];
-  for (NSURL *file in fileURLs) {
-    NSDictionary *fileResources = [file resourceValuesForKeys:@[NSURLCustomIconKey, NSURLEffectiveIconKey, NSURLFileResourceTypeKey, NSURLNameKey] error:nil];
-    [directoryCollectionViewData addObject:
-     @{
-       @"name": fileResources[NSURLNameKey],
-       @"icon": fileResources[NSURLEffectiveIconKey],
-       }];
-  }
-
   // XXX: This is a hack to arrange the items vertically first, then horizontally in the NSCollectionView.
   NSUInteger numberOfRows = 4;
 

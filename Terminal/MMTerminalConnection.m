@@ -29,23 +29,14 @@
 
 + (NSInteger)uniqueShellIdentifier;
 
-@property NSConnection *connectionToSelf;
 @property NSString *directoryToStartIn;
-@property NSMutableDictionary *tasksByFD;
-@property NSMutableArray *unusedShells;
-@property NSMutableArray *busyShells;
-@property NSMutableDictionary *shellIdentifierToFD;
-@property NSMutableDictionary *shellIdentifierToProxy;
+@property NSMutableDictionary *tasksByIdentifier;
 @property NSMutableArray *shellCommandTasks;
 @property dispatch_queue_t outputQueue;
 @property NSTask *shellTask;
 @property NSPipe *shellErrorPipe;
 @property NSPipe *shellInputPipe;
 @property NSPipe *shellOutputPipe;
-
-- (MMShellIdentifier)unusedShell;
-- (NSProxy<MMShellProxy> *)proxyForShellIdentifier:(MMShellIdentifier)identifier;
-- (int)fdForTask:(MMTask *)task;
 
 @end
 
@@ -66,6 +57,9 @@
   }
 
   self.terminalIdentifier = identifier;
+  self.terminalHeight = DEFAULT_TERM_HEIGHT;
+  self.terminalWidth = DEFAULT_TERM_WIDTH;
+  self.tasksByIdentifier = [NSMutableDictionary dictionary];
 
   return self;
 }
@@ -82,8 +76,8 @@
 {
   NSTask *task = [[NSTask alloc] init];
   self.shellTask = task;
-  task.launchPath = @"/usr/bin/runhaskell";
-  task.arguments = @[ @"/Users/mehdi/Development/hs-shell/main.hs" ];
+  task.launchPath = @"/usr/local/bin/python3.3";
+  task.arguments = @[ @"-u", @"/Users/mehdi/src/term-server/server.py" ];
 
   self.shellErrorPipe = [NSPipe pipe];
   self.shellInputPipe = [NSPipe pipe];
@@ -114,7 +108,7 @@
         NSLog(@"Server did not send JSON object!");
       }
 
-      [self _processShellMessage:message[@"name"] extra:message[@"extra"]];
+      [self _processShellMessage:message[@"type"] content:message[@"message"]];
 
       shellOutput = [[shellOutput substringFromIndex:(newlineRange.location + 1)] mutableCopy];
       newlineRange = [shellOutput rangeOfString:@"\n"];
@@ -122,33 +116,98 @@
   }
 }
 
-- (void)_processShellMessage:(NSString *)name extra:(NSArray *)extra
+- (void)_processShellMessage:(NSString *)name content:(NSDictionary *)content
 {
+  MMTask *task;
+  if (content[@"identifier"]) {
+    task = self.tasksByIdentifier[content[@"identifier"]];
+  }
 
+  if ([name isEqualToString:@"task_output"]) {
+    [task handleCommandOutput:content[@"output"]];
+  } else if ([name isEqualToString:@"task_done"]) {
+    [task processFinished:MMProcessStatusExit data:content[@"code"]];
+  } else {
+    NSLog(@"Got message %@ with body %@", name, content);
+  }
 }
 
-- (void)_sendShellMessage:(NSString *)name extra:(NSArray *)extra
+- (void)_sendShellMessage:(NSString *)name content:(NSDictionary *)content
 {
   NSAssert(name, @"Must provide a message name");
 
   NSDictionary *message =
   @{
-    @"name": name,
-    @"extra": extra ?: @[],
+    @"type": name,
+    @"message": content ?: @{},
     };
   [self.shellInputPipe.fileHandleForWriting writeData:[message JSONData]];
+  [self.shellInputPipe.fileHandleForWriting writeData:[@"\n" dataUsingEncoding:NSUTF8StringEncoding]];
 }
 
 - (void)handleTerminalInput:(NSString *)input task:(MMTask *)task
 {
-
+  // Convert input to hex characters to avoid breaking JSON decoders.
+  NSData *data = [input dataUsingEncoding:NSUTF8StringEncoding];
+  NSMutableString *hexString = [NSMutableString stringWithCapacity:(data.length * 2)];
+  const unsigned char *stringBuffer = data.bytes;
+  for (NSInteger i = 0; i < data.length; i++) {
+    [hexString appendFormat:@"%02lX", (unsigned long)stringBuffer[i]];
+  }
+  NSDictionary *message =
+  @{
+    @"identifier": @(task.identifier),
+    @"input": hexString,
+    };
+  [self _sendShellMessage:@"handle_input" content:message];
 }
 
 - (MMTask *)createAndRunTaskWithCommand:(NSString *)command taskDelegate:(id <MMTaskDelegate>)delegate
 {
-  [self _sendShellMessage:@"runCommand" extra:@[ command ]];
+  MMTask *task = [[MMTask alloc] initWithTerminalConnection:self];
+  task.command = [NSString stringWithString:command];
+  task.startedAt = [NSDate date];
+  task.delegate = delegate;
+  delegate.task = task;
+  ((MMTaskCellViewController *)delegate).windowController = self.terminalWindow;
 
-  return nil;
+  NSArray *commandGroups = task.commandGroups;
+
+  // TODO: Support multiple commands.
+  // TODO: Handle the case of no commands better. (Also detect it better.)
+  if (commandGroups.count == 0 || [commandGroups[0] commands].count == 0) {
+    dispatch_async(dispatch_get_main_queue(), ^{
+      [task processStarted];
+      [task processFinished:MMProcessStatusError data:nil];
+    });
+    return task;
+  }
+
+  if (commandGroups.count > 1) {
+    MMLog(@"Discarded all commands past the first in: %@", task.command);
+  }
+
+  if ([MMShellCommands isShellCommand:[commandGroups[0] commands][0]]) {
+
+    [self.shellCommandTasks addObject:task];
+    [task processStarted];
+
+    return task;
+  }
+
+  self.tasksByIdentifier[@(task.identifier)] = task;
+
+  MMCommand *commandObj = [commandGroups[0] commands][0];
+  NSDictionary *message =
+  @{
+    @"identifier": @( task.identifier ),
+    @"arguments": commandObj.arguments,
+    };
+  [self _sendShellMessage:@"start_task" content:message];
+
+  [task processStarted];
+
+  return task;
 }
 
 - (void)setPathVariable:(NSString *)pathVariable
@@ -158,8 +217,7 @@
 
 - (void)startShellsToRunCommands:(NSInteger)numberOfCommands
 {
-  NSArray *extra = @[ @(numberOfCommands) ];
-  [self _sendShellMessage:@"startShells" extra:extra];
+  [self _sendShellMessage:@"startShells" content:@{ @"amount": @(numberOfCommands) }];
 }
 
 - (void)end
@@ -169,16 +227,16 @@
 
 - (void)changeTerminalSizeToColumns:(NSInteger)columns rows:(NSInteger)rows
 {
+  self.terminalHeight = rows;
+  self.terminalWidth = columns;
 
+  // TODO: Send message to server.
 }
 
 # pragma mark - MMTerminalProxy
 
 - (void)shellStartedWithIdentifier:(MMShellIdentifier)identifier;
 {
-  NSProxy *shellProxy = [[NSConnection connectionWithRegisteredName:[ConnectionShellName stringByAppendingFormat:@".%ld.%ld", self.terminalIdentifier, identifier] host:nil] rootProxy];
-  self.shellIdentifierToProxy[@(identifier)] = shellProxy;
-  [self.unusedShells addObject:@(identifier)];
 }
 
 - (void)taskFinished:(MMTaskIdentifier)taskIdentifier status:(MMProcessStatus)status data:(id)data;
@@ -205,62 +263,6 @@
   dispatch_async(dispatch_get_main_queue(), ^{
     [task processFinished:success data:attachment];
   });
-}
-
-# pragma mark - Shell identifier organization
-
-- (int)fdForTask:(MMTask *)task;
-{
-  return [[self.tasksByFD allKeysForObject:task][0] intValue];
-}
-
-- (int)fdForTaskIdentifier:(MMTaskIdentifier)taskIdentifier;
-{
-  NSSet *tasksForFD = [self.tasksByFD keysOfEntriesPassingTest:^BOOL(NSNumber *fd, MMTask *task, BOOL *stop) {
-    if (task.identifier == taskIdentifier) {
-      *stop = YES;
-      return YES;
-    }
-
-    return NO;
-  }];
-
-  if (tasksForFD.count == 0) {
-    return 0;
-  }
-
-  return [tasksForFD.allObjects[0] intValue];
-}
-
-- (MMShellIdentifier)shellIdentifierForFD:(int)fd;
-{
-  return [[self.shellIdentifierToFD allKeysForObject:@(fd)][0] integerValue];
-}
-
-- (NSProxy<MMShellProxy> *)proxyForShellIdentifier:(MMShellIdentifier)identifier;
-{
-  return self.shellIdentifierToProxy[@(identifier)];
-}
-
-- (MMShellIdentifier)unusedShell;
-{
-  if (self.unusedShells.count == 0) {
-    return 0;
-  }
-
-  return [self.unusedShells[0] integerValue];
-}
-
-- (void)ghettoFunctionByRemote;
-{
-  struct termios terminalSettings;
-  [self setUpTermIOSettings:&terminalSettings];
-  terminalSettings.c_iflag = BRKINT | IUTF8;
-	terminalSettings.c_oflag = 0;
-	terminalSettings.c_cflag = CS8 | CREAD | HUPCL;
-	terminalSettings.c_lflag = ECHOKE | ECHOE | ECHOK | ECHOCTL | ISIG | ICANON | IEXTEN | PENDIN;
-  NSLog(@"Ghetto-ing up %d", [[self.tasksByFD allKeys][0] intValue]);
-  ioctl([[self.tasksByFD allKeys][0] intValue], TIOCSETA, &terminalSettings);
 }
 
 @end

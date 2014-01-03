@@ -35,8 +35,6 @@
 - (void)setPathVariable:(NSString *)pathVariable;
 - (void)startShellsToRunCommands:(NSInteger)numberOfCommands;
 
-- (void)startShell;
-
 - (void)end;
 
 - (void)changeTerminalSizeToColumns:(NSInteger)columns rows:(NSInteger)rows;
