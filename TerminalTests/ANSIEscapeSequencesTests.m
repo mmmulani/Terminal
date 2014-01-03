@@ -344,6 +344,8 @@
 
   CheckInputAgainstExpectedOutput(@"\033[0J\033D\033[0J", @"");
   CheckInputAgainstExpectedOutput([@"\033[0J" stringByPaddingToLength:300 withString:@"A" startingAtIndex:0], [@"A" repeatedTimes:296]);
+
+  CheckInputAgainstExpectedOutput(@"\n\033c\033[1P", @"");
 }
 
 - (void)testReverseIndex;

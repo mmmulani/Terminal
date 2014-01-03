@@ -96,7 +96,7 @@
 
   [self.delegate removeCharactersInScrollRow:self.delegate.cursorPositionY range:NSMakeRange(adjustedPositionX, numberOfCharactersToDelete) shiftCharactersAfter:YES];
 
-  if (self.delegate.cursorPositionY < self.delegate.termHeight &&
+  if (self.delegate.cursorPositionY < self.delegate.numberOfRowsOnScreen &&
       [self.delegate numberOfCharactersInScrollRow:(self.delegate.cursorPositionY + 1)] > 0) {
     [self.delegate setScrollRow:self.delegate.cursorPositionY hasNewline:YES];
   }
