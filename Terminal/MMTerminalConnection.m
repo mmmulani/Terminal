@@ -62,6 +62,7 @@
   self.terminalWidth = DEFAULT_TERM_WIDTH;
   self.tasksByIdentifier = [NSMutableDictionary dictionary];
   self.directoryData = [NSMutableDictionary dictionary];
+  self.shellCommandTasks = [NSMutableArray array];
 
   return self;
 }
@@ -137,6 +138,13 @@
     if (firstDirectory) {
       [self directoryChangedTo:[content allKeys][0]];
     }
+  } else if ([name isEqualToString:@"changed_directory"]) {
+    [self directoryChangedTo:content[@"directory"]];
+    MMTask *task = self.shellCommandTasks[0];
+    dispatch_async(dispatch_get_main_queue(), ^{
+      [task processFinished:YES data:content[@"directory"]];
+    });
+    [self.shellCommandTasks removeObjectAtIndex:0];
   } else {
     NSLog(@"Got message %@ with body %@", name, content);
   }
@@ -198,9 +206,15 @@
   }
 
   if ([MMShellCommands isShellCommand:[commandGroups[0] commands][0]]) {
-
     [self.shellCommandTasks addObject:task];
+
     [task processStarted];
+
+    NSDictionary *message =
+    @{
+      @"directory": [[commandGroups[0] commands][0] arguments][1],
+      };
+    [self _sendShellMessage:@"dir_change" content:message];
 
     return task;
   }
