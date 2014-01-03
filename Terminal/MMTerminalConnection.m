@@ -258,7 +258,7 @@
   self.terminalHeight = rows;
   self.terminalWidth = columns;
 
-  // TODO: Send message to server.
+  [self _sendShellMessage:@"resize" content:@{ @"columns": @(columns), @"rows": @(rows) }];
 }
 
 - (void)storeDirectoryInformation:(NSDictionary *)information;
