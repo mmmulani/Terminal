@@ -86,7 +86,7 @@
   }
 
   // Set our terminal height and width correctly.
-  //[self windowDidResize:nil];
+  [self windowDidResize:nil];
 
   return self;
 }

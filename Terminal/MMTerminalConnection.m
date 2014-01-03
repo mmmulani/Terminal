@@ -97,24 +97,32 @@
 
 - (void)_readShellOutput
 {
-  NSMutableString *shellOutput = [NSMutableString string];
-  while (YES) {
-    NSData *data = [self.shellOutputPipe.fileHandleForReading availableData];
-    [shellOutput appendString:[[NSString alloc] initWithData:data encoding:NSUTF8StringEncoding]];
-
-    NSRange newlineRange = [shellOutput rangeOfString:@"\n"];
-    while (newlineRange.location != NSNotFound) {
-      NSString *messageString = [shellOutput substringToIndex:newlineRange.location];
-
-      NSDictionary *message = [messageString objectFromJSONString];
-      if (!message) {
-        NSLog(@"Server did not send JSON object!");
+  @autoreleasepool {
+    NSMutableString *shellOutput = [NSMutableString string];
+    while (YES) {
+      NSData *data = [self.shellOutputPipe.fileHandleForReading availableData];
+      if (data.length == 0) {
+        break;
       }
+      [shellOutput appendString:[[NSString alloc] initWithData:data encoding:NSUTF8StringEncoding]];
 
-      [self _processShellMessage:message[@"type"] content:message[@"message"]];
+      NSRange newlineRange = [shellOutput rangeOfString:@"\n"];
+      while (newlineRange.location != NSNotFound) {
+        NSString *messageString = [shellOutput substringToIndex:newlineRange.location];
 
-      shellOutput = [[shellOutput substringFromIndex:(newlineRange.location + 1)] mutableCopy];
-      newlineRange = [shellOutput rangeOfString:@"\n"];
+        NSDictionary *message = [messageString objectFromJSONString];
+        if (!message) {
+          NSLog(@"Server did not send JSON object!");
+        }
+
+        // A lot of the messages affect UI, so it's easier to run them all on the main thread for now.
+        dispatch_async(dispatch_get_main_queue(), ^{
+          [self _processShellMessage:message[@"type"] content:message[@"message"]];
+        });
+
+        shellOutput = [[shellOutput substringFromIndex:(newlineRange.location + 1)] mutableCopy];
+        newlineRange = [shellOutput rangeOfString:@"\n"];
+      }
     }
   }
 }
@@ -129,9 +137,7 @@
   if ([name isEqualToString:@"task_output"]) {
     [task handleCommandOutput:content[@"output"]];
   } else if ([name isEqualToString:@"task_done"]) {
-    dispatch_async(dispatch_get_main_queue(), ^{
-      [task processFinished:MMProcessStatusExit data:content[@"code"]];
-    });
+    [task processFinished:MMProcessStatusExit data:content[@"code"]];
   } else if ([name isEqualToString:@"directory_info"]) {
     BOOL firstDirectory = [self.directoryData count] == 0;
     [self storeDirectoryInformation:content];
@@ -141,9 +147,7 @@
   } else if ([name isEqualToString:@"changed_directory"]) {
     [self directoryChangedTo:content[@"directory"]];
     MMTask *task = self.shellCommandTasks[0];
-    dispatch_async(dispatch_get_main_queue(), ^{
-      [task processFinished:YES data:content[@"directory"]];
-    });
+    [task processFinished:YES data:content[@"directory"]];
     [self.shellCommandTasks removeObjectAtIndex:0];
   } else {
     NSLog(@"Got message %@ with body %@", name, content);
