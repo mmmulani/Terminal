@@ -29,6 +29,7 @@
 		913CC1CD174D2D8100E002AD /* MMErasingActions.m in Sources */ = {isa = PBXBuildFile; fileRef = 913CC1CC174D2D8100E002AD /* MMErasingActions.m */; };
 		913CC1D1174D703D00E002AD /* MMLineManipulationActions.m in Sources */ = {isa = PBXBuildFile; fileRef = 913CC1D0174D703C00E002AD /* MMLineManipulationActions.m */; };
 		913CC1D5174DA22500E002AD /* MMIndexActions.m in Sources */ = {isa = PBXBuildFile; fileRef = 913CC1D4174DA22500E002AD /* MMIndexActions.m */; };
+		913DE126187756F000AA5E27 /* JSONKit.m in Sources */ = {isa = PBXBuildFile; fileRef = 913DE125187756F000AA5E27 /* JSONKit.m */; settings = {COMPILER_FLAGS = "-fno-objc-arc"; }; };
 		913DE70B176A5CE80068ED2F /* glyphiconsOK.png in Resources */ = {isa = PBXBuildFile; fileRef = 913DE705176A5CE80068ED2F /* glyphiconsOK.png */; };
 		913DE70C176A5CE80068ED2F /* glyphiconsPause.png in Resources */ = {isa = PBXBuildFile; fileRef = 913DE706176A5CE80068ED2F /* glyphiconsPause.png */; };
 		913DE70D176A5CE80068ED2F /* glyphiconsPlay.png in Resources */ = {isa = PBXBuildFile; fileRef = 913DE707176A5CE80068ED2F /* glyphiconsPlay.png */; };
@@ -75,7 +76,6 @@
 		91D8FD06177B26AA005934AE /* Sparkle.framework in CopyFiles */ = {isa = PBXBuildFile; fileRef = 91D8FD04177B21E9005934AE /* Sparkle.framework */; };
 		91D8FD0A177B3542005934AE /* MMInfoPanelController.m in Sources */ = {isa = PBXBuildFile; fileRef = 91D8FD08177B3542005934AE /* MMInfoPanelController.m */; };
 		91D8FD0B177B3542005934AE /* MMInfoPanelController.xib in Resources */ = {isa = PBXBuildFile; fileRef = 91D8FD09177B3542005934AE /* MMInfoPanelController.xib */; };
-		91DA06D818663AA000D42E1D /* JSONKit.m in Sources */ = {isa = PBXBuildFile; fileRef = 91DA06D718663AA000D42E1D /* JSONKit.m */; settings = {COMPILER_FLAGS = "-fno-objc-arc"; }; };
 		91DF63DB1774ECDB0053CB4F /* MMUtilities.m in Sources */ = {isa = PBXBuildFile; fileRef = 912141A71758F61200A50F6E /* MMUtilities.m */; };
 		91E4A26A1753F9EF00EFDDBE /* MMCommandGroup.m in Sources */ = {isa = PBXBuildFile; fileRef = 91E4A2691753F9EF00EFDDBE /* MMCommandGroup.m */; };
 		91E4A26B1754371400EFDDBE /* MMCommandGroup.m in Sources */ = {isa = PBXBuildFile; fileRef = 91E4A2691753F9EF00EFDDBE /* MMCommandGroup.m */; };
@@ -220,6 +220,8 @@
 		913CC1D0174D703C00E002AD /* MMLineManipulationActions.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = MMLineManipulationActions.m; path = Task/MMLineManipulationActions.m; sourceTree = "<group>"; };
 		913CC1D3174DA22400E002AD /* MMIndexActions.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = MMIndexActions.h; path = Task/MMIndexActions.h; sourceTree = "<group>"; };
 		913CC1D4174DA22500E002AD /* MMIndexActions.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = MMIndexActions.m; path = Task/MMIndexActions.m; sourceTree = "<group>"; };
+		913DE124187756F000AA5E27 /* JSONKit.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSONKit.h; sourceTree = "<group>"; };
+		913DE125187756F000AA5E27 /* JSONKit.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = JSONKit.m; sourceTree = "<group>"; };
 		913DE705176A5CE80068ED2F /* glyphiconsOK.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = glyphiconsOK.png; path = Resources/glyphiconsOK.png; sourceTree = "<group>"; };
 		913DE706176A5CE80068ED2F /* glyphiconsPause.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = glyphiconsPause.png; path = Resources/glyphiconsPause.png; sourceTree = "<group>"; };
 		913DE707176A5CE80068ED2F /* glyphiconsPlay.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = glyphiconsPlay.png; path = Resources/glyphiconsPlay.png; sourceTree = "<group>"; };
@@ -285,8 +287,6 @@
 		91D8FD07177B3542005934AE /* MMInfoPanelController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MMInfoPanelController.h; sourceTree = "<group>"; };
 		91D8FD08177B3542005934AE /* MMInfoPanelController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MMInfoPanelController.m; sourceTree = "<group>"; };
 		91D8FD09177B3542005934AE /* MMInfoPanelController.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = MMInfoPanelController.xib; sourceTree = "<group>"; };
-		91DA06D618663AA000D42E1D /* JSONKit.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = JSONKit.h; path = ../../../Downloads/JSONKit.h; sourceTree = "<group>"; };
-		91DA06D718663AA000D42E1D /* JSONKit.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = JSONKit.m; path = ../../../Downloads/JSONKit.m; sourceTree = "<group>"; };
 		91E4A2681753F9EF00EFDDBE /* MMCommandGroup.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = MMCommandGroup.h; path = ../Terminal/CommandLine/MMCommandGroup.h; sourceTree = "<group>"; };
 		91E4A2691753F9EF00EFDDBE /* MMCommandGroup.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = MMCommandGroup.m; path = ../Terminal/CommandLine/MMCommandGroup.m; sourceTree = "<group>"; };
 		91E4C02B1742C65400062EF5 /* Icon.icns */ = {isa = PBXFileReference; lastKnownFileType = image.icns; name = Icon.icns; path = ../Icon.icns; sourceTree = "<group>"; };
@@ -567,8 +567,8 @@
 		91F4EEBE16B8D63D00F65E91 /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
-				91DA06D618663AA000D42E1D /* JSONKit.h */,
-				91DA06D718663AA000D42E1D /* JSONKit.m */,
+				913DE124187756F000AA5E27 /* JSONKit.h */,
+				913DE125187756F000AA5E27 /* JSONKit.m */,
 				91D8FD04177B21E9005934AE /* Sparkle.framework */,
 				9101DC201764CEAF00F05A43 /* OCMock.framework */,
 				912141A01757FA4300A50F6E /* Quincy.framework */,
@@ -854,6 +854,7 @@
 				913CC1C9174C34E100E002AD /* MMMoveCursor.m in Sources */,
 				913CC1CD174D2D8100E002AD /* MMErasingActions.m in Sources */,
 				913CC1D1174D703D00E002AD /* MMLineManipulationActions.m in Sources */,
+				913DE126187756F000AA5E27 /* JSONKit.m in Sources */,
 				913CC1D5174DA22500E002AD /* MMIndexActions.m in Sources */,
 				91E4A26A1753F9EF00EFDDBE /* MMCommandGroup.m in Sources */,
 				910D0EED1757B8B100FFF569 /* MMShellCommands.m in Sources */,
@@ -867,7 +868,6 @@
 				91D8FD0A177B3542005934AE /* MMInfoPanelController.m in Sources */,
 				916E893B17811CE30070A1C6 /* MMPrintingActions.m in Sources */,
 				916E893E17811F900070A1C6 /* NSString+MMAdditions.m in Sources */,
-				91DA06D818663AA000D42E1D /* JSONKit.m in Sources */,
 				918CA3EB17A8E0D500A5D852 /* MMRemoteTerminalConnection.m in Sources */,
 				918CA3EF17A8E94E00A5D852 /* MMConnectRemoteWindowController.m in Sources */,
 			);
