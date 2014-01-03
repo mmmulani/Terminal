@@ -37,6 +37,7 @@
 @property NSPipe *shellErrorPipe;
 @property NSPipe *shellInputPipe;
 @property NSPipe *shellOutputPipe;
+@property NSMutableDictionary *directoryData;
 
 @end
 
@@ -60,6 +61,7 @@
   self.terminalHeight = DEFAULT_TERM_HEIGHT;
   self.terminalWidth = DEFAULT_TERM_WIDTH;
   self.tasksByIdentifier = [NSMutableDictionary dictionary];
+  self.directoryData = [NSMutableDictionary dictionary];
 
   return self;
 }
@@ -126,7 +128,15 @@
   if ([name isEqualToString:@"task_output"]) {
     [task handleCommandOutput:content[@"output"]];
   } else if ([name isEqualToString:@"task_done"]) {
-    [task processFinished:MMProcessStatusExit data:content[@"code"]];
+    dispatch_async(dispatch_get_main_queue(), ^{
+      [task processFinished:MMProcessStatusExit data:content[@"code"]];
+    });
+  } else if ([name isEqualToString:@"directory_info"]) {
+    BOOL firstDirectory = [self.directoryData count] == 0;
+    [self storeDirectoryInformation:content];
+    if (firstDirectory) {
+      [self directoryChangedTo:[content allKeys][0]];
+    }
   } else {
     NSLog(@"Got message %@ with body %@", name, content);
   }
@@ -232,6 +242,21 @@
 
   // TODO: Send message to server.
 }
+
+- (void)storeDirectoryInformation:(NSDictionary *)information;
+{
+  NSString *directory = [information allKeys][0];
+  self.directoryData[directory] = information[directory];
+  if (!self.currentDirectory) {
+    [self directoryChangedTo:directory];
+  }
+}
+
+- (NSDictionary *)dataForPath:(NSString *)path;
+{
+  return self.directoryData[path];
+}
+
 
 # pragma mark - MMTerminalProxy
 

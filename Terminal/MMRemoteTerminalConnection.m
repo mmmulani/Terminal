@@ -20,7 +20,6 @@
 
 @interface MMRemoteTerminalConnection ()
 
-@property NSMutableDictionary *directoryData;
 @property NSString *outputBuffer;
 @property NSMutableDictionary *taskByIdentifier;
 
@@ -36,7 +35,6 @@
 
 - (void)createTerminalWindowWithState:(NSCoder *)state completionHandler:(void (^)(NSWindow *, NSError *))completionHandler;
 {
-  self.directoryData = [NSMutableDictionary dictionary];
   self.taskByIdentifier = [NSMutableDictionary dictionary];
     
   // TODO: Implement restoration.
@@ -172,21 +170,6 @@
   [self.taskByIdentifier[status[@"identifier"]] processFinished:method data:status[@"code"]];
 //  [self.taskByIdentifier removeObjectForKey:status[@"identifier"]];
 }
-
-- (void)storeDirectoryInformation:(NSDictionary *)information;
-{
-  NSString *directory = [information allKeys][0];
-  self.directoryData[directory] = information[directory];
-  if (!self.currentDirectory) {
-    [self directoryChangedTo:directory];
-  }
-}
-
-- (NSDictionary *)dataForPath:(NSString *)path;
-{
-  return self.directoryData[path];
-}
-
 # pragma mark - MMTask faking
 
 - (void)handleCommandOutput:(NSString *)output;
@@ -212,7 +195,7 @@
       } else if ([type isEqualToString:@"task_done"]) {
         [self handleTaskDone:attachment];
       } else if ([type isEqualToString:@"directory_info"]) {
-        [self storeDirectoryInformation:attachment];
+        //[self storeDirectoryInformation:attachment];
       } else if ([type isEqualToString:@"changed_directory"]) {
         MMTask *task = self.taskByIdentifier[attachment[@"identifier"]];
         if (!task.isFinished) {
