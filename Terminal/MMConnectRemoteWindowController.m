@@ -67,6 +67,10 @@
   task.standardInput = self.sshInputPipe;
   task.standardOutput = self.sshOutputPipe;
 
+  task.terminationHandler = ^(NSTask *task) {
+    [self.window close];
+  };
+
   [self performSelectorInBackground:@selector(_readSSHOutput) withObject:nil];
 
   [task launch];
@@ -100,6 +104,7 @@
 
 - (void)shellStartedWithInitialOutput:(NSString *)initialOutput
 {
+  self.sshTask.terminationHandler = nil;
   [((MMAppDelegate *)[NSApp delegate]) createNewRemoteTerminalWindowWithSSHTask:self.sshTask initialOutput:initialOutput];
   [self.window close];
 }
