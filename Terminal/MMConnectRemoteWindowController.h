@@ -8,14 +8,11 @@
 
 #import <Cocoa/Cocoa.h>
 
-#import "MMTextView.h"
-#import "MMTask.h"
+@class MMTextView;
+@protocol MMTextViewDelegate;
 
-@interface MMConnectRemoteWindowController : NSWindowController <MMTextViewDelegate, MMTaskDelegate>
+@interface MMConnectRemoteWindowController : NSWindowController <MMTextViewDelegate>
 
-@property (strong) IBOutlet NSTextView *sshTextView;
-
-// For MMTaskDelegate.
-@property (weak) MMTask *task;
+@property (strong) IBOutlet MMTextView *sshTextView;
 
 @end

@@ -9,6 +9,7 @@
 #import "MMAppDelegate.h"
 #import "MMShared.h"
 #import "MMTerminalConnection.h"
+#import "MMRemoteTerminalConnection.h"
 #import "MMFirstRunWindowController.h"
 #import "MMConnectRemoteWindowController.h"
 
@@ -58,14 +59,27 @@
   [self.sshWindow showWindow:nil];
 }
 
-- (void)createNewTerminalWithState:(NSCoder *)state completionHandler:(void (^)(NSWindow *, NSError *))completionHandler;
++ (NSInteger)uniqueTerminalConnectionIdentifier
 {
   static NSInteger uniqueIdentifier = 0;
   uniqueIdentifier++;
+  return uniqueIdentifier;
+}
 
-  MMTerminalConnection *terminalConnection = [[MMTerminalConnection alloc] initWithIdentifier:uniqueIdentifier];
+- (void)createNewTerminalWithState:(NSCoder *)state completionHandler:(void (^)(NSWindow *, NSError *))completionHandler;
+{
+  MMTerminalConnection *terminalConnection = [[MMTerminalConnection alloc] initWithIdentifier:[[self class] uniqueTerminalConnectionIdentifier]];
   [self.terminalConnections addObject:terminalConnection];
   [terminalConnection createTerminalWindowWithState:state completionHandler:completionHandler];
+}
+
+- (void)createNewRemoteTerminalWindowWithSSHTask:(NSTask *)sshTask initialOutput:(NSString *)initialOutput
+{
+  MMRemoteTerminalConnection *terminalConnection = [[MMRemoteTerminalConnection alloc] initWithIdentifier:[[self class] uniqueTerminalConnectionIdentifier]];
+  [self.terminalConnections addObject:terminalConnection];
+
+  [terminalConnection setUpRemoteTerminalConnectionWithSSHTask:sshTask initialOutput:initialOutput];
+  [terminalConnection createTerminalWindowWithState:nil completionHandler:nil];
 }
 
 - (NSInteger)uniqueWindowShortcut;

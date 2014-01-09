@@ -10,8 +10,6 @@
 
 @interface MMRemoteTerminalConnection : MMTerminalConnection
 
-@property MMTerminalConnection *bootstrapTerminalConnection;
-
-- (NSDictionary *)dataForPath:(NSString *)path;
+- (void)setUpRemoteTerminalConnectionWithSSHTask:(NSTask *)sshTask initialOutput:(NSString *)initialOutput;
 
 @end

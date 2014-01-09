@@ -283,6 +283,7 @@
 		91C7D985173F250300875974 /* MMCompletionEngine.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = MMCompletionEngine.h; path = CommandLine/MMCompletionEngine.h; sourceTree = "<group>"; };
 		91C7D986173F250300875974 /* MMCompletionEngine.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = MMCompletionEngine.m; path = CommandLine/MMCompletionEngine.m; sourceTree = "<group>"; };
 		91C7D9881740575700875974 /* libiconv.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libiconv.dylib; path = usr/lib/libiconv.dylib; sourceTree = SDKROOT; };
+		91D8D2C2187A624C004D086D /* MMTerminalConnectionInternal.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = MMTerminalConnectionInternal.h; sourceTree = "<group>"; };
 		91D8FD04177B21E9005934AE /* Sparkle.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = Sparkle.framework; sourceTree = "<group>"; };
 		91D8FD07177B3542005934AE /* MMInfoPanelController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MMInfoPanelController.h; sourceTree = "<group>"; };
 		91D8FD08177B3542005934AE /* MMInfoPanelController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MMInfoPanelController.m; sourceTree = "<group>"; };
@@ -613,6 +614,7 @@
 				918649BD16D69A700024D9BE /* MMDebugMessagesPanel.xib */,
 				9139E15F173B2423009FFC1E /* MMTerminalConnection.h */,
 				9139E160173B2423009FFC1E /* MMTerminalConnection.m */,
+				91D8D2C2187A624C004D086D /* MMTerminalConnectionInternal.h */,
 				918CA3E917A8E0D500A5D852 /* MMRemoteTerminalConnection.h */,
 				918CA3EA17A8E0D500A5D852 /* MMRemoteTerminalConnection.m */,
 			);

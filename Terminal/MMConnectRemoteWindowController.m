@@ -6,16 +6,17 @@
 //  Copyright (c) 2013 Mehdi Mulani. All rights reserved.
 //
 
-#import "MMConnectRemoteWindowController.h"
-#import "MMTerminalConnection.h"
-#import "MMRemoteTerminalConnection.h"
 #import "MMAppDelegate.h"
+#import "MMConnectRemoteWindowController.h"
+#import "MMRemoteTerminalConnection.h"
+#import "MMTextView.h"
 
 @interface MMConnectRemoteWindowController ()
 
-@property NSPipe *inputPipe;
-@property MMTask *sshTask;
-@property MMTerminalConnection *terminalConnection;
+@property NSPipe *sshErrorPipe;
+@property NSPipe *sshInputPipe;
+@property NSPipe *sshOutputPipe;
+@property NSTask *sshTask;
 @property id windowController;
 
 @end
@@ -53,68 +54,67 @@
     return;
   }
 
+  NSTask *task = [[NSTask alloc] init];
+  self.sshTask = task;
+  task.launchPath = @"/usr/bin/script";
   NSString *sshHost = input.stringValue;
-  NSString *sshCommand = [NSString stringWithFormat:@"/usr/bin/ssh -T \"%@\" \"/usr/local/bin/python3.3 -u term-server/server.py", sshHost];
+  task.arguments = @[ @"-q", @"/dev/null", @"/usr/bin/ssh", @"-T", sshHost, @"/usr/local/bin/python3.3 -u term-server/server.py remote" ];
 
-  // XXX: j0nx because we can't figure out NSTask.
-  self.terminalConnection = [[MMTerminalConnection alloc] initWithIdentifier:9999];
-  [self.terminalConnection createTerminalWindowWithState:nil completionHandler:nil];
-  self.terminalConnection.terminalWindow = nil;
+  self.sshErrorPipe = [NSPipe pipe];
+  self.sshInputPipe = [NSPipe pipe];
+  self.sshOutputPipe = [NSPipe pipe];
+  //task.standardError = self.sshErrorPipe;
+  task.standardInput = self.sshInputPipe;
+  task.standardOutput = self.sshOutputPipe;
 
-  double delayInSeconds = 2.0;
-  dispatch_time_t popTime = dispatch_time(DISPATCH_TIME_NOW, (int64_t)(delayInSeconds * NSEC_PER_SEC));
-  dispatch_after(popTime, dispatch_get_main_queue(), ^(void){
+  [self performSelectorInBackground:@selector(_readSSHOutput) withObject:nil];
 
-    self.sshTask = [self.terminalConnection createAndRunTaskWithCommand:sshCommand taskDelegate:self];
-    [self.sshTextView.layoutManager replaceTextStorage:self.sshTask.displayTextStorage];
-  });
+  [task launch];
+}
+
+- (void)_readSSHOutput
+{
+  @autoreleasepool {
+    while (YES) {
+      NSData *data = [self.sshOutputPipe.fileHandleForReading availableData];
+      if (data.length == 0) {
+        break;
+      }
+      NSString *output = [[NSString alloc] initWithData:data encoding:NSUTF8StringEncoding];
+
+      NSRange flagRange = [output rangeOfString:@"☃"];
+      if (flagRange.location != NSNotFound) {
+        NSString *initialOutput = [output substringFromIndex:(flagRange.location + 1)];
+        dispatch_async(dispatch_get_main_queue(), ^{
+          [self shellStartedWithInitialOutput:initialOutput];
+        });
+        break;
+      }
+
+      dispatch_async(dispatch_get_main_queue(), ^{
+        [self.sshTextView.textStorage appendAttributedString:[[NSAttributedString alloc] initWithString:output]];
+      });
+    }
+  }
+}
+
+- (void)shellStartedWithInitialOutput:(NSString *)initialOutput
+{
+  [((MMAppDelegate *)[NSApp delegate]) createNewRemoteTerminalWindowWithSSHTask:self.sshTask initialOutput:initialOutput];
+  [self.window close];
 }
 
 # pragma mark - MMTextView delegate
 
-- (void)handleKeyPress:(NSEvent *)keyEvent;
+- (void)handleKeyPress:(NSEvent *)keyEvent
 {
-  // Really ghetto but we assume that after they hit enter, we are done with the SSH login and can use it for our remote proxy.
-  [self.sshTask handleUserInput:[keyEvent characters]];
-  if ([keyEvent.characters isEqualToString:@"\r"]) {
-    [((MMAppDelegate *)[NSApp delegate]).terminalConnections addObject:self.terminalConnection];
-
-    MMRemoteTerminalConnection *remoteTerminalConnection = [[MMRemoteTerminalConnection alloc] initWithIdentifier:0];
-    remoteTerminalConnection.bootstrapTerminalConnection = self.terminalConnection;
-    self.terminalConnection.tasksByFD[self.terminalConnection.tasksByFD.allKeys[0]] = remoteTerminalConnection;
-
-    [((MMAppDelegate *)[NSApp delegate]).terminalConnections addObject:remoteTerminalConnection];
-    [remoteTerminalConnection createTerminalWindowWithState:nil completionHandler:nil];
-
-    [self.window close];
-  }
+  NSString *input = [keyEvent characters];
+  [self handleInput:input];
 }
 
-- (void)handleInput:(NSString *)input;
+- (void)handleInput:(NSString *)input
 {
-  [self.sshTask handleUserInput:input];
-}
-
-# pragma mark - MMTaskDelegate protocol
-
-- (void)taskStarted:(MMTask *)task;
-{
-
-}
-
-- (void)taskFinished:(MMTask *)task;
-{
-
-}
-
-- (void)taskMovedToBackground:(MMTask *)task;
-{
-
-}
-
-- (void)taskReceivedOutput:(MMTask *)task;
-{
-  
+  [self.sshInputPipe.fileHandleForWriting writeData:[input dataUsingEncoding:NSUTF8StringEncoding]];
 }
 
 @end

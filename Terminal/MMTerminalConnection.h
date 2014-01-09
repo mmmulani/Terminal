@@ -7,6 +7,7 @@
 //
 
 #import <Foundation/Foundation.h>
+
 #import "MMTerminalProxy.h"
 
 #define DEFAULT_TERM_WIDTH 80

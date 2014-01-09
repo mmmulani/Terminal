@@ -15,6 +15,7 @@
 
 #import "JSONKit.h"
 #import "MMTerminalConnection.h"
+#import "MMTerminalConnectionInternal.h"
 #import "MMTerminalWindowController.h"
 #import "MMShared.h"
 #import "MMCommandLineArgumentsParser.h"
@@ -38,6 +39,7 @@
 @property NSPipe *shellInputPipe;
 @property NSPipe *shellOutputPipe;
 @property NSMutableDictionary *directoryData;
+@property NSString *unreadInitialOutput;
 
 @end
 
@@ -98,7 +100,7 @@
 - (void)_readShellOutput
 {
   @autoreleasepool {
-    NSMutableString *shellOutput = [NSMutableString string];
+    NSMutableString *shellOutput = self.unreadInitialOutput ? [self.unreadInitialOutput mutableCopy] : [NSMutableString string];
     while (YES) {
       NSData *data = [self.shellOutputPipe.fileHandleForReading availableData];
       if (data.length == 0) {
@@ -251,6 +253,8 @@
 - (void)end
 {
   [self _sendShellMessage:@"exit" content:@{}];
+
+  [self.shellTask terminate];
 }
 
 - (void)changeTerminalSizeToColumns:(NSInteger)columns rows:(NSInteger)rows

@@ -26,6 +26,7 @@
 - (IBAction)createNewTerminal:(id)sender;
 - (IBAction)createNewRemoteTerminal:(id)sender;
 - (IBAction)openDebugWindow:(id)sender;
+- (void)createNewRemoteTerminalWindowWithSSHTask:(NSTask *)sshTask initialOutput:(NSString *)initialOutput;
 
 - (NSInteger)uniqueWindowShortcut;
 - (void)resignWindowShortcut:(NSInteger)shortcut;
