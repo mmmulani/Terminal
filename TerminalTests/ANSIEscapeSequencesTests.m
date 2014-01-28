@@ -368,6 +368,8 @@
   CheckInputAgainstExpectedOutput(@"A\033MB\033MC", @"  C\n B\nA");
   CheckInputAgainstExpectedOutput(@"\033[3;10rA\033MB", @"AB");
   CheckInputAgainstExpectedOutput(@"\033[3;10rA\033MB\033MC", @"ABC");
+
+  CheckInputAgainstExpectedOutput(@"\033[2;21r\033[24;1HA\033[2;1H\033M", [[@"\n" repeatedTimes:23] stringByAppendingString:@"A"]);
 }
 
 - (void)testIndex;

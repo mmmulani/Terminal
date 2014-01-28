@@ -31,7 +31,9 @@
   // When we scroll up, we remove a newline from the last line if it exists.
   if (self.delegate.cursorPositionY == self.delegate.scrollMarginTop) {
     if ([self.delegate numberOfRowsOnScreen] >= self.delegate.scrollMarginBottom) {
-      [self.delegate setScrollRow:(self.delegate.termHeight - 1) hasNewline:NO];
+      if (self.delegate.scrollMarginBottom == self.delegate.termHeight) {
+        [self.delegate setScrollRow:(self.delegate.scrollMarginBottom - 1) hasNewline:NO];
+      }
       [self.delegate removeLineAtScrollRow:self.delegate.scrollMarginBottom];
     }
     [self.delegate insertBlankLineAtScrollRow:self.delegate.scrollMarginTop withNewline:YES];
