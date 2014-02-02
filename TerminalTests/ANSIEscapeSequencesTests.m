@@ -370,6 +370,10 @@
   CheckInputAgainstExpectedOutput(@"\033[3;10rA\033MB\033MC", @"ABC");
 
   CheckInputAgainstExpectedOutput(@"\033[2;21r\033[24;1HA\033[2;1H\033M", [[@"\n" repeatedTimes:23] stringByAppendingString:@"A"]);
+
+  // This escape sequence is handled differently in xterm and Terminal.app.
+  // This follows xterm's handling.
+  CheckInputAgainstExpectedOutput(@"\033c1\n2\n3\n4\n5\n6\n7\n8\n9\n10\033[7;1H\033[7;21r\033MA", @"A\n2\n3\n4\n5\n6\n7\n8\n9\n10");
 }
 
 - (void)testIndex;
@@ -438,6 +442,8 @@
   CheckInputAgainstExpectedOutput(@"\033[?6h\033[5;6r\033[2;1HA", @"\n\n\n\n\nA");
   CheckInputAgainstExpectedOutput(@"\033[?6h\033[5;6r\033[100;1HA", @"\n\n\n\n\nA");
   CheckInputAgainstExpectedOutput(@"\033[?6h\033[5;7r\033[100;1HA", @"\n\n\n\n\n\nA");
+
+  CheckInputAgainstExpectedOutput(@"\033[?6h\033[5;7rA", @"\n\n\n\nA");
 }
 
 - (void)testBackspace;

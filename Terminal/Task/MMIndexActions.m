@@ -28,7 +28,7 @@
 {
   // This corresponds to ESC M and is called RI.
   // This escape sequence moves the cursor up by one line and if it passes the top margin, scrolls up.
-  // When we scroll up, we remove a newline from the last line if it exists.
+  // When we scroll up, we remove a newline from the last line if it is at the bottom of the screen.
   if (self.delegate.cursorPositionY == self.delegate.scrollMarginTop) {
     if ([self.delegate numberOfRowsOnScreen] >= self.delegate.scrollMarginBottom) {
       if (self.delegate.scrollMarginBottom == self.delegate.termHeight) {

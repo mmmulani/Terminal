@@ -108,7 +108,8 @@
   NSUInteger top = self.arguments.count >= 1 ? [self.arguments[0] integerValue] : 1;
   [self.delegate setScrollMarginTop:top ScrollMarginBottom:bottom];
 
-  [self.delegate setCursorToX:1 Y:1];
+  NSUInteger yPosition = [self.delegate isDECPrivateModeSet:MMDECModeOrigin] ? self.delegate.scrollMarginTop : 1;
+  [self.delegate setCursorToX:1 Y:yPosition];
 }
 
 @end

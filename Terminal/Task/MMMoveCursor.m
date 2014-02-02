@@ -134,7 +134,7 @@
     }
 
     // Add newline characters when necessary starting from the final row and moving up.
-    for (NSUInteger row = y; row > self.delegate.cursorPositionY; row--) {
+    for (NSUInteger row = y; row > 1; row--) {
       if ([self.delegate numberOfCharactersInScrollRow:row] > 0) {
         continue;
       }
