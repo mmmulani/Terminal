@@ -58,7 +58,7 @@
   self.sshTask = task;
   task.launchPath = @"/usr/bin/script";
   NSString *sshHost = input.stringValue;
-  task.arguments = @[ @"-q", @"/dev/null", @"/usr/bin/ssh", @"-T", sshHost, @"/usr/local/bin/python3.3 -u term-server/server.py remote" ];
+  task.arguments = @[ @"-q", @"/dev/null", @"/usr/bin/ssh", @"-T", sshHost, @"python3.3 -u term-server/server.py remote" ];
 
   self.sshErrorPipe = [NSPipe pipe];
   self.sshInputPipe = [NSPipe pipe];
