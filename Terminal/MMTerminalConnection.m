@@ -13,7 +13,6 @@
 #include <syslog.h>
 #include "iconv.h"
 
-#import "JSONKit.h"
 #import "MMTerminalConnection.h"
 #import "MMTerminalConnectionInternal.h"
 #import "MMTerminalWindowController.h"
@@ -112,9 +111,10 @@
       while (newlineRange.location != NSNotFound) {
         NSString *messageString = [shellOutput substringToIndex:newlineRange.location];
 
-        NSDictionary *message = [messageString objectFromJSONString];
+        NSError *error;
+        NSDictionary *message = [NSJSONSerialization JSONObjectWithData:[messageString dataUsingEncoding:NSUTF8StringEncoding] options:0 error:&error];
         if (!message) {
-          NSLog(@"Server did not send JSON object!");
+          NSLog(@"Server did not send JSON object! Error: %@", error);
         }
 
         // A lot of the messages affect UI, so it's easier to run them all on the main thread for now.
@@ -159,13 +159,17 @@
 - (void)_sendShellMessage:(NSString *)name content:(NSDictionary *)content
 {
   NSAssert(name, @"Must provide a message name");
+  NSError *error;
 
   NSDictionary *message =
   @{
     @"type": name,
     @"message": content ?: @{},
     };
-  [self.shellInputPipe.fileHandleForWriting writeData:[message JSONData]];
+  [self.shellInputPipe.fileHandleForWriting writeData:[NSJSONSerialization dataWithJSONObject:message options:0 error:&error]];
+  if (error) {
+    NSLog(@"Encountered an error sending shell message, error: %@", error);
+  }
   [self.shellInputPipe.fileHandleForWriting writeData:[@"\n" dataUsingEncoding:NSUTF8StringEncoding]];
 }
 
