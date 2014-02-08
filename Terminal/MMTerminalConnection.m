@@ -81,7 +81,7 @@
   NSTask *task = [[NSTask alloc] init];
   self.shellTask = task;
   task.launchPath = @"/usr/local/bin/python3.3";
-  task.arguments = @[ @"-u", @"/Users/mehdi/src/term-server/server.py" ];
+  task.arguments = @[ @"-u", @"/Users/mehdi/src/term-server/server.py", @"--dir", @"~" ];
 
   self.shellErrorPipe = [NSPipe pipe];
   self.shellInputPipe = [NSPipe pipe];
