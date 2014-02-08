@@ -137,6 +137,7 @@
   MMCharacterSet characterSet;
 
   switch (characterSetChar) {
+    default:
     case 'B':
       characterSet = MMCharacterSetUSASCII;
       break;

@@ -15,10 +15,15 @@
 
 - (void)do;
 {
+  NSUInteger argument = [[self defaultedArgumentAtIndex:0] integerValue];
+  if (argument > 2) {
+    return;
+  }
+
   NSRange rangeToRemove;
   BOOL fillWithSpaces = NO;
   NSInteger numberOfCharactersLeftInLine;
-  switch ([[self defaultedArgumentAtIndex:0] integerValue]) {
+  switch (argument) {
     case 0:
       numberOfCharactersLeftInLine = MAX(0, [self.delegate numberOfCharactersInScrollRow:self.delegate.cursorPositionY] - self.delegate.cursorPositionX + 1);
       rangeToRemove = NSMakeRange(self.delegate.cursorPositionX, numberOfCharactersLeftInLine);

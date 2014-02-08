@@ -20,18 +20,14 @@ NSString *const ConnectionTerminalName = @"com.mm.terminal";
 void MMLog(NSString *format, ...)
 {
   static NSString *processName;
-  if (!processName) {
-    processName = [[NSProcessInfo processInfo] processName];
-  }
   static NSDateFormatter *dateFormatter;
-  NSString *now;
-  @synchronized(dateFormatter) {
-    if (!dateFormatter) {
-      dateFormatter = [[NSDateFormatter alloc] init];
-      [dateFormatter setDateFormat:@"yyyy-MM-dd HH:mm:ss.SSS"];
-    }
-    now = [dateFormatter stringFromDate:[NSDate date]];
-  }
+  static dispatch_once_t onceToken;
+  dispatch_once(&onceToken, ^{
+    dateFormatter = [[NSDateFormatter alloc] init];
+    [dateFormatter setDateFormat:@"yyyy-MM-dd HH:mm:ss.SSS"];
+    processName = [[NSProcessInfo processInfo] processName];
+  });
+  NSString *now = [dateFormatter stringFromDate:[NSDate date]];
   va_list args;
   va_start(args, format);
   NSString *formattedString = [[NSString alloc] initWithFormat:format arguments:args];

@@ -134,7 +134,7 @@
     unichar currentChar = [outputToHandle characterAtIndex:i];
 
     if (![nonPrintableCharacters characterIsMember:currentChar]) {
-      NSInteger end = i + 1;
+      NSInteger end;
       for (end = i + 1; end < outputToHandle.length && ![nonPrintableCharacters characterIsMember:[outputToHandle characterAtIndex:end]]; end++);
 
       MMANSIAction *action = [[MMANSIPrint alloc] initWithArguments:@[[outputToHandle substringWithRange:NSMakeRange(i, end - i)]]];
@@ -244,6 +244,11 @@
   } else if (currentChar == '\017') { // Shift In.
     action = [[MMCharacterSetInvocation alloc] initWithArguments:@[@0]];
   }
+
+  if (!action) {
+    return;
+  }
+
   @synchronized(self.ansiActions) {
     [self.ansiActions addObject:action];
   }

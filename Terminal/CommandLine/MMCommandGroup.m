@@ -45,7 +45,6 @@
 
     if (range.location == NSNotFound) {
       [newArgument appendString:[argument substringFromIndex:i]];
-      i = argument.length;
       break;
     }
 
@@ -120,7 +119,6 @@
   }
 
   // Apply tilde expansion.
-  NSInteger tildeExpandingAmount = 0;
   if (argument.length > 0 && [argument characterAtIndex:0] == '~') {
     NSRange slashRange = [newArgument rangeOfString:@"/"];
     NSString *user = @"";
@@ -134,8 +132,6 @@
     if (homeDirectory) {
       [newArgument replaceCharactersInRange:NSMakeRange(0, 1 + user.length) withString:homeDirectory];
     }
-
-    tildeExpandingAmount = homeDirectory.length - (1 + user.length);
   }
 
   // Apply globbing patterns. (Only ? and * so far.)
