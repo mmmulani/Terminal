@@ -13,8 +13,12 @@
 - (void)awakeFromNib
 {
   _layoutManager = [[NSLayoutManager alloc] init];
-  NSTextStorage *textStorage = [[NSTextStorage alloc] init];
-  [textStorage addLayoutManager:_layoutManager];
+}
+
+- (void)setTextStorage:(NSTextStorage *)textStorage
+{
+  [self.layoutManager replaceTextStorage:textStorage];
+  textStorage.delegate = self;
 }
 
 - (NSTextStorage *)textStorage
@@ -27,6 +31,13 @@
   // TODO: Handle a cursor position.
 }
 
+# pragma mark - Event handling
+
+- (BOOL)acceptsFirstResponder
+{
+  return YES;
+}
+
 - (void)keyDown:(NSEvent *)theEvent;
 {
   [self.delegate handleKeyPress:theEvent];
@@ -36,6 +47,13 @@
 {
   NSString *pasteboardString = [[NSPasteboard generalPasteboard] stringForType:NSPasteboardTypeString];
   [self.delegate handleInput:pasteboardString];
+}
+
+# pragma mark - NSTextStorageDelegate methods
+
+- (void)textStorageDidProcessEditing:(NSNotification *)notification
+{
+  [self setNeedsDisplay:YES];
 }
 
 # pragma mark - Text drawing

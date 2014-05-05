@@ -31,7 +31,7 @@
     [self updateViewForShellCommand];
   } else {
     if (self.task.displayTextStorage) {
-      [self.outputView.layoutManager replaceTextStorage:self.task.displayTextStorage];
+      [self.outputView setTextStorage:self.task.displayTextStorage];
     }
 
     [self.view addSubview:self.imageView];
