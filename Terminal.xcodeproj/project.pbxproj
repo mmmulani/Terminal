@@ -87,7 +87,6 @@
 		91E4C0741745712200062EF5 /* ServiceManagement.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 91E4C0731745712200062EF5 /* ServiceManagement.framework */; };
 		91E4C07817459E7400062EF5 /* mmm.ProcessMonitor in CopyFiles */ = {isa = PBXBuildFile; fileRef = 91E4C05F1745682800062EF5 /* mmm.ProcessMonitor */; };
 		91E4C07A1745E00900062EF5 /* MMShared.m in Sources */ = {isa = PBXBuildFile; fileRef = 918649B116D5A6A80024D9BE /* MMShared.m */; };
-		91F1747216ED0CF0002E2594 /* SenTestingKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 91F1747116ED0CF0002E2594 /* SenTestingKit.framework */; };
 		91F1747316ED0CF0002E2594 /* Cocoa.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 91F4EEBF16B8D63D00F65E91 /* Cocoa.framework */; };
 		91F4EEC016B8D63D00F65E91 /* Cocoa.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 91F4EEBF16B8D63D00F65E91 /* Cocoa.framework */; };
 		91F4EECA16B8D63D00F65E91 /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = 91F4EEC816B8D63D00F65E91 /* InfoPlist.strings */; };
@@ -298,8 +297,7 @@
 		91E4C0731745712200062EF5 /* ServiceManagement.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = ServiceManagement.framework; path = System/Library/Frameworks/ServiceManagement.framework; sourceTree = SDKROOT; };
 		91E4C0761745723100062EF5 /* ProcessMonitor-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "ProcessMonitor-Info.plist"; sourceTree = "<group>"; };
 		91E4C0791745A10000062EF5 /* ProcessMonitor-Launchd.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "ProcessMonitor-Launchd.plist"; sourceTree = "<group>"; };
-		91F1747016ED0CF0002E2594 /* TerminalTests.octest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = TerminalTests.octest; sourceTree = BUILT_PRODUCTS_DIR; };
-		91F1747116ED0CF0002E2594 /* SenTestingKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SenTestingKit.framework; path = Library/Frameworks/SenTestingKit.framework; sourceTree = DEVELOPER_DIR; };
+		91F1747016ED0CF0002E2594 /* TerminalTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = TerminalTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		91F4EEBC16B8D63D00F65E91 /* TermDebug.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = TermDebug.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		91F4EEBF16B8D63D00F65E91 /* Cocoa.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Cocoa.framework; path = System/Library/Frameworks/Cocoa.framework; sourceTree = SDKROOT; };
 		91F4EEC216B8D63D00F65E91 /* AppKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AppKit.framework; path = System/Library/Frameworks/AppKit.framework; sourceTree = SDKROOT; };
@@ -336,7 +334,6 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				91F1747216ED0CF0002E2594 /* SenTestingKit.framework in Frameworks */,
 				91F1747316ED0CF0002E2594 /* Cocoa.framework in Frameworks */,
 				9101DC231764D24B00F05A43 /* OCMock.framework in Frameworks */,
 			);
@@ -556,7 +553,7 @@
 			children = (
 				91F4EEBC16B8D63D00F65E91 /* TermDebug.app */,
 				919BA9AF16C875C40091CB1B /* Shell */,
-				91F1747016ED0CF0002E2594 /* TerminalTests.octest */,
+				91F1747016ED0CF0002E2594 /* TerminalTests.xctest */,
 				91E4C05F1745682800062EF5 /* mmm.ProcessMonitor */,
 			);
 			name = Products;
@@ -574,7 +571,6 @@
 				9103CD7116F7EE0900506F8B /* QuartzCore.framework */,
 				91F4EEBF16B8D63D00F65E91 /* Cocoa.framework */,
 				919BA9B016C875C40091CB1B /* Foundation.framework */,
-				91F1747116ED0CF0002E2594 /* SenTestingKit.framework */,
 				91F4EEC116B8D63D00F65E91 /* Other Frameworks */,
 			);
 			path = Frameworks;
@@ -683,8 +679,8 @@
 			);
 			name = TerminalTests;
 			productName = TerminalTests;
-			productReference = 91F1747016ED0CF0002E2594 /* TerminalTests.octest */;
-			productType = "com.apple.product-type.bundle";
+			productReference = 91F1747016ED0CF0002E2594 /* TerminalTests.xctest */;
+			productType = "com.apple.product-type.bundle.unit-test";
 		};
 		91F4EEBB16B8D63D00F65E91 /* Term */ = {
 			isa = PBXNativeTarget;
@@ -715,7 +711,8 @@
 			isa = PBXProject;
 			attributes = {
 				CLASSPREFIX = MM;
-				LastUpgradeCheck = 0460;
+				LastTestingUpgradeCheck = 0510;
+				LastUpgradeCheck = 0510;
 				ORGANIZATIONNAME = "Mehdi Mulani";
 			};
 			buildConfigurationList = 91F4EEB716B8D63C00F65E91 /* Build configuration list for PBXProject "Terminal" */;
@@ -993,6 +990,7 @@
 				FRAMEWORK_SEARCH_PATHS = (
 					"\"$(DEVELOPER_LIBRARY_DIR)/Frameworks\"",
 					"\"$(SRCROOT)/Frameworks\"",
+					"$(inherited)",
 				);
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "TerminalTests/TerminalTests-Prefix.pch";
@@ -1000,7 +998,6 @@
 				INFOPLIST_FILE = "TerminalTests/TerminalTests-Info.plist";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				TEST_HOST = "$(BUNDLE_LOADER)";
-				WRAPPER_EXTENSION = octest;
 			};
 			name = Debug;
 		};
@@ -1012,6 +1009,7 @@
 				FRAMEWORK_SEARCH_PATHS = (
 					"\"$(DEVELOPER_LIBRARY_DIR)/Frameworks\"",
 					"\"$(SRCROOT)/Frameworks\"",
+					"$(inherited)",
 				);
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "TerminalTests/TerminalTests-Prefix.pch";
@@ -1019,7 +1017,6 @@
 				INFOPLIST_FILE = "TerminalTests/TerminalTests-Info.plist";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				TEST_HOST = "$(BUNDLE_LOADER)";
-				WRAPPER_EXTENSION = octest;
 			};
 			name = Release;
 		};
@@ -1027,7 +1024,6 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
-				ARCHS = "$(ARCHS_STANDARD_64_BIT)";
 				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
 				CLANG_CXX_LIBRARY = "libc++";
 				CLANG_ENABLE_OBJC_ARC = YES;
@@ -1061,7 +1057,6 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
-				ARCHS = "$(ARCHS_STANDARD_64_BIT)";
 				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
 				CLANG_CXX_LIBRARY = "libc++";
 				CLANG_ENABLE_OBJC_ARC = YES;

@@ -8,11 +8,11 @@
 
 #import <Foundation/Foundation.h>
 
-typedef enum {
+typedef NS_ENUM(NSInteger, MMSourceType) {
   MMSourceTypeDefault = 0,
   MMSourceTypePipe,
   MMSourceTypeFile,
-} MMSourceType;
+};
 
 typedef enum {
   MMCommandOperatorPipe = 0,

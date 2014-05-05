@@ -10,12 +10,12 @@
 
 #import "MMShellCommands.h"
 
-typedef enum {
+typedef NS_ENUM(NSInteger, MMProcessStatus) {
   MMProcessStatusError,
   MMProcessStatusExit,
   MMProcessStatusSignal,
   MMProcessStatusStopped,
-} MMProcessStatus;
+};
 
 typedef NSInteger MMTaskIdentifier;
 typedef NSInteger MMShellIdentifier;

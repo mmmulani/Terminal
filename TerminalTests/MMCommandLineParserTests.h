@@ -6,8 +6,8 @@
 //  Copyright (c) 2013 Mehdi Mulani. All rights reserved.
 //
 
-#import <SenTestingKit/SenTestingKit.h>
+#import <XCTest/XCTest.h>
 
-@interface MMCommandLineParserTests : SenTestCase
+@interface MMCommandLineParserTests : XCTestCase
 
 @end

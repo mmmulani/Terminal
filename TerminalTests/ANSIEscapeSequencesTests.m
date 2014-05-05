@@ -338,7 +338,7 @@
 
   MMTask *task = [MMTask new];
   [task handleCommandOutput:@"\033[0J\n\n\n"];
-  STAssertEquals(task.cursorPositionByCharacters, (NSInteger)3, @"Should not crash in looking at the cursor position for a row which does not exist");
+  XCTAssertEqual(task.cursorPositionByCharacters, (NSInteger)3, @"Should not crash in looking at the cursor position for a row which does not exist");
 
   CheckInputAgainstExpectedOutput(([NSString stringWithFormat:@"\033[%@HA", [@"1;" repeatedToLength:875]]), @"A");
 
@@ -483,7 +483,9 @@
   CheckInputAgainstExpectedOutput(@"\t\t\t\t\t\t\t\t\t\ta", @"\t\t\t\t\t\t\t\t\t       a");
 
   // Test deleting tabs.
-  BEGIN_EXPECTED_FAILURES;
+  /***
+   * These tests are commented out as there does not seem to be a way to specify
+   * expected failures in XCTest.
   CheckInputAgainstExpectedOutputWithExpectedCursor(@"\t\033[g\tb", @"\t\tb", MMPositionMake(18, 1));
   CheckInputAgainstExpectedOutputWithExpectedCursor(@"\t\033[g\033[1;1H\tb", @"\t       b", MMPositionMake(18, 1));
   CheckInputAgainstExpectedOutputWithExpectedCursor(@"a\t\033[g\033[1;1H\tb", @"a\t        b", MMPositionMake(18, 1));
@@ -492,7 +494,7 @@
   CheckInputAgainstExpectedOutputWithExpectedCursor(@"\033[1;9H\033[g\033[1;17H\033[g\033[1;1H\ta", @"\ta", MMPositionMake(26, 1));
   CheckInputAgainstExpectedOutputWithExpectedCursor(@"\t\033[g\t\033[g\033[1;1H\ta", @"\t\t        a", MMPositionMake(26, 1));
   CheckInputAgainstExpectedOutputWithExpectedCursor(@"\t\033[g\t\033[g\033[1;1H\t\ta", @"\t\t        \ta", MMPositionMake(34, 1));
-  END_EXPECTED_FAILURES;
+  */
 
   // Test expansion of the tab character into spaces.
   CheckInputAgainstExpectedOutput(@"\ta", @"\ta");
@@ -519,7 +521,7 @@
   // Test that the character offset changes by the number of printable characters.
   MMTask *task = [MMTask new];
   [task handleCommandOutput:[@"\t" stringByAppendingString:[@"\n" repeatedTimes:30]]];
-  STAssertEquals(task.cursorPositionByCharacters, (NSInteger)31, @"Cursor should be offset by number of printable characters.");
+  XCTAssertEqual(task.cursorPositionByCharacters, (NSInteger)31, @"Cursor should be offset by number of printable characters.");
 }
 
 - (void)testFullReset;
