@@ -51,9 +51,6 @@
     }
   }
 
-  if (!self.task.isFinished) {
-    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(outputFrameChanged:) name:NSViewFrameDidChangeNotification object:self.outputView];
-  }
   [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(labelFrameChanged:) name:NSViewFrameDidChangeNotification object:self.label];
 }
 
@@ -81,7 +78,7 @@
   [self.spinningIndicator setFrameOrigin:self.imageView.frame.origin];
 }
 
-- (void)outputFrameChanged:(NSNotification *)notification;
+- (void)scrollOutputToBottom
 {
   // TODO: Add a check to see if we are already scrolled to the bottom, and only scroll down then.
   // XXX: This is a hack to scroll the text by farther than it should go, to give the appearance of a full terminal screen.
@@ -283,6 +280,7 @@
   [self updateWithANSIOutput];
 
   [self.windowController noteHeightChangeForTask:self];
+  [self scrollOutputToBottom];
 }
 
 @end
