@@ -10,6 +10,23 @@
 
 @implementation MMTextView
 
+- (void)awakeFromNib
+{
+  _layoutManager = [[NSLayoutManager alloc] init];
+  NSTextStorage *textStorage = [[NSTextStorage alloc] init];
+  [textStorage addLayoutManager:_layoutManager];
+}
+
+- (NSTextStorage *)textStorage
+{
+  return self.layoutManager.textStorage;
+}
+
+- (void)setSelectedRange:(NSRange)charRange
+{
+  // TODO: Handle a cursor position.
+}
+
 - (void)keyDown:(NSEvent *)theEvent;
 {
   [self.delegate handleKeyPress:theEvent];
@@ -21,10 +38,27 @@
   [self.delegate handleInput:pasteboardString];
 }
 
-- (BOOL)shouldChangeTextInRange:(NSRange)affectedCharRange replacementString:(NSString *)replacementString;
+# pragma mark - Text drawing
+
+- (void)drawRect:(NSRect)dirtyRect
 {
-  return NO;
+  CGContextRef ctx = (CGContextRef)[[NSGraphicsContext currentContext] graphicsPort];
+  CGContextSetTextMatrix(ctx, CGAffineTransformIdentity);
+
+  CGMutablePathRef path = CGPathCreateMutable();
+  CGRect bounds = CGRectMake(0.0, 0.0, self.bounds.size.width, self.bounds.size.height);
+  CGPathAddRect(path, NULL, bounds);
+
+  CTFramesetterRef framesetter = CTFramesetterCreateWithAttributedString((__bridge CFMutableAttributedStringRef)self.textStorage);
+
+  CTFrameRef frame = CTFramesetterCreateFrame(framesetter, CFRangeMake(0, 0), path, NULL);
+
+  CFRelease(framesetter);
+  CTFrameDraw(frame, ctx);
+  CFRelease(frame);
 }
+
+# pragma mark - Focus ring drawing
 
 - (BOOL)becomeFirstResponder;
 {

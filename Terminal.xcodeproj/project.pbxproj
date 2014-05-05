@@ -358,6 +358,8 @@
 				918CA3EC17A8E94E00A5D852 /* MMConnectRemoteWindowController.h */,
 				918CA3ED17A8E94E00A5D852 /* MMConnectRemoteWindowController.m */,
 				918CA3EE17A8E94E00A5D852 /* MMConnectRemoteWindowController.xib */,
+				9106520A16C574160010DC76 /* MMTextView.h */,
+				9106520B16C574160010DC76 /* MMTextView.m */,
 			);
 			name = "Terminal window";
 			sourceTree = "<group>";
@@ -466,8 +468,6 @@
 				9186499C16D46A5E0024D9BE /* Terminal window */,
 				91F4EED116B8D63D00F65E91 /* MMAppDelegate.h */,
 				91F4EED216B8D63D00F65E91 /* MMAppDelegate.m */,
-				9106520A16C574160010DC76 /* MMTextView.h */,
-				9106520B16C574160010DC76 /* MMTextView.m */,
 				91F4EED416B8D63D00F65E91 /* MMMainMenu.xib */,
 				91F4EEC616B8D63D00F65E91 /* Supporting Files */,
 				918649BB16D69A6F0024D9BE /* MMDebugMessagesWindowController.h */,

@@ -15,8 +15,12 @@
 
 @end
 
-@interface MMTextView : NSTextView
+@interface MMTextView : NSView
 
 @property (assign) id<MMTextViewDelegate> delegate;
+@property NSLayoutManager *layoutManager;
+
+- (NSTextStorage *)textStorage;
+- (void)setSelectedRange:(NSRange)charRange;
 
 @end
