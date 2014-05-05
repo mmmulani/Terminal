@@ -13,7 +13,6 @@
 		9103CD7216F7EE0900506F8B /* QuartzCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 9103CD7116F7EE0900506F8B /* QuartzCore.framework */; };
 		9106520C16C574160010DC76 /* MMTextView.m in Sources */ = {isa = PBXBuildFile; fileRef = 9106520B16C574160010DC76 /* MMTextView.m */; };
 		910D0EED1757B8B100FFF569 /* MMShellCommands.m in Sources */ = {isa = PBXBuildFile; fileRef = 910D0EEC1757B8B100FFF569 /* MMShellCommands.m */; };
-		910D0EEE1757B8B100FFF569 /* MMShellCommands.m in Sources */ = {isa = PBXBuildFile; fileRef = 910D0EEC1757B8B100FFF569 /* MMShellCommands.m */; };
 		9121418C1757E5CA00A50F6E /* MMFirstRunWindowController.m in Sources */ = {isa = PBXBuildFile; fileRef = 9121418A1757E5CA00A50F6E /* MMFirstRunWindowController.m */; };
 		9121418D1757E5CA00A50F6E /* MMFirstRunWindowController.xib in Resources */ = {isa = PBXBuildFile; fileRef = 9121418B1757E5CA00A50F6E /* MMFirstRunWindowController.xib */; };
 		912141A21757FF7900A50F6E /* Quincy.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 912141A01757FA4300A50F6E /* Quincy.framework */; };
@@ -23,7 +22,6 @@
 		9126054E1739C5BC001962AE /* MMCommandLineParserTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 9126054C1739C4E0001962AE /* MMCommandLineParserTests.m */; };
 		912605511739E1EF001962AE /* MMCommandLineArgumentsParser.m in Sources */ = {isa = PBXBuildFile; fileRef = 912605501739E1EF001962AE /* MMCommandLineArgumentsParser.m */; };
 		9139E161173B2423009FFC1E /* MMTerminalConnection.m in Sources */ = {isa = PBXBuildFile; fileRef = 9139E160173B2423009FFC1E /* MMTerminalConnection.m */; };
-		913CC1C1174A92AD00E002AD /* Shell in CopyFiles */ = {isa = PBXBuildFile; fileRef = 919BA9AF16C875C40091CB1B /* Shell */; };
 		913CC1C5174C31FD00E002AD /* MMANSIAction.m in Sources */ = {isa = PBXBuildFile; fileRef = 913CC1C4174C31FD00E002AD /* MMANSIAction.m */; };
 		913CC1C9174C34E100E002AD /* MMMoveCursor.m in Sources */ = {isa = PBXBuildFile; fileRef = 913CC1C8174C34E100E002AD /* MMMoveCursor.m */; };
 		913CC1CD174D2D8100E002AD /* MMErasingActions.m in Sources */ = {isa = PBXBuildFile; fileRef = 913CC1CC174D2D8100E002AD /* MMErasingActions.m */; };
@@ -40,21 +38,18 @@
 		91563C45176E575C009FF46A /* MMOutputScrollView.m in Sources */ = {isa = PBXBuildFile; fileRef = 91563C44176E575C009FF46A /* MMOutputScrollView.m */; };
 		916E893B17811CE30070A1C6 /* MMPrintingActions.m in Sources */ = {isa = PBXBuildFile; fileRef = 916E893A17811CE30070A1C6 /* MMPrintingActions.m */; };
 		916E893E17811F900070A1C6 /* NSString+MMAdditions.m in Sources */ = {isa = PBXBuildFile; fileRef = 916E893D17811F900070A1C6 /* NSString+MMAdditions.m */; };
-		916E893F17811F900070A1C6 /* NSString+MMAdditions.m in Sources */ = {isa = PBXBuildFile; fileRef = 916E893D17811F900070A1C6 /* NSString+MMAdditions.m */; };
 		916E894017811F900070A1C6 /* NSString+MMAdditions.m in Sources */ = {isa = PBXBuildFile; fileRef = 916E893D17811F900070A1C6 /* NSString+MMAdditions.m */; };
 		917D1C42173963C800503158 /* lexer.lm in Sources */ = {isa = PBXBuildFile; fileRef = 917D1C41173963C800503158 /* lexer.lm */; };
 		917D1C4417396C8000503158 /* parser.ym in Sources */ = {isa = PBXBuildFile; fileRef = 917D1C4317396C8000503158 /* parser.ym */; };
 		917D1C47173973D600503158 /* MMParserContext.m in Sources */ = {isa = PBXBuildFile; fileRef = 917D1C46173973D600503158 /* MMParserContext.m */; };
 		917DE9E2176A7FC200591874 /* glyphiconsX.png in Resources */ = {isa = PBXBuildFile; fileRef = 917DE9E1176A7FC200591874 /* glyphiconsX.png */; };
 		91814925176CACDC0020AB9D /* MMTaskInfo.m in Sources */ = {isa = PBXBuildFile; fileRef = 91814924176CACDC0020AB9D /* MMTaskInfo.m */; };
-		91814926176CACDC0020AB9D /* MMTaskInfo.m in Sources */ = {isa = PBXBuildFile; fileRef = 91814924176CACDC0020AB9D /* MMTaskInfo.m */; };
 		9186499016D2A6190024D9BE /* MMTerminalWindowController.m in Sources */ = {isa = PBXBuildFile; fileRef = 9186498E16D2A6190024D9BE /* MMTerminalWindowController.m */; };
 		9186499116D2A6190024D9BE /* MMTerminalWindow.xib in Resources */ = {isa = PBXBuildFile; fileRef = 9186498F16D2A6190024D9BE /* MMTerminalWindow.xib */; };
 		9186499416D408700024D9BE /* MMTask.m in Sources */ = {isa = PBXBuildFile; fileRef = 9186499316D408700024D9BE /* MMTask.m */; };
 		9186499A16D46A490024D9BE /* MMTaskCellViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 9186499816D46A490024D9BE /* MMTaskCellViewController.m */; };
 		9186499B16D46A490024D9BE /* MMTaskCellView.xib in Resources */ = {isa = PBXBuildFile; fileRef = 9186499916D46A490024D9BE /* MMTaskCellView.xib */; };
 		918649B916D5D19E0024D9BE /* MMShared.m in Sources */ = {isa = PBXBuildFile; fileRef = 918649B116D5A6A80024D9BE /* MMShared.m */; };
-		918649BA16D5D1BD0024D9BE /* MMShared.m in Sources */ = {isa = PBXBuildFile; fileRef = 918649B116D5A6A80024D9BE /* MMShared.m */; };
 		918649BE16D69A700024D9BE /* MMDebugMessagesWindowController.m in Sources */ = {isa = PBXBuildFile; fileRef = 918649BC16D69A6F0024D9BE /* MMDebugMessagesWindowController.m */; };
 		918649BF16D69A700024D9BE /* MMDebugMessagesPanel.xib in Resources */ = {isa = PBXBuildFile; fileRef = 918649BD16D69A700024D9BE /* MMDebugMessagesPanel.xib */; };
 		918CA3EB17A8E0D500A5D852 /* MMRemoteTerminalConnection.m in Sources */ = {isa = PBXBuildFile; fileRef = 918CA3EA17A8E0D500A5D852 /* MMRemoteTerminalConnection.m */; };
@@ -62,11 +57,6 @@
 		918CA3F017A8E94E00A5D852 /* MMConnectRemoteWindowController.xib in Resources */ = {isa = PBXBuildFile; fileRef = 918CA3EE17A8E94E00A5D852 /* MMConnectRemoteWindowController.xib */; };
 		919ABB4D16FF9D7200BB7108 /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = 919ABB4B16FF9D7200BB7108 /* InfoPlist.strings */; };
 		919ABB5016FFA22900BB7108 /* MMTaskTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 919ABB4F16FFA22900BB7108 /* MMTaskTests.m */; };
-		919BA9B116C875C40091CB1B /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 919BA9B016C875C40091CB1B /* Foundation.framework */; };
-		919BA9B416C875C40091CB1B /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 919BA9B316C875C40091CB1B /* main.m */; };
-		919BA9B816C875C40091CB1B /* Shell.1 in CopyFiles */ = {isa = PBXBuildFile; fileRef = 919BA9B716C875C40091CB1B /* Shell.1 */; };
-		919BA9C016C87E4F0091CB1B /* MMShellMain.m in Sources */ = {isa = PBXBuildFile; fileRef = 919BA9BF16C87E4F0091CB1B /* MMShellMain.m */; };
-		91B8050B16FBC70B00E6D9DF /* MMShellMain.m in Sources */ = {isa = PBXBuildFile; fileRef = 919BA9BF16C87E4F0091CB1B /* MMShellMain.m */; };
 		91B8050F16FF9BCD00E6D9DF /* ANSIEscapeSequencesTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 91B8050E16FF9BCD00E6D9DF /* ANSIEscapeSequencesTests.m */; };
 		91C7D984173ECE0900875974 /* MMCommandsTextView.m in Sources */ = {isa = PBXBuildFile; fileRef = 91C7D983173ECE0900875974 /* MMCommandsTextView.m */; };
 		91C7D987173F250300875974 /* MMCompletionEngine.m in Sources */ = {isa = PBXBuildFile; fileRef = 91C7D986173F250300875974 /* MMCompletionEngine.m */; };
@@ -75,18 +65,10 @@
 		91D8FD06177B26AA005934AE /* Sparkle.framework in CopyFiles */ = {isa = PBXBuildFile; fileRef = 91D8FD04177B21E9005934AE /* Sparkle.framework */; };
 		91D8FD0A177B3542005934AE /* MMInfoPanelController.m in Sources */ = {isa = PBXBuildFile; fileRef = 91D8FD08177B3542005934AE /* MMInfoPanelController.m */; };
 		91D8FD0B177B3542005934AE /* MMInfoPanelController.xib in Resources */ = {isa = PBXBuildFile; fileRef = 91D8FD09177B3542005934AE /* MMInfoPanelController.xib */; };
-		91DF63DB1774ECDB0053CB4F /* MMUtilities.m in Sources */ = {isa = PBXBuildFile; fileRef = 912141A71758F61200A50F6E /* MMUtilities.m */; };
 		91E4A26A1753F9EF00EFDDBE /* MMCommandGroup.m in Sources */ = {isa = PBXBuildFile; fileRef = 91E4A2691753F9EF00EFDDBE /* MMCommandGroup.m */; };
-		91E4A26B1754371400EFDDBE /* MMCommandGroup.m in Sources */ = {isa = PBXBuildFile; fileRef = 91E4A2691753F9EF00EFDDBE /* MMCommandGroup.m */; };
 		91E4C02C1742C65400062EF5 /* Icon.icns in Resources */ = {isa = PBXBuildFile; fileRef = 91E4C02B1742C65400062EF5 /* Icon.icns */; };
-		91E4C0601745682800062EF5 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 919BA9B016C875C40091CB1B /* Foundation.framework */; };
-		91E4C0631745682800062EF5 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 91E4C0621745682800062EF5 /* main.m */; };
-		91E4C0671745682800062EF5 /* ProcessMonitor.1 in CopyFiles */ = {isa = PBXBuildFile; fileRef = 91E4C0661745682800062EF5 /* ProcessMonitor.1 */; };
-		91E4C06D1745685000062EF5 /* MMProcessMonitorMain.m in Sources */ = {isa = PBXBuildFile; fileRef = 91E4C06C1745685000062EF5 /* MMProcessMonitorMain.m */; };
 		91E4C07217456FF200062EF5 /* Security.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 91E4C07017456FE600062EF5 /* Security.framework */; };
 		91E4C0741745712200062EF5 /* ServiceManagement.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 91E4C0731745712200062EF5 /* ServiceManagement.framework */; };
-		91E4C07817459E7400062EF5 /* mmm.ProcessMonitor in CopyFiles */ = {isa = PBXBuildFile; fileRef = 91E4C05F1745682800062EF5 /* mmm.ProcessMonitor */; };
-		91E4C07A1745E00900062EF5 /* MMShared.m in Sources */ = {isa = PBXBuildFile; fileRef = 918649B116D5A6A80024D9BE /* MMShared.m */; };
 		91F1747316ED0CF0002E2594 /* Cocoa.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 91F4EEBF16B8D63D00F65E91 /* Cocoa.framework */; };
 		91F4EEC016B8D63D00F65E91 /* Cocoa.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 91F4EEBF16B8D63D00F65E91 /* Cocoa.framework */; };
 		91F4EECA16B8D63D00F65E91 /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = 91F4EEC816B8D63D00F65E91 /* InfoPlist.strings */; };
@@ -97,20 +79,6 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
-		919BA9BC16C876260091CB1B /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = 91F4EEB416B8D63C00F65E91 /* Project object */;
-			proxyType = 1;
-			remoteGlobalIDString = 919BA9AE16C875C40091CB1B;
-			remoteInfo = Shell;
-		};
-		91E4C06E174569A000062EF5 /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = 91F4EEB416B8D63C00F65E91 /* Project object */;
-			proxyType = 1;
-			remoteGlobalIDString = 91E4C05E1745682800062EF5;
-			remoteInfo = ProcessMonitor;
-		};
 		91F1748116ED0F31002E2594 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = 91F4EEB416B8D63C00F65E91 /* Project object */;
@@ -148,29 +116,8 @@
 			dstPath = "";
 			dstSubfolderSpec = 6;
 			files = (
-				913CC1C1174A92AD00E002AD /* Shell in CopyFiles */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
-		};
-		919BA9AD16C875C40091CB1B /* CopyFiles */ = {
-			isa = PBXCopyFilesBuildPhase;
-			buildActionMask = 2147483647;
-			dstPath = /usr/share/man/man1/;
-			dstSubfolderSpec = 0;
-			files = (
-				919BA9B816C875C40091CB1B /* Shell.1 in CopyFiles */,
-			);
-			runOnlyForDeploymentPostprocessing = 1;
-		};
-		91E4C05D1745682800062EF5 /* CopyFiles */ = {
-			isa = PBXCopyFilesBuildPhase;
-			buildActionMask = 2147483647;
-			dstPath = /usr/share/man/man1/;
-			dstSubfolderSpec = 0;
-			files = (
-				91E4C0671745682800062EF5 /* ProcessMonitor.1 in CopyFiles */,
-			);
-			runOnlyForDeploymentPostprocessing = 1;
 		};
 		91E4C07717459E6100062EF5 /* CopyFiles */ = {
 			isa = PBXCopyFilesBuildPhase;
@@ -178,7 +125,6 @@
 			dstPath = Contents/Library/LaunchServices;
 			dstSubfolderSpec = 1;
 			files = (
-				91E4C07817459E7400062EF5 /* mmm.ProcessMonitor in CopyFiles */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -263,13 +209,7 @@
 		919ABB4C16FF9D7200BB7108 /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = TerminalTests/en.lproj/InfoPlist.strings; sourceTree = "<group>"; };
 		919ABB4E16FFA22900BB7108 /* MMTaskTests.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = MMTaskTests.h; path = TerminalTests/MMTaskTests.h; sourceTree = "<group>"; };
 		919ABB4F16FFA22900BB7108 /* MMTaskTests.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = MMTaskTests.m; path = TerminalTests/MMTaskTests.m; sourceTree = "<group>"; };
-		919BA9AF16C875C40091CB1B /* Shell */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = Shell; sourceTree = BUILT_PRODUCTS_DIR; };
 		919BA9B016C875C40091CB1B /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = System/Library/Frameworks/Foundation.framework; sourceTree = SDKROOT; };
-		919BA9B316C875C40091CB1B /* main.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
-		919BA9B616C875C40091CB1B /* Shell-Prefix.pch */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "Shell-Prefix.pch"; sourceTree = "<group>"; };
-		919BA9B716C875C40091CB1B /* Shell.1 */ = {isa = PBXFileReference; lastKnownFileType = text.man; path = Shell.1; sourceTree = "<group>"; };
-		919BA9BE16C87E4F0091CB1B /* MMShellMain.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MMShellMain.h; sourceTree = "<group>"; };
-		919BA9BF16C87E4F0091CB1B /* MMShellMain.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MMShellMain.m; sourceTree = "<group>"; };
 		91B8050D16FF9BC400E6D9DF /* ANSIEscapeSequencesTests.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ANSIEscapeSequencesTests.h; path = TerminalTests/ANSIEscapeSequencesTests.h; sourceTree = SOURCE_ROOT; };
 		91B8050E16FF9BCD00E6D9DF /* ANSIEscapeSequencesTests.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = ANSIEscapeSequencesTests.m; path = TerminalTests/ANSIEscapeSequencesTests.m; sourceTree = SOURCE_ROOT; };
 		91B8051016FF9BD900E6D9DF /* TerminalTests-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; name = "TerminalTests-Info.plist"; path = "TerminalTests/TerminalTests-Info.plist"; sourceTree = SOURCE_ROOT; };
@@ -287,16 +227,8 @@
 		91E4A2681753F9EF00EFDDBE /* MMCommandGroup.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = MMCommandGroup.h; path = ../Terminal/CommandLine/MMCommandGroup.h; sourceTree = "<group>"; };
 		91E4A2691753F9EF00EFDDBE /* MMCommandGroup.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = MMCommandGroup.m; path = ../Terminal/CommandLine/MMCommandGroup.m; sourceTree = "<group>"; };
 		91E4C02B1742C65400062EF5 /* Icon.icns */ = {isa = PBXFileReference; lastKnownFileType = image.icns; name = Icon.icns; path = ../Icon.icns; sourceTree = "<group>"; };
-		91E4C05F1745682800062EF5 /* mmm.ProcessMonitor */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = mmm.ProcessMonitor; sourceTree = BUILT_PRODUCTS_DIR; };
-		91E4C0621745682800062EF5 /* main.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
-		91E4C0651745682800062EF5 /* ProcessMonitor-Prefix.pch */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "ProcessMonitor-Prefix.pch"; sourceTree = "<group>"; };
-		91E4C0661745682800062EF5 /* ProcessMonitor.1 */ = {isa = PBXFileReference; lastKnownFileType = text.man; path = ProcessMonitor.1; sourceTree = "<group>"; };
-		91E4C06B1745685000062EF5 /* MMProcessMonitorMain.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MMProcessMonitorMain.h; sourceTree = "<group>"; };
-		91E4C06C1745685000062EF5 /* MMProcessMonitorMain.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MMProcessMonitorMain.m; sourceTree = "<group>"; };
 		91E4C07017456FE600062EF5 /* Security.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Security.framework; path = System/Library/Frameworks/Security.framework; sourceTree = SDKROOT; };
 		91E4C0731745712200062EF5 /* ServiceManagement.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = ServiceManagement.framework; path = System/Library/Frameworks/ServiceManagement.framework; sourceTree = SDKROOT; };
-		91E4C0761745723100062EF5 /* ProcessMonitor-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "ProcessMonitor-Info.plist"; sourceTree = "<group>"; };
-		91E4C0791745A10000062EF5 /* ProcessMonitor-Launchd.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "ProcessMonitor-Launchd.plist"; sourceTree = "<group>"; };
 		91F1747016ED0CF0002E2594 /* TerminalTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = TerminalTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		91F4EEBC16B8D63D00F65E91 /* TermDebug.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = TermDebug.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		91F4EEBF16B8D63D00F65E91 /* Cocoa.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Cocoa.framework; path = System/Library/Frameworks/Cocoa.framework; sourceTree = SDKROOT; };
@@ -314,22 +246,6 @@
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
-		919BA9AC16C875C40091CB1B /* Frameworks */ = {
-			isa = PBXFrameworksBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-				919BA9B116C875C40091CB1B /* Foundation.framework in Frameworks */,
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
-		91E4C05C1745682800062EF5 /* Frameworks */ = {
-			isa = PBXFrameworksBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-				91E4C0601745682800062EF5 /* Foundation.framework in Frameworks */,
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
 		91F1746C16ED0CF0002E2594 /* Frameworks */ = {
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
@@ -468,48 +384,6 @@
 			path = MMShared;
 			sourceTree = "<group>";
 		};
-		919BA9B216C875C40091CB1B /* Shell */ = {
-			isa = PBXGroup;
-			children = (
-				919BA9B316C875C40091CB1B /* main.m */,
-				919BA9BE16C87E4F0091CB1B /* MMShellMain.h */,
-				919BA9BF16C87E4F0091CB1B /* MMShellMain.m */,
-				919BA9B716C875C40091CB1B /* Shell.1 */,
-				919BA9B516C875C40091CB1B /* Supporting Files */,
-			);
-			path = Shell;
-			sourceTree = "<group>";
-		};
-		919BA9B516C875C40091CB1B /* Supporting Files */ = {
-			isa = PBXGroup;
-			children = (
-				919BA9B616C875C40091CB1B /* Shell-Prefix.pch */,
-			);
-			name = "Supporting Files";
-			sourceTree = "<group>";
-		};
-		91E4C0611745682800062EF5 /* ProcessMonitor */ = {
-			isa = PBXGroup;
-			children = (
-				91E4C0761745723100062EF5 /* ProcessMonitor-Info.plist */,
-				91E4C0791745A10000062EF5 /* ProcessMonitor-Launchd.plist */,
-				91E4C0621745682800062EF5 /* main.m */,
-				91E4C0661745682800062EF5 /* ProcessMonitor.1 */,
-				91E4C0641745682800062EF5 /* Supporting Files */,
-				91E4C06B1745685000062EF5 /* MMProcessMonitorMain.h */,
-				91E4C06C1745685000062EF5 /* MMProcessMonitorMain.m */,
-			);
-			path = ProcessMonitor;
-			sourceTree = "<group>";
-		};
-		91E4C0641745682800062EF5 /* Supporting Files */ = {
-			isa = PBXGroup;
-			children = (
-				91E4C0651745682800062EF5 /* ProcessMonitor-Prefix.pch */,
-			);
-			name = "Supporting Files";
-			sourceTree = "<group>";
-		};
 		91F1747416ED0CF0002E2594 /* TerminalTests */ = {
 			isa = PBXGroup;
 			children = (
@@ -539,9 +413,7 @@
 			isa = PBXGroup;
 			children = (
 				91F4EEC516B8D63D00F65E91 /* Terminal */,
-				919BA9B216C875C40091CB1B /* Shell */,
 				91F1747416ED0CF0002E2594 /* TerminalTests */,
-				91E4C0611745682800062EF5 /* ProcessMonitor */,
 				91F4EEBE16B8D63D00F65E91 /* Frameworks */,
 				91F4EEBD16B8D63D00F65E91 /* Products */,
 				918649B716D5D16F0024D9BE /* Shared */,
@@ -552,9 +424,7 @@
 			isa = PBXGroup;
 			children = (
 				91F4EEBC16B8D63D00F65E91 /* TermDebug.app */,
-				919BA9AF16C875C40091CB1B /* Shell */,
 				91F1747016ED0CF0002E2594 /* TerminalTests.xctest */,
-				91E4C05F1745682800062EF5 /* mmm.ProcessMonitor */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -628,40 +498,6 @@
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
-		919BA9AE16C875C40091CB1B /* Shell */ = {
-			isa = PBXNativeTarget;
-			buildConfigurationList = 919BA9BB16C875C40091CB1B /* Build configuration list for PBXNativeTarget "Shell" */;
-			buildPhases = (
-				919BA9AB16C875C40091CB1B /* Sources */,
-				919BA9AC16C875C40091CB1B /* Frameworks */,
-				919BA9AD16C875C40091CB1B /* CopyFiles */,
-			);
-			buildRules = (
-			);
-			dependencies = (
-			);
-			name = Shell;
-			productName = Shell;
-			productReference = 919BA9AF16C875C40091CB1B /* Shell */;
-			productType = "com.apple.product-type.tool";
-		};
-		91E4C05E1745682800062EF5 /* ProcessMonitor */ = {
-			isa = PBXNativeTarget;
-			buildConfigurationList = 91E4C06A1745682800062EF5 /* Build configuration list for PBXNativeTarget "ProcessMonitor" */;
-			buildPhases = (
-				91E4C05B1745682800062EF5 /* Sources */,
-				91E4C05C1745682800062EF5 /* Frameworks */,
-				91E4C05D1745682800062EF5 /* CopyFiles */,
-			);
-			buildRules = (
-			);
-			dependencies = (
-			);
-			name = ProcessMonitor;
-			productName = ProcessMonitor;
-			productReference = 91E4C05F1745682800062EF5 /* mmm.ProcessMonitor */;
-			productType = "com.apple.product-type.tool";
-		};
 		91F1746F16ED0CF0002E2594 /* TerminalTests */ = {
 			isa = PBXNativeTarget;
 			buildConfigurationList = 91F1748016ED0CF0002E2594 /* Build configuration list for PBXNativeTarget "TerminalTests" */;
@@ -696,8 +532,6 @@
 			buildRules = (
 			);
 			dependencies = (
-				91E4C06F174569A000062EF5 /* PBXTargetDependency */,
-				919BA9BD16C876260091CB1B /* PBXTargetDependency */,
 			);
 			name = Term;
 			productName = Terminal;
@@ -728,9 +562,7 @@
 			projectRoot = "";
 			targets = (
 				91F4EEBB16B8D63D00F65E91 /* Term */,
-				919BA9AE16C875C40091CB1B /* Shell */,
 				91F1746F16ED0CF0002E2594 /* TerminalTests */,
-				91E4C05E1745682800062EF5 /* ProcessMonitor */,
 			);
 		};
 /* End PBXProject section */
@@ -788,37 +620,11 @@
 /* End PBXShellScriptBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
-		919BA9AB16C875C40091CB1B /* Sources */ = {
-			isa = PBXSourcesBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-				91DF63DB1774ECDB0053CB4F /* MMUtilities.m in Sources */,
-				91E4A26B1754371400EFDDBE /* MMCommandGroup.m in Sources */,
-				918649BA16D5D1BD0024D9BE /* MMShared.m in Sources */,
-				919BA9B416C875C40091CB1B /* main.m in Sources */,
-				919BA9C016C87E4F0091CB1B /* MMShellMain.m in Sources */,
-				910D0EEE1757B8B100FFF569 /* MMShellCommands.m in Sources */,
-				91814926176CACDC0020AB9D /* MMTaskInfo.m in Sources */,
-				916E893F17811F900070A1C6 /* NSString+MMAdditions.m in Sources */,
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
-		91E4C05B1745682800062EF5 /* Sources */ = {
-			isa = PBXSourcesBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-				91E4C07A1745E00900062EF5 /* MMShared.m in Sources */,
-				91E4C0631745682800062EF5 /* main.m in Sources */,
-				91E4C06D1745685000062EF5 /* MMProcessMonitorMain.m in Sources */,
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
 		91F1746B16ED0CF0002E2594 /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
 				9126054E1739C5BC001962AE /* MMCommandLineParserTests.m in Sources */,
-				91B8050B16FBC70B00E6D9DF /* MMShellMain.m in Sources */,
 				91B8050F16FF9BCD00E6D9DF /* ANSIEscapeSequencesTests.m in Sources */,
 				919ABB5016FFA22900BB7108 /* MMTaskTests.m in Sources */,
 				916E894017811F900070A1C6 /* NSString+MMAdditions.m in Sources */,
@@ -869,16 +675,6 @@
 /* End PBXSourcesBuildPhase section */
 
 /* Begin PBXTargetDependency section */
-		919BA9BD16C876260091CB1B /* PBXTargetDependency */ = {
-			isa = PBXTargetDependency;
-			target = 919BA9AE16C875C40091CB1B /* Shell */;
-			targetProxy = 919BA9BC16C876260091CB1B /* PBXContainerItemProxy */;
-		};
-		91E4C06F174569A000062EF5 /* PBXTargetDependency */ = {
-			isa = PBXTargetDependency;
-			target = 91E4C05E1745682800062EF5 /* ProcessMonitor */;
-			targetProxy = 91E4C06E174569A000062EF5 /* PBXContainerItemProxy */;
-		};
 		91F1748216ED0F31002E2594 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
 			target = 91F4EEBB16B8D63D00F65E91 /* Term */;
@@ -922,66 +718,6 @@
 /* End PBXVariantGroup section */
 
 /* Begin XCBuildConfiguration section */
-		919BA9B916C875C40091CB1B /* Debug */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				GCC_PRECOMPILE_PREFIX_HEADER = YES;
-				GCC_PREFIX_HEADER = "Shell/Shell-Prefix.pch";
-				PRODUCT_NAME = "$(TARGET_NAME)";
-			};
-			name = Debug;
-		};
-		919BA9BA16C875C40091CB1B /* Release */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				GCC_PRECOMPILE_PREFIX_HEADER = YES;
-				GCC_PREFIX_HEADER = "Shell/Shell-Prefix.pch";
-				PRODUCT_NAME = "$(TARGET_NAME)";
-			};
-			name = Release;
-		};
-		91E4C0681745682800062EF5 /* Debug */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				CODE_SIGN_IDENTITY = "";
-				GCC_PRECOMPILE_PREFIX_HEADER = YES;
-				GCC_PREFIX_HEADER = "ProcessMonitor/ProcessMonitor-Prefix.pch";
-				INFOPLIST_FILE = "ProcessMonitor/ProcessMonitor-Info.plist";
-				OTHER_LDFLAGS = (
-					"-sectcreate",
-					__TEXT,
-					__info_plist,
-					"ProcessMonitor/ProcessMonitor-Info.plist",
-					"-sectcreate",
-					__TEXT,
-					__launchd_plist,
-					"ProcessMonitor/ProcessMonitor-Launchd.plist",
-				);
-				PRODUCT_NAME = "mmm.$(TARGET_NAME)";
-			};
-			name = Debug;
-		};
-		91E4C0691745682800062EF5 /* Release */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				CODE_SIGN_IDENTITY = "";
-				GCC_PRECOMPILE_PREFIX_HEADER = YES;
-				GCC_PREFIX_HEADER = "ProcessMonitor/ProcessMonitor-Prefix.pch";
-				INFOPLIST_FILE = "ProcessMonitor/ProcessMonitor-Info.plist";
-				OTHER_LDFLAGS = (
-					"-sectcreate",
-					__TEXT,
-					__info_plist,
-					"ProcessMonitor/ProcessMonitor-Info.plist",
-					"-sectcreate",
-					__TEXT,
-					__launchd_plist,
-					"ProcessMonitor/ProcessMonitor-Launchd.plist",
-				);
-				PRODUCT_NAME = "mmm.$(TARGET_NAME)";
-			};
-			name = Release;
-		};
 		91F1747E16ED0CF0002E2594 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
@@ -1118,24 +854,6 @@
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
-		919BA9BB16C875C40091CB1B /* Build configuration list for PBXNativeTarget "Shell" */ = {
-			isa = XCConfigurationList;
-			buildConfigurations = (
-				919BA9B916C875C40091CB1B /* Debug */,
-				919BA9BA16C875C40091CB1B /* Release */,
-			);
-			defaultConfigurationIsVisible = 0;
-			defaultConfigurationName = Release;
-		};
-		91E4C06A1745682800062EF5 /* Build configuration list for PBXNativeTarget "ProcessMonitor" */ = {
-			isa = XCConfigurationList;
-			buildConfigurations = (
-				91E4C0681745682800062EF5 /* Debug */,
-				91E4C0691745682800062EF5 /* Release */,
-			);
-			defaultConfigurationIsVisible = 0;
-			defaultConfigurationName = Release;
-		};
 		91F1748016ED0CF0002E2594 /* Build configuration list for PBXNativeTarget "TerminalTests" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
