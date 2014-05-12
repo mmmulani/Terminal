@@ -18,6 +18,7 @@
 @property NSPipe *sshOutputPipe;
 @property NSTask *sshTask;
 @property id windowController;
+@property NSTextStorage *textStorage;
 
 @end
 
@@ -39,11 +40,19 @@
   return self;
 }
 
+- (void)awakeFromNib
+{
+  [super awakeFromNib];
+
+  self.textStorage = [NSTextStorage new];
+  [self.textStorage addLayoutManager:self.sshTextView.layoutManager];
+  self.textStorage.delegate = self.sshTextView;
+  self.sshTextView.delegate = self;
+}
+
 - (void)windowDidLoad
 {
   [super windowDidLoad];
-
-  self.sshTextView.delegate = self;
 
   // Prompt for a server to connect to.
   NSAlert *alert = [NSAlert alertWithMessageText:@"Choose a server" defaultButton:@"Connect" alternateButton:@"Cancel" otherButton:nil informativeTextWithFormat:@"Enter the SSH host to run this session on."];
