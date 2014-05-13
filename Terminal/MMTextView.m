@@ -53,6 +53,14 @@
 
 - (void)textStorageDidProcessEditing:(NSNotification *)notification
 {
+  CTFramesetterRef framesetter = CTFramesetterCreateWithAttributedString((__bridge CFMutableAttributedStringRef)self.textStorage);
+  CFRange fitRange;
+  CGSize suggestedSize = CTFramesetterSuggestFrameSizeWithConstraints(framesetter, CFRangeMake(0, 0), NULL, CGSizeMake(self.bounds.size.width, CGFLOAT_MAX), &fitRange);
+  suggestedSize.height = MAX(self.bounds.size.height, suggestedSize.height);
+  suggestedSize.width = self.bounds.size.width;
+
+  [self setFrameSize:suggestedSize];
+
   [self setNeedsDisplay:YES];
 }
 
