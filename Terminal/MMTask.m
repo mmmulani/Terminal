@@ -40,6 +40,7 @@
 @property NSMutableSet *decModes;
 @property NSInteger currentCharacterSetSlot;
 @property NSMutableArray *ansiActions;
+@property NSUInteger totalRowsInOutput;
 
 @property MMTaskIdentifier identifier;
 
@@ -79,11 +80,10 @@
   self.characterCountsOnVisibleRows = [NSMutableArray arrayWithCapacity:self.termHeight];
   self.scrollRowHasNewline = [NSMutableArray arrayWithCapacity:self.termHeight];
   self.scrollRowTabRanges = [NSMutableArray arrayWithCapacity:self.termHeight];
-  for (NSInteger i = 0; i < self.termHeight; i++) {
-    [self.characterCountsOnVisibleRows addObject:@0];
-    [self.scrollRowHasNewline addObject:@NO];
-    [self.scrollRowTabRanges addObject:[NSMutableArray array]];
-  }
+  [self.characterCountsOnVisibleRows addObject:@0];
+  [self.scrollRowHasNewline addObject:@NO];
+  [self.scrollRowTabRanges addObject:[NSMutableArray array]];
+  self.totalRowsInOutput = 1;
   self.removedTrailingNewlineInScrollLine = 0;
   self.cursorPosition = MMPositionMake(1, 1);
   self.scrollMarginTop = 1;
@@ -869,7 +869,7 @@
 - (void)changeTerminalHeightTo:(NSInteger)newHeight;
 {
   if (newHeight < self.termHeight) {
-    NSInteger linesToRemove = self.termHeight - newHeight;
+    NSInteger linesToRemove = MAX(self.numberOfRowsOnScreen - newHeight, 0);
 
     for (NSInteger i = self.numberOfRowsOnScreen; i > 1 && linesToRemove > 0; i--) {
       if ([self numberOfCharactersInScrollRow:i] > 0 || [self isScrollRowTerminatedInNewline:(i - 1)]) {
@@ -948,11 +948,19 @@
 
 - (NSInteger)numberOfCharactersInScrollRow:(NSInteger)row;
 {
+  if (row > self.numberOfRowsOnScreen) {
+    return 0;
+  }
+
   return [self.characterCountsOnVisibleRows[row - 1] integerValue];
 }
 
 - (NSInteger)numberOfDisplayableCharactersInScrollRow:(NSInteger)row;
 {
+  if (row > self.numberOfRowsOnScreen) {
+    return 0;
+  }
+
   NSInteger count = [self numberOfCharactersInScrollRow:row];
   for (id value in self.scrollRowTabRanges[row - 1]) {
     NSRange tabRange = [value rangeValue];
@@ -964,6 +972,10 @@
 
 - (BOOL)isScrollRowTerminatedInNewline:(NSInteger)row;
 {
+  if (row > self.numberOfRowsOnScreen) {
+    return NO;
+  }
+
   return [self.scrollRowHasNewline[row - 1] boolValue];
 }
 
@@ -1038,16 +1050,22 @@
   [self.characterCountsOnVisibleRows insertObject:@0 atIndex:(row - 1)];
   [self.scrollRowHasNewline insertObject:@NO atIndex:(row - 1)];
   [self.scrollRowTabRanges insertObject:[NSMutableArray array] atIndex:(row - 1)];
+  self.totalRowsInOutput++;
   [self setScrollRow:row hasNewline:newline];
 }
 
 - (void)removeLineAtScrollRow:(NSInteger)row;
 {
+  if (row > self.numberOfRowsOnScreen) {
+    return;
+  }
+
   NSInteger lengthIncludingNewline = ([self isScrollRowTerminatedInNewline:row] ? 1 : 0) + [self numberOfDisplayableCharactersInScrollRow:row];
   [self.displayTextStorage deleteCharactersInRange:NSMakeRange([self characterOffsetUpToScrollRow:row], lengthIncludingNewline)];
   [self.characterCountsOnVisibleRows removeObjectAtIndex:(row - 1)];
   [self.scrollRowHasNewline removeObjectAtIndex:(row - 1)];
   [self.scrollRowTabRanges removeObjectAtIndex:(row - 1)];
+  self.totalRowsInOutput--;
 }
 
 - (void)setScrollRow:(NSInteger)row hasNewline:(BOOL)hasNewline;
@@ -1137,7 +1155,8 @@
     } else {
       [self incrementRowOffset];
     }
-    [self insertBlankLineAtScrollRow:self.scrollMarginBottom withNewline:NO];
+    NSInteger newRow = MIN(self.numberOfRowsOnScreen + 1, self.scrollMarginBottom);
+    [self insertBlankLineAtScrollRow:newRow withNewline:NO];
   }
 }
 

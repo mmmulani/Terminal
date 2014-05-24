@@ -187,8 +187,8 @@
   XCTAssertEqual(task.characterOffsetToScreen, (NSInteger)0, @"");
   XCTAssertEqual(task.cursorPositionX, (NSInteger)2, @"");
   XCTAssertEqual(task.cursorPositionY, (NSInteger)3, @"");
-  XCTAssertEqualObjects(task.characterCountsOnVisibleRows, (@[@1, @1, @1, @0, @0, @0, @0, @0, @0, @0, @0, @0, @0, @0, @0, @0, @0, @0, @0, @0]), @"");
-  XCTAssertEqualObjects(task.scrollRowHasNewline, (@[@YES, @YES, @NO, @NO, @NO, @NO, @NO, @NO, @NO, @NO, @NO, @NO, @NO, @NO, @NO, @NO, @NO, @NO, @NO, @NO]), @"");
+  XCTAssertEqualObjects(task.characterCountsOnVisibleRows, (@[@1, @1, @1]));
+  XCTAssertEqualObjects(task.scrollRowHasNewline, (@[@YES, @YES, @NO]));
   XCTAssertEqual(task.termHeight, (NSInteger)20, @"");
   XCTAssertEqual(task.scrollMarginTop, (NSInteger)1, @"");
   XCTAssertEqual(task.scrollMarginBottom, (NSInteger)20, @"");
@@ -286,6 +286,34 @@
   XCTAssertEqual(task.termWidth, (NSInteger)80, @"");
   XCTAssertEqual(task.termHeight, (NSInteger)24, @"");
   XCTAssertEqualObjects(task.currentANSIDisplay.string, @"", @"");
+}
+
+- (void)testRowCounting
+{
+  MMTask *task = [MMTask new];
+  XCTAssertEqual(task.totalRowsInOutput, 1);
+  SendInputToTask(task, @"a\nb\nc");
+  XCTAssertEqual(task.totalRowsInOutput, 3);
+  SendInputToTask(task, @" ");
+  XCTAssertEqual(task.totalRowsInOutput, 3);
+  SendInputToTask(task, @"\n");
+  XCTAssertEqual(task.totalRowsInOutput, 4);
+  SendInputToTask(task, @"\b");
+  XCTAssertEqual(task.totalRowsInOutput, 4);
+
+  task = [MMTask new];
+  SendInputToTask(task, [@"\n" repeatedTimes:25]);
+  XCTAssertEqual(task.totalRowsInOutput, 26);
+
+  task = [MMTask new];
+  SendInputToTask(task, @"\033[5;1H");
+  XCTAssertEqual(task.totalRowsInOutput, 5);
+  SendInputToTask(task, @"\033[24;1H");
+  XCTAssertEqual(task.totalRowsInOutput, 24);
+
+  task = [MMTask new];
+  SendInputToTask(task, [@"A" repeatedTimes:81]);
+  XCTAssertEqual(task.totalRowsInOutput, 2);
 }
 
 @end

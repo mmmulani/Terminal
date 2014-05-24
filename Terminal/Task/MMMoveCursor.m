@@ -128,7 +128,7 @@
   } else {
     // We are guaranteed that y >= 2.
     // Add new lines as needed.
-    NSInteger linesToAdd = self.delegate.termHeight - self.delegate.numberOfRowsOnScreen;
+    NSInteger linesToAdd = y - self.delegate.numberOfRowsOnScreen;
     for (NSInteger i = 0; i < linesToAdd; i++) {
       [self.delegate insertBlankLineAtScrollRow:(self.delegate.numberOfRowsOnScreen + 1) withNewline:NO];
     }

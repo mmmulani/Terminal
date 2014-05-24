@@ -77,6 +77,7 @@ typedef enum {
 - (void)processFinished:(MMProcessStatus)status data:(id)data;
 
 - (void)resizeTerminalToColumns:(NSInteger)columns rows:(NSInteger)rows;
+- (NSUInteger)totalRowsInOutput;
 
 // In some cases, the task does not have enough output to fill a terminal screen but we should still render the full screen.
 // (e.g. after we receive a clear escape sequence.)
