@@ -43,11 +43,6 @@
         [self.outputView.enclosingScrollView removeFromSuperview];
         self.outputView = nil;
         [self updateViewForShellCommand];
-        
-        BOOL isCd = [[[self.task.commandGroups[0] commands][0] arguments][0] isEqualToString:@"cd"];
-        if (!isCd) {
-            [self.view addSubview:self.catImageView];
-        }
     } else {
       [self.label setStringValue:[NSString stringWithFormat:@"Running %@", self.task.command]];
     }
@@ -108,10 +103,6 @@
 - (CGFloat)heightToFitAllOfOutput;
 {
   if (self.task.isShellCommand) {
-    if (self.catImageView.image) {
-      return self.catImageView.image.size.height + 80.0;
-    }
-    
     return 55.0;
   }
 
@@ -174,23 +165,6 @@
     }
     self.label.stringValue = displayText;
     self.label.alignment = NSCenterTextAlignment;
-  } else {
-    self.label.stringValue = [NSString stringWithFormat:@"Ran cat_ %@", self.task.shellCommandAttachment[@"image"]];
-
-    // Image cat.
-    NSString *imageString = self.task.shellCommandAttachment[@"content"];
-    NSMutableData *imageData = [NSMutableData dataWithCapacity:(imageString.length / 2)];
-    for (NSInteger i = 0; i < imageString.length; i += 2) {
-      unichar first = [imageString characterAtIndex:i];
-      unichar second = [imageString characterAtIndex:(i + 1)];
-      NSInteger value = first >= 'a' ? first - 'a' + 10 : first - '0';
-      NSInteger secondValue = second >= 'a' ? second - 'a' + 10 : second - '0';
-
-      NSInteger totalValue = (value * 16) + secondValue;
-      [imageData appendBytes:&totalValue length:1];
-    }
-    self.catImageView.image = [[NSImage alloc] initWithData:imageData];
-    [self.catImageView setFrame:NSMakeRect(20, -(self.catImageView.image.size.height) + 10, self.catImageView.image.size.width, self.catImageView.image.size.height)];
   }
 }
 

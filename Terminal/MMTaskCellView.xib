@@ -7,7 +7,6 @@
     <objects>
         <customObject id="-2" userLabel="File's Owner" customClass="MMTaskCellViewController">
             <connections>
-                <outlet property="catImageView" destination="71" id="73"/>
                 <outlet property="imageView" destination="44" id="52"/>
                 <outlet property="label" destination="13" id="20"/>
                 <outlet property="outputView" destination="4" id="21"/>
@@ -90,11 +89,6 @@
             <rect key="frame" x="0.0" y="0.0" width="16" height="16"/>
             <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
             <imageCell key="cell" refusesFirstResponder="YES" alignment="left" imageScaling="proportionallyUpOrDown" id="45"/>
-        </imageView>
-        <imageView id="71">
-            <rect key="frame" x="0.0" y="0.0" width="16" height="16"/>
-            <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
-            <imageCell key="cell" refusesFirstResponder="YES" alignment="left" imageScaling="proportionallyUpOrDown" id="72"/>
         </imageView>
         <progressIndicator hidden="YES" horizontalHuggingPriority="750" verticalHuggingPriority="750" maxValue="100" bezeled="NO" indeterminate="YES" controlSize="small" style="spinning" id="67">
             <rect key="frame" x="0.0" y="0.0" width="16" height="16"/>
