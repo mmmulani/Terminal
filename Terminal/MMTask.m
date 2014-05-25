@@ -89,7 +89,7 @@
   self.scrollMarginTop = 1;
   self.scrollMarginBottom = self.termHeight;
   self.characterAttributes = [NSMutableDictionary dictionary];
-  self.characterAttributes[NSFontAttributeName] = [NSFont userFixedPitchFontOfSize:[NSFont systemFontSize]];
+  self.characterAttributes[NSFontAttributeName] = [[self class] taskFont];
   NSMutableParagraphStyle *paragraphStyle = [[NSParagraphStyle defaultParagraphStyle] mutableCopy];
   [paragraphStyle setLineBreakMode:NSLineBreakByCharWrapping];
   paragraphStyle.tabStops = @[];
@@ -276,6 +276,14 @@
 {
   if (!self.finishedAt || self.removedTrailingNewlineInScrollLine != 0) {
     return;
+  }
+
+  // If we output a full line and then the task terminates, the cursor is on a new line but for display purposes we want to omit the last line.
+  if (self.finishedAt &&
+      self.cursorPositionY == self.numberOfRowsOnScreen &&
+      self.cursorPositionX == 1 &&
+      [self numberOfCharactersInScrollRow:self.cursorPositionY] == 0) {
+    self.totalRowsInOutput--;
   }
 
   if (self.displayTextStorage.length > 0 && [[self.displayTextStorage attributedSubstringFromRange:NSMakeRange(self.displayTextStorage.length - 1, 1)].string isEqualToString:@"\n"]) {
@@ -624,6 +632,16 @@
   }
 }
 
++ (NSFont *)taskFont
+{
+  static NSFont *font;
+  static dispatch_once_t onceToken;
+  dispatch_once(&onceToken, ^{
+    font = [NSFont userFixedPitchFontOfSize:[NSFont systemFontSize]];
+  });
+  return font;
+}
+
 - (void)handleCharacterAttributes:(NSArray *)items;
 {
   if (items.count == 0) {
@@ -637,7 +655,7 @@
         [self.characterAttributes removeObjectForKey:NSForegroundColorAttributeName];
         [self.characterAttributes removeObjectForKey:NSBackgroundColorAttributeName];
 
-        self.characterAttributes[NSFontAttributeName] = [NSFont userFixedPitchFontOfSize:[NSFont systemFontSize]];
+        self.characterAttributes[NSFontAttributeName] = [[self class] taskFont];
         break;
       case 1:
         self.characterAttributes[NSFontAttributeName] = [[NSFontManager sharedFontManager] convertFont:self.characterAttributes[NSFontAttributeName] toHaveTrait:NSBoldFontMask];

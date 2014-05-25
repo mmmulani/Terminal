@@ -25,6 +25,8 @@
 {
   [super loadView];
 
+  self.outputView.task = self.task;
+
   if (self.task.shellCommand) {
     [self.outputView.enclosingScrollView removeFromSuperview];
     self.outputView = nil;
@@ -105,35 +107,15 @@
 
 - (CGFloat)heightToFitAllOfOutput;
 {
-    if (self.task.isShellCommand) {
-        if (self.catImageView.image) {
-            return self.catImageView.image.size.height + 80.0;
-        }
-        
-        return 55.0;
+  if (self.task.isShellCommand) {
+    if (self.catImageView.image) {
+      return self.catImageView.image.size.height + 80.0;
     }
+    
+    return 55.0;
+  }
 
-    CGFloat textHeight = 0.0f;
-    if (self.task.shouldDrawFullTerminalScreen) {
-        // We let the default maximum later take over, rather than calculate a max height.
-        textHeight = 9999.0f;
-    } else {
-        NSAttributedString *output = [self.outputView.textStorage attributedSubstringFromRange:NSMakeRange(0, self.outputView.textStorage.length)];
-
-        NSTextStorage *textStorage = [[NSTextStorage alloc] initWithAttributedString:output];
-        NSTextContainer *textContainer = [[NSTextContainer alloc] initWithContainerSize:NSMakeSize(self.view.frame.size.width - 40, FLT_MAX)];
-        NSLayoutManager *layoutManager = [[NSLayoutManager alloc] init];
-        [layoutManager addTextContainer:textContainer];
-        [textStorage addLayoutManager:layoutManager];
-        [layoutManager glyphRangeForTextContainer:textContainer];
-        textHeight = [layoutManager usedRectForTextContainer:textContainer].size.height + 2.0; // + 2.0 for padding.
-    }
-
-    // When drawing the whole screen, we use 64 points for the chrome and 15 points for each line of text.
-    CGFloat heightForWholeScreen = 64.0 + 15.0 * self.task.termHeight;
-
-    CGFloat height = MIN(64 + textHeight, heightForWholeScreen);
-    return height;
+  return 64.0 + self.outputView.desiredScrollHeight;
 }
 
 - (void)updateWithANSIOutput;

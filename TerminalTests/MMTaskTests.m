@@ -65,6 +65,20 @@
   XCTAssertEqualObjects(task.currentANSIDisplay.string, @"test", @"Newline should be removed after process is finished");
   SendInputToTask(task, @"test2\n");
   XCTAssertEqualObjects(task.currentANSIDisplay.string, @"test\ntest2", @"Newline should be readded if task has to handle more output");
+
+  task = [MMTask new];
+  SendInputToTask(task, [[@"1234567890" repeatedTimes:8] stringByAppendingString:@"\n"]);
+  XCTAssertEqual(task.totalRowsInOutput, 2);
+
+  [task processFinished:MMProcessStatusExit data:nil];
+  XCTAssertEqual(task.totalRowsInOutput, 1);
+
+  task = [MMTask new];
+  SendInputToTask(task, [[@"1234567890" repeatedTimes:9] stringByAppendingString:@"\n"]);
+  XCTAssertEqual(task.totalRowsInOutput, 3);
+
+  [task processFinished:MMProcessStatusExit data:nil];
+  XCTAssertEqual(task.totalRowsInOutput, 2);
 }
 
 - (void)testWidthResizing;

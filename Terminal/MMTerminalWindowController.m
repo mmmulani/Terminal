@@ -57,7 +57,7 @@
   self.terminalConnection = terminalConnection;
   //self.window.restorationClass = [[NSApp delegate] class];
 
-  self.extraWidthMargin = 56.0;
+  self.extraWidthMargin = 46.0;
   self.extraHeightMargin = 335.0;
 
   if (state) {
@@ -500,9 +500,7 @@ static void directoryWatchingCallback(CFFileDescriptorRef kqRef, CFOptionFlags c
 
 - (NSSize)windowWillResize:(NSWindow *)sender toSize:(NSSize)frameSize;
 {
-  // In terms of width considerations:
-  // 7.82666 is required for each column and (by default) we add 56 for the surrounding chrome.
-  // For height:
+  // In terms of height considerations:
   // 15 is added for each row of text and (by default) we add 335 for the surrounding chrome/context.
   // The 335 value is a margin that is modifiable by the user, by resizing and holding down Command.
 
@@ -511,12 +509,12 @@ static void directoryWatchingCallback(CFFileDescriptorRef kqRef, CFOptionFlags c
   }
 
   NSSize newFrame = frameSize;
-  NSInteger columns = MAX(20, round((frameSize.width - self.extraWidthMargin) / 7.82666));
+  NSInteger columns = MAX(20, [MMTextView columnsForWidthOfText:(frameSize.width - self.extraWidthMargin)]);
   NSInteger rows = MAX(10, round((frameSize.height - self.extraHeightMargin) / 15));
 
   self.infoOverlayView.displayText = [NSString stringWithFormat:@"%ldx%ld", columns, rows];
 
-  newFrame.width = floor(self.extraWidthMargin + columns * 7.82666);
+  newFrame.width = ceil(self.extraWidthMargin + [MMTextView widthForColumnsOfText:columns]);
   newFrame.height = floor(self.extraHeightMargin + rows * 15);
   return newFrame;
 }
@@ -524,7 +522,7 @@ static void directoryWatchingCallback(CFFileDescriptorRef kqRef, CFOptionFlags c
 - (void)resizeWindowForTerminalScreenSizeOfColumns:(NSInteger)columns rows:(NSInteger)rows;
 {
   CGSize newSize = self.window.frame.size;
-  newSize.width = round(7.82666 * columns) + self.extraWidthMargin;
+  newSize.width = ceil([MMTextView widthForColumnsOfText:columns]) + self.extraWidthMargin;
   newSize.height = 15 * rows + self.extraHeightMargin;
   NSRect newFrame = self.window.frame;
   newFrame.size = newSize;
@@ -534,7 +532,7 @@ static void directoryWatchingCallback(CFFileDescriptorRef kqRef, CFOptionFlags c
 
 - (void)windowDidResize:(NSNotification *)notification;
 {
-  NSInteger newWidth = lround((self.window.frame.size.width - self.extraWidthMargin) / 7.82666);
+  NSInteger newWidth = [MMTextView columnsForWidthOfText:(self.window.frame.size.width - self.extraWidthMargin)];
   NSInteger newHeight = lround((self.window.frame.size.height - self.extraHeightMargin) / 15);
 
   [self.terminalConnection changeTerminalSizeToColumns:newWidth rows:newHeight];

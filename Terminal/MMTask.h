@@ -36,6 +36,7 @@ typedef enum {
 @interface MMTask : NSObject <MMANSIActionDelegate, NSCoding>
 
 + (MMTaskIdentifier)uniqueTaskIdentifier;
++ (NSFont *)taskFont;
 
 @property (strong) NSMutableString *output;
 @property NSTextStorage *displayTextStorage;

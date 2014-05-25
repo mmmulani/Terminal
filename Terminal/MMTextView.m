@@ -8,11 +8,14 @@
 
 #import "MMTextView.h"
 
+#import "MMTask.h"
+
 @implementation MMTextView
 
 - (void)awakeFromNib
 {
   _layoutManager = [[NSLayoutManager alloc] init];
+  [self setAutoresizingMask:NSViewNotSizable];
 }
 
 - (void)setTextStorage:(NSTextStorage *)textStorage
@@ -53,15 +56,44 @@
 
 - (void)textStorageDidProcessEditing:(NSNotification *)notification
 {
-  CTFramesetterRef framesetter = CTFramesetterCreateWithAttributedString((__bridge CFMutableAttributedStringRef)self.textStorage);
-  CFRange fitRange;
-  CGSize suggestedSize = CTFramesetterSuggestFrameSizeWithConstraints(framesetter, CFRangeMake(0, 0), NULL, CGSizeMake(self.bounds.size.width, CGFLOAT_MAX), &fitRange);
-  suggestedSize.height = MAX(self.bounds.size.height, suggestedSize.height);
-  suggestedSize.width = self.bounds.size.width;
+  [self setSizeForRowsOfText:self.task.totalRowsInOutput columns:self.task.termWidth];
 
-  [self setFrameSize:suggestedSize];
-
+  [self setNeedsLayout:YES];
   [self setNeedsDisplay:YES];
+}
+
+# pragma mark - Text sizing
+
+- (CGFloat)desiredScrollHeight
+{
+  NSUInteger rows = MIN(self.task.totalRowsInOutput, self.task.termHeight);
+  return [[self class] heightForRowsOfText:rows];
+}
+
++ (CGFloat)widthForColumnsOfText:(NSUInteger)columns
+{
+  CGFloat characterWidth = [[MMTask taskFont] maximumAdvancement].width;
+  return ceil(characterWidth * columns) + 1;
+}
+
++ (NSUInteger)columnsForWidthOfText:(CGFloat)width
+{
+  CGFloat characterWidth = [[MMTask taskFont] maximumAdvancement].width;
+  return floor(width / characterWidth);
+}
+
++ (CGFloat)heightForRowsOfText:(NSUInteger)rows
+{
+  CGFloat characterHeight = [[[NSLayoutManager alloc] init] defaultLineHeightForFont:[MMTask taskFont]];
+  return ceil(characterHeight * rows) + 1;
+}
+
+- (void)setSizeForRowsOfText:(NSUInteger)rows columns:(NSUInteger)columns
+{
+  CGFloat height = [[self class] heightForRowsOfText:rows];
+  CGFloat width = [[self class] widthForColumnsOfText:columns];
+
+  [self setFrameSize:NSMakeSize(width, height)];
 }
 
 # pragma mark - Text drawing
@@ -72,7 +104,7 @@
   CGContextSetTextMatrix(ctx, CGAffineTransformIdentity);
 
   CGMutablePathRef path = CGPathCreateMutable();
-  CGRect bounds = CGRectMake(0.0, 0.0, self.bounds.size.width, self.bounds.size.height);
+  CGRect bounds = CGRectMake(0.0, 0.0, self.frame.size.width, self.frame.size.height);
   CGPathAddRect(path, NULL, bounds);
 
   CTFramesetterRef framesetter = CTFramesetterCreateWithAttributedString((__bridge CFMutableAttributedStringRef)self.textStorage);
