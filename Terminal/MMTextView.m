@@ -12,6 +12,19 @@
 
 @implementation MMTextView
 
+- (instancetype)initWithFrame:(NSRect)frameRect
+{
+  self = [super initWithFrame:frameRect];
+  if (!self) {
+    return nil;
+  }
+
+  _layoutManager = [[NSLayoutManager alloc] init];
+  [self setAutoresizingMask:NSViewNotSizable];
+
+  return self;
+}
+
 - (void)awakeFromNib
 {
   _layoutManager = [[NSLayoutManager alloc] init];

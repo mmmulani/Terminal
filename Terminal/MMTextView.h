@@ -20,6 +20,7 @@
 @interface MMTextView : NSView <NSTextStorageDelegate>
 
 + (CGFloat)widthForColumnsOfText:(NSUInteger)columns;
++ (CGFloat)heightForRowsOfText:(NSUInteger)rows;
 + (NSUInteger)columnsForWidthOfText:(CGFloat)width;
 
 @property (assign) id<MMTextViewDelegate> delegate;
