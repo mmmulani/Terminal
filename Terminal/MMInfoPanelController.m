@@ -13,7 +13,6 @@
 @interface MMInfoPanelController ()
 
 @property NSString *currentPanelType;
-@property BOOL windowLoaded;
 
 @end
 

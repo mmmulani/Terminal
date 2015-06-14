@@ -215,14 +215,15 @@
     MMLog(@"Discarded all commands past the first in: %@", task.command);
   }
 
-  if ([MMShellCommands isShellCommand:[commandGroups[0] commands][0]]) {
+  MMCommandGroup *commandGroup = commandGroups[0];
+  if ([MMShellCommands isShellCommand:[commandGroup commands][0]]) {
     [self.shellCommandTasks addObject:task];
 
     [task processStarted];
 
     NSDictionary *message =
     @{
-      @"directory": [[commandGroups[0] commands][0] arguments][1],
+      @"directory": [[commandGroup commands][0] arguments][1],
       };
     [self _sendShellMessage:@"dir_change" content:message];
 
@@ -231,7 +232,7 @@
 
   self.tasksByIdentifier[@(task.identifier)] = task;
 
-  MMCommand *commandObj = [commandGroups[0] commands][0];
+  MMCommand *commandObj = [commandGroup commands][0];
   NSDictionary *message =
   @{
     @"identifier": @( task.identifier ),

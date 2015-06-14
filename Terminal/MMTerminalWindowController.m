@@ -86,7 +86,7 @@
   }
 
   // Set our terminal height and width correctly.
-  [self windowDidResize:nil];
+  [self _windowDidResize];
 
   return self;
 }
@@ -337,9 +337,9 @@
   NSInteger currentCommand = [self indexOfSelectedRow];
   if (currentCommand != -1 &&
       currentCommand > 0 &&
-      ![self.taskViewControllers[currentCommand - 1] task].isFinished) {
+      !((MMTask *)[self.taskViewControllers[currentCommand - 1] task]).isFinished) {
     [self.window makeFirstResponder:((MMTaskCellViewController *)self.taskViewControllers[currentCommand - 1]).outputView];
-  } else if (![self.taskViewControllers.lastObject task].isFinished) {
+  } else if (!((MMTask *)[self.taskViewControllers.lastObject task]).isFinished) {
     [self.window makeFirstResponder:((MMTaskCellViewController *)self.taskViewControllers.lastObject).outputView];
   }
 }
@@ -349,9 +349,9 @@
   NSInteger currentCommand = [self indexOfSelectedRow];
   if (currentCommand != -1 &&
       currentCommand < self.taskViewControllers.count - 1 &&
-      ![self.taskViewControllers[currentCommand + 1] task].isFinished) {
+      !((MMTask *)[self.taskViewControllers[currentCommand + 1] task]).isFinished) {
     [self.window makeFirstResponder:((MMTaskCellViewController *)self.taskViewControllers[currentCommand + 1]).outputView];
-  } else if (![self.taskViewControllers.lastObject task].isFinished) {
+  } else if (!((MMTask *)[self.taskViewControllers.lastObject task]).isFinished) {
     [self.window makeFirstResponder:((MMTaskCellViewController *)self.taskViewControllers.lastObject).outputView];
   }
 }
@@ -531,6 +531,11 @@ static void directoryWatchingCallback(CFFileDescriptorRef kqRef, CFOptionFlags c
 }
 
 - (void)windowDidResize:(NSNotification *)notification;
+{
+  [self _windowDidResize];
+}
+
+- (void)_windowDidResize
 {
   NSInteger newWidth = [MMTextView columnsForWidthOfText:(self.window.frame.size.width - self.extraWidthMargin)];
   NSInteger newHeight = lround((self.window.frame.size.height - self.extraHeightMargin) / 15);

@@ -6,6 +6,7 @@
 //  Copyright (c) 2013 Mehdi Mulani. All rights reserved.
 //
 
+#import "MMCommandGroup.h"
 #import "MMTaskCellViewController.h"
 #import "MMTerminalWindowController.h"
 
@@ -149,7 +150,8 @@
 
 - (void)updateViewForShellCommand;
 {
-  BOOL isCd = [[[self.task.commandGroups[0] commands][0] arguments][0] isEqualToString:@"cd"];
+  MMCommandGroup *commandGroup = self.task.commandGroups[0];
+  BOOL isCd = [[[commandGroup commands][0] arguments][0] isEqualToString:@"cd"];
   if (isCd) {
     if (!self.task.shellCommandAttachment) {
       return;
